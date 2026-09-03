@@ -1,4 +1,5 @@
 import ContactForm from "@/components/ContactForm";
+import Reveal from "@/components/Reveal";
 import { siteConfig } from "@/lib/data";
 
 export const metadata = {
@@ -10,7 +11,7 @@ export default function ContactPage() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16 lg:px-8 lg:py-24">
       <div className="grid grid-cols-1 gap-16 lg:grid-cols-12">
-        <div className="lg:col-span-5">
+        <Reveal className="lg:col-span-5">
           <span className="text-xs font-semibold uppercase tracking-[0.25em] text-gold">
             Contact Us
           </span>
@@ -54,13 +55,13 @@ export default function ContactPage() {
               <dd className="mt-1 text-navy">{siteConfig.address}</dd>
             </div>
           </dl>
-        </div>
+        </Reveal>
 
-        <div className="lg:col-span-7">
-          <div className="rounded-3xl border border-navy/10 bg-white p-8 shadow-sm sm:p-10">
+        <Reveal delay={150} className="lg:col-span-7">
+          <div className="rounded-3xl border border-navy/10 bg-white p-8 shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-navy/5 sm:p-10">
             <ContactForm />
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

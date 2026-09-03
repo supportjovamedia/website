@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-colors duration-200";
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy/10 active:translate-y-0 active:shadow-none";
 
 const variants = {
   primary: "bg-navy text-ivory hover:bg-gold hover:text-navy",

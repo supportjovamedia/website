@@ -38,3 +38,69 @@ body {
   background: var(--color-gold);
   color: var(--color-navy);
 }
+
+/* Scroll-reveal: elements start hidden/offset, JS flips them visible via
+   the .is-visible class once they enter the viewport. Respects users who
+   have asked for reduced motion. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gentle floating motion for hero decoration */
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -18px, 0); }
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.animate-float-slow-delayed {
+  animation: float-slow 9s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+/* Infinite horizontal marquee */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 28s linear infinite;
+}
+
+.group:hover .animate-marquee,
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-slow-delayed,
+  .animate-marquee {
+    animation: none;
+  }
+}

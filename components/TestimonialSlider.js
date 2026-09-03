@@ -1,30 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { testimonials } from "@/lib/data";
+
+const AUTOPLAY_MS = 6000;
 
 export default function TestimonialSlider() {
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const total = testimonials.length;
+  const timerRef = useRef(null);
 
-  const go = (dir) => {
-    setIndex((current) => (current + dir + total) % total);
-  };
+  const go = useCallback(
+    (dir) => {
+      setIndex((current) => (current + dir + total) % total);
+    },
+    [total]
+  );
+
+  useEffect(() => {
+    if (paused) return undefined;
+    timerRef.current = setInterval(() => go(1), AUTOPLAY_MS);
+    return () => clearInterval(timerRef.current);
+  }, [paused, go]);
 
   const current = testimonials[index];
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="relative rounded-3xl border border-navy/10 bg-white px-8 py-12 text-center shadow-sm sm:px-14 sm:py-16">
-        <span className="font-serif-brand text-6xl leading-none text-gold" aria-hidden="true">
-          &ldquo;
-        </span>
-        <p className="mx-auto -mt-4 max-w-2xl font-serif-brand text-xl leading-relaxed text-navy sm:text-2xl">
-          {current.quote}
-        </p>
-        <div className="mt-8">
-          <p className="text-sm font-semibold tracking-wide text-navy">{current.name}</p>
-          <p className="text-sm text-navy/60">{current.role}</p>
+    <div
+      className="mx-auto max-w-3xl"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="relative overflow-hidden rounded-3xl border border-navy/10 bg-white px-8 py-12 text-center shadow-sm sm:px-14 sm:py-16">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-10 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-gold/10 blur-3xl"
+        />
+        <div key={index} className="relative animate-[fadeIn_0.6s_ease]">
+          <span className="font-serif-brand text-6xl leading-none text-gold" aria-hidden="true">
+            &ldquo;
+          </span>
+          <p className="mx-auto -mt-4 max-w-2xl font-serif-brand text-xl leading-relaxed text-navy sm:text-2xl">
+            {current.quote}
+          </p>
+          <div className="mt-8">
+            <p className="text-sm font-semibold tracking-wide text-navy">{current.name}</p>
+            <p className="text-sm text-navy/60">{current.role}</p>
+          </div>
         </div>
       </div>
 
@@ -45,7 +68,7 @@ export default function TestimonialSlider() {
               type="button"
               aria-label={`Go to testimonial ${i + 1}`}
               onClick={() => setIndex(i)}
-              className={`h-2 w-2 rounded-full transition-all ${
+              className={`h-2 w-2 rounded-full transition-all duration-300 ${
                 i === index ? "w-6 bg-gold" : "bg-navy/20"
               }`}
             />
