@@ -44,8 +44,9 @@ export default function RootLayout({ children }) {
     <html lang="en-GB" className="h-full">
       <body className="min-h-full flex flex-col antialiased bg-ivory text-navy">
         <Header />
-        <main className="flex-1">{children}<Analytics/></main>
+        <main className="flex-1">{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
