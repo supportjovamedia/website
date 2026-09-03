@@ -13,6 +13,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { siteConfig } from "@/lib/data";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -45,6 +46,7 @@ export default function RootLayout({ children }) {
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
