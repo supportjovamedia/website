@@ -28,7 +28,7 @@ img{max-width:100%}
 /* Header */
 .header{position:fixed;inset:0 0 auto 0;z-index:50;height:76px;background:#fff;border-bottom:1px solid var(--line)}
 .nav{height:76px;display:flex;align-items:center;gap:34px}
-.brand-logo{width:128px;height:56px;display:flex;align-items:center;overflow:hidden;flex:0 0 auto}
+.brand-logo{width:145px;height:auto;display:flex;align-items:center;overflow:hidden;flex:0 0 auto}
 .brand-logo img{width:100%;height:100%;object-fit:contain}
 .desktop-nav{display:flex;align-items:center;gap:30px;margin-left:auto}
 .desktop-nav a{position:relative;padding:28px 0 25px;font-size:14px;font-weight:650;color:#2f3944}
@@ -172,7 +172,7 @@ footer{background:#05080b;color:#fff}
 .footer-grid b{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:#8f9aa5;margin-bottom:5px}
 .footer-grid a{color:#fff;font-size:14px}.footer-grid a:hover{text-decoration:underline;text-underline-offset:4px}
 .footer-grid .muted{color:#8f9aa5;font-size:14px;line-height:1.55}
-.footer-logo{width:150px;height:70px;background:#fff;padding:7px 10px;display:flex;align-items:center}.footer-logo img{width:100%;height:100%;object-fit:contain}
+.footer-logo{width:200px;height:auto;background:#fff;padding:10px 10px;display:flex;align-items:center}.footer-logo img{width:100%;height:100%;object-fit:contain}
 .social-row{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:24px 0;border-top:1px solid #27303a}.social-row>span{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:#8f9aa5}.social-row>div{display:flex;gap:8px;flex-wrap:wrap}
 .social-placeholder{border:1px solid #303944;border-radius:0;background:transparent;color:#fff;padding:10px 12px;font-size:12px;display:inline-flex;align-items:center;gap:14px;cursor:default}
 .copyright{border-top:1px solid #27303a;padding:22px 0 28px;color:#8f9aa5;font-size:12px}
