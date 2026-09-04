@@ -1,1 +1,1 @@
-{"name":"jovamedia","version":"1.0.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint"},"dependencies":{"@vercel/analytics":"latest","next":"latest","react":"latest","react-dom":"latest"},"devDependencies":{}}
+{"name":"jovamedia","version":"1.0.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint"},"dependencies":{"@tailwindcss/postcss":"^4.3.3","@vercel/analytics":"latest","next":"latest","react":"latest","react-dom":"latest","tailwindcss":"^4.3.3"}}
