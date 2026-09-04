@@ -27,7 +27,6 @@ const outcomes=[
 
 export default function Home(){return <main>
 <section className="hero hero-v20">
-  <div className="hero-art" aria-hidden="true"><span className="geo-blue"></span><span className="geo-yellow"></span><span className="geo-red"></span><span className="geo-black"></span><span className="geo-rule"></span><span className="geo-words">Ideas<br/>to<br/>impact.</span></div>
   <div className="shell hero-v20-grid">
     <div className="hero-copy">
       <div className="kicker">Digital media agency · London</div>
@@ -44,6 +43,7 @@ export default function Home(){return <main>
     </div>
     <aside className="hero-side hero-side-v20"><div className="hero-side-disciplines">Strategy<br/>Creative<br/>Media<br/>Technology</div></aside>
   </div>
+  <div className="hero-art" aria-hidden="true"><span className="geo-blue"></span><span className="geo-yellow"></span><span className="geo-red"></span><span className="geo-black"></span><span className="geo-rule"></span><span className="geo-words">Ideas<br/>to<br/>impact.</span></div>
   <div className="hero-capabilities">
     <div className="shell hero-cap-grid">
       {heroCapabilities.map(([num,icon,name,summary])=><Link href="/services" key={name} className="hero-cap">

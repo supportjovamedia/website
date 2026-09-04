@@ -311,3 +311,106 @@ body{background:var(--paper);color:var(--black)}
   .hero-v20 .hero-outcomes{grid-template-columns:repeat(3,1fr);margin-top:24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.hero-v20 .hero-outcome,.hero-v20 .hero-outcome+.hero-outcome{min-height:86px;padding:13px 6px;border-left:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;text-align:center;gap:6px;font-size:11px;line-height:1.2}.hero-v20 .hero-outcome:first-child{border-left:0}
   .hero-art{width:calc(100% + 30px);margin-left:-15px;height:230px}.geo-blue{width:245px;left:-100px;top:38px}.geo-yellow{width:78px;height:78px;right:18%;top:24px}.geo-red{width:62px;height:112px;left:27%}.geo-black{width:64px;height:84px;right:12%}.geo-words{right:5%;bottom:20px}
 }
+
+/* v2.1 — refined small-screen geometric hero */
+@media(max-width:768px){
+  .hero-v20-grid{padding-bottom:38px}
+  .hero-art{
+    width:100%;
+    height:220px;
+    margin:0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+    background:var(--paper);
+  }
+  .geo-blue{width:250px;left:-74px;top:38px;right:auto}
+  .geo-yellow{width:86px;height:86px;right:18%;top:24px}
+  .geo-red{width:72px;height:110px;left:31%;bottom:0;right:auto}
+  .geo-black{width:76px;height:88px;right:12%;bottom:0}
+  .geo-rule{height:70px;right:29%;top:88px}
+  .geo-words{right:5%;bottom:18px;font-size:9px;line-height:1.65;letter-spacing:.22em}
+}
+
+@media(max-width:480px){
+  .hero-v20-grid{padding-top:34px;padding-bottom:30px}
+  .hero-v20 .hero-copy{padding-bottom:0}
+  .hero-art{height:188px}
+  .geo-blue{width:205px;left:-70px;top:34px}
+  .geo-yellow{width:68px;height:68px;right:19%;top:20px}
+  .geo-red{width:56px;height:92px;left:30%;bottom:0}
+  .geo-black{width:58px;height:72px;right:12%;bottom:0}
+  .geo-rule{height:58px;right:28%;top:72px}
+  .geo-words{right:4%;bottom:14px;font-size:8px;letter-spacing:.19em}
+}
+
+/* v2.2 — mobile/tablet hero artwork sits behind the content */
+@media(max-width:768px){
+  .hero-v20{position:relative;background:var(--paper)}
+  .hero-v20-grid{position:relative;z-index:2;padding-top:44px;padding-bottom:42px}
+  .hero-v20 .hero-copy{position:relative;z-index:3;padding-bottom:0}
+
+  .hero-art{
+    position:absolute;
+    z-index:0;
+    inset:0 0 auto 0;
+    width:100%;
+    height:min(760px,100%);
+    margin:0;
+    border:0;
+    overflow:hidden;
+    background:transparent;
+    opacity:1;
+  }
+  .hero-art::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg,rgba(253,255,252,.98) 0%,rgba(253,255,252,.94) 42%,rgba(253,255,252,.68) 70%,rgba(253,255,252,.24) 100%);
+    pointer-events:none;
+  }
+  .geo-blue{width:460px;aspect-ratio:1;left:55%;right:auto;top:118px;opacity:.18}
+  .geo-yellow{width:132px;height:132px;right:-18px;top:112px;opacity:.52}
+  .geo-red{width:92px;height:190px;left:auto;right:14%;bottom:54px;opacity:.22}
+  .geo-black{width:84px;height:138px;right:-10px;bottom:92px;opacity:.12}
+  .geo-rule{width:2px;height:88px;right:13%;top:260px;opacity:.45}
+  .geo-words{display:block;right:18px;bottom:48px;font-size:9px;line-height:1.7;letter-spacing:.24em;color:var(--black);opacity:.7}
+
+  .hero-v20 .hero-outcomes{
+    position:relative;
+    z-index:4;
+    background:rgba(253,255,252,.90);
+    backdrop-filter:blur(2px);
+  }
+  .hero-side-v20{display:none}
+}
+
+@media(max-width:480px){
+  .hero-v20-grid{padding-top:34px;padding-bottom:34px}
+  .hero-art{height:min(700px,100%)}
+  .hero-art::after{background:linear-gradient(90deg,rgba(253,255,252,.99) 0%,rgba(253,255,252,.96) 48%,rgba(253,255,252,.74) 74%,rgba(253,255,252,.34) 100%)}
+  .geo-blue{width:360px;left:56%;top:138px;opacity:.16}
+  .geo-yellow{width:102px;height:102px;right:-24px;top:126px;opacity:.48}
+  .geo-red{width:72px;height:148px;right:15%;bottom:62px;opacity:.20}
+  .geo-black{width:66px;height:105px;right:-13px;bottom:104px;opacity:.10}
+  .geo-rule{height:68px;right:15%;top:245px;opacity:.38}
+  .geo-words{right:12px;bottom:50px;font-size:8px;letter-spacing:.20em;opacity:.62}
+  .hero-v20 h1,.hero-v20 .lead,.hero-v20 .actions{position:relative;z-index:4}
+}
+
+/* v2.3 — hero art visibility and layering */
+/* Keep the geometric hero artwork behind the main shell on tablet and larger phones. */
+@media (min-width:425px){
+  .hero-v20{position:relative;isolation:isolate;overflow:hidden}
+  .hero-v20-grid{position:relative;z-index:3}
+  .hero-v20 .hero-copy,.hero-v20 .hero-side-v20{position:relative;z-index:4}
+  .hero-art{z-index:1;pointer-events:none}
+  .hero-capabilities{position:relative;z-index:3}
+}
+
+/* On very small phones, remove the decorative artwork entirely for clarity. */
+@media (max-width:424px){
+  .hero-art{display:none!important}
+  .hero-v20-grid{position:relative;z-index:2}
+  .hero-v20 .hero-copy{position:relative;z-index:3}
+}
