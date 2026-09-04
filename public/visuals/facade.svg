@@ -1,0 +1,21 @@
+<svg width="1400" height="1000" viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#244d78"/>
+      <stop offset="0.48" stop-color="#0d2235"/>
+      <stop offset="1" stop-color="#020100"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.02"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="1000" fill="#dceafb"/>
+  <polygon points="220,1000 720,0 1400,0 1400,1000" fill="url(#g)"/>
+  <g stroke="#82a5c7" stroke-opacity="0.34" stroke-width="2">
+    <path d="M330 1000L800 0"/><path d="M450 1000L880 0"/><path d="M570 1000L960 0"/><path d="M690 1000L1040 0"/><path d="M810 1000L1120 0"/><path d="M930 1000L1200 0"/><path d="M1050 1000L1280 0"/>
+    <path d="M240 900H1400"/><path d="M290 800H1400"/><path d="M340 700H1400"/><path d="M390 600H1400"/><path d="M440 500H1400"/><path d="M490 400H1400"/><path d="M540 300H1400"/><path d="M590 200H1400"/><path d="M640 100H1400"/>
+  </g>
+  <polygon points="565,1000 910,0 1035,0 710,1000" fill="url(#shine)"/>
+</svg>
