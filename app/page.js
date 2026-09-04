@@ -26,9 +26,9 @@ const outcomes=[
 ];
 
 export default function Home(){return <main>
-<section className="hero hero-v19">
-  <div className="hero-orbit" aria-hidden="true"></div>
-  <div className="shell hero-v19-grid">
+<section className="hero hero-v20">
+  <div className="hero-art" aria-hidden="true"><span className="geo-blue"></span><span className="geo-yellow"></span><span className="geo-red"></span><span className="geo-black"></span><span className="geo-rule"></span><span className="geo-words">Ideas<br/>to<br/>impact.</span></div>
+  <div className="shell hero-v20-grid">
     <div className="hero-copy">
       <div className="kicker">Digital media agency · London</div>
       <h1>
@@ -42,12 +42,7 @@ export default function Home(){return <main>
         {outcomes.map(([icon,label])=><div className="hero-outcome" key={label}><Icon type={icon}/><span>{label}</span></div>)}
       </div>
     </div>
-    <aside className="hero-side">
-      <div className="hero-side-line"></div>
-      <p className="hero-side-title">Ideas into impact.</p>
-      <p>We build joined-up digital systems that turn attention into measurable growth.</p>
-      <div className="hero-side-disciplines">Strategy<br/>Creative<br/>Media<br/>Technology</div>
-    </aside>
+    <aside className="hero-side hero-side-v20"><div className="hero-side-disciplines">Strategy<br/>Creative<br/>Media<br/>Technology</div></aside>
   </div>
   <div className="hero-capabilities">
     <div className="shell hero-cap-grid">

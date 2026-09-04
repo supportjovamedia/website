@@ -1,12 +1,10 @@
-# JovaMedia v1.9
+# JovaMedia v2.0
 
-- Restored the stronger hero composition across desktop, tablet and mobile instead of stripping it down on small screens.
-- Restored the “Ideas into impact.” editorial panel on tablet and mobile.
-- Restored visual outcome icons and the numbered 01–04 capability cards.
-- Removed the duplicate Strategy / Creative / Performance / Technology strip above the capability cards.
-- Added meaningful line icons to the four capability cards.
-- Reworked mobile/tablet hero spacing, typography, orbit artwork and content hierarchy.
-- Mobile menu is now a right-side drawer rather than a full-screen takeover.
-- Mobile drawer closes on scroll, navigation, backdrop click and Escape.
-- Desktop navigation remains right aligned.
-- Fixed header spacing across breakpoints.
+- Applied approved brand palette: Porcelain #FDFFFC, Baltic Blue #235789, Flag Red #C1292E, Bright Gold #F1D302, Black #020100.
+- Rebuilt homepage hero around the selected bold-geometric direction.
+- No photography, stock imagery or generated imagery is used by the hero. The artwork is CSS geometry.
+- Red outcome headline, blue primary CTA, colour-coded outcome icons and 01–04 capability numbers.
+- Original geometric composition adapts across desktop, tablet and phone.
+- Mobile hero keeps the same visual identity instead of removing the artwork.
+- Existing half-width mobile navigation behaviour retained.
+- Updated dark and gold homepage bands to align with the new palette.
