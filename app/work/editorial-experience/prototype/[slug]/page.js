@@ -1,7 +1,76 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import {notFound} from 'next/navigation';
-import {stories,editorialRoot} from '@/lib/editorial';
-export function generateStaticParams(){return stories.map(({slug})=>({slug}))}
-export async function generateMetadata({params}){const {slug}=await params;const story=stories.find(s=>s.slug===slug);return {title:story?`${story.title} — Sample story`:'Story not found',description:story?.teaser,robots:{index:false,follow:false},alternates:{canonical:`${editorialRoot}/${slug}`}}}
-export default async function Article({params}){const {slug}=await params;const story=stories.find(s=>s.slug===slug);if(!story)notFound();const related=stories.filter(s=>s.slug!==slug);return <main className="publication"><div className="concept-banner">Sample editorial content / Fictional publication / No real-person bylines or interviews</div><div className="shell"><nav className="publication-nav" aria-label="Publication navigation"><Link className="publication-name" href={editorialRoot}>Perspective</Link><div><Link href={`${editorialRoot}#stories`}>Stories</Link><Link href={`${editorialRoot}#topics`}>Topics</Link><Link href={`${editorialRoot}/about`}>About</Link></div></nav><article className="publication-article"><header><p className="kicker">{story.topic} / Sample editorial content</p><h1>{story.title}</h1><p className="lead">{story.teaser}</p></header><figure><Image src={story.image} alt={story.alt} width={1122} height={1402} sizes="(max-width:700px) 100vw, 800px" preload/><figcaption>{story.caption}</figcaption></figure><div className="article-body">{story.body.map(paragraph=><p key={paragraph}>{paragraph}</p>)}</div></article><section className="related-stories"><h2>Keep looking.</h2>{related.map(item=><Link key={item.slug} href={`${editorialRoot}/${item.slug}`}><span>{item.topic}</span><h3>{item.title}</h3><p>{item.teaser}</p></Link>)}</section></div></main>}
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { stories, editorialRoot } from "@/lib/editorial";
+export function generateStaticParams() {
+  return stories.map(({ slug }) => ({ slug }));
+}
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const story = stories.find((s) => s.slug === slug);
+  return {
+    title: story ? `${story.title} — Sample story` : "Story not found",
+    description: story?.teaser,
+    robots: { index: false, follow: false },
+    alternates: { canonical: `${editorialRoot}/${slug}` },
+  };
+}
+export default async function Article({ params }) {
+  const { slug } = await params;
+  const story = stories.find((s) => s.slug === slug);
+  if (!story) notFound();
+  const related = stories.filter((s) => s.slug !== slug);
+  return (
+    <main className="publication">
+      <div className="concept-banner">
+        Sample editorial content / Fictional publication / No real-person
+        bylines or interviews
+      </div>
+      <div className="shell">
+        <nav className="publication-nav" aria-label="Publication navigation">
+          <Link className="publication-name" href={editorialRoot}>
+            Perspective
+          </Link>
+          <div>
+            <Link href={`${editorialRoot}#stories`}>Stories</Link>
+            <Link href={`${editorialRoot}#topics`}>Topics</Link>
+            <Link href={`${editorialRoot}/about`}>About</Link>
+          </div>
+        </nav>
+        <article className="publication-article">
+          <header>
+            <p className="kicker">{story.topic} / Sample editorial content</p>
+            <h1>{story.title}</h1>
+            <p className="lead">{story.teaser}</p>
+          </header>
+          <figure>
+            <Image
+              src={story.image}
+              alt={story.alt}
+              width={1122}
+              height={1402}
+              sizes="(max-width:700px) 100vw, 800px"
+              preload
+            />
+            <figcaption>{story.caption}</figcaption>
+          </figure>
+          <div className="article-body">
+            {story.body.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </article>
+        <section className="related-stories">
+          <h2>Keep looking.</h2>
+          {related.map((item) => (
+            <Link key={item.slug} href={`${editorialRoot}/${item.slug}`}>
+              <span>{item.topic}</span>
+              <h3>{item.title}</h3>
+              <p>{item.teaser}</p>
+            </Link>
+          ))}
+        </section>
+      </div>
+    </main>
+  );
+}

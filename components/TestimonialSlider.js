@@ -15,7 +15,7 @@ export default function TestimonialSlider() {
     (dir) => {
       setIndex((current) => (current + dir + total) % total);
     },
-    [total]
+    [total],
   );
 
   useEffect(() => {
@@ -38,14 +38,19 @@ export default function TestimonialSlider() {
           className="pointer-events-none absolute -top-10 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-gold/10 blur-3xl"
         />
         <div key={index} className="relative animate-[fadeIn_0.6s_ease]">
-          <span className="font-serif-brand text-6xl leading-none text-gold" aria-hidden="true">
+          <span
+            className="font-serif-brand text-6xl leading-none text-gold"
+            aria-hidden="true"
+          >
             &ldquo;
           </span>
           <p className="mx-auto -mt-4 max-w-2xl font-serif-brand text-xl leading-relaxed text-navy sm:text-2xl">
             {current.quote}
           </p>
           <div className="mt-8">
-            <p className="text-sm font-semibold tracking-wide text-navy">{current.name}</p>
+            <p className="text-sm font-semibold tracking-wide text-navy">
+              {current.name}
+            </p>
             <p className="text-sm text-navy/60">{current.role}</p>
           </div>
         </div>

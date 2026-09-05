@@ -1,6 +1,7 @@
 # JovaMedia Premium Redesign
 
 ## Audit findings addressed
+
 - Replaced accumulated v2.0-v2.3 hero breakpoint overrides with one coherent responsive system.
 - Replaced the older navy/gold/cream design tokens with the final JovaMedia palette.
 - Reduced card-heavy/template-like presentation in favour of editorial grids, rules and stronger typography.
@@ -12,7 +13,9 @@
 - Replaced stale favicon precedence by using the supplied icon.png/apple-icon.png assets.
 
 ## Brand system
+
 Porcelain #FDFFFC · Baltic Blue #235789 · Flag Red #C1292E · Bright Gold #F1D302 · Black #020100
 
 ## QA note
+
 The source was syntax/structure reviewed. A full Next production build could not finish inside the isolated build container because Next attempted to download its Linux SWC binary from npm and outbound npm access is unavailable. The project package files and existing dependencies were otherwise left intact.

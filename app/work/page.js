@@ -1,6 +1,126 @@
-import {pageMetadata} from '@/lib/seo';
-import Link from 'next/link';
-import WorkStudy from '@/components/WorkStudy';
-import Arrow from '@/components/Arrow';
-export const metadata=pageMetadata('/work','Work & Case Studies','Explore two self-initiated JovaMedia concepts: a bold fictional drinks campaign and a working editorial website prototype.');
-export default function Work(){return <main><section className="page-hero"><div className="shell"><p className="kicker">Work / A closer look</p><h1>A sense of<br/>what’s possible.</h1><p className="lead">Two design studies exploring how a clear idea becomes a distinctive digital experience.</p></div></section><div className="shell"><section className="work-detail" id="brand-study"><Link href="/work/brand-direction" aria-label="Explore A bolder brand direction"><WorkStudy kind="brand"/></Link><div><p className="kicker">01 / Self-initiated concept</p><h2>A bolder brand direction.</h2><p>A fictional drinks campaign exploring how colour, type and product imagery can give a new product a clear voice.</p><dl><div><dt>Focus</dt><dd>Campaign art direction, format adaptations, responsive landing concept</dd></div><div><dt>Creative route</dt><dd>Make some noise. Red surfaces, gold headlines and a confident product crop.</dd></div><div><dt>Status</dt><dd>Self-initiated concept. Not commissioned or commercially launched.</dd></div></dl><div className="actions"><Link href="/work/brand-direction" className="btn">Explore the study <Arrow/></Link></div></div></section><section className="work-detail" id="digital-study"><Link href="/work/editorial-experience" aria-label="Explore A more considered experience"><WorkStudy kind="digital"/></Link><div><p className="kicker">02 / Self-initiated concept</p><h2>A more considered experience.</h2><p>A responsive website concept for Perspective, a fictional creative publication. A portrait-led homepage, topic filters and three sample stories create a complete reading flow.</p><dl><div><dt>Focus</dt><dd>Editorial design, responsive layouts, accessible interaction</dd></div><div><dt>Creative route</dt><dd>A new point of view. Give the story room to breathe.</dd></div><div><dt>Status</dt><dd>Working concept prototype. Not a client project or commercial publication.</dd></div></dl><div className="actions"><Link href="/work/editorial-experience" className="btn">Explore the study <Arrow/></Link></div></div></section></div><section className="band band-navy"><div className="shell statement"><p className="kicker">Our standard</p><h2>Context before the headline number.</h2><p className="lead">Self-initiated concepts. Client stories will be published with permission and verified outcomes.</p></div></section></main>}
+import { pageMetadata } from "@/lib/seo";
+import Link from "next/link";
+import WorkStudy from "@/components/WorkStudy";
+import Arrow from "@/components/Arrow";
+export const metadata = pageMetadata(
+  "/work",
+  "Work & Case Studies",
+  "Explore two self-initiated JovaMedia concepts: a bold fictional drinks campaign and a working editorial website prototype.",
+);
+export default function Work() {
+  return (
+    <main>
+      <section className="page-hero">
+        <div className="shell">
+          <p className="kicker">Work / A closer look</p>
+          <h1>
+            A sense of
+            <br />
+            what’s possible.
+          </h1>
+          <p className="lead">
+            Two design studies exploring how a clear idea becomes a distinctive
+            digital experience.
+          </p>
+        </div>
+      </section>
+      <div className="shell">
+        <section className="work-detail" id="brand-study">
+          <Link
+            href="/work/brand-direction"
+            aria-label="Explore A bolder brand direction"
+          >
+            <WorkStudy kind="brand" />
+          </Link>
+          <div>
+            <p className="kicker">01 / Self-initiated concept</p>
+            <h2>A bolder brand direction.</h2>
+            <p>
+              A fictional drinks campaign exploring how colour, type and product
+              imagery can give a new product a clear voice.
+            </p>
+            <dl>
+              <div>
+                <dt>Focus</dt>
+                <dd>
+                  Campaign art direction, format adaptations, responsive landing
+                  concept
+                </dd>
+              </div>
+              <div>
+                <dt>Creative route</dt>
+                <dd>
+                  Make some noise. Red surfaces, gold headlines and a confident
+                  product crop.
+                </dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>
+                  Self-initiated concept. Not commissioned or commercially
+                  launched.
+                </dd>
+              </div>
+            </dl>
+            <div className="actions">
+              <Link href="/work/brand-direction" className="btn">
+                Explore the study <Arrow />
+              </Link>
+            </div>
+          </div>
+        </section>
+        <section className="work-detail" id="digital-study">
+          <Link
+            href="/work/editorial-experience"
+            aria-label="Explore A more considered experience"
+          >
+            <WorkStudy kind="digital" />
+          </Link>
+          <div>
+            <p className="kicker">02 / Self-initiated concept</p>
+            <h2>A more considered experience.</h2>
+            <p>
+              A responsive website concept for Perspective, a fictional creative
+              publication. A portrait-led homepage, topic filters and three
+              sample stories create a complete reading flow.
+            </p>
+            <dl>
+              <div>
+                <dt>Focus</dt>
+                <dd>
+                  Editorial design, responsive layouts, accessible interaction
+                </dd>
+              </div>
+              <div>
+                <dt>Creative route</dt>
+                <dd>A new point of view. Give the story room to breathe.</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>
+                  Working concept prototype. Not a client project or commercial
+                  publication.
+                </dd>
+              </div>
+            </dl>
+            <div className="actions">
+              <Link href="/work/editorial-experience" className="btn">
+                Explore the study <Arrow />
+              </Link>
+            </div>
+          </div>
+        </section>
+      </div>
+      <section className="band band-navy">
+        <div className="shell statement">
+          <p className="kicker">Our standard</p>
+          <h2>Context before the headline number.</h2>
+          <p className="lead">
+            Self-initiated concepts. Client stories will be published with
+            permission and verified outcomes.
+          </p>
+        </div>
+      </section>
+    </main>
+  );
+}

@@ -42,7 +42,7 @@ function AnimatedNumber({ value }) {
           observer.disconnect();
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0.4 },
     );
 
     observer.observe(node);
@@ -53,7 +53,9 @@ function AnimatedNumber({ value }) {
     return <span ref={ref}>{suffix}</span>;
   }
 
-  const rounded = Number.isInteger(number) ? Math.round(display) : display.toFixed(1);
+  const rounded = Number.isInteger(number)
+    ? Math.round(display)
+    : display.toFixed(1);
 
   return (
     <span ref={ref}>

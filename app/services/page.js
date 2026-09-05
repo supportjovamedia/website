@@ -1,9 +1,137 @@
-import {pageMetadata} from '@/lib/seo';
-import Link from 'next/link'; import {services} from '@/lib/data'; export const metadata=pageMetadata('/services','Digital Marketing, Web Design & SEO Services','Explore web design, SEO, paid media, social media, branding, content and business automation services from JovaMedia. Find support for your business goals.');
-const groups=[
- ['Strategy & Growth',['competitor-analysis','digital-marketing','social-strategy','analytics-reporting']],
- ['Social & Community',['social-management','community-listening','social-selling','influencer-marketing']],
- ['Content & Creative',['content-production','media-content','content','email-marketing','graphic-design','brand-strategy']],
- ['Web, Search & Technology',['web-design','seo','ai-automation','business-digital-setup','hosting-support','paid-media']]
-];
-export default function Page(){return <main><section className="page-hero services-hero"><div className="shell"><div className="kicker">Capabilities</div><h1>One agency.<br/>More ways to grow.</h1><p className="lead">From the first scroll to the final conversion, we help brands plan, create, activate and improve the digital experiences that move people.</p><div className="actions"><Link href="/contact" className="btn">Build your scope</Link><a href="#services" className="text-link">Explore capabilities </a></div></div></section><section className="band band-navy"><div className="shell band-grid"><div className="kicker">How to use us</div><h2>Bring us a channel, a campaign or the whole problem.</h2><p>Choose a focused engagement or combine capabilities around a bigger objective. We shape the team and cadence around what the work needs.</p></div></section><section id="services" className="section service-directory"><div className="shell">{groups.map(([title,slugs],gi)=><div className="service-group" key={title}><div className="service-group-title"><h2>{title}</h2></div><div className="service-group-grid">{slugs.map((slug,i)=>{const s=services.find(x=>x.slug===slug);return <Link href={'/services/'+s.slug} className={`directory-card tone-${((gi+i)%3)+1}`} key={s.slug}><small>{s.eyebrow}</small><h3>{s.name}</h3><p>{s.summary}</p><div><span>{s.from}</span><b>Explore </b></div></Link>})}</div></div>)}</div></section><section className="band band-gold"><div className="shell statement"><div className="kicker">Not sure what you need?</div><h2>Tell us the business problem. We’ll help work backwards to the right mix.</h2><Link href="/contact" className="btn dark-button">Talk to JovaMedia</Link></div></section></main>}
+import { pageMetadata } from "@/lib/seo";
+import Link from "next/link";
+import { services } from "@/lib/data";
+export const metadata = pageMetadata(
+  "/services",
+  "Digital Marketing, Web Design & SEO Services",
+  "Explore web design, SEO, paid media, social media, branding, content and business automation services from JovaMedia. Find support for your business goals.",
+);
+
+const groups = [
+  [
+    "Strategy & Growth",
+    [
+      "competitor-analysis",
+      "digital-marketing",
+      "social-strategy",
+      "analytics-reporting",
+    ],
+  ],
+
+  [
+    "Social & Community",
+    [
+      "social-management",
+      "community-listening",
+      "social-selling",
+      "influencer-marketing",
+    ],
+  ],
+
+  [
+    "Content & Creative",
+    [
+      "content-production",
+      "media-content",
+      "content",
+      "email-marketing",
+      "graphic-design",
+      "brand-strategy",
+    ],
+  ],
+
+  [
+    "Web, Search & Technology",
+    [
+      "web-design",
+      "seo",
+      "ai-automation",
+      "business-digital-setup",
+      "hosting-support",
+      "paid-media",
+    ],
+  ],
+];
+
+export default function Page() {
+  return (
+    <main>
+      <section className="page-hero services-hero">
+        <div className="shell">
+          <div className="kicker">Capabilities</div>
+          <h1>
+            One agency.
+            <br />
+            More ways to grow.
+          </h1>
+          <p className="lead">
+            From the first scroll to the final conversion, we help brands plan,
+            create, activate and improve the digital experiences that move
+            people.
+          </p>
+          <div className="actions">
+            <Link href="/contact" className="btn">
+              Build your scope
+            </Link>
+            <a href="#services" className="text-link">
+              Explore capabilities{" "}
+            </a>
+          </div>
+        </div>
+      </section>
+      <section className="band band-navy">
+        <div className="shell band-grid">
+          <div className="kicker">How to use us</div>
+          <h2>Bring us a channel, a campaign or the whole problem.</h2>
+          <p>
+            Choose a focused engagement or combine capabilities around a bigger
+            objective. We shape the team and cadence around what the work needs.
+          </p>
+        </div>
+      </section>
+      <section id="services" className="section service-directory">
+        <div className="shell">
+          {groups.map(([title, slugs], gi) => (
+            <div className="service-group" key={title}>
+              <div className="service-group-title">
+                <h2>{title}</h2>
+              </div>
+              <div className="service-group-grid">
+                {slugs.map((slug, i) => {
+                  const s = services.find((x) => x.slug === slug);
+                  return (
+                    <Link
+                      href={"/services/" + s.slug}
+                      className={`directory-card tone-${((gi + i) % 3) + 1}`}
+                      key={s.slug}
+                    >
+                      <small>{s.eyebrow}</small>
+                      <h3>{s.name}</h3>
+                      <p>{s.summary}</p>
+                      <div>
+                        <span>{s.from}</span>
+                        <b>Explore </b>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="band band-gold">
+        <div className="shell statement">
+          <div className="kicker">Not sure what you need?</div>
+          <h2>
+            Tell us the business problem. We’ll help work backwards to the right
+            mix.
+          </h2>
+          <Link href="/contact" className="btn dark-button">
+            Talk to JovaMedia
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}

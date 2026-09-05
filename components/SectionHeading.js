@@ -5,7 +5,8 @@ export default function SectionHeading({
   align = "left",
   light = false,
 }) {
-  const alignClass = align === "center" ? "text-center items-center" : "text-left items-start";
+  const alignClass =
+    align === "center" ? "text-center items-center" : "text-left items-start";
   return (
     <div className={`flex flex-col ${alignClass}`}>
       {eyebrow && (

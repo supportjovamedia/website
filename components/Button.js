@@ -6,11 +6,19 @@ const base =
 const variants = {
   primary: "bg-navy text-ivory hover:bg-gold hover:text-navy",
   gold: "bg-gold text-navy hover:bg-navy hover:text-ivory",
-  outline: "border border-navy/25 text-navy hover:border-navy hover:bg-navy hover:text-ivory",
-  outlineLight: "border border-ivory/40 text-ivory hover:bg-ivory hover:text-navy",
+  outline:
+    "border border-navy/25 text-navy hover:border-navy hover:bg-navy hover:text-ivory",
+  outlineLight:
+    "border border-ivory/40 text-ivory hover:bg-ivory hover:text-navy",
 };
 
-export default function Button({ href, variant = "primary", children, className = "", ...props }) {
+export default function Button({
+  href,
+  variant = "primary",
+  children,
+  className = "",
+  ...props
+}) {
   const classes = `${base} ${variants[variant] ?? variants.primary} ${className}`;
 
   if (href) {

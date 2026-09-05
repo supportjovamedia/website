@@ -1,1 +1,6 @@
-export default function robots(){return {rules:{userAgent:'*',allow:'/'},sitemap:'https://jovamedia.com/sitemap.xml'}}
+export default function robots() {
+  return {
+    rules: { userAgent: "*", allow: "/" },
+    sitemap: "https://jovamedia.com/sitemap.xml",
+  };
+}

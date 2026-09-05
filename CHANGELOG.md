@@ -9,8 +9,8 @@
 - Existing half-width mobile navigation behaviour retained.
 - Updated dark and gold homepage bands to align with the new palette.
 
-
 ## v2.1
+
 - Moved the geometric hero artwork below the hero copy on tablet and mobile so the first viewport reads correctly.
 - Rebalanced all mobile geometric shapes to prevent clipping and awkward overlap.
 - Added contained top/bottom rules around the mobile artwork so it reads as a deliberate visual panel.
@@ -20,6 +20,7 @@
 - Removed the standalone mobile artwork panel so the visual no longer interrupts the flow between outcomes and capabilities.
 
 ## v2.3
+
 - Hide the decorative hero artwork completely below 425px viewport width.
 - Keep hero artwork behind the main hero shell at 425px and above.
 - Raise hero copy, side content and capability content above the artwork for consistent readability.
