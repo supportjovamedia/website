@@ -57,36 +57,36 @@ const capabilities = [
 const steps = [
   [
     "Understand your goals",
-    "We get close to your business, your audience and the opportunity.",
+    "We take the time to understand your business, your audience and what you want to achieve.",
   ],
   [
     "Create a tailored strategy",
-    "A shared direction, clear priorities and a plan for measuring success.",
+    "We build a clear plan around your goals, choosing the ideas, services and direction that make sense for you.",
   ],
   [
     "Execute with precision",
-    "Strategy becomes considered creative, connected channels and better experiences.",
+    "We bring the strategy to life with thoughtful creative, careful execution and attention to every detail.",
   ],
   [
     "Measure and grow",
-    "We learn from the work, refine what matters and build on what works.",
+    "We track what matters, learn from the results and refine our approach to keep your business moving forward.",
   ],
 ];
 
 const values = [
   [
-    "Strategic thinking",
-    "Every project starts with commercial goals. A clear direction before a single deliverable.",
+    "Thought beyond the brief",
+    "We don’t just take instructions and tick boxes. We ask questions, explore the bigger picture and look for opportunities that could make the work better.",
     "strategy",
   ],
   [
-    "Creative execution",
-    "Distinctive ideas, thoughtfully made. With the details and consistency your brand deserves.",
+    "Standards that stay high",
+    "From the first idea to the smallest detail, we care about the quality of what leaves our hands and won’t settle for something simply because it works.",
     "creative",
   ],
   [
-    "Measurable progress",
-    "Shared priorities and meaningful measures. So the next decision builds on what we learn.",
+    "A relationship that works",
+    "Clear communication, genuine collaboration and no unnecessary complications. You’ll know what’s happening, why decisions are being made and where your project stands.",
     "growth",
   ],
 ];
@@ -153,7 +153,6 @@ export default function Home() {
               Discover JOVA{" "}
             </Link>
           </div>
-          
         </div>
       </section>
 
@@ -243,13 +242,14 @@ export default function Home() {
 
       <section className={`shell ${styles.approach}`}>
         <div>
-          <p className="kicker">04 / Our approach</p>
+          <p className="kicker">04 / HOW WE WORK</p>
           <h2>
-            A clearer path<span>to growth.</span>
+            From first idea<span>to final result.</span>
           </h2>
           <p>
-            Simple, strategic and focused. You’ll know where we’re heading,
-            what’s happening and why it matters.
+            A straightforward process built around you. We keep things clear,
+            collaborative and focused from the first conversation to the final
+            delivery.
           </p>
         </div>
         <ol className={styles.steps}>
@@ -262,20 +262,21 @@ export default function Home() {
           ))}
         </ol>
         <Link href="/about" className={`btn ${styles.approachAction}`}>
-          How we work
+          Learn More
         </Link>
       </section>
 
       <section className={styles.why}>
         <div className={`shell ${styles.whyGrid}`}>
           <div>
-            <p className="kicker">05 / Why JovaMedia</p>
+            <p className="kicker">05 / Why Jova?</p>
             <h2>
-              Small team.<span>Big thinking.</span>
+              Built around<span>your ambition.</span>
             </h2>
             <p>
-              A modern digital media agency that stays close to your business
-              and accountable to the work.
+              Anyone can follow a brief. We want to understand what sits behind
+              it, question what could be better and find opportunities you might
+              not have considered yet. Your business deserves more than a standard solution.
             </p>
           </div>
           <div className={styles.values}>
@@ -292,20 +293,19 @@ export default function Home() {
 
       <section className={`shell ${styles.cta}`}>
         <div>
-          <p className="kicker">06 / Your next chapter</p>
+          <p className="kicker">06 / LET’S WORK TOGETHER</p>
           <h2>
             Ready to grow<span>your brand?</span>
           </h2>
           <div className={styles.swoosh} />
           <p>
-            Tell us about your project. We’ll get back to you within 1 business
-            day.
+           Tell us what you’re working on and where you want to take it. We’ll get back to you within one business day.
           </p>
           <Link className="btn" href="/contact">
-            Let’s start something{" "}
+            Let’s get started{" "}
           </Link>
-          <a className="text-link" href="mailto:support@jovamedia.com">
-            support@jovamedia.com
+          <a className="text-link" href="mailto:support.jovamedia@gmail.com">
+            support.jovamedia@gmail.com
           </a>
         </div>
       </section>
