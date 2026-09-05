@@ -164,14 +164,11 @@ export default function Home() {
               From Ideas to Impact<span>and everything in between</span>
             </h2>
             <div className={styles.goldStroke} />
-          </div>
-          <div>
-            <p>
+            {/* <p class="secondsectionp">
               Whether you're starting from scratch or ready to take your
               business further, we bring together design, development, branding
               and marketing to make it happen.
-            </p>
-            
+            </p> */}
           </div>
         </div>
         <div className={styles.serviceGrid}>
