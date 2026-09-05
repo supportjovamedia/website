@@ -1,131 +1,19 @@
-import LineIcon from '@/components/LineIcon';
 import Image from 'next/image';
 import Link from 'next/link';
+import Arrow from '@/components/Arrow';
+import LineIcon from '@/components/LineIcon';
+import WorkStudy from '@/components/WorkStudy';
 import styles from './home.module.css';
-
-const capabilities = [
-  ['Strategy & Growth','/services/competitor-analysis','strategy'],
-  ['Brand & Creative','/services/brand-strategy','creative'],
-  ['Social & Media','/services/social-management','social'],
-  ['Websites & Digital','/services/web-design','web'],
-  ['Performance & Growth','/services/paid-media','growth'],
-  ['Automation & Technology','/services/ai-automation','tech'],
-];
-
-const process = [
-  ['01','Understand your goals'],
-  ['02','Create a tailored strategy'],
-  ['03','Execute with precision'],
-  ['04','Measure and grow'],
-];
-
 export const metadata={alternates:{canonical:'/'}};
-export default function Home(){
-  return <main className={styles.home}>
-    <section className={styles.hero}>
-      <div className={styles.heroInner}>
-        <div className={styles.heroCopy}>
-          <h1>Brands<br/>grow with<br/><em>purpose.</em></h1>
-          <p>Strategy, creative, media and technology to help ambitious businesses get noticed, win customers and grow.</p>
-          <div className={styles.heroActions}>
-            <Link href="/contact" className={styles.primaryBtn}>Start a project</Link>
-            <Link href="/work" className={styles.secondaryLink}>Explore our work</Link>
-          </div>
-        </div>
-
-        <div className={styles.heroVisual}><Image src="/original/jova-architecture.png" alt="An original architectural study of a contemporary glass facade" width={1122} height={1402} sizes="(max-width:600px) 40vw, 50vw" priority/></div>
-      </div>
-      <div className={styles.mobileDisciplineBar}>
-        <span>Strategy</span> <span>Creative</span> <span>Media</span> <span>Technology</span>
-      </div>
-    </section>
-
-    <section className={styles.dualBand}>
-      <div className={styles.bluePanel}>
-        <div className={styles.panelNumber}>01 <span/></div>
-        <div className={styles.blueContent}>
-          <div>
-            <h2>More than<br/>marketing.<br/>A partner for<br/>what’s next.</h2>
-            <p>We combine strategy, creativity and technology to help businesses grow in a way that’s focused, measurable and built for the long term.</p>
-            <Link href="/about" className={styles.lightBtn}>Our approach</Link>
-          </div>
-          <div className={styles.blueMetrics}>
-            <div><b><LineIcon name="star"/></b><span>Strategy<br/>led</span></div>
-            <div><b><LineIcon name="strategy"/></b><span>Results<br/>focused</span></div>
-            <div><b><LineIcon name="bolt"/></b><span>Built for<br/>growth</span></div>
-          </div>
-        </div>
-      </div>
-
-
-    </section>
-
-    <section className={styles.servicesSection}>
-      <div className={styles.servicesLead}>
-        <div className={styles.panelNumber}>02 <span/></div>
-        <h2>What we do</h2>
-        <p>End-to-end digital solutions for ambitious businesses.</p>
-      </div>
-      <div className={styles.capabilityList}>
-        {capabilities.map(([name,href,icon]) => <Link key={name} href={href} className={styles.capabilityItem}>
-          <span className={styles.capIcon}><LineIcon name={icon}/></span><strong>{name}</strong>
-        </Link>)}
-      </div>
-      <Link href="/services" className={styles.servicesBtn}>Explore all services</Link>
-    </section>
-
-<section className={styles.redPanel}>
-        <div className={styles.panelNumber}>03 <span/></div>
-        <div className={styles.redGrid}>
-          <div>
-            <h2>Ideas into impact.</h2>
-            <p>A selection of recent concept projects showing how we turn strategy into real-world results.</p>
-            <Link href="/work" className={styles.redLink}>View all work</Link>
-          </div>
-          <Link href="/work" className={styles.workCard} aria-label="Explore our concept projects">
-            <small>CONCEPT</small>
-            <strong>Modern brand<br/>for a bolder future</strong>
-          </Link>
-        </div>
-        
-      </section>
-
-    <section className={styles.processSection}>
-      <div className={styles.processCopy}>
-        <div className={styles.panelNumber}>04 <span/></div>
-        <h2>A clearer path<br/>to growth.</h2>
-        <p>Our proven process keeps things simple, strategic and focused on results.</p>
-
-      </div>
-      <div className={styles.processSteps}>
-        {process.map(([n,t],i)=><div key={n} className={styles.processStep}>
-          <span className={i%2===0?styles.stepBlue:styles.stepSoft}>{n}</span><strong>{t}</strong>
-        </div>)}
-      </div>
-      <Link href="/about" className={styles.processLink}>Our process</Link>
-    </section>
-
-    <section className={styles.whySection}>
-      <div className={styles.panelNumber}>05 <span/></div>
-      <h2>Why JovaMedia</h2>
-      <p className={styles.whyIntro}>A modern digital media agency built for ambitious businesses.</p>
-      <div className={styles.whyItems}>
-        <div><span><LineIcon name="bolt"/></span><p><strong>Strategic Thinking</strong>Every project starts with commercial goals.</p></div>
-        <div><span><LineIcon name="social"/></span><p><strong>Creative Execution</strong>Ideas that make an impact.</p></div>
-        <div><span><LineIcon name="strategy"/></span><p><strong>Measurable Results</strong>Work that drives real growth.</p></div>
-      </div>
-      <div className={styles.whyBanner}>
-        <div><b>“</b><h3>Small team.<br/>Big thinking.</h3><Link href="/about">About us</Link></div>
-      </div>
-    </section>
-
-    <section className={styles.ctaSection}>
-      <div>
-        <div className={styles.panelNumber}>06 <span/></div>
-        <h2>Ready to grow<br/>your brand?</h2>
-        <p>Tell us about your project and we’ll get back to you within 1 business day.</p>
-      </div>
-      <div className={styles.ctaActions}><Link href="/contact" className={styles.lightBtn}>Start a project</Link><Link href="mailto:support@jovamedia.com">Or get in touch</Link></div>
-    </section>
-  </main>
-}
+const capabilities=[['Strategy & Growth','competitor-analysis','Find your advantage. Define what comes next.','growth'],['Brand & Creative','brand-strategy','A clear identity. A lasting impression.','creative'],['Social & Media','social-management','Build a presence people want to be part of.','social'],['Websites & Digital','web-design','Thoughtful experiences, built to perform.','web'],['Performance & Growth','paid-media','Turn attention into meaningful action.','growth'],['Automation & Technology','ai-automation','Make the everyday work more intelligently.','tech']];
+const steps=[['Understand your goals','We get close to your business, your audience and the opportunity.'],['Create a tailored strategy','A shared direction, clear priorities and a plan for measuring success.'],['Execute with precision','Strategy becomes considered creative, connected channels and better experiences.'],['Measure and grow','We learn from the work, refine what matters and build on what works.']];
+const values=[['Strategic thinking','Every project starts with commercial goals. A clear direction before a single deliverable.','strategy'],['Creative execution','Distinctive ideas, thoughtfully made. With the details and consistency your brand deserves.','creative'],['Measurable progress','Shared priorities and meaningful measures. So the next decision builds on what we learn.','growth']];
+export default function Home(){return <main className={styles.home}>
+<section className={`shell ${styles.hero}`}><div className={styles.heroCopy}><p className={styles.eyebrow}>Independent digital agency</p><p className={styles.location}>London, UK · Thinking beyond borders</p><h1>Brands grow <span>with purpose.</span></h1><div className={styles.swoosh}/><p className={styles.heroLead}>Strategy, creative, media and technology to help ambitious businesses get noticed, win customers and grow.</p><div className={styles.heroActions}><Link href="/contact" className="btn">Start a project <Arrow/></Link><Link href="/work" className="text-link">Explore our work <Arrow/></Link></div></div><figure className={styles.heroVisual}><Image src="/campaign/hero.webp" alt="Conceptual campaign portrait: a model in red sunglasses and a blue windbreaker against a warm yellow background" width={1024} height={1280} sizes="(max-width:700px) 100vw, 48vw" preload/><figcaption>A different perspective.</figcaption></figure></section>
+<section className={styles.partnership}><div className={`shell ${styles.partnershipGrid}`}><div><p className="kicker">01 / The partnership</p><h2>More than marketing.<span>A partner for what’s next.</span></h2><div className={styles.goldStroke}/><p>We combine strategy, creativity and technology to help businesses grow in a way that’s focused, measurable and built for the long term.</p><Link href="/about" className="text-link">Meet JovaMedia <Arrow/></Link></div><figure><Image src="/campaign/studio.webp" alt="Creative workspace still life with a sketchbook, colour swatches, a laptop and a red coffee cup" width={1536} height={1024} sizes="(max-width:700px) 100vw, 48vw"/><figcaption>Space for connected thinking. Conceptual studio imagery.</figcaption></figure></div></section>
+<section className={`shell ${styles.services}`}><div className={styles.sectionHead}><div><p className="kicker">02 / Capabilities</p><h2>Connected thinking.<span>End-to-end impact.</span></h2><div className={styles.goldStroke}/></div><div><p>Digital solutions for ambitious businesses. Built around your goals, from the first idea to the next stage of growth.</p><Link href="/services" className="text-link">Explore all services <Arrow/></Link></div></div><div className={styles.serviceGrid}>{capabilities.map(([name,slug,description,icon],i)=><Link key={slug} href={`/services/${slug}`} className={styles.serviceCard}><div className={styles.serviceTop}><span>0{i+1}</span><span>{i===0?<Arrow/>:<LineIcon name={icon}/>}</span></div><div><h3>{name}</h3><p>{description}</p></div><Arrow className={styles.mobileArrow}/></Link>)}</div></section>
+<section className={`shell ${styles.work}`}><div className={styles.workIntro}><p className="kicker">03 / Ideas into impact</p><h2>A sense of<span>what’s possible.</span></h2><p>Two design studies exploring how a clear idea becomes a distinctive digital experience.</p><Link className="btn" href="/work">Explore the thinking <Arrow/></Link></div><div className={styles.workGrid}><Link className={`${styles.project} ${styles.brandProject}`} href="/work/brand-direction"><WorkStudy kind="brand"/><div className={styles.projectMeta}><h3>A bolder brand direction</h3><p>Brand & creative · Concept study</p><Arrow/></div></Link><Link className={`${styles.project} ${styles.digitalProject}`} href="/work/editorial-experience"><WorkStudy kind="digital"/><div className={styles.projectMeta}><h3>A more considered experience</h3><p>Web & digital · Concept study</p><Arrow/></div></Link></div><p className={styles.disclosure}>Self-initiated concepts. Client stories will be published with permission and verified outcomes.</p></section>
+<section className={`shell ${styles.approach}`}><div><p className="kicker">04 / Our approach</p><h2>A clearer path<span>to growth.</span></h2><p>Simple, strategic and focused. You’ll know where we’re heading, what’s happening and why it matters.</p><Link href="/about" className="btn">How we work <Arrow/></Link></div><ol className={styles.steps}>{steps.map(([title,body],i)=><li key={title}><span className={styles.stepNumber}>0{i+1}<Arrow/></span><h3>{title}</h3><p>{body}</p></li>)}</ol></section>
+<section className={styles.why}><div className={`shell ${styles.whyGrid}`}><div><p className="kicker">05 / Why JovaMedia</p><h2>Small team.<span>Big thinking.</span></h2><p>A modern digital media agency that stays close to your business and accountable to the work.</p></div><div className={styles.values}>{values.map(([title,body,icon])=><div key={title}><LineIcon name={icon}/><h3>{title}</h3><p>{body}</p></div>)}</div></div></section>
+<section className={`shell ${styles.cta}`}><div><p className="kicker">06 / Your next chapter</p><h2>Ready to grow<span>your brand?</span></h2><div className={styles.swoosh}/><p>Tell us about your project. We’ll get back to you within 1 business day.</p><Link className="btn red-button" href="/contact">Let’s start something <Arrow/></Link><a className="text-link" href="mailto:support@jovamedia.com">support@jovamedia.com</a></div><svg className={styles.ctaPath} viewBox="0 0 500 220" fill="none" aria-hidden="true"><path d="M20 145C90 70 190 235 260 162S200 91 236 139s135 32 197-113" stroke="currentColor" strokeWidth="2" strokeDasharray="4 6"/><path d="m420 34 15-13 3 21" stroke="currentColor" strokeWidth="2"/></svg></section>
+</main>}

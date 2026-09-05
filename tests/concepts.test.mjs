@@ -1,0 +1,7 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+const base=process.env.TEST_URL||'http://localhost:3100';
+if(!['localhost','127.0.0.1'].includes(new URL(base).hostname))throw Error('Use a local preview');
+test('concept prototypes and all sample article routes remain inspectable',async()=>{for(const route of ['/work/brand-direction/landing','/work/editorial-experience/prototype','/work/editorial-experience/prototype/about','/work/editorial-experience/prototype/a-new-point-of-view','/work/editorial-experience/prototype/less-noise-more-meaning','/work/editorial-experience/prototype/built-around-people']){const response=await fetch(base+route);assert.equal(response.status,200,route);const html=await response.text();assert.match(html,/noindex/,route+' concept indexing');assert.equal((html.match(/<h1[\s>]/g)||[]).length,1,route+' heading')}});
+test('unknown editorial stories return 404',async()=>assert.equal((await fetch(base+'/work/editorial-experience/prototype/unknown-story')).status,404));
+test('campaign downloads return actual image files',async()=>{for(const name of ['brand-hero','brand-social','brand-poster','brand-statement','brand-detail']){const response=await fetch(base+'/campaign/'+name+'.png');assert.equal(response.status,200,name);assert.match(response.headers.get('content-type'),/image\/png/);assert.ok((await response.arrayBuffer()).byteLength>10000,name)}});
