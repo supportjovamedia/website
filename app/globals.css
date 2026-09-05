@@ -91,6 +91,9 @@ textarea:focus-visible,
   color: var(--blue);
   margin: 0 0 28px;
 }
+.secondCTA{
+margin-top: 20px;
+}
 .btn {
   display: inline-flex;
   align-items: center;

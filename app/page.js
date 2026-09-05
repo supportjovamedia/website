@@ -161,7 +161,7 @@ export default function Home() {
           <div>
             <p className="kicker">02 / what we offer</p>
             <h2>
-              From Ideas to Impact<span>and everything inbetween</span>
+              From Ideas to Impact<span>and everything in between</span>
             </h2>
             <div className={styles.goldStroke} />
           </div>
@@ -171,9 +171,7 @@ export default function Home() {
               business further, we bring together design, development, branding
               and marketing to make it happen.
             </p>
-            <Link href="/services" className="btn">
-              Explore our services{" "}
-            </Link>
+            
           </div>
         </div>
         <div className={styles.serviceGrid}>
@@ -193,6 +191,9 @@ export default function Home() {
             </Link>
           ))}
         </div>
+        <div class="secondCTA"><Link href="/services" className="btn">
+              Explore our services{" "}
+            </Link></div>
       </section>
 
       <section className={styles.workBand}>
