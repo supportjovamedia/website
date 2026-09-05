@@ -1,3 +1,5 @@
+> Latest update: see SEO-HANDOVER.md for the SEO improvements and right-aligned mobile menu.
+
 # JovaMedia — final website handover
 
 Prepared 5 September 2026. This is the latest version and supersedes the earlier v3 source ZIP and brand-kit website snapshot.
