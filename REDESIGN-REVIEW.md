@@ -1,3 +1,5 @@
+> Historical v3 implementation notes. For the final September 2026 refinement and current handover, see FINAL-HANDOVER.md.
+
 # JovaMedia v3 — design-pack implementation
 
 Status: built and locally verified. Not deployed or pushed.
