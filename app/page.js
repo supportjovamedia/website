@@ -17,39 +17,39 @@ export const metadata = pageMetadata(
 
 const capabilities = [
   [
-    "Strategy & Growth",
+    "Strategy",
     "competitor-analysis",
-    "Find your advantage. Define what comes next.",
+    "Make the right moves, from the very beginning.",
     "strategy",
   ],
   [
-    "Brand & Creative",
+    "Branding",
     "brand-strategy",
-    "A clear identity. A lasting impression.",
+    "Build an identity that looks like you and feels unmistakably yours.",
     "creative",
   ],
   [
-    "Social & Media",
+    "Social Media",
     "social-management",
-    "Build a presence people want to be part of.",
+    "Show up consistently with content made to connect.",
     "social",
   ],
   [
-    "Websites & Digital",
+    "Web Design",
     "web-design",
-    "Thoughtful experiences, built to perform.",
+    "Thoughtfully designed. Seamlessly built. Ready to perform.",
     "web",
   ],
   [
-    "Performance & Growth",
+    "Marketing & Performance",
     "paid-media",
-    "Turn attention into meaningful action.",
+    "Reach the right people and turn attention into results.",
     "growth",
   ],
   [
     "Automation & Technology",
     "ai-automation",
-    "Make the everyday work more intelligently.",
+    "Simplify the way you work with smarter systems and solutions.",
     "tech",
   ],
 ];
@@ -96,21 +96,22 @@ export default function Home() {
     <main className={styles.home}>
       <section className={`shell ${styles.hero}`}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>Independent digital agency</p>
+          <p className={styles.eyebrow}>Creative digital agency</p>
           <p className={styles.location}>
             London, UK · Thinking beyond borders
           </p>
           <h1>
-            Brands grow <span>with purpose.</span>
+            <span>JOVA - </span> Your Digital Partner
           </h1>
           <div className={styles.swoosh} />
           <p className={styles.heroLead}>
-            Strategy, creative, media and technology to help ambitious
-            businesses get noticed, win customers and grow.
+            From websites and branding to digital marketing and creative
+            content, we help businesses build a stronger presence, reach the
+            right customers and grow online.
           </p>
           <div className={styles.heroActions}>
             <Link href="/contact" className="btn">
-              Start a project{" "}
+              Get Started{" "}
             </Link>
           </div>
         </div>
@@ -129,18 +130,17 @@ export default function Home() {
       <section className={styles.partnership}>
         <div className={`shell ${styles.partnershipGrid}`}>
           <div>
-            <p className="kicker">01 / The partnership</p>
+            <p className="kicker">01 / The JOVA Approach</p>
             <h2>
-              More than marketing.<span>A partner for what’s next.</span>
+              Designed to stand out.<span>Built to perform.</span>
             </h2>
             <div className={styles.goldStroke} />
             <p>
-              We combine strategy, creativity and technology to help businesses
-              grow in a way that’s focused, measurable and built for the long
-              term.
+              We blend creativity, strategy and technology to create work that
+              looks good, works hard and helps your business move forward.
             </p>
             <Link href="/about" className="btn">
-              Meet JovaMedia{" "}
+              Discover JOVA{" "}
             </Link>
           </div>
           <figure>
@@ -151,9 +151,7 @@ export default function Home() {
               height={1024}
               sizes="(max-width:700px) 100vw, 48vw"
             />
-            <figcaption>
-              Space for connected thinking. Conceptual studio imagery.
-            </figcaption>
+            <figcaption>Good ideas deserve great execution.</figcaption>
           </figure>
         </div>
       </section>
@@ -161,19 +159,20 @@ export default function Home() {
       <section className={`shell ${styles.services}`}>
         <div className={styles.sectionHead}>
           <div>
-            <p className="kicker">02 / Capabilities</p>
+            <p className="kicker">02 / what we offer</p>
             <h2>
-              Connected thinking.<span>End-to-end impact.</span>
+              From Ideas to Impact<span>and everything inbetween</span>
             </h2>
             <div className={styles.goldStroke} />
           </div>
           <div>
             <p>
-              Digital solutions for ambitious businesses. Built around your
-              goals, from the first idea to the next stage of growth.
+              Whether you're starting from scratch or ready to take your
+              business further, we bring together design, development, branding
+              and marketing to make it happen.
             </p>
             <Link href="/services" className="btn">
-              Explore all services{" "}
+              Explore our services{" "}
             </Link>
           </div>
         </div>
@@ -199,16 +198,16 @@ export default function Home() {
       <section className={styles.workBand}>
         <div className={`shell ${styles.work}`}>
           <div className={styles.workIntro}>
-            <p className="kicker">03 / Ideas into impact</p>
+            <p className="kicker">03 / OUR WORK</p>
             <h2>
-              A sense of<span>what’s possible.</span>
+              Bringing ideas<span>to life.</span>
             </h2>
             <p>
-              Two design studies exploring how a clear idea becomes a
-              distinctive digital experience.
+              A look at how strategy, creativity and craft come together across
+              the work we create.
             </p>
             <Link className="btn" href="/work">
-              Explore the thinking{" "}
+              View our Work{" "}
             </Link>
           </div>
           <div className={styles.workGrid}>
@@ -218,7 +217,7 @@ export default function Home() {
             >
               <WorkStudy kind="brand" />
               <div className={styles.projectMeta}>
-                <h3>A bolder brand direction</h3>
+                <h3>Made for the way you think.</h3>
                 <p>Brand & creative · Concept study</p>
               </div>
             </Link>
@@ -228,14 +227,15 @@ export default function Home() {
             >
               <WorkStudy kind="digital" />
               <div className={styles.projectMeta}>
-                <h3>A more considered experience</h3>
+                <h3>Designed with Intention.</h3>
                 <p>Web & digital · Concept study</p>
               </div>
             </Link>
           </div>
           <p className={styles.disclosure}>
-            Self-initiated concepts. Client stories will be published with
-            permission and verified outcomes.
+            No two businesses are the same, and their ideas shouldn’t be either.
+            Everything we create is considered, intentional and made to feel
+            distinct.
           </p>
         </div>
       </section>

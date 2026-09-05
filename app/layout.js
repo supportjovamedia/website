@@ -14,7 +14,7 @@ const jakarta = localFont({
 export const metadata = {
   metadataBase: new URL("https://jovamedia.com"),
   title: {
-    default: "Digital Marketing Agency London | JovaMedia",
+    default: "JovaMedia | Digital Marketing Agency London ",
     template: "%s | JovaMedia",
   },
   description:
