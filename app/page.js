@@ -107,7 +107,7 @@ export default function Home() {
           <p className={styles.heroLead}>
             From websites and branding to digital marketing and creative
             content, we help businesses build a stronger presence, reach the
-            right customers and grow online.
+            right customers and grow online. Good ideas deserve great execution!
           </p>
           <div className={styles.heroActions}>
             <Link href="/contact" className="btn">
@@ -137,7 +137,7 @@ export default function Home() {
               height={1024}
               sizes="(max-width:700px) 100vw, 48vw"
             />
-            <figcaption>Good ideas deserve great execution.</figcaption>
+            {/* <figcaption>Good ideas deserve great execution.</figcaption> */}
           </figure>
           <div>
             <p className="kicker">01 / The JOVA Approach</p>
@@ -236,7 +236,7 @@ export default function Home() {
           <p className={styles.disclosure}>
             No two businesses are the same, and their ideas shouldn’t be either.
             Everything we create is considered, intentional and made to feel
-            distinct.
+            distinct. Stop Guessing and start growing with JOVA.
           </p>
         </div>
       </section>
