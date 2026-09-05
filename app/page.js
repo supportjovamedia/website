@@ -129,6 +129,16 @@ export default function Home() {
 
       <section className={styles.partnership}>
         <div className={`shell ${styles.partnershipGrid}`}>
+          <figure>
+            <Image
+              src="/campaign/studio.webp"
+              alt="Creative workspace still life with a sketchbook, colour swatches, a laptop and a red coffee cup"
+              width={1536}
+              height={1024}
+              sizes="(max-width:700px) 100vw, 48vw"
+            />
+            <figcaption>Good ideas deserve great execution.</figcaption>
+          </figure>
           <div>
             <p className="kicker">01 / The JOVA Approach</p>
             <h2>
@@ -143,16 +153,7 @@ export default function Home() {
               Discover JOVA{" "}
             </Link>
           </div>
-          <figure>
-            <Image
-              src="/campaign/studio.webp"
-              alt="Creative workspace still life with a sketchbook, colour swatches, a laptop and a red coffee cup"
-              width={1536}
-              height={1024}
-              sizes="(max-width:700px) 100vw, 48vw"
-            />
-            <figcaption>Good ideas deserve great execution.</figcaption>
-          </figure>
+          
         </div>
       </section>
 
