@@ -19,35 +19,24 @@ const process = [
   ['04','Measure and grow'],
 ];
 
+export const metadata={alternates:{canonical:'/'}};
 export default function Home(){
   return <main className={styles.home}>
     <section className={styles.hero}>
       <div className={styles.heroInner}>
         <div className={styles.heroCopy}>
-          <div className={styles.eyebrow}><span/>Independent digital media agency · London</div>
           <h1>Brands<br/>grow with<br/><em>purpose.</em></h1>
           <p>Strategy, creative, media and technology to help ambitious businesses get noticed, win customers and grow.</p>
           <div className={styles.heroActions}>
-            <Link href="/contact" className={styles.primaryBtn}>Start a project <span>↗</span></Link>
-            <Link href="/work" className={styles.secondaryLink}>Explore our work <span>→</span></Link>
-          </div>
-          <div className={styles.heroProof}>
-            <div><b><LineIcon name="star"/></b><span>Strategy<br/>led</span></div>
-            <div><b><LineIcon name="strategy"/></b><span>Results<br/>focused</span></div>
-            <div><b><LineIcon name="bolt"/></b><span>Built for<br/>growth</span></div>
-            <div className={styles.desktopOnly}><b>♙</b><span>A true<br/>partner</span></div>
+            <Link href="/contact" className={styles.primaryBtn}>Start a project</Link>
+            <Link href="/work" className={styles.secondaryLink}>Explore our work</Link>
           </div>
         </div>
 
-        <div className={styles.heroVisual} aria-hidden="true">
-          <Image src="/design/hero-clean.png" alt="" width={642} height={404} className={styles.heroDesktopImage} priority/>
-          <Image src="/design/hero-mobile.png" alt="" width={158} height={330} className={styles.heroMobileImage} priority/>
-        </div>
-
-        <div className={styles.heroDisciplines} aria-hidden="true">IDEAS<br/>STRATEGY<br/>CREATIVE<br/>MEDIA<br/>TECHNOLOGY</div>
+        <div className={styles.heroVisual}><Image src="/original/jova-architecture.png" alt="An original architectural study of a contemporary glass facade" width={1122} height={1402} sizes="(max-width:600px) 40vw, 50vw" priority/></div>
       </div>
       <div className={styles.mobileDisciplineBar}>
-        <span>Strategy</span><i/> <span>Creative</span><i/> <span>Media</span><i/> <span>Technology</span>
+        <span>Strategy</span> <span>Creative</span> <span>Media</span> <span>Technology</span>
       </div>
     </section>
 
@@ -58,7 +47,7 @@ export default function Home(){
           <div>
             <h2>More than<br/>marketing.<br/>A partner for<br/>what’s next.</h2>
             <p>We combine strategy, creativity and technology to help businesses grow in a way that’s focused, measurable and built for the long term.</p>
-            <Link href="/about" className={styles.lightBtn}>Our approach <span>↗</span></Link>
+            <Link href="/about" className={styles.lightBtn}>Our approach</Link>
           </div>
           <div className={styles.blueMetrics}>
             <div><b><LineIcon name="star"/></b><span>Strategy<br/>led</span></div>
@@ -79,10 +68,10 @@ export default function Home(){
       </div>
       <div className={styles.capabilityList}>
         {capabilities.map(([name,href,icon]) => <Link key={name} href={href} className={styles.capabilityItem}>
-          <span className={styles.capIcon}><LineIcon name={icon}/></span><strong>{name}</strong><span className={styles.capArrow}>→</span>
+          <span className={styles.capIcon}><LineIcon name={icon}/></span><strong>{name}</strong>
         </Link>)}
       </div>
-      <Link href="/services" className={styles.servicesBtn}>Explore all services <span>↗</span></Link>
+      <Link href="/services" className={styles.servicesBtn}>Explore all services</Link>
     </section>
 
 <section className={styles.redPanel}>
@@ -91,20 +80,17 @@ export default function Home(){
           <div>
             <h2>Ideas into impact.</h2>
             <p>A selection of recent concept projects showing how we turn strategy into real-world results.</p>
-            <Link href="/work" className={styles.redLink}>View all work <span>→</span></Link>
+            <Link href="/work" className={styles.redLink}>View all work</Link>
           </div>
           <Link href="/work" className={styles.workCard} aria-label="Explore our concept projects">
-            <div className={styles.workGraphic}><span/><i/><b/></div>
             <small>CONCEPT</small>
             <strong>Modern brand<br/>for a bolder future</strong>
-            <span className={styles.workArrow}>→</span>
           </Link>
         </div>
         
       </section>
 
     <section className={styles.processSection}>
-      <div className={styles.processArt} aria-hidden="true"><Image src="/design/process-desktop.png" alt="" width={332} height={160}/></div>
       <div className={styles.processCopy}>
         <div className={styles.panelNumber}>04 <span/></div>
         <h2>A clearer path<br/>to growth.</h2>
@@ -116,9 +102,7 @@ export default function Home(){
           <span className={i%2===0?styles.stepBlue:styles.stepSoft}>{n}</span><strong>{t}</strong>
         </div>)}
       </div>
-      <Link href="/about" className={styles.processLink}>Our process <span>↗</span></Link>
-      <div className={styles.processTag}>SAME IDEAS.<br/>A BRIGHTER<br/>TOMORROW.<i/></div>
-      <div className={styles.processSun}/>
+      <Link href="/about" className={styles.processLink}>Our process</Link>
     </section>
 
     <section className={styles.whySection}>
@@ -131,8 +115,7 @@ export default function Home(){
         <div><span><LineIcon name="strategy"/></span><p><strong>Measurable Results</strong>Work that drives real growth.</p></div>
       </div>
       <div className={styles.whyBanner}>
-        <div><b>“</b><h3>Small team.<br/>Big thinking.</h3><Link href="/about">About us <span>↗</span></Link></div>
-        <Image src="/design/why-mobile.png" alt="" width={148} height={240}/>
+        <div><b>“</b><h3>Small team.<br/>Big thinking.</h3><Link href="/about">About us</Link></div>
       </div>
     </section>
 
@@ -142,8 +125,7 @@ export default function Home(){
         <h2>Ready to grow<br/>your brand?</h2>
         <p>Tell us about your project and we’ll get back to you within 1 business day.</p>
       </div>
-      <div className={styles.ctaActions}><Link href="/contact" className={styles.lightBtn}>Start a project <span>↗</span></Link><Link href="mailto:support@jovamedia.com">Or get in touch <span>→</span></Link></div>
-      <div className={styles.ctaArt}/>
+      <div className={styles.ctaActions}><Link href="/contact" className={styles.lightBtn}>Start a project</Link><Link href="mailto:support@jovamedia.com">Or get in touch</Link></div>
     </section>
   </main>
 }

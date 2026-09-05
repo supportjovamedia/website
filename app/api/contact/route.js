@@ -1,1 +1,2 @@
-export async function POST(request){const data=await request.json(); if(!data?.email||!data?.message)return Response.json({ok:false},{status:400}); console.log('CONTACT_ENQUIRY',data); return Response.json({ok:true});}
+// No mail provider is configured. Never report delivery or log personal enquiry data.
+export async function POST(){return Response.json({ok:false,error:'Online delivery is not configured. Please use the email draft on the contact page.'},{status:503,headers:{'Cache-Control':'no-store'}})}

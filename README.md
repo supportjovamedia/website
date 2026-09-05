@@ -1,44 +1,60 @@
-# JovaMedia — mobile reference rebuild
+# JovaMedia — refined original design
 
-## Run in VS Code
+## Run locally
 
-1. Extract this ZIP to a new folder and open that folder in VS Code.
-2. Use Node.js 20.9 or newer (Node 22 or 24 recommended).
-3. In the VS Code terminal run:
+Extract this project into a new folder, open it in VS Code, and use Node.js 20.9 or newer.
 
-   npm ci
-   npm run dev
+    npm ci
+    npm run dev
 
-4. Open http://localhost:3000. Use your browser's responsive mode at 390px wide to review the mobile layout. Also check 320px and 430px.
+Open http://localhost:3000.
 
-For a production build: npm run build, then npm start.
+Production check:
 
-## What changed
+    npm run build
+    npm start
 
-- Rebuilt the homepage stylesheet around the supplied phone references.
-- Fixed the actual document order: hero, introduction (01), services (02), work (03), process (04), why us (05), contact (06).
-- Matched the three-line hero heading, muted blue/red palette, diagonal building imagery, yellow accents, compact service rows, vertical process timeline and full-width blue banner.
-- Added consistent SVG line icons and a compact header/footer.
-- Kept the existing Next.js app, dependencies, lockfile, service routes, content pages and contact route.
-- The screenshots show two portions of one long mobile page side by side; this implementation scrolls as one page on a phone. The phone frame and screenshot Edit/share/download controls are not website elements.
-- Desktop and tablet layouts adapt the same content to wider screens.
+## Final design
 
-## Existing limitations
+The original JovaMedia design, supplied logos and page content have been restored. The alternate redesign is not used in this project.
 
-- The contact API in app/api/contact/route.js only writes submissions to the server log. It does not deliver email or persist enquiries. Connect a real email/form service before launch.
-- No social profile URLs were supplied. Footer social icons are disabled placeholders; configure real destinations before launch.
-- Only one concept project was provided. The work card links to the existing Work page; no fake three-slide pagination was added.
-- The supplied raster artwork includes crops from earlier mockups. CSS clips/composes those existing assets; this is a close reconstruction, not a claim of pixel-perfect equivalence.
-- Browser-based visual testing has been left for your local review as requested.
+- Numbered homepage sections alternate blue / light / red / light / blue / light.
+- Removed decorative arrows, arrows on buttons, abstract geometry, yellow discs, circular service badges and geometric image masks.
+- Kept the original headline, rectangular buttons, typography, service list and compact black footer.
+- Removed the independent-agency/London eyebrow.
+- Replaced the old building crop with an original generated architectural image. No stock photographs or third-party website images are used.
+- Preserved LinkedIn, Instagram, X and TikTok. They link to their platform homepages as requested; edit lib/site.js when agency profiles are ready.
+- Improved spacing, touch targets, focus states and mobile menu keyboard behaviour.
 
-## Main edited files
+## Functionality and limits
 
-app/page.js
-app/home.module.css
-app/globals.css
-components/Footer.js
-components/LineIcon.js
+The previous contact endpoint logged personal details and returned a misleading success message without delivering email. It now returns an honest unavailable response. The contact form instead prepares a brief for the visitor to review and send in their email app, with a copy option. Nothing is sent automatically. Configure a real delivery provider later if you want direct website submissions.
 
-The ZIP excludes node_modules, build output, and the old embedded Git history.
+The contact email remains support@jovamedia.com. Analytics is off unless NEXT_PUBLIC_ENABLE_ANALYTICS=true is configured. Canonical links now point to the appropriate pages, and the duplicate terms URL uses the same maintained content. Existing legal copy remains subject to owner review.
 
-Validation: npm ci and npm run build completed successfully; all 37 pages generated.
+The Work page retains the original status: client case studies are not yet published. The homepage concept card is an illustration of the design direction, not a client result.
+
+## Verification
+
+- Production build passed, including 37 generated pages.
+- Homepage checked in-browser at 320px, 390px, 768px and 1440px with no horizontal overflow.
+- Contact form and service directory checked at 320px.
+- Mobile menu open, Escape-to-close and enquiry draft preparation verified.
+- Main routes and all 20 service detail routes checked. Missing pages return 404. The unconfigured contact endpoint returns 503 instead of false success.
+
+## Main files
+
+app/page.js — homepage content and section order
+app/home.module.css — homepage layout and responsive rules
+app/globals.css — shared styles and final refinement rules
+components/Header.js — original logo and accessible mobile navigation
+components/Footer.js — original footer with social platform links
+components/ContactForm.js — local enquiry review and email draft
+lib/site.js — social URLs and email setting
+public/original/jova-architecture.png — original generated hero image
+
+## Image provenance
+
+The architectural image was generated with the built-in image-generation tool and inspected. Prompt: "Original portrait architectural photograph of an elegant sweeping modern glass office facade, viewed upward at a close oblique angle; charcoal and cool blue-grey glass, crisp linear mullions, soft overcast pale sky, believable continuous editorial photography; no recognisable landmark, brands, text, yellow discs, graphics, circles or arrows."
+
+The logo and favicons are the assets supplied with your original project. The ZIP excludes unused legacy photos, the alternate redesign's imagery, installed dependencies, build output and old Git history.
