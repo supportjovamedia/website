@@ -101,7 +101,7 @@ export default function Home() {
             London, UK · Thinking beyond borders
           </p>
           <h1>
-            <span>JOVA - </span> Your Digital Partner
+            <span>JOVA </span> Your Digital Partner
           </h1>
           <div className={styles.swoosh} />
           <p className={styles.heroLead}>
