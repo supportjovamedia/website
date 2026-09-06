@@ -1,4 +1,3 @@
-import GrowthSignup from "./GrowthSignup";
 import CookieConsent from "./CookieConsent";
 import Image from "next/image";
 import Link from "next/link";
@@ -51,7 +50,6 @@ function SocialIcon({ name }) {
 export default function Footer() {
   return (
     <footer className="reference-footer">
-      <GrowthSignup newsletter />
       <div className="reference-footer-inner">
         <div className="reference-footer-brand">
           <Link href="/" className="reference-footer-logo">
