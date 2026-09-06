@@ -107,7 +107,6 @@ function Navigation({ pathname }) {
             >
               <span />
               <span />
-              <span />
             </button>
           </div>
         </div>
