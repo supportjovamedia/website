@@ -1,0 +1,6 @@
+"use client";
+import {useEffect,useState,useRef} from "react";
+export default function NewsletterConfirm(){const token=useRef("");const [message,setMessage]=useState("");const [busy,setBusy]=useState(false);const [done,setDone]=useState(false);useEffect(()=>{if(window.location.hash)token.current=window.location.hash.slice(1);window.history.replaceState(null,"",window.location.pathname);},[]);
+async function confirm(){if(!token.current){setMessage("Open the full confirmation link from your email, or request a new one using the footer form.");return;}setBusy(true);try{const r=await fetch("/api/growth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({kind:"confirm",token:token.current})});const d=await r.json();if(!r.ok)throw Error(d.error);setDone(true);setMessage("You’re subscribed. Look out for occasional useful ideas from JovaMedia.");}catch(e){setMessage(e.message||"Please try again.");}finally{setBusy(false);}}
+return <div><p>Confirm that you want to receive JovaMedia marketing emails about growth, creative, media and technology. You can unsubscribe anytime.</p>{!done&&<button className="btn" onClick={confirm} disabled={busy}>{busy?"Confirming…":"Confirm subscription"}</button>}<p role="status">{message}</p></div>}
+
