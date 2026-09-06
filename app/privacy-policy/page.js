@@ -1,51 +1,14 @@
 import { pageMetadata } from "@/lib/seo";
-export const metadata = pageMetadata(
-  "/privacy-policy",
-  "Privacy Policy",
-  "Read how JovaMedia handles enquiry information, website analytics, data retention and privacy requests, and how to contact us about personal information.",
-);
-export default function Page() {
-  return (
-    <main>
-      <section className="legal shell">
-        <h1>Privacy Policy</h1>
-        <p>Last updated: 3 September 2026</p>
-        <h2>Who we are</h2>
-        <p>
-          JovaMedia operates jovamedia.com. For privacy enquiries, contact
-          support.jovamedia@gmail.com.
-        </p>
-        <h2>Information we collect</h2>
-        <p>
-          When you submit an enquiry, we process the information you provide,
-          such as your name, email, company, website and project details. We
-          also use privacy-conscious website analytics to understand site usage.
-        </p>
-        <h2>Why we use it</h2>
-        <p>
-          We use enquiry information to respond to you, provide requested
-          services, maintain business records and improve our website and
-          services.
-        </p>
-        <h2>Sharing and retention</h2>
-        <p>
-          We only share data with service providers where needed to operate our
-          website or deliver services. We retain information only for as long as
-          needed for the relevant purpose or legal obligation.
-        </p>
-        <h2>Your rights</h2>
-        <p>
-          UK data protection law gives you rights over your personal data.
-          Contact us to request access, correction, deletion or another
-          applicable right.
-        </p>
-        <h2>Cookies and analytics</h2>
-        <p>
-          Our website may use essential technologies and Vercel Analytics. If we
-          introduce non-essential cookies or advertising technologies, we will
-          update our consent controls and this policy.
-        </p>
-      </section>
-    </main>
-  );
-}
+import { contactEmail } from "@/lib/site";
+export const metadata = pageMetadata("/privacy-policy", "Privacy Policy", "How JovaMedia handles enquiries, optional analytics, your stored consent choice and your privacy rights.");
+export default function Page(){return <main><section className="legal shell">
+<h1>Privacy Policy</h1><p>Last updated: 6 September 2026</p>
+<h2>Who we are</h2><p>JovaMedia operates www.jovamedia.com, a digital agency website based in London, UK. For questions about your information, email <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>
+<h2>Enquiries and your information</h2><p>The enquiry form prepares a draft in your browser. It does not send the entered information to JovaMedia or store it in a website database. If you choose to send the draft using your email application, we receive the information in that email, including the name, contact details and project information you include.</p>
+<h2>Why we use enquiry information</h2><p>We use enquiries to respond to requests, discuss potential projects and provide agreed services. Where relevant, this is to take steps at your request before a contract or perform a contract. We also have a legitimate interest in handling business correspondence and protecting our services, and may keep records to meet legal obligations. Sending an enquiry does not subscribe you to marketing.</p>
+<h2>Optional analytics and your choice</h2><p>Optional Vercel Web Analytics is disabled until you select Accept analytics, and only operates when analytics is enabled for this website. Reject analytics leaves it off. When enabled and accepted, it helps us understand page visits and device or browser characteristics. We do not send enquiry fields as analytics events; URL query strings and fragments are removed from the events sent by our integration.</p><p>We store your acceptance or rejection and the time of your choice in your browser’s local storage under jovamedia-consent-v1 for up to 180 days. This preference storage is used to remember your privacy choice. You can change it at any time through Cookie settings in the footer. Rejecting after accepting stops future analytics and reloads the page to remove the loaded analytics code; it does not undo information already sent.</p>
+<h2>Hosting and service providers</h2><p>The website is hosted on Vercel. Hosting providers may process technical request information, such as IP addresses, for delivering and securing the website, separately from optional analytics. Email providers process messages you choose to send. These services may involve processing outside the UK, subject to the providers’ applicable data protection arrangements. See <a href="https://vercel.com/legal/privacy-policy">Vercel’s privacy policy</a> for its handling of information.</p>
+<h2>Retention</h2><p>We retain enquiry correspondence and project records only for as long as needed to handle the request, deliver services or meet relevant legal obligations. Retention depends on the type and purpose of the record. You may ask us about information relating to you using the contact address above.</p>
+<h2>Your rights</h2><p>Depending on the circumstances, you may have rights to access, correct or erase personal information, restrict processing, object to processing or receive information in a portable form. Where we rely on consent, you can withdraw it. You can also raise a concern with the <a href="https://ico.org.uk/make-a-complaint/">Information Commissioner’s Office</a>.</p>
+<h2>External links and changes</h2><p>External websites have their own privacy practices. We will update this page when the way this website handles information changes.</p>
+</section></main>}

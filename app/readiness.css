@@ -1,0 +1,8 @@
+.cookie-settings{background:none;border:0;color:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer;font:inherit;min-height:44px;padding:10px 0;text-align:inherit}
+.cookie-panel{position:fixed;z-index:70;bottom:20px;right:20px;width:min(520px,calc(100% - 40px));max-height:calc(100dvh - 40px);overflow:auto;padding:26px;background:var(--paper);color:var(--ink);border:1px solid var(--line);box-shadow:0 10px 45px #0002;text-align:left}
+.cookie-panel h2{font-size:23px;line-height:1.2;margin:0 0 14px}.cookie-panel p{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:14px}.cookie-panel>a{font-size:14px;text-decoration:underline;display:inline-block;padding:8px 0}
+.cookie-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}.cookie-actions button{flex:1 1 150px;background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:13px 16px;min-height:46px;cursor:pointer;font-size:14px}
+.site-faq{padding-block:65px}.site-faq h2{font-size:clamp(30px,4vw,46px);letter-spacing:-.04em}.site-faq details{border-top:1px solid var(--line);padding:20px 0}.site-faq summary{cursor:pointer;font-weight:650;font-size:18px;min-height:32px}.site-faq details p{max-width:800px;font-size:16px;line-height:1.8;margin:16px 0 0}
+@media(max-width:700px){.cookie-panel{bottom:10px;right:10px;width:calc(100% - 20px);padding:20px}.site-faq>h2{text-align:center}}
+@media print{.cookie-panel,.cookie-settings{display:none!important}}
+body:has(.menu-toggle[aria-expanded="true"]) .cookie-panel{display:none}

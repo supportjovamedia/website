@@ -37,7 +37,7 @@ test("every indexable page has unique metadata, matching social URLs and valid o
 test("service structured data and visible breadcrumbs agree with the canonical page", async () => {
   const xml = await (await fetch(base + "/sitemap.xml")).text();
   for (const match of xml.matchAll(
-    /<loc>(https:\/\/jovamedia.com\/services\/.*?)<\/loc>/g,
+    /<loc>(https:\/\/www\.jovamedia\.com\/services\/.*?)<\/loc>/g,
   )) {
     const url = match[1];
     const html = await (await fetch(base + new URL(url).pathname)).text();
@@ -48,7 +48,7 @@ test("service structured data and visible breadcrumbs agree with the canonical p
     assert.equal(service.url, url);
     assert.equal(
       service.provider["@id"],
-      "https://jovamedia.com/#organisation",
+      "https://www.jovamedia.com/#organisation",
     );
     const trail = data.find((x) => x["@type"] === "BreadcrumbList");
     assert.equal(trail.itemListElement.at(-1).item, url);

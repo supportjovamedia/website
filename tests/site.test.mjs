@@ -24,7 +24,7 @@ test("every sitemap page responds with its canonical URL and one main heading", 
       route,
       route + " canonical path",
     );
-    assert.equal(new URL(canonical[1]).hostname, "jovamedia.com");
+    assert.equal(new URL(canonical[1]).hostname, "www.jovamedia.com");
     assert.ok(html.includes('name="description"'), route + " description");
   }
 });
@@ -37,7 +37,7 @@ test("terms alias remains available with its primary canonical URL", async () =>
   assert.equal(response.status, 200);
   assert.match(
     await response.text(),
-    /rel="canonical" href="https:\/\/jovamedia.com\/terms"/,
+    /rel="canonical" href="https:\/\/www\.jovamedia\.com\/terms"/,
   );
 });
 test("contact endpoint truthfully reports unconfigured delivery", async () => {
@@ -49,7 +49,7 @@ test("contact endpoint truthfully reports unconfigured delivery", async () => {
 test("robots and social preview remain available", async () => {
   const robots = await fetch(base + "/robots.txt");
   assert.equal(robots.status, 200);
-  assert.match(await robots.text(), /https:\/\/jovamedia.com\/sitemap.xml/);
+  assert.match(await robots.text(), /https:\/\/www\.jovamedia\.com\/sitemap.xml/);
   const image = await fetch(base + "/opengraph-image");
   assert.equal(image.status, 200);
   assert.match(image.headers.get("content-type"), /image\/png/);
