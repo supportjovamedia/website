@@ -1,3 +1,4 @@
+import CookieConsent from "./CookieConsent";
 import Image from "next/image";
 import Link from "next/link";
 import { socialProfiles } from "@/lib/site";
@@ -90,6 +91,7 @@ export default function Footer() {
             <Link href="/contact">Contact</Link>
             <Link href="/privacy-policy">Privacy</Link>
             <Link href="/terms">Terms</Link>
+            <CookieConsent />
           </div>
         </nav>
         <div className="reference-footer-bottom">

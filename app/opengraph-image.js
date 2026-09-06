@@ -1,8 +1,12 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 export const alt = "JovaMedia — Brands grow with purpose.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export default function Image() {
+export default async function Image() {
+  const logo = await readFile(path.join(process.cwd(), "public/brand/jova-logo.png"));
+  const logoUrl = "data:image/png;base64," + logo.toString("base64");
   return new ImageResponse(
     <div
       style={{
@@ -23,7 +27,8 @@ export default function Image() {
           fontSize: 23,
         }}
       >
-        <span>JOVA MEDIA</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={logoUrl} width={185} height={96} alt="JovaMedia" />
         <span style={{ color: "#235789" }}>LONDON / DIGITAL AGENCY</span>
       </div>
       <div

@@ -1,9 +1,10 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import "./direction.css";
+import "./readiness.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Analytics } from "@vercel/analytics/react";
+import { socialProfiles } from "@/lib/site";
 const jakarta = localFont({
   src: "./fonts/plus-jakarta-sans.woff2",
   display: "swap",
@@ -12,9 +13,9 @@ const jakarta = localFont({
   fallback: ["Arial"],
 });
 export const metadata = {
-  metadataBase: new URL("https://jovamedia.com"),
+  metadataBase: new URL("https://www.jovamedia.com"),
   title: {
-    default: "JovaMedia | Digital Marketing Agency London ",
+    default: "JovaMedia | Digital Marketing Agency London",
     template: "%s | JovaMedia",
   },
   description:
@@ -23,7 +24,7 @@ export const metadata = {
     title: "JovaMedia — Brands grow with purpose.",
     description:
       "Strategy, creative, media and technology for ambitious businesses.",
-    url: "https://jovamedia.com",
+    url: "https://www.jovamedia.com",
     siteName: "JovaMedia",
     locale: "en_GB",
     type: "website",
@@ -39,10 +40,12 @@ export const metadata = {
 const organisation = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "@id": "https://jovamedia.com/#organisation",
+  "@id": "https://www.jovamedia.com/#organisation",
   name: "JovaMedia",
-  url: "https://jovamedia.com",
-  logo: "https://jovamedia.com/brand/jova-logo.png",
+  description: "London, UK digital agency providing web design, branding, SEO, social media and paid media services.",
+  sameAs: socialProfiles.map(profile => profile.url),
+  url: "https://www.jovamedia.com",
+  logo: "https://www.jovamedia.com/brand/jova-logo.png",
   email: "support.jovamedia@gmail.com",
   address: {
     "@type": "PostalAddress",
@@ -72,17 +75,17 @@ export default function RootLayout({ children }) {
                 organisation,
                 {
                   "@type": "WebSite",
-                  "@id": "https://jovamedia.com/#website",
-                  url: "https://jovamedia.com",
+                  "@id": "https://www.jovamedia.com/#website",
+                  url: "https://www.jovamedia.com",
                   name: "JovaMedia",
                   inLanguage: "en-GB",
-                  publisher: { "@id": "https://jovamedia.com/#organisation" },
+                  publisher: { "@id": "https://www.jovamedia.com/#organisation" },
                 },
               ],
             }).replace(/</g, "\\u003c"),
           }}
         />
-        {process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true" && <Analytics />}
+
       </body>
     </html>
   );

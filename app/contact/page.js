@@ -1,3 +1,4 @@
+import ProjectFAQ from "@/components/ProjectFAQ";
 import { pageMetadata } from "@/lib/seo";
 import ContactForm from "@/components/ContactForm";
 export const metadata = pageMetadata(
@@ -38,6 +39,7 @@ export default function Page() {
           <ContactForm />
         </div>
       </section>
+    <ProjectFAQ />
     </main>
   );
 }

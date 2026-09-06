@@ -1,6 +1,6 @@
 import { services } from "@/lib/data";
 export default function sitemap() {
-  const base = "https://jovamedia.com";
+  const base = "https://www.jovamedia.com";
   const pages = [
     "",
     "/services",
