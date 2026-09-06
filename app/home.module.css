@@ -703,7 +703,7 @@
     display: block;
   }
   .why p {
-    max-width: 36ch;
+    /* max-width: 36ch; */
     margin-inline: auto;
   }
   .values {
