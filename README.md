@@ -30,7 +30,7 @@ The original JovaMedia design, supplied logos and page content have been restore
 
 The previous contact endpoint logged personal details and returned a misleading success message without delivering email. It now returns an honest unavailable response. The contact form instead prepares a brief for the visitor to review and send in their email app, with a copy option. Nothing is sent automatically. Configure a real delivery provider later if you want direct website submissions.
 
-The contact email remains support@jovamedia.com. Analytics is off unless NEXT_PUBLIC_ENABLE_ANALYTICS=true is configured. Canonical links now point to the appropriate pages, and the duplicate terms URL uses the same maintained content. Existing legal copy remains subject to owner review.
+The contact email remains support.jovamedia@gmail.com. Analytics is off unless NEXT_PUBLIC_ENABLE_ANALYTICS=true is configured. Canonical links now point to the appropriate pages, and the duplicate terms URL uses the same maintained content. Existing legal copy remains subject to owner review.
 
 The Work page retains the original status: client case studies are not yet published. The homepage concept card is an illustration of the design direction, not a client result.
 

@@ -43,7 +43,7 @@ const organisation = {
   name: "JovaMedia",
   url: "https://jovamedia.com",
   logo: "https://jovamedia.com/brand/jova-logo.png",
-  email: "support@jovamedia.com",
+  email: "support.jovamedia@gmail.com",
   address: {
     "@type": "PostalAddress",
     addressLocality: "London",

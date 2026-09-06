@@ -13,7 +13,7 @@ export default function Page() {
         <h2>Who we are</h2>
         <p>
           JovaMedia operates jovamedia.com. For privacy enquiries, contact
-          support@jovamedia.com.
+          support.jovamedia@gmail.com.
         </p>
         <h2>Information we collect</h2>
         <p>

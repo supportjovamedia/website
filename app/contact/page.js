@@ -30,7 +30,7 @@ export default function Page() {
               mind, we’ll say so.
             </p>
             <p>
-              <b>support@jovamedia.com</b>
+              <b>support.jovamedia@gmail.com</b>
               <br />
               London, United Kingdom
             </p>

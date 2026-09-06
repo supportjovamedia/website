@@ -32,7 +32,7 @@ export default function Page() {
           availability and pricing guidance may change.
         </p>
         <h2>Contact</h2>
-        <p>Questions about these terms can be sent to support@jovamedia.com.</p>
+        <p>Questions about these terms can be sent to support.jovamedia@gmail.com.</p>
       </section>
     </main>
   );

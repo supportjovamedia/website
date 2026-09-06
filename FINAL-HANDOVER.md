@@ -52,6 +52,6 @@ The ZIP excludes `node_modules`, `.next`, Git internals and private environment 
 
 ## Existing functionality to be aware of
 
-The contact form prepares an email draft to `support@jovamedia.com`; the visitor sends it from their email app. A direct email delivery provider is not configured, and the API correctly returns an unavailable response. Social links are the existing platform links. Campaign and editorial portfolio examples remain clearly labelled self-initiated concepts, with no invented client outcomes.
+The contact form prepares an email draft to `support.jovamedia@gmail.com`; the visitor sends it from their email app. A direct email delivery provider is not configured, and the API correctly returns an unavailable response. Social links are the existing platform links. Campaign and editorial portfolio examples remain clearly labelled self-initiated concepts, with no invented client outcomes.
 
 No production deployment, Git push or domain change was performed. The local preview is for final approval before publishing.

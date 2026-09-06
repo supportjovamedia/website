@@ -96,7 +96,7 @@ export default function Footer() {
           <div>
             London, UK
             <br />
-            <a href="mailto:support@jovamedia.com">support@jovamedia.com</a>
+            <a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a>
           </div>
           <div>
             © {new Date().getFullYear()} JovaMedia
