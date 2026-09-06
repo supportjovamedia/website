@@ -113,6 +113,7 @@ function Navigation({ pathname }) {
         <nav
           ref={menu}
           hidden={!open}
+          inert={!open}
           id="mobile-menu"
           className="mobile-menu"
           aria-label="Mobile navigation"
