@@ -1,3 +1,4 @@
+import GrowthSignup from "@/components/GrowthSignup";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./direction.css";
@@ -65,6 +66,7 @@ export default function RootLayout({ children }) {
         <div id="main-content" tabIndex={-1}>
           {children}
         </div>
+        <GrowthSignup newsletter />
         <Footer />
         <script
           type="application/ld+json"

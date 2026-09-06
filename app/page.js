@@ -1,4 +1,3 @@
-import GrowthSignup from "@/components/GrowthSignup";
 import { pageMetadata } from "@/lib/seo";
 import Image from "next/image";
 
@@ -308,7 +307,6 @@ export default function Home() {
           </a>
         </div>
       </section>
-      <GrowthSignup />
     </main>
   );
 }
