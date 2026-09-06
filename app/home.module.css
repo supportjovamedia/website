@@ -581,7 +581,7 @@
   }
   .sectionHead p {
     font-size: 16px;
-    max-width: 36ch;
+    /* max-width: 36ch; */
     margin: 24px auto;
   }
   .sectionHead .goldStroke {
