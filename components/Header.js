@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 const links = [
   ["Home", "/"],
+  ["About", "/about"],
   ["Services", "/services"],
   ["Work", "/work"],
-  ["About", "/about"],
   ["Contact", "/contact"],
 ];
 export default function Header() {
@@ -113,6 +113,7 @@ function Navigation({ pathname }) {
         <nav
           ref={menu}
           hidden={!open}
+          inert={!open}
           id="mobile-menu"
           className="mobile-menu"
           aria-label="Mobile navigation"
