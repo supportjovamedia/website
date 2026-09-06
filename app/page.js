@@ -11,7 +11,7 @@ import styles from "./home.module.css";
 
 export const metadata = pageMetadata(
   "/",
-  "Digital Marketing Agency London",
+  "JovaMedia | Your Digital Partner in London",
   "JovaMedia connects strategy, branding, web design, SEO and paid media for ambitious businesses. Meet your London digital agency and discuss your next project.",
 );
 
@@ -118,7 +118,7 @@ export default function Home() {
         <figure className={styles.heroVisual}>
           <Image
             src="/campaign/hero.webp"
-            alt="Conceptual campaign portrait: a model in red sunglasses and a blue windbreaker against a warm yellow background"
+            alt="Conceptual digital agency workspace with a laptop and design graphics against a yellow background"
             width={1024}
             height={1280}
             sizes="(max-width:700px) 100vw, 48vw"
