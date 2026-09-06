@@ -193,7 +193,7 @@ export default function Home() {
             </Link></div>
       </section>
 
-      <section className={styles.workBand}>
+      {/* <section className={styles.workBand}>
         <div className={`shell ${styles.work}`}>
           <div className={styles.workIntro}>
             <p className="kicker">03 / OUR WORK</p>
@@ -236,7 +236,7 @@ export default function Home() {
             distinct. Stop Guessing and start growing with JOVA.
           </p>
         </div>
-      </section>
+      </section> */}
 
       <section className={`shell ${styles.approach}`}>
         <div>
