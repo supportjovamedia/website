@@ -83,7 +83,7 @@ export default function Footer() {
           <div>
             <Link href="/">Home</Link>
             <Link href="/services">Services</Link>
-            <Link href="/work">Work</Link>
+            {/* <Link href="/work">Work</Link> */}
           </div>
           <div>
             <Link href="/about">About</Link>
