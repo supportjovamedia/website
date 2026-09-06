@@ -214,6 +214,8 @@ margin-top: 20px;
 .nav-actions {
   display: flex;
   align-items: center;
+  background-color: #F5F7FA;
+  border-radius: 50%;
 }
 .menu-toggle {
   display: none;
@@ -877,6 +879,8 @@ margin-top: 20px;
   }
   .nav-actions {
     margin-left: auto;
+    background-color: #F5F7FA;
+    border-radius: 50%;
   }
 }
 @media (max-width: 700px) {
@@ -1111,6 +1115,8 @@ margin-top: 20px;
   .mobile-menu,
   .skip-link {
     display: none !important;
+    background-color: #F5F7FA;
+    border-radius: 50%;
   }
   .btn {
     min-height: 0;
