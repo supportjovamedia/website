@@ -31,3 +31,6 @@ The PDF is included at /resources/digital-growth-checklist.pdf. No Blob account 
 The endpoint rejects foreign origins, oversized bodies and a honeypot, and applies a per-instance 8-request/10-minute IP limit. Memory limits are not global on serverless. Before public promotion, configure a Vercel Firewall rate-limit rule for POST /api/growth or add a durable limiter/challenge. Monitor Resend usage and bounces. Avoid logging request bodies or confirmation links. No actual email was sent by the automated checks.
 
 The footer-v1 consent wording is: By subscribing, you agree to receive JovaMedia marketing emails. Confirm by email; unsubscribe anytime. The confirmation screen specifies growth, creative, media and technology.
+
+## Welcome automation
+To connect the three published templates, follow [NEWSLETTER-AUTOMATION-SETUP.md](NEWSLETTER-AUTOMATION-SETUP.md). This optional sequence requires shared Redis storage for duplicate protection; the resource and basic signup above do not.
