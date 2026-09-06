@@ -1396,3 +1396,4 @@ textarea {
   .menu-toggle span { transition: none; }
   .mobile-menu:not([hidden]) .mobile-menu-inner > a { animation: none; }
 }
+@media screen and (max-width: 700px) { .about-approach { text-align: center; } }

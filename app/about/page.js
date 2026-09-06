@@ -31,7 +31,7 @@ export default function Page() {
         </div>
       </section>
       <section className="section">
-        <div className="shell split">
+        <div className="shell split about-approach">
           <div>
             <div className="kicker">How we work</div>
             <h2>Close to the problem. Close to the work.</h2>
