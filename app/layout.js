@@ -21,7 +21,7 @@ export const metadata = {
   description:
     "JovaMedia is a London digital agency specialising in websites, SEO, paid media, content, social and brand strategy.",
   openGraph: {
-    title: "JovaMedia — Brands grow with purpose.",
+    title: "JovaMedia — Your Digital Partner",
     description:
       "Strategy, creative, media and technology for ambitious businesses.",
     url: "https://www.jovamedia.com",
