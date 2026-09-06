@@ -297,7 +297,7 @@ export default function Home() {
           </h2>
           <div className={styles.swoosh} />
           <p>
-           Tell us what you’re working on and where you want to take it. We’ll get back to you within one business day.
+           Tell us what you’re working on and where you want to take it. We’ll get back to you within 1–3 working days.
           </p>
           <Link className="btn" href="/contact">
             Let’s get started{" "}
