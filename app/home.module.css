@@ -285,11 +285,14 @@
   color: var(--muted);
 }
 .approach {
-  padding-block: var(--section-space);
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 0 40px;
   align-items: start;
+  background: #f5f7f3;
+  padding-block: var(--section-space);
+  width: 100%;
+  padding: 80px 50px;
 }
 .approach > div > p:not(:first-child) {
   font-size: 16px;

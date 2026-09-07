@@ -241,7 +241,7 @@ export default function Home() {
 
       <section className={`shell ${styles.approach}`}>
         <div>
-          <p className="kicker">04 / HOW WE WORK</p>
+          <p className="kicker">03 / HOW WE WORK</p>
           <h2>
             From first idea<span>to final result.</span>
           </h2>
@@ -268,7 +268,7 @@ export default function Home() {
       <section className={styles.why}>
         <div className={`shell ${styles.whyGrid}`}>
           <div>
-            <p className="kicker">05 / Why Jova?</p>
+            <p className="kicker">04 / Why Jova?</p>
             <h2>
               Built around<span>your ambition.</span>
             </h2>
@@ -292,7 +292,7 @@ export default function Home() {
 
       <section className={`shell ${styles.cta}`}>
         <div>
-          <p className="kicker">06 / LET’S WORK TOGETHER</p>
+          <p className="kicker">05 / LET’S WORK TOGETHER</p>
           <h2>
             Ready to grow<span>your brand?</span>
           </h2>
