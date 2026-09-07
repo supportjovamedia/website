@@ -32,6 +32,6 @@ test("old service URLs redirect directly to a current information page", async (
 });
 test("contact choices match the public services and exclude paid-media sales", async () => {
   const html = await (await fetch(base + "/contact")).text();
-  for (const name of ["Websites &amp; Landing Pages", "Website Copywriting", "Social Media", "Brand Strategy &amp; Design", "Email Marketing &amp; Automation", "Content Production"]) assert.ok(html.includes(`<option>${name}</option>`), name);
+  for (const name of ["Website Development", "Copywriting", "Social Media", "Brand Strategy &amp; Design", "Email Marketing &amp; Automation", "Content Production"]) assert.ok(html.includes(`<option>${name}</option>`), name);
   assert.doesNotMatch(html, /<option>Performance &amp; growth<\/option>|Social, content, paid media/);
 });

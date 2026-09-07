@@ -162,7 +162,8 @@ textarea {
 .reference-footer-brand p {
   color: #e1e5df;
 }
-.reference-footer-links a {
+.reference-footer-links a,
+.reference-footer-links .cookie-settings {
   font-size: 13px;
 }
 .reference-footer-inner {
@@ -591,7 +592,8 @@ textarea {
   .reference-footer-inner {
     padding-block: 35px 25px;
   }
-  .reference-footer-links a {
+  .reference-footer-links a,
+.reference-footer-links .cookie-settings {
     font-size: 13px;
   }
   .reference-socials {
@@ -739,7 +741,8 @@ textarea {
   .reference-footer-brand p {
     font-size: 8pt;
   }
-  .reference-footer-links a {
+  .reference-footer-links a,
+.reference-footer-links .cookie-settings {
     font-size: 8pt;
   }
 }
@@ -1256,7 +1259,8 @@ textarea {
   .reference-socials {
     justify-content: center;
   }
-  .reference-footer-links a {
+  .reference-footer-links a,
+.reference-footer-links .cookie-settings {
     justify-content: center;
   }
   .reference-footer-bottom {

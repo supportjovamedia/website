@@ -596,7 +596,8 @@ margin-top: 20px;
   flex-direction: column;
   gap: 5px;
 }
-.reference-footer-links a {
+.reference-footer-links a,
+.reference-footer-links .cookie-settings {
   font-size: 14px;
   min-height: 40px;
   display: flex;
@@ -1233,7 +1234,8 @@ margin-top: 20px;
     border: 0;
     padding: 0;
   }
-  .reference-footer-links a {
+  .reference-footer-links a,
+.reference-footer-links .cookie-settings {
     font-size: 9pt;
     min-height: 24px;
   }
@@ -1288,7 +1290,8 @@ margin-top: 20px;
     line-height: 1.5;
     margin-block: 8px;
   }
-  .reference-footer-links a {
+  .reference-footer-links a,
+.reference-footer-links .cookie-settings {
     font-size: 8pt;
     min-height: 20px;
   }
@@ -1330,3 +1333,9 @@ margin-top: 20px;
   }
 } */
 
+
+.reference-footer-links .cookie-settings { padding: 0; border: 0; background: none; color: inherit; font-family: inherit; text-align: left; text-decoration: none; cursor: pointer; }
+.form .required-mark { color: #c90000; }
+.form .field-hint { display: block; font-size: 12px; line-height: 1.6; margin-top: 7px; color: #526078; }
+.form .field-error { display: block; color: #b40000; font-size: 13px; line-height: 1.5; margin-top: 7px; }
+.form [aria-invalid="true"] { border-color: #b40000; }
