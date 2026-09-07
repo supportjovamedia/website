@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 
-import { serviceOptions } from "@/lib/service-options";
+import { serviceOptions, budgetOptions, countryOptions, validateEnquiry } from "@/lib/enquiry-fields.mjs";
 
 import { contactEmail } from "@/lib/site";
 
@@ -11,6 +11,10 @@ export default function ContactForm() {
   const [status, setStatus] = useState("idle");
 
   const [error, setError] = useState("");
+
+  const [fields, setFields] = useState({});
+  const [service, setService] = useState("");
+  const [messageLength, setMessageLength] = useState(0);
 
   const result = useRef(null);
 
@@ -28,6 +32,12 @@ export default function ContactForm() {
 
     const values = Object.fromEntries(new FormData(form));
 
+    const validation = validateEnquiry(values);
+    setFields(validation.errors);
+    if (Object.keys(validation.errors).length) {
+      form.elements.namedItem(Object.keys(validation.errors)[0])?.focus();
+      return;
+    }
     const serialized = JSON.stringify(values);
 
     if (!attempt.current || attempt.current.body !== serialized)
@@ -56,11 +66,16 @@ export default function ContactForm() {
 
       const data = await response.json();
 
-      if (!response.ok || data.ok !== true) throw new Error(data.error || "We could not send your enquiry. Please try again.");
+      if (!response.ok || data.ok !== true) {
+        if (data.fields) setFields(data.fields);
+        throw new Error(data.error || "We could not send your enquiry. Please try again.");
+      }
 
       setStatus("success");
 
       form.reset();
+      setService("");
+      setMessageLength(0);
 
       attempt.current = null;
 
@@ -84,11 +99,19 @@ export default function ContactForm() {
 
   }
 
+  function fieldProps(name, hint) {
+    return { "aria-invalid": fields[name] ? true : undefined, "aria-describedby": [hint, fields[name] ? `${name}-error` : ""].filter(Boolean).join(" ") || undefined };
+  }
+  function fieldError(name) {
+    return fields[name] && <span className="field-error" id={`${name}-error`}>{fields[name]}</span>;
+  }
+
   return (
 
     <form
 
       className="form"
+      noValidate
 
       onSubmit={submit}
 
@@ -106,133 +129,63 @@ export default function ContactForm() {
 
       </div>
 
+      <p className="form-note">Fields marked <span className="required-mark" aria-hidden="true">*</span> are required. Please complete them so we can understand your enquiry.</p>
       <fieldset className="contact-fields" disabled={status === "sending"}>
-      <div className="two">
-
-        <label>
-
-          Your name
-
-          <input
-
-            name="name"
-
-            autoComplete="name"
-
-            required
-
-            maxLength={100}
-
-            placeholder="Alex Morgan"
-
-          />
-
+        <div className="two">
+          <label><span>Your name <Required /></span>
+            <input name="name" autoComplete="name" required maxLength={100} placeholder="Alex Morgan" {...fieldProps("name")} />
+            {fieldError("name")}
+          </label>
+          <label><span>Email address <Required /></span>
+            <input name="email" type="email" autoComplete="email" required maxLength={200} placeholder="alex@yourcompany.com" {...fieldProps("email")} />
+            {fieldError("email")}
+          </label>
+        </div>
+        <label>Company <span className="optional">Optional</span>
+          <input name="company" autoComplete="organization" maxLength={150} placeholder="Your company" {...fieldProps("company")} />
+          {fieldError("company")}
         </label>
-
-        <label>
-
-          Email address
-
-          <input
-
-            name="email"
-
-            type="email"
-
-            autoComplete="email"
-
-            required
-
-            maxLength={200}
-
-            placeholder="alex@yourcompany.com"
-
-          />
-
-        </label>
-
-      </div>
-
-      <label>
-
-        Company <span className="optional">Optional</span>
-
-        <input
-
-          name="company"
-
-          autoComplete="organization"
-
-          maxLength={150}
-
-          placeholder="Your company"
-
-        />
-
-      </label>
-
-      <div className="two">
-
-        <label>
-
-          I’m interested in
-
-          <select name="service" defaultValue="A little guidance">
-
-            <option>A little guidance</option>
-
-            {serviceOptions.map((name) => <option key={name}>{name}</option>)}
-
-            <option>A connected programme</option>
-
+        <div className="two">
+          <label><span>Country <Required /></span>
+            <select name="country" autoComplete="country" defaultValue="" required {...fieldProps("country")}>
+              <option value="" disabled>Select your country</option>
+              {countryOptions.map(({code, name}) => <option key={code} value={code}>{name}</option>)}
+            </select>
+            {fieldError("country")}
+          </label>
+          <label><span>Monthly budget (GBP) <Required /></span>
+            <select name="budget" defaultValue="" required {...fieldProps("budget", "budget-hint")}>
+              <option value="" disabled>Select your monthly budget</option>
+              {budgetOptions.map(budget => <option key={budget}>{budget}</option>)}
+            </select>
+            <span className="field-hint" id="budget-hint">For ongoing support, in British pounds. For a one-off project, include your total budget in the description too.</span>
+            {fieldError("budget")}
+          </label>
+        </div>
+        <label><span>I’m interested in <Required /></span>
+          <select name="service" value={service} onChange={event => setService(event.target.value)} required {...fieldProps("service")}>
+            <option value="" disabled>Select a service</option>
+            {serviceOptions.map(name => <option key={name}>{name}</option>)}
+            <option>Other</option>
           </select>
-
+          {fieldError("service")}
         </label>
-
-        <label>
-
-          Ideal timing
-
-          <select name="timing" defaultValue="Let’s discuss">
-
-            <option>Let’s discuss</option>
-
-            <option>As soon as possible</option>
-
-            <option>Within 1–3 months</option>
-
-            <option>Within 3–6 months</option>
-
-            <option>Planning ahead</option>
-
+        {service === "Other" && <label><span>Please specify <Required /></span>
+          <input name="other" required minLength={10} maxLength={500} placeholder="Tell us what support you need" {...fieldProps("other", "other-hint")} />
+          <span className="field-hint" id="other-hint">At least 10 characters.</span>
+          {fieldError("other")}
+        </label>}
+        <label>Ideal timing <span className="optional">Optional</span>
+          <select name="timing" defaultValue="Let’s discuss" {...fieldProps("timing")}>
+            <option>Let’s discuss</option><option>As soon as possible</option><option>Within 1–3 months</option><option>Within 3–6 months</option><option>Planning ahead</option>
           </select>
-
+          {fieldError("timing")}
         </label>
-
-      </div>
-
-      <label>
-
-        Tell us a little about the project
-
-        <textarea
-
-          name="message"
-
-          required
-
-          minLength={10}
-
-          maxLength={3000}
-
-          rows={5}
-
-          placeholder="What would you like to change, create or grow?"
-
-        />
-
-      </label>
-
+        <label><span>Tell us a little about the project <Required /></span>
+          <textarea name="message" required minLength={100} maxLength={3000} rows={5} placeholder="Tell us about your business, what you need and what you’d like to achieve." onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
+          <span className="field-hint" id="message-hint">At least 100 characters. {messageLength.toLocaleString("en-GB")} / 3,000 characters.</span>
+          {fieldError("message")}
+        </label>
       </fieldset>
       <div className="contact-trap" aria-hidden="true">
 
@@ -264,3 +217,4 @@ export default function ContactForm() {
 
 }
 
+function Required() { return <span className="required-mark" aria-hidden="true">*</span>; }

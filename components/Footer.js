@@ -47,6 +47,9 @@ function SocialIcon({ name }) {
   );
 }
 
+// Re-enable when the social channels are ready to promote.
+const showSocialLinks = false;
+
 export default function Footer() {
   return (
     <footer className="reference-footer">
@@ -65,7 +68,7 @@ export default function Footer() {
             <br />
             for ambitious businesses.
           </p>
-          <div className="reference-socials">
+          {showSocialLinks && <div className="reference-socials">
             {socialProfiles.map(({ label, icon, url }) => (
               <a
                 key={icon}
@@ -78,7 +81,7 @@ export default function Footer() {
                 <span>{label}</span>
               </a>
             ))}
-          </div>
+          </div>}
         </div>
         <nav className="reference-footer-links" aria-label="Footer navigation">
           <div>

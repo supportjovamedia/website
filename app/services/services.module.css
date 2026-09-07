@@ -46,8 +46,8 @@
 .question > div { padding: 0 36px 24px 0; max-width: 900px; }
 .question > div p { font-size: 15px; line-height: 1.8; margin-bottom: 0; }
 .question summary:focus-visible { outline: 3px solid #7198c6; outline-offset: 5px; }
-.custom { background: var(--sand); }
-.custom :global(.lead) { max-width: 850px; }
+.custom { background: var(--sand); padding-block: clamp(56px, 7vw, 96px); }
+.custom :global(.lead) { max-width: 850px; margin-bottom: 28px; }
 .relatedGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 28px; margin-block: 32px; }
 .relatedGrid > a { border-top: 2px solid var(--blue); padding-top: 24px; }
 .relatedGrid h3 { font-size: 23px; }

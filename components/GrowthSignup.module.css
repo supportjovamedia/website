@@ -9,3 +9,5 @@
 .newsletter .message{color:#1d6842}
 .newsletter .error{color:#ac2424}
 @media(max-width:700px){.newsletter{padding:40px 24px}.newsletter .form button{justify-self:center}}
+
+.newsletter.whiteNewsletter { background: #fff; }
