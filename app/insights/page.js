@@ -3,7 +3,7 @@ export const metadata = {
   ...pageMetadata(
     "/insights",
     "Insights",
-    "Explore the topics planned for practical JovaMedia guides to SEO, paid media, business websites and digital growth. New guides are in preparation.",
+    "Explore the topics planned for practical JovaMedia guides to search, email marketing, business websites and digital growth. New guides are in preparation.",
   ),
   robots: { index: false, follow: true },
 };
@@ -21,7 +21,7 @@ export default function Page() {
           <div className="kicker">Insights</div>
           <h1>Useful thinking for digital growth.</h1>
           <p className="lead">
-            Practical guides are being prepared around search, paid media,
+            Practical guides are being prepared around search, email marketing,
             websites and growth strategy.
           </p>
         </div>

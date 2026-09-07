@@ -1,3 +1,4 @@
+import { primaryServices } from "@/lib/service-catalogue";
 import { pageMetadata } from "@/lib/seo";
 import Image from "next/image";
 
@@ -12,47 +13,10 @@ import styles from "./home.module.css";
 export const metadata = pageMetadata(
   "/",
   "JovaMedia | Your Digital Partner in London",
-  "JovaMedia connects strategy, branding, web design, SEO and paid media for ambitious businesses. Meet your London digital agency and discuss your next project.",
+  "Websites, copywriting, social media, brand design, email automation and content production from JovaMedia, your creative digital agency in London.",
 );
 
-const capabilities = [
-  [
-    "Strategy",
-    "competitor-analysis",
-    "Make the right moves, from the very beginning.",
-    "strategy",
-  ],
-  [
-    "Branding",
-    "brand-strategy",
-    "Build an identity that looks like you and feels unmistakably yours.",
-    "creative",
-  ],
-  [
-    "Social Media",
-    "social-management",
-    "Show up consistently with content made to connect.",
-    "social",
-  ],
-  [
-    "Web Design",
-    "web-design",
-    "Thoughtfully designed. Seamlessly built. Ready to perform.",
-    "web",
-  ],
-  [
-    "Marketing & Performance",
-    "paid-media",
-    "Reach the right people and turn attention into results.",
-    "growth",
-  ],
-  [
-    "Automation & Technology",
-    "ai-automation",
-    "Simplify the way you work with smarter systems and solutions.",
-    "tech",
-  ],
-];
+const capabilities = primaryServices.map((service) => [service.name, service.slug, service.summary]);
 
 const steps = [
   [
@@ -188,7 +152,7 @@ export default function Home() {
             </Link>
           ))}
         </div>
-        <div class="secondCTA"><Link href="/services" className="btn">
+        <div className="secondCTA"><Link href="/services" className="btn">
               Explore our services{" "}
             </Link></div>
       </section>

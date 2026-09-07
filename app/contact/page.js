@@ -26,7 +26,7 @@ export default function Page() {
             <div className="kicker">New business</div>
             <h2>Bring us the goal, not a perfectly written brief.</h2>
             <p className="lead small-lead">
-              Social, content, paid media, search, web, brand or a joined-up
+              Websites, copywriting, social, brand, email, content or a joined-up
               programme. If there is a better route than the one you have in
               mind, we’ll say so.
             </p>

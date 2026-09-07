@@ -1,0 +1,85 @@
+.catalogue { min-width: 0; }
+.hero { padding-bottom: 72px; }
+.hero h1 { max-width: 940px; font-size: clamp(40px, 5.4vw, 76px); line-height: 1.08; }
+.hero :global(.lead) { max-width: 760px; }
+.heroGrid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); align-items: start; gap: 64px; }
+.fit { background: var(--blue); color: var(--paper); padding: 34px; }
+.serviceIndex { display: block; font-size: 64px; line-height: 1; font-weight: 400; letter-spacing: -.07em; margin-bottom: 44px; color: var(--gold); }
+.fit h2 { font-size: 24px; line-height: 1.3; margin-bottom: 24px; }
+.fit ul { padding: 0; margin: 0; list-style: none; }
+.fit li { padding-block: 16px; border-top: 1px solid #ffffff40; font-size: 14px; line-height: 1.7; }
+.directory { padding-top: 0; }
+.directoryGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.directoryCard { min-width: 0; padding: 30px; border: 1px solid var(--line); display: flex; flex-direction: column; transition: background .18s; }
+.directoryCard:first-child { background: var(--blue); color: var(--paper); border-color: var(--blue); }
+.directoryCard:first-child p { color: var(--paper); }
+.directoryCard:hover { background: var(--soft); }
+.directoryCard:first-child:hover { background: var(--navy-2); }
+.number { display: block; font-size: 14px; margin-bottom: 32px; }
+.directoryCard :global(.kicker) { margin-bottom: 12px; }
+.directoryCard h2 { font-size: 26px; line-height: 1.2; margin-bottom: 18px; }
+.directoryCard > p { font-size: 15px; line-height: 1.7; }
+.cardFoot { margin-top: auto; padding-top: 28px; font-size: 13px; line-height: 1.5; font-weight: 650; }
+.supportLink { display: flex; gap: 40px; align-items: center; justify-content: space-between; padding-top: 48px; border-top: 1px solid var(--line); margin-top: 48px; }
+.supportLink h2 { font-size: 26px; }
+.supportLink p { max-width: 650px; line-height: 1.7; margin-bottom: 0; }
+.supportLink > a { min-width: 220px; }
+.help { background: var(--soft); }
+.sectionIntro { margin-bottom: 44px; max-width: 850px; }
+.sectionIntro h2, .process h2, .custom h2, .questions h2, .related h2 { font-size: clamp(29px, 3.4vw, 46px); line-height: 1.15; margin-bottom: 22px; }
+.sectionIntro > p:last-child { font-size: 16px; line-height: 1.7; margin: 0; }
+.helpGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 32px; }
+.helpGrid article { border-top: 2px solid var(--blue); padding-top: 24px; }
+.helpGrid h3 { font-size: 22px; line-height: 1.3; margin-bottom: 16px; }
+.helpGrid p, .processGrid p { font-size: 15px; line-height: 1.8; margin-bottom: 0; }
+.processGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 44px; }
+.processGrid > div { border-left: 1px solid var(--line); padding-left: 24px; }
+.processGrid span { display: block; font-size: 14px; color: var(--blue); margin-bottom: 24px; }
+.processGrid h3 { font-size: 22px; line-height: 1.3; }
+.questions { padding-top: 0; }
+.question { border-bottom: 1px solid var(--line); }
+.question summary { list-style: none; display: grid; grid-template-columns: minmax(0,1fr) 20px; gap: 24px; align-items: center; padding: 24px 0; cursor: pointer; }
+.question summary::-webkit-details-marker { display: none; }
+.question summary > span:first-child { font-size: 17px; line-height: 1.5; font-weight: 600; }
+.plus { font-size: 23px; font-weight: 400; color: var(--blue); transition: transform .18s; }
+.question[open] .plus { transform: rotate(45deg); }
+.question > div { padding: 0 36px 24px 0; max-width: 900px; }
+.question > div p { font-size: 15px; line-height: 1.8; margin-bottom: 0; }
+.question summary:focus-visible { outline: 3px solid #7198c6; outline-offset: 5px; }
+.custom { background: var(--sand); }
+.custom :global(.lead) { max-width: 850px; }
+.relatedGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 28px; margin-block: 32px; }
+.relatedGrid > a { border-top: 2px solid var(--blue); padding-top: 24px; }
+.relatedGrid h3 { font-size: 23px; }
+.relatedGrid p { font-size: 15px; line-height: 1.8; }
+@media (max-width: 1000px) {
+  .directoryGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .heroGrid { gap: 32px; grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); }
+  .fit { padding: 26px; }
+  .helpGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 700px) {
+  .hero { padding-bottom: 44px; }
+  .hero h1 { font-size: clamp(36px, 9vw, 52px); }
+  .heroGrid, .directoryGrid, .helpGrid, .processGrid, .relatedGrid { grid-template-columns: 1fr; }
+  .heroGrid { gap: 36px; }
+  .fit { padding: 28px; }
+  .serviceIndex { font-size: 48px; margin-bottom: 28px; }
+  .fit li { font-size: 15px; }
+  .directoryCard { padding: 26px; }
+  .directoryCard h2 { font-size: 28px; }
+  .number { margin-bottom: 24px; }
+  .supportLink { display: block; padding-top: 32px; margin-top: 32px; }
+  .supportLink > div { margin-bottom: 24px; }
+  .helpGrid { gap: 28px; }
+  .processGrid { gap: 32px; margin-top: 32px; }
+  .question summary { gap: 16px; }
+  .question summary > span:first-child { font-size: 16px; }
+  .question > div { padding-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .directoryCard, .plus { transition: none; } }
+@media print {
+  .heroGrid { grid-template-columns: 2fr 1fr; gap: 24px; }
+  .helpGrid, .processGrid, .directoryGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .fit, .helpGrid article, .processGrid > div, .directoryCard, .question { break-inside: avoid; }
+}

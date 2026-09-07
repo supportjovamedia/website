@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 
+import { serviceOptions } from "@/lib/service-options";
+
 import { contactEmail } from "@/lib/site";
 
 export default function ContactForm() {
@@ -179,13 +181,7 @@ export default function ContactForm() {
 
             <option>A little guidance</option>
 
-            <option>Brand & strategy</option>
-
-            <option>Websites & digital</option>
-
-            <option>Social & content</option>
-
-            <option>Performance & growth</option>
+            {serviceOptions.map((name) => <option key={name}>{name}</option>)}
 
             <option>A connected programme</option>
 

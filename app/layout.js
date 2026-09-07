@@ -20,7 +20,7 @@ export const metadata = {
     template: "%s | JovaMedia",
   },
   description:
-    "JovaMedia is a London digital agency specialising in websites, SEO, paid media, content, social and brand strategy.",
+    "JovaMedia is a London digital agency for websites, copywriting, social media, brand design, email automation and content production.",
   openGraph: {
     title: "JovaMedia — Your Digital Partner",
     description:
@@ -43,7 +43,7 @@ const organisation = {
   "@type": "Organization",
   "@id": "https://www.jovamedia.com/#organisation",
   name: "JovaMedia",
-  description: "London, UK digital agency providing web design, branding, SEO, social media and paid media services.",
+  description: "London digital agency providing websites, copywriting, social media, brand strategy and design, email automation and content production.",
   sameAs: socialProfiles.map(profile => profile.url),
   url: "https://www.jovamedia.com",
   logo: "https://www.jovamedia.com/brand/jova-logo.png",

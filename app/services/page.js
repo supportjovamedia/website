@@ -1,137 +1,33 @@
-import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
-import { services } from "@/lib/data";
-export const metadata = pageMetadata(
-  "/services",
-  "Digital Marketing, Web Design & SEO Services",
-  "Explore web design, SEO, paid media, social media, branding, content and business automation services from JovaMedia. Find support for your business goals.",
-);
+import { pageMetadata } from "@/lib/seo";
+import { primaryServices } from "@/lib/service-catalogue";
+import styles from "./services.module.css";
 
-const groups = [
-  [
-    "Strategy & Growth",
-    [
-      "competitor-analysis",
-      "digital-marketing",
-      "social-strategy",
-      "analytics-reporting",
-    ],
-  ],
-
-  [
-    "Social & Community",
-    [
-      "social-management",
-      "community-listening",
-      "social-selling",
-      "influencer-marketing",
-    ],
-  ],
-
-  [
-    "Content & Creative",
-    [
-      "content-production",
-      "media-content",
-      "content",
-      "email-marketing",
-      "graphic-design",
-      "brand-strategy",
-    ],
-  ],
-
-  [
-    "Web, Search & Technology",
-    [
-      "web-design",
-      "seo",
-      "ai-automation",
-      "business-digital-setup",
-      "hosting-support",
-      "paid-media",
-    ],
-  ],
-];
+export const metadata = pageMetadata("/services", "Websites, Copywriting & Creative Services", "Explore websites, copywriting, social media, brand strategy and design, email automation and content production from JovaMedia, your London digital partner.");
 
 export default function Page() {
-  return (
-    <main>
-      <section className="page-hero services-hero">
-        <div className="shell">
-          <div className="kicker">Capabilities</div>
-          <h1>
-            One agency.
-            <br />
-            More ways to grow.
-          </h1>
-          <p className="lead">
-            From the first scroll to the final conversion, we help brands plan,
-            create, activate and improve the digital experiences that move
-            people.
-          </p>
-          <div className="actions">
-            <Link href="/contact" className="btn">
-              Build your scope
-            </Link>
-            <a href="#services" className="text-link">
-              Explore capabilities{" "}
-            </a>
-          </div>
+  return <main className={styles.catalogue}>
+    <section className={`page-hero ${styles.hero}`}>
+      <div className="shell">
+        <p className="kicker">What we offer</p>
+        <h1>Good ideas.<br />The right support.</h1>
+        <p className="lead">A new website, a clearer message or a more consistent presence. Start with one service, or bring a few together around your business.</p>
+        <div className="actions"><a className="btn" href="#services">Find your service</a><Link className="text-link" href="/contact">Talk through your brief</Link></div>
+      </div>
+    </section>
+    <section className={`section ${styles.directory}`} id="services" aria-label="Our six services">
+      <div className="shell">
+        <div className={styles.directoryGrid}>
+          {primaryServices.map((service, i) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard}>
+            <span className={styles.number}>0{i + 1}</span>
+            <p className="kicker">{service.eyebrow}</p>
+            <h2>{service.name}</h2><p>{service.summary}</p>
+            <div className={styles.cardFoot}><span>Explore service <span aria-hidden="true">↗</span></span></div>
+          </Link>)}
         </div>
-      </section>
-      <section className="band band-navy">
-        <div className="shell band-grid">
-          <div className="kicker">How to use us</div>
-          <h2>Bring us a channel, a campaign or the whole problem.</h2>
-          <p>
-            Choose a focused engagement or combine capabilities around a bigger
-            objective. We shape the team and cadence around what the work needs.
-          </p>
-        </div>
-      </section>
-      <section id="services" className="section service-directory">
-        <div className="shell">
-          {groups.map(([title, slugs], gi) => (
-            <div className="service-group" key={title}>
-              <div className="service-group-title">
-                <h2>{title}</h2>
-              </div>
-              <div className="service-group-grid">
-                {slugs.map((slug, i) => {
-                  const s = services.find((x) => x.slug === slug);
-                  return (
-                    <Link
-                      href={"/services/" + s.slug}
-                      className={`directory-card tone-${((gi + i) % 3) + 1}`}
-                      key={s.slug}
-                    >
-                      <small>{s.eyebrow}</small>
-                      <h3>{s.name}</h3>
-                      <p>{s.summary}</p>
-                      <div>
-                        <span>{s.from}</span>
-                        <b>Explore </b>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-      <section className="band band-gold">
-        <div className="shell statement">
-          <div className="kicker">Not sure what you need?</div>
-          <h2>
-            Tell us the business problem. We’ll help work backwards to the right
-            mix.
-          </h2>
-          <Link href="/contact" className="btn dark-button">
-            Talk to JovaMedia
-          </Link>
-        </div>
-      </section>
-    </main>
-  );
+        <div className={styles.supportLink}><div><h2>Already online. Ready to be found?</h2><p>Search and local visibility support is also available for your website and Google Business Profile.</p></div><Link className="text-link" href="/services/seo">Explore search & local visibility</Link></div>
+      </div>
+    </section>
+    <section className={`section ${styles.custom}`}><div className="shell"><p className="kicker">Made around your brief</p><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><Link href="/contact" className="btn">Let’s plan your project</Link></div></section>
+  </main>;
 }

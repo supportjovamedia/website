@@ -9,7 +9,7 @@ test("every sitemap page responds with its canonical URL and one main heading", 
   const routes = [...(await sitemap.text()).matchAll(/<loc>(.*?)<\/loc>/g)].map(
     (match) => new URL(match[1]).pathname,
   );
-  assert.equal(routes.length, 29);
+  assert.equal(routes.length, 16);
   for (const route of routes) {
     const response = await fetch(base + route);
     assert.equal(response.status, 200, route);
