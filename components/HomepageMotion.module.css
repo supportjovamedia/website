@@ -3,11 +3,13 @@
 .pending:focus-within { opacity: 1; translate: none; transition-delay: 0s; }
 .photo { overflow: hidden; }
 .photo img { transform: translateY(var(--photo-y, 0px)) scale(1.09); transition: transform .35s ease-out; }
-.card.reveal { transition: opacity .8s ease var(--reveal-delay, 0ms), translate .9s cubic-bezier(.16,1,.3,1) var(--reveal-delay, 0ms), transform .3s ease, box-shadow .3s ease, background .3s ease; }
+.card.reveal { transition: opacity .7s ease var(--reveal-delay, 0ms), translate .95s cubic-bezier(.16,1,.3,1) var(--reveal-delay, 0ms), rotate .95s cubic-bezier(.16,1,.3,1) var(--reveal-delay, 0ms), scale .95s cubic-bezier(.16,1,.3,1) var(--reveal-delay, 0ms), transform .3s ease, box-shadow .3s ease, background .3s ease; }
+.card.pending { translate: var(--entry-x, 0px) 55px; rotate: var(--entry-angle, 0deg); scale: .95; }
+.card:focus-within { rotate: none; scale: 1; translate: none; }
 .button { transition: transform .25s ease, box-shadow .25s ease, background .25s ease; }
 @media (hover: hover) and (pointer: fine) {
   .card:hover { transform: translateY(-8px); box-shadow: 0 16px 32px #23578916; }
   .button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px #02010012; }
 }
 @media (prefers-reduced-motion: reduce) { .reveal, .pending, .photo img { opacity: 1; translate: none; transform: none; transition: none; } }
-@media print { .reveal, .pending, .photo img { opacity: 1; translate: none; transform: none; } }
+@media print { .reveal, .card.pending, .pending, .photo img { opacity: 1; translate: none; rotate: none; scale: 1; transform: none; } }

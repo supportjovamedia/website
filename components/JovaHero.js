@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import JovaScene from './JovaScene';
 import Link from 'next/link';
 import styles from './JovaHero.module.css';
 import HomepageMotion from './HomepageMotion';
@@ -19,7 +19,7 @@ export default function JovaHero() {
           </Link>
         </div>
         <div className={styles.artwork}>
-          <Image src="/campaign/jova-hero.png" alt="Jova waving beside a floating website preview, with soft blue, yellow and red accents" width={1484} height={1060} sizes="(max-width: 900px) 100vw, (max-width: 1280px) 58vw, 760px" preload />
+          <JovaScene />
         </div>
       </div>
     </section>

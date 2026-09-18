@@ -19,7 +19,11 @@ export default function HomepageMotion() {
       const photos = [...main.querySelectorAll('figure')];
       const cards = [...main.querySelectorAll('a[href^="/services/"]')];
       const buttons = [...main.querySelectorAll('a.btn')];
-      for (const card of cards) card.classList.add(styles.card);
+      for (const [index, card] of cards.entries()) {
+        card.classList.add(styles.card);
+        card.style.setProperty('--entry-x', index % 2 ? '26px' : '-26px');
+        card.style.setProperty('--entry-angle', index % 2 ? '3deg' : '-3deg');
+      }
       for (const button of buttons) button.classList.add(styles.button);
       const observer = new IntersectionObserver(entries => {
         for (const entry of entries) {
@@ -47,7 +51,8 @@ export default function HomepageMotion() {
         const rect = hero.getBoundingClientRect();
         const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
         hero.style.setProperty('--art-x', `${x * 15}px`);
-        hero.style.setProperty('--art-y', `${y * 9 + progress * 65}px`);
+        hero.style.setProperty('--art-y', `${y * 9 + progress * 42}px`);
+        hero.style.setProperty('--mascot-y', `${-progress * 35}px`);
         hero.style.setProperty('--art-rotate', `${x * 1.8}deg`);
         hero.style.setProperty('--art-scale', `${1 + progress * .045}`);
         for (const photo of photos) {
@@ -81,9 +86,13 @@ export default function HomepageMotion() {
           section.style.removeProperty('--reveal-delay');
         }
         for (const photo of photos) { photo.classList.remove(styles.photo); photo.style.removeProperty('--photo-y'); }
-        for (const card of cards) card.classList.remove(styles.card);
+        for (const card of cards) {
+          card.classList.remove(styles.card);
+          card.style.removeProperty('--entry-x');
+          card.style.removeProperty('--entry-angle');
+        }
         for (const button of buttons) button.classList.remove(styles.button);
-        for (const name of ['--art-x', '--art-y', '--art-rotate', '--art-scale']) hero.style.removeProperty(name);
+        for (const name of ['--art-x', '--art-y', '--art-rotate', '--art-scale', '--mascot-y']) hero.style.removeProperty(name);
       };
     }
     setup();

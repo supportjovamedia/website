@@ -1,0 +1,16 @@
+.scene { position: relative; isolation: isolate; }
+.browser { animation: browserIn 1.25s cubic-bezier(.16,1,.3,1) .1s both; transform-origin: 65% 70%; }
+.browser img { display: block; width: 100%; height: auto; transform: translate3d(var(--art-x,0px),var(--art-y,0px),0) rotate(var(--art-rotate,0deg)); transition: transform .45s ease-out; }
+.character { position: absolute; width: 31%; left: 7%; bottom: 11%; z-index: 2; transform: translateY(var(--mascot-y,0px)); transition: transform .45s ease-out; }
+.mascot { appearance: none; display: block; position: relative; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; color: #235789; animation: jovaIn 1.2s cubic-bezier(.2,.8,.25,1) .4s both; -webkit-tap-highlight-color: transparent; }
+.pose { display: block; position: relative; transform-origin: 50% 95%; }
+.pose img { display: block; width: 100%; height: auto; transition: opacity .15s; }
+.pose .wink { position: absolute; inset: 0; }
+.pose .hidden { opacity: 0; }
+.label { display: inline-block; position: absolute; left: 50%; bottom: -16px; white-space: nowrap; transform: translateX(-50%); font-size: 11px; font-weight: 650; background: #fdfffc; border: 1px solid #23578920; padding: 6px 12px; border-radius: 30px; box-shadow: 0 3px 12px #2357890b; }
+.mascot:focus-visible { outline: 2px solid #235789; outline-offset: 4px; border-radius: 20px; }
+.greeting .pose { animation: hello .8s ease-in-out; }
+@keyframes browserIn { from { opacity: 0; transform: translate(55px,25px) rotate(7deg) scale(.87); } to { opacity: 1; transform: none; } }
+@keyframes jovaIn { 0% { opacity: 0; transform: translate(-45px,35px) rotate(-12deg) scale(.75); } 65% { opacity: 1; transform: translate(0,-8px) rotate(5deg) scale(1.03); } 100% { opacity: 1; transform: none; } }
+@keyframes hello { 0%,100% { transform: none; } 25% { transform: translateY(-14px) rotate(-8deg); } 55% { transform: translateY(-8px) rotate(7deg); } 80% { transform: rotate(-3deg); } }
+@media (prefers-reduced-motion: reduce) { .browser,.mascot,.greeting .pose { animation: none; } .browser img,.character,.pose img { transition: none; transform: none; } }
