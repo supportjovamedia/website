@@ -387,6 +387,8 @@
 }
 .cta {
   padding-block: var(--section-space);
+  background: #edf3f7;
+  margin-top: 40px;
 }
 .cta > div {
   display: grid;
