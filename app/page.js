@@ -1,3 +1,4 @@
+import JovaHero from "@/components/JovaHero";
 import { primaryServices } from "@/lib/service-catalogue";
 import { pageMetadata } from "@/lib/seo";
 import Image from "next/image";
@@ -58,38 +59,7 @@ const values = [
 export default function Home() {
   return (
     <main className={styles.home}>
-      <section className={`shell ${styles.hero}`}>
-        <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>Creative digital agency</p>
-          <p className={styles.location}>
-            London, UK · Thinking beyond borders
-          </p>
-          <h1>
-            <span>JOVA </span> Your Digital Partner
-          </h1>
-          <div className={styles.swoosh} />
-          <p className={styles.heroLead}>
-            From websites and branding to digital marketing and creative
-            content, we help businesses build a stronger presence, reach the
-            right customers and grow online. Good ideas deserve great execution!
-          </p>
-          <div className={styles.heroActions}>
-            <Link href="/contact" className="btn">
-              Get Started{" "}
-            </Link>
-          </div>
-        </div>
-        <figure className={styles.heroVisual}>
-          <Image
-            src="/campaign/hero.webp"
-            alt="Conceptual digital agency workspace with a laptop and design graphics against a yellow background"
-            width={1024}
-            height={1280}
-            sizes="(max-width:700px) 100vw, 48vw"
-            preload
-          />
-        </figure>
-      </section>
+      <JovaHero />
 
       <section className={styles.partnership}>
         <div className={`shell ${styles.partnershipGrid}`}>
@@ -141,6 +111,7 @@ export default function Home() {
               key={slug}
               href={`/services/${slug}`}
               className={styles.serviceCard}
+              data-motion-order={i % 3}
             >
               <div className={styles.serviceTop}>
                 <span aria-hidden="true">0{i + 1}</span>
@@ -216,7 +187,7 @@ export default function Home() {
         </div>
         <ol className={styles.steps}>
           {steps.map(([title, body], i) => (
-            <li key={title}>
+            <li key={title} data-motion-order={i}>
               <span className={styles.stepNumber}>0{i + 1}</span>
               <h3>{title}</h3>
               <p>{body}</p>
@@ -241,7 +212,7 @@ export default function Home() {
               not have considered yet. Your business deserves more than a standard solution.
             </p>
           </div>
-          <div className={styles.values}>
+          <div className={styles.values} data-motion-group="values">
             {values.map(([title, body, icon]) => (
               <div key={title}>
                 <LineIcon name={icon} />
