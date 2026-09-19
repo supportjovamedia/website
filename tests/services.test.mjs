@@ -20,7 +20,7 @@ test("public service pages have no commercial tables, prices or internal tiers",
 test("homepage presents the six intended services in order", async () => {
   const html = await (await fetch(base)).text();
   const serviceCards = [...html.matchAll(/href="\/services\/([^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(serviceCards.slice(0, 6), mainServices);
+  assert.deepEqual([...new Set(serviceCards)].slice(0, 6), mainServices);
 });
 test("old service URLs redirect directly to a current information page", async () => {
   for (const [source, target] of Object.entries(serviceRedirects)) {
