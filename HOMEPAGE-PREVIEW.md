@@ -2,14 +2,14 @@
 
 Local preview: http://127.0.0.1:3000/
 
-Homepage-only rebrand with the original JovaMedia logo, warm white, ink, restrained red and a dark services section. Other pages retain their existing presentation.
+The approved photographic hero is preserved: Ideas, Websites and Brands move through three scroll chapters. The active word centers and enlarges while the photograph and supporting copy change. Mobile content stays centered. Natural page scrolling continues into the main homepage, with no wheel interception.
 
-The hero has three scroll chapters: Ideas, Websites and Brands. The active word moves to the center, enlarges and changes the accompanying photograph and copy. Chapter buttons also allow direct navigation. Natural page scrolling continues into the studio section. There is no wheel interception.
+Below the hero, the supplied homepage reference governs the composition: a full-width monochrome studio strip, compact three-column studio introduction, bold capability strip, an asymmetric Selected Concepts grid, six equal service cards on dark navy, process, dark Why Jova strip, FAQ, insights, red contact section and white footer. Selected Concepts is restored following the latest request to match the supplied design.
 
-Services follow a six-step pinned scroll sequence with compact named controls, real photography and links to existing service pages. Discover, Design, Develop and Launch highlight sequentially. Why Jova uses scroll-linked movement and SVG line drawing. Section reveals, a serif text strip and hover transitions connect the remaining sections. Motion can be paused, and reduced-motion preferences remove pinned sequences.
+Each service has distinct CSS artwork using real photographs and editable text: laptop, printed book, phone, original-logo brand book, email newsletter and camera. All six service links are simultaneously visible and keyboard accessible. Existing service destinations are retained. Desktop uses six columns, tablet three and mobile two.
 
-Selected Concepts has been removed. Insights remain as short readable dialogs, the FAQ uses native disclosure controls, and the footer remains white. The hero uses a single large photograph per chapter with integrated copy, without a floating Start a project button.
+The process retains its scroll-driven red progression. Section entrances, image parallax, icon line drawing and hover details remain. Pause and reduced-motion preferences are respected. Concept and insight previews use accessible dialogs and the FAQ uses native disclosure controls.
 
-Photography sources and original download URLs are recorded in public/home-agency/sources.json. These are illustrative stock photographs, not claimed client work or JovaMedia staff. Final WebP exports were inspected: all eleven contain only VP8 image chunks, with no EXIF, XMP or C2PA metadata. The hero uses three additional real photographs with CSS transitions. Originals are preserved in work/pikiz-home-reference/hero-photo-review outside the repository.
+Only the homepage presentation changes. The original JovaMedia logo is retained. Photography sources are documented in PHOTO-CREDITS.md and public/home-agency/sources.json. Concepts are explicitly illustrative, not claimed client work. WebP exports contain only image data, with no EXIF, XMP or C2PA metadata. Source photographs remain preserved in the workspace.
 
-Validation: production build, source lint, 46 existing tests, desktop and mobile visual checks, chapter and service navigation checks. Existing unrelated edits to components/HomepageMotion.js and public/campaign/costa-showcase.jpg are excluded.
+Validation: production build, targeted ESLint, 46 existing tests, desktop and mobile visual checks. Unrelated pre-existing edits to components/HomepageMotion.js and public/campaign/costa-showcase.jpg are excluded.

@@ -11,7 +11,7 @@ Real stock photographs from Pexels, used as illustrative visual material. Origin
 - Design planning: https://www.pexels.com/photo/people-drawing-designs-on-papers-8000529/
 - Camera: https://www.pexels.com/photo/close-up-shot-of-a-black-camera-10357232/
 
-Coastline and vessels were acquired for the earlier concept layout and remain available for future image selection. They are not currently displayed on the homepage.
+Coastline and ceramic vessels appear in the illustrative concept grid.
 
 Hero photography:
 
