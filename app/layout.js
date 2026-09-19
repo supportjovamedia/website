@@ -5,6 +5,7 @@ import "./direction.css";
 import "./readiness.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SiteChrome from "@/components/SiteChrome";
 import { socialProfiles } from "@/lib/site";
 const jakarta = localFont({
   src: "./fonts/plus-jakarta-sans.woff2",
@@ -62,12 +63,11 @@ export default function RootLayout({ children }) {
       data-scroll-behavior="smooth"
     >
       <body>
-        <Header />
+        <SiteChrome header={<Header />} footer={<><GrowthSignup newsletter /><Footer /></>}>
         <div id="main-content" tabIndex={-1}>
           {children}
         </div>
-        <GrowthSignup newsletter />
-        <Footer />
+        </SiteChrome>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
