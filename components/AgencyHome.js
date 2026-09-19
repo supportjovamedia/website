@@ -6,6 +6,7 @@ import CookieConsent from "./CookieConsent";
 import s from "./AgencyHome.module.css";
 import r from "./ReferenceHome.module.css";
 import ServiceArtwork from "./ServiceArtwork";
+import LayeredStudio from "./LayeredStudio";
 const services = [
  ["Website Development", "Beautiful, high-performing websites that convert.", "web-design", "desk"],
  ["Copywriting", "Words that work harder for your business.", "content", "book"],
@@ -82,7 +83,7 @@ export default function AgencyHome(){
   </div></section>
   <div className={r.body}>
   <div className={r.studioBanner}><div className={r.bannerImage} data-scroll><Photo name="sketch" alt="Creative team working together on website plans"/></div><div className={r.bannerWords} aria-hidden="true">Strategy<br/>Design<br/>Better Websites<br/>Brighter Brands</div></div>
-  <section className={r.studio} id="studio"><div data-reveal><p className={r.label}>(01) THE STUDIO</p><h2>Small details.<br/>Big difference.</h2></div><div className={r.studioIntro} data-reveal><p>JovaMedia brings design, development and digital services together to help your business move forward.</p><Link href="/about" className={r.textLink}>Meet your digital partner <Arrow/></Link></div><div className={r.disciplines} data-reveal>{['Strategy','Design','Technology'].map((label,i)=><div key={label}><div className={`${r.disciplineArt} ${r['discipline'+i]}`} aria-hidden="true"><i/></div><span>{label}</span></div>)}</div></section>
+  <LayeredStudio paused={paused}/>
   <div className={r.marquee} aria-label="Web design. Development. Digital thinking."><div aria-hidden="true">{[0,1].map(n=><span key={n}>WEB DESIGN <b>✦</b> DEVELOPMENT <b>✦</b> DIGITAL THINKING <b>✦</b> </span>)}</div></div>
   <section className={r.work} id="work"><div className={r.sectionHeading} data-reveal><div><p className={r.label}>(02) SELECTED CONCEPTS</p><h2>Digital experiences.<br/>Made to stand out.</h2></div><Link href="/work" className={r.textLink}>View all work <Arrow/></Link></div><div className={r.projectGrid}>{[
    {name:'Coast',image:'coast',title:'Explore a wider world.',label:'Travel website concept',paragraphs:['An independent travel website exploration, built around coastal photography and a clear journey from inspiration to enquiry. This is illustrative concept work.']},
