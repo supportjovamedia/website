@@ -1,13 +1,15 @@
 # JovaMedia homepage preview
 
-Local preview: http://127.0.0.1:3000
+Local preview: http://127.0.0.1:3000/
 
-This branch explores a homepage rebrand informed by the supplied PIKIZ recording. It retains the original JovaMedia logo and blue, uses alternating light and navy sections, and adds clearer service and process content. Only the homepage uses the new presentation. Other routes retain their existing shared header, newsletter and footer.
+Homepage-only rebrand with the original JovaMedia logo, warm white, ink, restrained red and a dark services section. Other pages retain their existing presentation.
 
-Motion includes a title entrance, a staggered project gallery responding to scroll, image parallax, section reveals and a pausable text strip. Reduced-motion preferences are respected. Project previews open as keyboard-accessible dialogs; the FAQ uses native disclosure controls.
+The hero has three scroll chapters: Ideas, Websites and Brands. The active word moves to the center, enlarges and changes the accompanying photograph and copy. Chapter buttons also allow direct navigation. Natural page scrolling continues into the studio section. There is no wheel interception.
 
-The three images are optimised copies of existing JovaMedia concept work. Source originals were preserved at their existing workspace paths. Final WebP files contain only VP8 image chunks, with no EXIF, XMP or C2PA chunks. No paid image or video generation was used. The Costa study is clearly identified as independent work rather than a client commission.
+Services follow a six-step pinned scroll sequence with compact named controls, real photography and links to existing service pages. Discover, Design, Develop and Launch highlight sequentially. Why Jova uses scroll-linked movement and SVG line drawing. Section reveals, a serif text strip and hover transitions connect the remaining sections. Motion can be paused, and reduced-motion preferences remove pinned sequences.
 
-Verification: local production build, source lint, 46 existing tests against the running local server, desktop and mobile browser checks. The existing service-link test now checks unique destinations because the design has both service links and group navigation.
+Selected Concepts has been removed. Insights remain as short readable dialogs, the FAQ uses native disclosure controls, and the footer remains white. The hero uses a single large photograph per chapter with integrated copy, without a floating Start a project button.
 
-Unrelated pre-existing edits to components/HomepageMotion.js and public/campaign/costa-showcase.jpg are excluded from this branch's commit.
+Photography sources and original download URLs are recorded in public/home-agency/sources.json. These are illustrative stock photographs, not claimed client work or JovaMedia staff. Final WebP exports were inspected: all eleven contain only VP8 image chunks, with no EXIF, XMP or C2PA metadata. The hero uses three additional real photographs with CSS transitions. Originals are preserved in work/pikiz-home-reference/hero-photo-review outside the repository.
+
+Validation: production build, source lint, 46 existing tests, desktop and mobile visual checks, chapter and service navigation checks. Existing unrelated edits to components/HomepageMotion.js and public/campaign/costa-showcase.jpg are excluded.
