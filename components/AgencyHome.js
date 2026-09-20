@@ -9,19 +9,15 @@ import ServiceCardsPreview from "./ServiceCardsPreview";
 import LayeredStudio from "./LayeredStudio";
 import WhyJovaPreview from "./WhyJovaPreview";
 import SelectedConcepts from "./SelectedConcepts";
+import Industries from "./Industries";
 import CapabilityStrip from "./CapabilityStrip";
 import { ProcessStory, FaqStory } from "./ScrollStories";
 import hero from "./UnifiedHero.module.css";
-const chapters = [
- {word:"Ideas", title:"A clear idea. A brighter direction.", copy:"We find what makes your business different and turn it into a direction worth following.", visual:"Ideas with impact.", foot:"Strategy with a point of view."},
- {word:"Websites", title:"Built to make your next move.", copy:"Thoughtful design and seamless development. A website that feels like you and works for your customers.", visual:"Make your next move.", foot:"Considered design. Seamless experience."},
- {word:"Brands", title:"Made to mean something.", copy:"A distinctive identity, a consistent voice and content that gives people a reason to remember you.", visual:"Make your mark.", foot:"Distinctive by design."}
-];
 function Arrow(){return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.6"/></svg>}
 function Photo({name,alt=""}){return <div className={s.photo} data-photo><Image src={`/home-agency/${name}.webp`} alt={alt} fill sizes="(max-width:700px) 100vw, 55vw"/></div>}
 export default function AgencyHome(){
  const root=useRef(null);
- const [paused,setPaused]=useState(false),[heroStep,setHeroStep]=useState(0);
+ const [paused,setPaused]=useState(false);
  useEffect(()=>{
   const el=root.current,mq=matchMedia('(prefers-reduced-motion: reduce)');let teardown=()=>{};
   function setup(){
@@ -32,9 +28,6 @@ export default function AgencyHome(){
    let frame=0;
    const paint=()=>{
     frame=0;
-    const hero=el.querySelector('[data-hero]'),hr=hero.getBoundingClientRect(),hp=Math.min(1,Math.max(0,-hr.top/Math.max(1,hr.height-innerHeight)));
-    const nextHero=Math.min(2,Math.floor(hp*3));setHeroStep(previous=>previous===nextHero?previous:nextHero);
-    el.style.setProperty('--hero',hp);el.style.setProperty('--chapter-progress',Math.min(1,hp*3-nextHero));
     scrolling.forEach(e=>{const r=e.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight+100)return;const p=Math.min(1,Math.max(0,(innerHeight-r.top)/(innerHeight*.65)));e.style.setProperty('--progress',p);e.style.setProperty('--pan',`${Math.max(-36,Math.min(36,(innerHeight/2-r.top-r.height/2)*.09))}px`)});
    };
    const request=()=>{if(!frame)frame=requestAnimationFrame(paint)};
@@ -43,42 +36,27 @@ export default function AgencyHome(){
   }
   setup();mq.addEventListener('change',setup);return()=>{teardown();mq.removeEventListener('change',setup)};
  },[paused]);
- const goChapter=i=>{
-  if(paused||matchMedia('(prefers-reduced-motion: reduce)').matches){setHeroStep(i);return;}
-  const node=root.current.querySelector('[data-hero]');
-  window.scrollTo({top:window.scrollY+node.getBoundingClientRect().top+(node.offsetHeight-innerHeight)*(i+.18)/3,behavior:'smooth'});
- };
  return <div className={`${s.home} ${paused?s.paused:''}`} ref={root}>
  <main id="agency-main">
-  <section className={hero.scroll} data-hero aria-label="Ideas, websites and brands" data-paused={paused}>
-    <div className={hero.panel} data-step={heroStep}>
+  <section className={hero.banner} aria-labelledby="home-title">
+    <div className={hero.inner}>
       <div className={hero.content}>
-        <p className={hero.eyebrow}>STRATEGY. DESIGN. DIGITAL.</p>
-        <h1>Good ideas.<br/><em>Distinctive digital.</em></h1>
-        <div className={hero.story} key={heroStep}><p>{chapters[heroStep].copy}</p></div>
-        <a className={hero.cta} href="#studio">Meet your digital partner</a>
+        <p className={hero.eyebrow}>YOUR NEXT CHAPTER STARTS HERE</p>
+        <h1 id="home-title">Good ideas.<br/>Better websites.<br/><em>Brighter businesses.</em></h1>
+        <p className={hero.copy}>We bring websites, brands and digital experiences together to help your business move forward.</p>
+        <div className={hero.actions}><Link href="/services" className={hero.cta}>Explore our services</Link><Link href="/contact" className={hero.secondary}>Let’s talk</Link></div>
       </div>
-      <div className={hero.showcase} aria-label="From creative direction to websites and brand identity">
-        {[
-          ['hero-crafted-ideas','Ideas','Find your direction','A sculptural paper ribbon turning pencil sketches into a finished graphic idea'],
-          ['hero-crafted-websites','Websites','Build your next chapter','An architectural website presented on a graphite laptop and phone'],
-          ['hero-crafted-brands','Brands','Make a lasting impression','An embossed identity manual, letterpress cards and vermilion packaging']
-        ].map(([image,name,caption,alt],i)=><div className={hero.project} key={image} data-position={i} data-slot={(i-heroStep+3)%3} data-featured={heroStep===i}>
-          <div className={hero.projectScreen}><Image src={`/home-agency/${image}.webp`} alt={alt} fill sizes="(max-width:700px) 80vw, 45vw" preload={i===0}/></div>
-          <div className={hero.projectBar}><span>0{i+1} / {name}</span><span>{caption}</span></div>
-        </div>)}
-      </div>
-      <div className={hero.bottom}>
-        <nav className={hero.chapters} aria-label="Explore our approach">{chapters.map((chapter,i)=><button key={chapter.word} onClick={()=>goChapter(i)} aria-pressed={heroStep===i} data-active={heroStep===i}><small>0{i+1}</small><span>{chapter.word}</span><i aria-hidden="true"/></button>)}</nav>
-        <div className={hero.controls}><span>Scroll to explore ↓</span><button onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'Play motion':'Pause motion'}</button></div>
-      </div>
+      <div className={hero.visual}><Image src="/home-agency/hero-workspace.webp" alt="A web design workspace with a desktop monitor, mobile preview and paper sketches" fill sizes="(max-width:700px) 92vw, 48vw" preload /></div>
     </div>
+    <div className={hero.bottom}><a href="#studio">Scroll to explore ↓</a><button onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'Play page motion':'Pause page motion'}</button></div>
+
   </section>
   <div className={r.body}>
-  <div className={r.studioBanner}><div className={r.bannerImage} data-scroll><Photo name="sketch" alt="Creative team working together on website plans"/></div><div className={r.bannerWords} aria-hidden="true">Strategy<br/>Design<br/>Better Websites<br/>Brighter Brands</div></div>
+  <div className={r.studioBanner}><svg className={r.heroWave} viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1440V25C1170 125 1020 100 720 35S250 150 0 35Z" fill="#0c2948"/></svg><div className={r.bannerImage} data-scroll><Photo name="sketch" alt="Creative team working together on website plans"/></div><div className={r.bannerWords} aria-hidden="true">Strategy<br/>Design<br/>Better Websites<br/>Brighter Brands</div></div>
   <LayeredStudio paused={paused}/>
   <CapabilityStrip paused={paused}/>
   <SelectedConcepts/>
+  <Industries/>
   <ServiceCardsPreview paused={paused}/>
   <ProcessStory paused={paused}/>
   <WhyJovaPreview/>

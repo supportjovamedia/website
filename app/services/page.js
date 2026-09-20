@@ -17,7 +17,7 @@ export default function Page() {
         <div className="actions"><a className="btn" href="#services">Find your service</a><Link className="text-link" href="/contact">Talk through your brief</Link></div>
       </div>
     </section>
-    <section className={`section ${styles.directory}`} id="services" aria-label="Our six services">
+    <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
       <div className="shell">
         <div className={styles.directoryGrid}>
           {primaryServices.map((service, i) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard}>
