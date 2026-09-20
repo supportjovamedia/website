@@ -187,8 +187,8 @@ export default function ContactForm() {
         </label>
         </> : <input type="hidden" name="service" value={purpose === "support" ? "Existing client support" : "General enquiry"} />}
         <label><span>{isProject ? "Tell us a little about the project" : "Your message"} <Required /></span>
-          <textarea name="message" required minLength={isProject ? 100 : 10} maxLength={3000} rows={5} placeholder={isProject ? "Tell us about your business, what you need and what you’d like to achieve." : "Ask your question or tell us what you need help with."} onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
-          <span className="field-hint" id="message-hint">At least {isProject ? 100 : 10} characters. {messageLength.toLocaleString("en-GB")} / 3,000 characters.</span>
+          <textarea name="message" required minLength={10} maxLength={3000} rows={5} placeholder={isProject ? "Tell us about your business, what you need and what you’d like to achieve." : "Ask your question or tell us what you need help with."} onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
+          <span className="field-hint" id="message-hint">At least 10 characters. {messageLength.toLocaleString("en-GB")} / 3,000 characters.</span>
           {fieldError("message")}
         </label>
       </fieldset>

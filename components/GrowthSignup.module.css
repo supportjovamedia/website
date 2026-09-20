@@ -13,3 +13,6 @@
 .newsletter.whiteNewsletter { background: #fff; }
 
 @media(max-width:700px){.newsletter .form{text-align:center}.newsletter .form input{text-align:left}}
+
+/* Shared dark newsletter theme on both home and inner pages. */
+.newsletter.newsletter{background:#071b29;color:#fff}.newsletter.newsletter h2,.newsletter.newsletter label{color:#fff}.newsletter.newsletter p:not(.message){color:#dbe3ee!important}.newsletter.newsletter .form button{background:var(--brand-red);color:#fff}.newsletter.newsletter .form button:hover{background:var(--brand-red-hover)}.newsletter.newsletter .privacy a{border-bottom:0;text-decoration:underline;text-underline-offset:3px;color:inherit}.newsletter.newsletter .message{color:#a2e7bb}.newsletter.newsletter .error{color:#ffc0c0}
