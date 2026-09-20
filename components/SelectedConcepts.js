@@ -2,21 +2,30 @@ import Image from "next/image";
 import s from "./SelectedConcepts.module.css";
 
 const concepts = [
-  { name: "Daybreak", image: "daybreak", alt: "Daybreak coffee website with an orange hero and iced coffee" },
-  { name: "Stillleaf", image: "stillleaf", alt: "Stillleaf Matcha website with green typography and a matcha bowl" },
-  { name: "Vellune", image: "vellune", alt: "Vellune fragrance website with a warm neutral palette and perfume bottle" },
+  { name: "Sumera’s", image: "sumera", category: "Hair, beauty & academy", width: 789, height: 1994 },
+  { name: "KOVA", image: "kova", category: "Coffee & hospitality", width: 870, height: 1808 },
+  { name: "Knitly", image: "knitly", category: "Handmade & lifestyle", width: 870, height: 1808 },
+  { name: "NÉRA", image: "nera", category: "Fragrance & beauty", width: 787, height: 1999 },
+  { name: "NEXO", image: "nexo", category: "Construction & architecture", width: 826, height: 1904 },
+  { name: "Dolcé", image: "dolce", category: "Cakes & sweets", width: 843, height: 1866 },
 ];
 
 export default function SelectedConcepts() {
   return <section id="work" className={s.section} aria-labelledby="concepts-title">
     <header className={s.heading} data-reveal>
-      <p>(02) SELECTED CONCEPTS</p>
-      <h2 id="concepts-title">Digital experiences.<br />Made to stand out.</h2>
+      <div><p>(02) OUR WORK</p><h2 id="concepts-title">Digital experiences.<br />Made to stand out.</h2></div>
+      <span>Different businesses. Distinctive design.<br />Scroll inside each preview to explore.</span>
     </header>
     <div className={s.grid}>
-      {concepts.map(({ name, image, alt }, index) => <figure key={name} data-reveal style={{ "--delay": `${index * 80}ms` }}>
-        <div className={s.image}><Image src={`/home-selected/${image}.webp`} alt={alt} fill sizes="(max-width: 700px) 90vw, 31vw" /></div>
-        <figcaption>{name}</figcaption>
+      {concepts.map((concept, index) => <figure key={concept.image} data-reveal style={{ "--delay": `${index % 3 * 80}ms` }}>
+        <div className={s.preview}>
+          <div className={s.browserBar} aria-hidden="true"><span>● ● ●</span><span>{concept.name}</span></div>
+          <div className={s.image} tabIndex={0} role="region" aria-label={`${concept.name} website preview, scroll to explore`}>
+            <Image src={`/home-selected/${concept.image}.png`} alt={`${concept.name} website`} width={concept.width} height={concept.height} sizes="(max-width:700px) 90vw, (max-width:1050px) 45vw,31vw" draggable={false} />
+          </div>
+          <div className={s.hint} aria-hidden="true">Scroll to explore <span>↓</span></div>
+        </div>
+        <figcaption><strong>{concept.name}</strong><span>{concept.category}</span></figcaption>
       </figure>)}
     </div>
   </section>;

@@ -1,0 +1,52 @@
+.scroll{height:250svh;position:relative;background:#071b29}
+.panel{position:sticky;top:0;height:calc(100svh - 95px);min-height:760px;max-height:1120px;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;padding:23px 5% 18px;color:#f4f0e8;background:#071b29}
+.panel:before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 50% 75%,#20435580,transparent 65%);pointer-events:none}
+.topline{display:flex;justify-content:space-between;gap:20px;font-size:9px;letter-spacing:.13em;color:#9eafb9;padding-bottom:16px;border-bottom:1px solid #ffffff1c}
+.content{text-align:center;max-width:1000px;width:100%;margin:30px auto 0;position:relative;z-index:3}
+.content .eyebrow{font-size:9px;letter-spacing:.16em;margin:0 0 17px;color:#c1cbd1}.eyebrow:before{content:'';display:inline-block;width:19px;height:2px;background:#ef2346;margin-right:10px;vertical-align:middle}
+.content h1{font-size:clamp(63px,6.2vw,98px);line-height:.94;letter-spacing:-.055em;font-weight:500;color:#f4f0e8;margin:0}.content h1 em{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:normal;letter-spacing:-.055em}
+.story{margin:17px auto 0;max-width:470px;min-height:44px;animation:storyIn .65s both}.content .story p{font-size:13px;line-height:1.55;color:#bfcdd5;margin:0 auto}
+.content .cta{display:inline-block;background:#f3eee4;color:#102330;border:1px solid #f3eee4;border-radius:3px;font-size:11px;padding:12px 19px;margin-top:17px;transition:background .3s,color .3s}.content .cta:hover{background:#fff;color:#172536}.cta:focus-visible,.chapters button:focus-visible,.controls button:focus-visible{outline:2px solid #fff;outline-offset:5px}
+.showcase{position:relative;width:100%;max-width:1280px;margin:26px auto 0;flex:1;min-height:240px;perspective:1400px;isolation:isolate;overflow:hidden}
+.showcase:after{content:'';position:absolute;left:-10%;right:-10%;bottom:-1px;height:55px;background:linear-gradient(transparent,#071b29);z-index:5;pointer-events:none}
+.project{position:absolute;width:43%;height:calc(100% + 65px);min-height:290px;top:0;background:#fff;border:1px solid #ffffff2b;border-radius:8px 8px 0 0;overflow:hidden;box-shadow:0 20px 55px #0005;transition:transform 1s cubic-bezier(.22,1,.36,1),filter 1s;transform-origin:50% 80%}
+.project[data-position='0']{left:0;transform:translateY(38px) rotate(-7deg);z-index:1;filter:brightness(.84)}
+.project[data-position='1']{left:28.5%;transform:translateY(5px);z-index:2}
+.project[data-position='2']{right:0;transform:translateY(38px) rotate(7deg);z-index:1;filter:brightness(.84)}
+.project[data-featured=true]{transform:translateY(-10px) rotate(0);z-index:3;filter:brightness(1)}
+.projectBar{height:27px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px;background:#f9faf7;color:#5c696d;font-size:8px}.projectBar>span:first-child{font-size:5px;letter-spacing:2px;color:#aab4b6}.projectBar>span:last-child{font-size:7px}
+.projectScreen{position:relative;height:calc(100% - 27px);overflow:hidden}.projectScreen img{object-fit:cover;object-position:top;transition:transform 1.2s ease;transform:translateY(calc(var(--chapter-progress,0)*-15px)) scale(1.015);transform-origin:top}
+.bottom{position:relative;z-index:6;background:#071b29;width:100%;max-width:1280px;margin:0 auto;padding-top:8px;border-top:1px solid #ffffff25}
+.chapters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}.chapters button{position:relative;display:flex;align-items:baseline;justify-content:center;gap:10px;color:#9eafb9;border:0;border-bottom:1px solid #ffffff20;background:none;padding:10px 0 12px;cursor:pointer;transition:color .5s}.chapters small{font-size:9px;letter-spacing:.1em}.chapters button>span{font-size:26px;letter-spacing:-.035em;transform:scale(.94);transition:transform .65s}.chapters button[data-active=true]{color:#f4f0e8}.chapters button[data-active=true]>span{transform:scale(1)}.chapters i{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#ee2143;transform:scaleX(0);transform-origin:left}.chapters button[data-active=true] i{transform:scaleX(var(--chapter-progress,0))}
+.controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:#9eafb9;font-size:9px}.controls button{background:none;border:0;color:inherit;font-size:9px;padding:5px 0;cursor:pointer}
+.scroll[data-paused=true]{height:auto}.scroll[data-paused=true] .panel{position:relative}.scroll[data-paused=true] .project,.scroll[data-paused=true] .projectScreen img{transition:none}.scroll[data-paused=true] .story{animation:none}
+@keyframes storyIn{from{transform:translateY(8px)}to{transform:none}}
+@media(max-width:700px){.scroll{height:250svh}.panel{padding:19px 5% 15px;min-height:740px;height:calc(100svh - 75px);max-height:none}.topline{font-size:7px;justify-content:center}.topline>span:last-child{display:none}.content{margin-top:30px}.content .eyebrow{font-size:8px;margin-bottom:18px}.content h1{font-size:clamp(43px,10.6vw,72px)}.story{min-height:65px;max-width:310px;margin-top:20px}.content .story p{font-size:12px}.cta{margin-top:15px;font-size:10px}.showcase{margin-top:30px;min-height:250px;width:125%;left:-12.5%}.project{width:64%;min-height:270px}.project[data-position='0']{left:-7%;transform:translateY(35px) rotate(-9deg)}.project[data-position='1']{left:18%;transform:translateY(4px)}.project[data-position='2']{right:-7%;transform:translateY(35px) rotate(9deg)}.project[data-featured=true]{transform:translateY(-4px) rotate(0)}.projectBar{font-size:7px;padding:0 8px;height:22px}.projectBar>span:last-child{display:none}.projectScreen{height:calc(100% - 22px)}.chapters{gap:12px}.chapters button{gap:6px}.chapters button>span{font-size:21px}.chapters small{font-size:8px}.controls{margin-top:9px}}
+@media(prefers-reduced-motion:reduce){.scroll{height:auto}.panel{position:relative}.project,.projectScreen img,.chapters button>span{transition:none}.projectScreen img{transform:none}.story{animation:none}.chapters i{display:none}}
+
+/* Photographic chapters, with the active image brought into the centre. */
+.project{background:#142b38;transition:transform 1s cubic-bezier(.22,1,.36,1),filter 1s,left 1s cubic-bezier(.22,1,.36,1);border-radius:8px}
+.project[data-position='2']{left:57%;right:auto}
+.project[data-featured=true]{left:28.5%;right:auto}
+.projectScreen{height:100%}
+.projectScreen img{object-position:50% 50%;transform:scale(calc(1.035 + var(--chapter-progress,0)*.035))}
+.project[data-position='1'] .projectScreen img{object-position:50% 50%}
+.projectBar{position:absolute;inset:0 0 auto;height:64px;padding:14px 18px;align-items:flex-start;background:linear-gradient(#071b29bb,transparent);color:#fff;font-size:11px;letter-spacing:.02em}
+.projectBar>span:first-child{font-size:10px;letter-spacing:.08em;color:#fff;text-transform:uppercase}
+.projectBar>span:last-child{font-size:10px}
+@media(max-width:700px){.project[data-position='2']{left:43%;right:auto}.project[data-featured=true]{left:18%;right:auto}.projectBar{height:55px;padding:13px}.projectBar>span:first-child{font-size:9px}.projectScreen{height:100%}}
+@media(prefers-reduced-motion:reduce){.project{transition:none}.projectScreen img{transform:none}}
+
+@media(max-width:700px){.projectScreen img{object-fit:contain;background:#0d1c2c}.project{min-height:220px;height:100%}.showcase{min-height:230px}}
+
+/* Each chapter has its own slot: no two cards share the active position. */
+.showcase{min-height:280px}
+.project[data-slot]{left:28.5%;right:auto;top:8px;height:calc(100% - 16px);min-height:0;transition:transform .8s cubic-bezier(.22,1,.36,1),filter .8s,opacity .8s;transform-origin:center}
+.project[data-slot='0']{transform:translateX(0) scale(1);z-index:3;filter:brightness(1);opacity:1}
+.project[data-slot='1']{transform:translateX(88%) translateY(22px) scale(.86) rotate(5deg);z-index:1;filter:brightness(.65);opacity:.8}
+.project[data-slot='2']{transform:translateX(-88%) translateY(22px) scale(.86) rotate(-5deg);z-index:1;filter:brightness(.65);opacity:.8}
+.projectScreen img{object-fit:contain;background:#0d1c2c;transform:none;transition:none}
+.projectBar{height:45px}
+@media(max-width:700px){.project[data-slot]{left:18%;height:calc(100% - 16px)}.showcase{min-height:230px}.project[data-slot='1']{transform:translateX(86%) translateY(14px) scale(.88) rotate(4deg)}.project[data-slot='2']{transform:translateX(-86%) translateY(14px) scale(.88) rotate(-4deg)}}
+@media(prefers-reduced-motion:reduce){.project[data-slot]{transition:none}}
+.scroll[data-paused=true] .project[data-slot]{transition:none}

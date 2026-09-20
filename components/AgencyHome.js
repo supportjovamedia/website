@@ -10,6 +10,8 @@ import LayeredStudio from "./LayeredStudio";
 import WhyJovaPreview from "./WhyJovaPreview";
 import SelectedConcepts from "./SelectedConcepts";
 import CapabilityStrip from "./CapabilityStrip";
+import { ProcessStory, FaqStory } from "./ScrollStories";
+import hero from "./UnifiedHero.module.css";
 const chapters = [
  {word:"Ideas", title:"A clear idea. A brighter direction.", copy:"We find what makes your business different and turn it into a direction worth following.", visual:"Ideas with impact.", foot:"Strategy with a point of view."},
  {word:"Websites", title:"Built to make your next move.", copy:"Thoughtful design and seamless development. A website that feels like you and works for your customers.", visual:"Make your next move.", foot:"Considered design. Seamless experience."},
@@ -17,17 +19,6 @@ const chapters = [
 ];
 function Arrow(){return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.6"/></svg>}
 function Photo({name,alt=""}){return <div className={s.photo} data-photo><Image src={`/home-agency/${name}.webp`} alt={alt} fill sizes="(max-width:700px) 100vw, 55vw"/></div>}
-function HeroPreview({mode}){
- return <div className={s.heroPhotography} data-mode={mode}>
-  {chapters.map((chapter,i)=><div key={chapter.word} className={s.heroPhotoLayer} data-active={mode===i} aria-hidden={mode!==i}>
-   <Image src={`/home-agency/hero-${chapter.word.toLowerCase()}.webp`} alt={['Designer working with colour samples and creative materials','Laptop in a sunlit contemporary workspace','Brand strategy moodboard with colour palettes and print layouts'][i]} fill sizes="(max-width:700px) 100vw,60vw" preload={i===0}/>
-   <div className={s.photoShade}/>
-   <div className={s.photoChapter}><span>JOVA / {chapter.word.toUpperCase()}</span><span>0{i+1} / 03</span></div>
-   <div className={s.photoStory}><span className={s.photoKicker}>{['THINK CLEARER','BUILD BETTER','BE REMEMBERED'][i]}</span><h2>{chapter.title}</h2><p>{chapter.copy}</p></div>
-  </div>)}
-  <div className={s.photoCorner} aria-hidden="true"><Arrow/></div>
- </div>
-}
 export default function AgencyHome(){
  const root=useRef(null),menuRef=useRef(null);
  const [menu,setMenu]=useState(false),[paused,setPaused]=useState(false),[heroStep,setHeroStep]=useState(0);
@@ -43,9 +34,7 @@ export default function AgencyHome(){
     frame=0;
     const hero=el.querySelector('[data-hero]'),hr=hero.getBoundingClientRect(),hp=Math.min(1,Math.max(0,-hr.top/Math.max(1,hr.height-innerHeight)));
     const nextHero=Math.min(2,Math.floor(hp*3));setHeroStep(previous=>previous===nextHero?previous:nextHero);
-    el.style.setProperty('--hero',hp);el.style.setProperty('--chapter-progress',Math.min(1,(hp*3)%1));
-    const process=el.querySelector('[data-process]'),pr=process.getBoundingClientRect(),ps=Math.min(3,Math.max(0,Math.floor((innerHeight*.85-pr.top)/(innerHeight*.55)*4)));
-    process.querySelectorAll('li').forEach((li,i)=>li.dataset.current=String(i===ps));
+    el.style.setProperty('--hero',hp);el.style.setProperty('--chapter-progress',Math.min(1,hp*3-nextHero));
     scrolling.forEach(e=>{const r=e.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight+100)return;const p=Math.min(1,Math.max(0,(innerHeight-r.top)/(innerHeight*.65)));e.style.setProperty('--progress',p);e.style.setProperty('--pan',`${Math.max(-36,Math.min(36,(innerHeight/2-r.top-r.height/2)*.09))}px`)});
    };
    const request=()=>{if(!frame)frame=requestAnimationFrame(paint)};
@@ -64,19 +53,39 @@ export default function AgencyHome(){
  <a href="#agency-main" className={s.skip}>Skip to content</a>
  <header className={s.header}><a href="#" aria-label="JovaMedia home"><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128} preload className={s.logo}/></a><nav className={s.nav} aria-label="Homepage navigation"><a href="#studio">Studio</a><a href="#services">Services</a><a href="#work">Work</a><Link href="/contact">Contact</Link></nav><Link href="/contact" className={`${s.button} ${s.desktopCta}`}>Let&apos;s talk <Arrow/></Link><button ref={menuRef} className={s.menuToggle} aria-expanded={menu} aria-controls="agency-menu" onClick={()=>setMenu(!menu)}>{menu?'Close':'Menu'} {menu?'−':'+'}</button>{menu&&<nav className={s.mobileNav} id="agency-menu" aria-label="Mobile navigation">{[['Work','work'],['Studio','studio'],['Services','services']].map(([label,id])=><a key={id} href={`#${id}`} onClick={()=>setMenu(false)}>{label}</a>)}<Link href="/contact">Contact</Link></nav>}</header>
  <main id="agency-main">
-  <section className={s.chapterHero} data-hero aria-label="Ideas, websites and brands"><div className={s.heroSticky}>
-   <div className={s.chapterLeft}><p className={s.heroEyebrow}><span/> JOVAMEDIA. INDEPENDENT BY DESIGN.</p><h1>Digital. Done right.</h1><div className={s.chapterWords} aria-label="Explore our approach"><div className={s.chapterWordTrack} style={{"--step":heroStep}}>{chapters.map((chapter,i)=><button key={chapter.word} onClick={()=>goChapter(i)} data-active={heroStep===i} aria-pressed={heroStep===i}><small>0{i+1}</small><span>{chapter.word}<i>.</i></span><span className={s.chapterArrow} aria-hidden="true">↗</span></button>)}</div></div><div className={s.chapterHint}><span>Scroll to explore</span><span>↓</span><a href="#studio">Meet the studio</a></div></div>
-   <div className={s.chapterRight}><HeroPreview mode={heroStep}/><div className={s.heroCaption}><span>0{heroStep+1} / 03 <span className={s.chapterTrack}><i/></span></span><button onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'Play motion':'Pause motion'} <span aria-hidden="true">{paused?'▶':'Ⅱ'}</span></button></div></div>
-  </div></section>
+  <section className={hero.scroll} data-hero aria-label="Ideas, websites and brands" data-paused={paused}>
+    <div className={hero.panel} data-step={heroStep}>
+      <div className={hero.content}>
+        <p className={hero.eyebrow}>STRATEGY. DESIGN. DIGITAL.</p>
+        <h1>Good ideas.<br/><em>Distinctive digital.</em></h1>
+        <div className={hero.story} key={heroStep}><p>{chapters[heroStep].copy}</p></div>
+        <a className={hero.cta} href="#studio">Meet your digital partner</a>
+      </div>
+      <div className={hero.showcase} aria-label="From creative direction to websites and brand identity">
+        {[
+          ['hero-crafted-ideas','Ideas','Find your direction','A sculptural paper ribbon turning pencil sketches into a finished graphic idea'],
+          ['hero-crafted-websites','Websites','Build your next chapter','An architectural website presented on a graphite laptop and phone'],
+          ['hero-crafted-brands','Brands','Make a lasting impression','An embossed identity manual, letterpress cards and vermilion packaging']
+        ].map(([image,name,caption,alt],i)=><div className={hero.project} key={image} data-position={i} data-slot={(i-heroStep+3)%3} data-featured={heroStep===i}>
+          <div className={hero.projectScreen}><Image src={`/home-agency/${image}.webp`} alt={alt} fill sizes="(max-width:700px) 80vw, 45vw" preload={i===0}/></div>
+          <div className={hero.projectBar}><span>0{i+1} / {name}</span><span>{caption}</span></div>
+        </div>)}
+      </div>
+      <div className={hero.bottom}>
+        <nav className={hero.chapters} aria-label="Explore our approach">{chapters.map((chapter,i)=><button key={chapter.word} onClick={()=>goChapter(i)} aria-pressed={heroStep===i} data-active={heroStep===i}><small>0{i+1}</small><span>{chapter.word}</span><i aria-hidden="true"/></button>)}</nav>
+        <div className={hero.controls}><span>Scroll to explore ↓</span><button onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'Play motion':'Pause motion'}</button></div>
+      </div>
+    </div>
+  </section>
   <div className={r.body}>
   <div className={r.studioBanner}><div className={r.bannerImage} data-scroll><Photo name="sketch" alt="Creative team working together on website plans"/></div><div className={r.bannerWords} aria-hidden="true">Strategy<br/>Design<br/>Better Websites<br/>Brighter Brands</div></div>
   <LayeredStudio paused={paused}/>
   <CapabilityStrip paused={paused}/>
   <SelectedConcepts/>
-  <ServiceCardsPreview/>
-  <section className={r.process} data-process><div data-reveal><p className={r.label}>(04) OUR PROCESS</p><h2>From first idea<br/>to final launch.</h2></div><ol>{[['Discover','We learn about your goals and opportunities.'],['Design','We create and refine the right solution.'],['Develop','We build, test and bring it to life.'],['Launch','We get you live and help you grow.']].map(([name,copy],i)=><li key={name} data-reveal style={{'--delay':`${i*90}ms`}}><span>0{i+1}</span><h3>{name}</h3><p>{copy}</p></li>)}</ol></section>
+  <ServiceCardsPreview paused={paused}/>
+  <ProcessStory paused={paused}/>
   <WhyJovaPreview/>
-  <section className={r.faq}><div data-reveal><p className={r.label}>(06) FAQ</p><h2>Good questions.<br/>Clear answers.</h2></div><div data-reveal>{[['Can you redesign my existing website?','Yes. We start by understanding your goals and reviewing your current site, then agree what to keep, improve or rebuild.'],['What digital services do you offer?','Website development, copywriting, social media, brand strategy and design, email marketing and automation, and content production.'],['How does a project get started?','Tell us about your business and what you want to achieve. We will discuss priorities, scope and a practical plan before work begins.'],['Can you support us after launch?','Yes. Website care, content and ongoing support can be agreed around what your business needs.']].map(([q,a])=><details key={q}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}</div></section>
+  <FaqStory paused={paused}/>
   <section className={r.contact}><div data-reveal><p className={r.label}>(07) LET&apos;S TALK</p><h2>LET&apos;S MAKE<br/>IT HAPPEN.</h2></div><Link className={r.bigCircle} href="/contact" aria-label="Start a project"><Arrow/></Link><div><p>Get in touch and let&apos;s build<br/>something great together.</p><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a></div></section>
   </div>
  </main>

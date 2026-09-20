@@ -61,6 +61,5 @@ export default function LayeredStudio({ paused = false }) {
         </article>
       </div>
     </div>
-    <div className={s.footnote}><span>Different disciplines.</span><strong>One shared ambition.</strong><span>JOVA MEDIA</span></div>
   </section>;
 }
