@@ -20,8 +20,8 @@ const chapters = [
 function Arrow(){return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.6"/></svg>}
 function Photo({name,alt=""}){return <div className={s.photo} data-photo><Image src={`/home-agency/${name}.webp`} alt={alt} fill sizes="(max-width:700px) 100vw, 55vw"/></div>}
 export default function AgencyHome(){
- const root=useRef(null),menuRef=useRef(null);
- const [menu,setMenu]=useState(false),[paused,setPaused]=useState(false),[heroStep,setHeroStep]=useState(0);
+ const root=useRef(null);
+ const [paused,setPaused]=useState(false),[heroStep,setHeroStep]=useState(0);
  useEffect(()=>{
   const el=root.current,mq=matchMedia('(prefers-reduced-motion: reduce)');let teardown=()=>{};
   function setup(){
@@ -43,15 +43,12 @@ export default function AgencyHome(){
   }
   setup();mq.addEventListener('change',setup);return()=>{teardown();mq.removeEventListener('change',setup)};
  },[paused]);
- useEffect(()=>{if(!menu)return;const key=e=>{if(e.key==='Escape'){setMenu(false);menuRef.current?.focus()}};addEventListener('keydown',key);return()=>removeEventListener('keydown',key)},[menu]);
  const goChapter=i=>{
   if(paused||matchMedia('(prefers-reduced-motion: reduce)').matches){setHeroStep(i);return;}
   const node=root.current.querySelector('[data-hero]');
   window.scrollTo({top:window.scrollY+node.getBoundingClientRect().top+(node.offsetHeight-innerHeight)*(i+.18)/3,behavior:'smooth'});
  };
  return <div className={`${s.home} ${paused?s.paused:''}`} ref={root}>
- <a href="#agency-main" className={s.skip}>Skip to content</a>
- <header className={s.header}><a href="#" aria-label="JovaMedia home"><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128} preload className={s.logo}/></a><nav className={s.nav} aria-label="Homepage navigation"><a href="#studio">Studio</a><a href="#services">Services</a><a href="#work">Work</a><Link href="/contact">Contact</Link></nav><Link href="/contact" className={`${s.button} ${s.desktopCta}`}>Let&apos;s talk <Arrow/></Link><button ref={menuRef} className={s.menuToggle} aria-expanded={menu} aria-controls="agency-menu" onClick={()=>setMenu(!menu)}>{menu?'Close':'Menu'} {menu?'−':'+'}</button>{menu&&<nav className={s.mobileNav} id="agency-menu" aria-label="Mobile navigation">{[['Work','work'],['Studio','studio'],['Services','services']].map(([label,id])=><a key={id} href={`#${id}`} onClick={()=>setMenu(false)}>{label}</a>)}<Link href="/contact">Contact</Link></nav>}</header>
  <main id="agency-main">
   <section className={hero.scroll} data-hero aria-label="Ideas, websites and brands" data-paused={paused}>
     <div className={hero.panel} data-step={heroStep}>
