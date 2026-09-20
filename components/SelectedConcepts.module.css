@@ -12,3 +12,5 @@
 @media(min-width:1600px){.section{padding-inline:max(4.3%,calc((100vw - 1480px)/2))}}
 @media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.image{height:370px}}
 @media(max-width:700px){.section{padding:35px 5%}.heading{display:block;text-align:center;margin-bottom:25px}.heading>span{display:block;margin-top:16px}.section .heading h2{font-size:clamp(33px,8.5vw,42px)}.grid{grid-template-columns:1fr;gap:28px}.image{height:400px;max-height:60svh}.browserBar{font-size:9px}}
+
+@media(max-width:700px){.grid figcaption{flex-direction:column;justify-content:center;text-align:center;gap:6px}.hint{justify-content:center;gap:15px}}

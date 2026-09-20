@@ -144,3 +144,5 @@
 .body .studioBanner::after{content:"";position:absolute;inset:0;background:rgba(12,41,72,.4);pointer-events:none;z-index:1}
 .body .bannerWords{z-index:2;color:#fff;text-shadow:0 2px 12px #03152180}
 @media(prefers-reduced-motion:reduce){.body .bannerImage{transform:none;will-change:auto}}
+
+@media(max-width:700px){.body .bannerWords{left:5%;right:5%;text-align:center}.footer .cookie-settings{margin-inline:auto}.footer a{overflow-wrap:anywhere}}

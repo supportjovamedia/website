@@ -102,3 +102,18 @@
 
 
 .jova-pages .page-hero .breadcrumbs,.jova-pages .page-hero .breadcrumbs a,.jova-pages .page-hero .breadcrumbs li{color:#bacad4}.jova-pages .page-hero .breadcrumbs{font-size:12px;margin-bottom:28px}
+
+/* Centre the mobile reading flow consistently across inner pages. */
+@media(max-width:700px){
+.jova-pages main{text-align:center}
+.jova-pages main :is(h1,h2,h3,p,.lead,.kicker){margin-inline:auto}
+.jova-pages .editorial-split>div,.jova-pages .studio-values article,.jova-pages .contact-intro>div{text-align:center}
+.jova-pages .actions,.jova-pages .breadcrumbs ol{justify-content:center;flex-wrap:wrap}
+.jova-pages .site-faq summary{text-align:center}
+.jova-pages .legal ul,.jova-pages .legal ol{list-style-position:inside;padding-inline:0}
+.jova-pages .contact-intro .form{text-align:center}
+.jova-pages .contact-intro .form :is(input,textarea,select){text-align:left}
+.jova-pages .contact-intro .form button{margin-inline:auto}
+.jova-pages .contact-intro a{overflow-wrap:anywhere}
+}
+@media(max-width:700px){.jova-pages .legal,.jova-pages .legal :is(h2,h3,p,li){text-align:center}}
