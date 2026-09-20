@@ -49,3 +49,5 @@
 @media(prefers-reduced-motion:reduce){.step,.stepIcon,.bubble,.questionArt span{transform:none!important}.process .heading,.faq .heading{background:none;color:#101b23}}
 
 @media(max-width:700px){.process{text-align:center}.stepIcon{margin-inline:auto}.stepBody{text-align:center}.detail{justify-content:center}.faq .bubble{text-align:center}.faq .introCopy{margin-inline:auto}}
+
+.stepBody{text-align:center}.stepIcon{margin-inline:auto}.detail{justify-content:center}

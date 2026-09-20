@@ -12,7 +12,7 @@ const steps = [
 ];
 const questions = [
   ["Can you redesign my existing website?", "Yes. We start by understanding your goals and reviewing your current site, then agree what to keep, improve or rebuild."],
-  ["What digital services do you offer?", "Website development, copywriting, social media, brand strategy and design, email marketing and automation, and content production."],
+  ["What digital services do you offer?", "Website development, system modernization, copywriting, social media, brand strategy and design, email marketing and automation, content production, and search and local visibility."],
   ["How does a project get started?", "Tell us about your business and what you want to achieve. We will discuss priorities, scope and a practical plan before work begins."],
   ["Can you support us after launch?", "Yes. Website care, content and ongoing support can be agreed around what your business needs."],
 ];

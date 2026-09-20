@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import GrowthSignup from "./GrowthSignup";
 import CookieConsent from "./CookieConsent";
 import s from "./AgencyHome.module.css";
 import r from "./ReferenceHome.module.css";
@@ -64,6 +65,7 @@ export default function AgencyHome(){
   <section className={r.contact}><div data-reveal><p className={r.label}>(07) LET&apos;S TALK</p><h2>LET&apos;S MAKE<br/>IT HAPPEN.</h2></div><Link className={r.bigCircle} href="/contact" aria-label="Start a project"><Arrow/></Link><div><p>Get in touch and let&apos;s build<br/>something great together.</p><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a></div></section>
   </div>
  </main>
+ <GrowthSignup newsletter/>
  <footer className={r.footer}><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128} className={r.logo}/><div><h3>Studio</h3><Link href="/about">Our story</Link><a href="#services">What we do</a><a href="#studio">Our approach</a></div><div><h3>Services</h3><Link href="/services">Explore our services</Link><Link href="/contact">Start a project</Link></div><div><h3>Contact</h3><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a><Link href="/privacy-policy">Privacy</Link><Link href="/terms">Terms</Link><CookieConsent/></div><p>© {new Date().getFullYear()} JovaMedia<br/>Distinctive digital experiences.</p></footer>
  </div>;
 }

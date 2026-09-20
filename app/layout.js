@@ -1,3 +1,4 @@
+import JovaChat from "@/components/JovaChat";
 import GrowthSignup from "@/components/GrowthSignup";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -69,6 +70,7 @@ export default function RootLayout({ children }) {
           {children}
         </div>
         </SiteChrome>
+        <JovaChat/>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

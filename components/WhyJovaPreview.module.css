@@ -56,3 +56,5 @@
   .section .art, .section .value h3, .section .value>p { opacity: 1; }
   .section .art, .section .disc, .section .rule, .section .object, .section .cta, .section .cta svg { transition: none; }
 }
+
+.value{text-align:center}.value .rule{margin-inline:auto}.value>p{margin-inline:auto}

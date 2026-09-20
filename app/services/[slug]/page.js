@@ -19,7 +19,7 @@ export default async function Page({ params }) {
   const service = services.find((s) => s.slug === slug);
   if (!service) notFound();
   const relatedSlugs = {
-    "legacy-software-updates": ["web-design", "email-marketing", "seo"],
+    "system-modernization": ["web-design", "email-marketing", "seo"],
     "web-design": ["content", "brand-strategy", "seo"],
     content: ["web-design", "content-production", "email-marketing"],
     "social-management": ["content-production", "brand-strategy", "email-marketing"],

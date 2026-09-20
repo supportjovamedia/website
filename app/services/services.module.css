@@ -111,3 +111,5 @@
 .question>div{padding-inline:0;margin-inline:auto}
 .supportLink,.custom,.questions,.related,.process{text-align:center}
 }
+
+.directoryCard,.helpGrid article,.processGrid>div,.relatedGrid>a{text-align:center}.directoryCard{align-items:center}
