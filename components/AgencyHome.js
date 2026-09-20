@@ -28,7 +28,7 @@ export default function AgencyHome(){
    let frame=0;
    const paint=()=>{
     frame=0;
-    scrolling.forEach(e=>{const r=e.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight+100)return;const p=Math.min(1,Math.max(0,(innerHeight-r.top)/(innerHeight*.65)));e.style.setProperty('--progress',p);e.style.setProperty('--pan',`${Math.max(-36,Math.min(36,(innerHeight/2-r.top-r.height/2)*.09))}px`)});
+    scrolling.forEach(e=>{const r=e.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight+100)return;const p=Math.min(1,Math.max(0,(innerHeight-r.top)/(innerHeight*.65)));e.style.setProperty('--progress',p);e.style.setProperty('--pan',`${Math.max(-65,Math.min(65,(innerHeight/2-r.top-r.height/2)*.18))}px`)});
    };
    const request=()=>{if(!frame)frame=requestAnimationFrame(paint)};
    addEventListener('scroll',request,{passive:true});addEventListener('resize',request);paint();
