@@ -18,3 +18,4 @@ const nextConfig = {
   },
 };
 export default nextConfig;
+// Service redirects include the previous System Modernization URL.

@@ -43,3 +43,16 @@ test("country, monthly budget and Other details reach the inbox; optional fields
  assert.match(mail.text,/Other — A customer booking system/);
  assert.match(mail.text,/Company: Not provided/);
 });
+
+
+test("general questions and client support can send without project qualification", async () => {
+ for (const service of ["General enquiry", "Existing client support"]) {
+  let mail;
+  const handler=createContactHandler({env,send:async(url,options)=>{mail=JSON.parse(options.body);return Response.json({id:"accepted"})}});
+  const body={name:"Test Visitor",email:"test@example.com",service,message:"Could you help me with my existing website?",website:""};
+  assert.equal((await handler(req(body))).status,200);
+  assert.ok(mail.text.includes(service));
+  assert.doesNotMatch(mail.text,/undefined/);
+  assert.equal((await handler(req({...body,message:"short"}))).status,400);
+ }
+});

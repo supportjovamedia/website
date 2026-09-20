@@ -11,3 +11,5 @@
 @media(max-width:700px){.newsletter{padding:40px 24px}.newsletter .form button{justify-self:center}}
 
 .newsletter.whiteNewsletter { background: #fff; }
+
+@media(max-width:700px){.newsletter .form{text-align:center}.newsletter .form input{text-align:left}}
