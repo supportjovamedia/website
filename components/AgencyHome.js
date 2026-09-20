@@ -52,7 +52,8 @@ export default function AgencyHome(){
 
   </section>
   <div className={r.body}>
-  <div className={r.studioBanner}><svg className={r.heroWave} viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1440V25C1170 125 1020 100 720 35S250 150 0 35Z" fill="#0c2948"/></svg><div className={r.bannerImage} data-scroll><Photo name="sketch" alt="Creative team working together on website plans"/></div><div className={r.bannerWords} aria-hidden="true">Strategy<br/>Design<br/>Better Websites<br/>Brighter Brands</div></div>
+  <section id="get-started" className={r.startSection} aria-labelledby="start-heading"><svg className={r.heroWave} viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1440V25C1170 125 1020 100 720 35S250 150 0 35Z" fill="#0c2948"/></svg><div className={r.startInner}><div><p className={r.label}>YOUR NEXT MOVE</p><h2 id="start-heading">Ready to make it happen?</h2><p>Tell us what you have in mind. We’ll help you find the right place to start.</p></div><Link href="/contact" className={r.startButton}>Get started</Link></div></section>
+  <div className={r.studioBanner}><div className={r.bannerImage} data-scroll><Photo name="sketch" alt="Creative team working together on website plans"/></div><div className={r.bannerWords} aria-hidden="true">Strategy<br/>Design<br/>Better Websites<br/>Brighter Brands</div></div>
   <LayeredStudio paused={paused}/>
   <CapabilityStrip paused={paused}/>
   <SelectedConcepts/>
