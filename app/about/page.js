@@ -1,68 +1,15 @@
+import Image from "next/image";
+import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
-export const metadata = pageMetadata(
-  "/about",
-  "About Our London Digital Agency",
-  "Meet JovaMedia, a London agency connecting strategy, creative, media and technology through clear priorities, direct communication and practical delivery.",
-);
-export default function Page() {
-  return (
-    <main>
-      <section className="page-hero">
-        <div className="shell">
-          <div className="kicker">About JovaMedia</div>
-          <h1>A digital partner built for businesses that want momentum.</h1>
-          <p className="lead">
-            We bring strategy, creative, media and technology together without
-            making clients navigate a maze of departments.
-          </p>
-        </div>
-      </section>
-      <section className="band band-navy">
-        <div className="shell band-grid">
-          <div className="kicker">Our point of view</div>
-          <h2>
-            The best agency relationship should make the work feel clearer, not
-            more complicated.
-          </h2>
-          <p>
-            That means direct communication, visible priorities, specialist
-            thinking and a shared understanding of what success looks like.
-          </p>
-        </div>
-      </section>
-      <section className="section">
-        <div className="shell split about-approach">
-          <div>
-            <div className="kicker">How we work</div>
-            <h2>Close to the problem. Close to the work.</h2>
-          </div>
-          <div className="prose">
-            <p>
-              We keep strategy connected to execution. The people thinking about
-              the problem stay close to the decisions, creative and performance.
-            </p>
-            <p>
-              We use modern tools, including AI-assisted workflows where they
-              improve research, production or efficiency, while human judgement
-              remains accountable for what goes live.
-            </p>
-            <p>
-              When a brief needs specialist capability, we shape the right
-              delivery team around it rather than pretending every discipline
-              needs a permanent seat at the table.
-            </p>
-          </div>
-        </div>
-      </section>
-      <section className="band band-gold">
-        <div className="shell statement">
-          <div className="kicker">What clients should expect</div>
-          <h2>
-            Clear thinking. Strong creative. Commercial context. No unnecessary
-            theatre.
-          </h2>
-        </div>
-      </section>
-    </main>
-  );
-}
+import LayeredStudio from "@/components/LayeredStudio";
+import { ProcessStory } from "@/components/ScrollStories";
+export const metadata = pageMetadata("/about", "About Our London Digital Agency", "Meet JovaMedia, a London agency connecting strategy, design, content and technology.");
+export default function Page(){return <main>
+ <section className="page-hero"><div className="shell"><p className="kicker">THE STUDIO</p><h1>A shared ambition.<br/><em>A stronger tomorrow.</em></h1><p className="lead">One partner for strategy, design, content and delivery. We bring the thinking and the making together, so your business can move forward.</p><div className="actions"><Link className="btn" href="/contact">Meet your digital partner</Link></div></div></section>
+ <div className="studio-photo"><Image src="/home-agency/sketch.webp" alt="A creative team developing website plans together" fill sizes="100vw" /></div>
+ <LayeredStudio/>
+ <section className="band band-navy"><div className="shell editorial-split"><div><p className="kicker">OUR POINT OF VIEW</p><h2>Good work starts<br/><em>with understanding.</em></h2></div><div><p className="lead">The best agency relationship makes the work feel clearer.</p><p>We listen to your business, agree what matters and keep you close to the decisions. Strategy stays connected to the people designing, writing and building.</p><p>We use modern tools where they improve the work. Human judgement remains accountable for what goes live, with specialist support shaped around your brief.</p></div></div></section>
+ <ProcessStory/>
+ <section className="section"><div className="shell"><p className="kicker">WHAT YOU CAN EXPECT</p><div className="studio-values">{[["01","A clearer direction.","A shared understanding of the problem, the priorities and what success looks like."],["02","Work that feels like you.","Considered design and a consistent voice, built around your business."],["03","A partner who stays close.","Direct communication, practical delivery and support agreed around your next steps."]].map(([n,title,copy])=><article key={n}><span>{n}</span><h2>{title}</h2><p>{copy}</p></article>)}</div></div></section>
+ <section className="band band-gold"><div className="shell"><p className="kicker">LET’S TALK</p><h2>Let’s build<br/><em>what’s next.</em></h2><Link href="/contact" className="btn">Start a conversation</Link></div></section>
+ </main>}

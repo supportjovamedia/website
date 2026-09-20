@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "./direction.css";
 import "./readiness.css";
+import "./rebrand.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SiteChrome from "@/components/SiteChrome";
@@ -63,7 +64,7 @@ export default function RootLayout({ children }) {
       data-scroll-behavior="smooth"
     >
       <body>
-        <SiteChrome header={<Header />} footer={<><GrowthSignup newsletter /><Footer /></>}>
+        <SiteChrome header={<Header />} footer={<><div className="jova-newsletter"><GrowthSignup newsletter /></div><Footer /></>}>
         <div id="main-content" tabIndex={-1}>
           {children}
         </div>
