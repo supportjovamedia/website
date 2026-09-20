@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import CookieConsent from "./CookieConsent";
 import s from "./AgencyHome.module.css";
 import r from "./ReferenceHome.module.css";
@@ -17,7 +17,7 @@ function Arrow(){return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
 function Photo({name,alt=""}){return <div className={s.photo} data-photo><Image src={`/home-agency/${name}.webp`} alt={alt} fill sizes="(max-width:700px) 100vw, 55vw"/></div>}
 export default function AgencyHome(){
  const root=useRef(null);
- const [paused,setPaused]=useState(false);
+ const paused=false;
  useEffect(()=>{
   const el=root.current,mq=matchMedia('(prefers-reduced-motion: reduce)');let teardown=()=>{};
   function setup(){
@@ -41,14 +41,13 @@ export default function AgencyHome(){
   <section className={hero.banner} aria-labelledby="home-title">
     <div className={hero.inner}>
       <div className={hero.content}>
-        <p className={hero.eyebrow}>YOUR NEXT CHAPTER STARTS HERE</p>
         <h1 id="home-title">Good ideas.<br/>Better websites.<br/><em>Brighter businesses.</em></h1>
         <p className={hero.copy}>We bring websites, brands and digital experiences together to help your business move forward.</p>
-        <div className={hero.actions}><Link href="/services" className={hero.cta}>Explore our services</Link><Link href="/contact" className={hero.secondary}>Let’s talk</Link></div>
+        <div className={hero.actions}><Link href="/services" className={hero.cta}>Explore Services</Link></div>
       </div>
       <div className={hero.visual}><Image src="/home-agency/hero-workspace.webp" alt="A web design workspace with a desktop monitor, mobile preview and paper sketches" fill sizes="(max-width:700px) 92vw, 48vw" preload /></div>
     </div>
-    <div className={hero.bottom}><a href="#studio">Scroll to explore ↓</a><button onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'Play page motion':'Pause page motion'}</button></div>
+
 
   </section>
   <div className={r.body}>
