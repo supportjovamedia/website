@@ -2,7 +2,7 @@ import Image from "next/image";
 import s from "./SelectedConcepts.module.css";
 
 const concepts = [
-  { name: "Sumera’s", image: "sumera", category: "Hair, beauty & academy", width: 789, height: 1994 },
+  { name: "Blush House", image: "blush-house", category: "Beauty & salons", width: 887, height: 1774 },
   { name: "KOVA", image: "kova", category: "Coffee & hospitality", width: 870, height: 1808 },
   { name: "Knitly", image: "knitly", category: "Handmade & lifestyle", width: 870, height: 1808 },
   { name: "NÉRA", image: "nera", category: "Fragrance & beauty", width: 787, height: 1999 },

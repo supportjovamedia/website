@@ -22,3 +22,13 @@
 @media(max-width:370px){.card{grid-template-columns:72px minmax(0,1fr) 28px;gap:10px;padding-right:9px}.visual{height:137px}.section .card h3{font-size:19px}.action{width:28px;height:28px}.section .title{font-size:37px}.tags span{padding:5px 6px}}
 .section[data-static=true] .card,.section[data-static=true] .visual{transform:none}
 @media(prefers-reduced-motion:reduce){.card,.visual,.visual img,.action{transform:none!important;transition:none!important}}
+
+@media(max-width:700px){
+.card{grid-template-columns:1fr;gap:0;padding:22px 18px;text-align:center;min-height:0}
+.card:before{inset:0}
+.visual{width:180px;height:180px;justify-self:center}
+.content{padding:22px 0 18px;width:100%}
+.section .card h3{font-size:26px;max-width:290px;margin-inline:auto}
+.tags{justify-content:center}.action{justify-self:center;width:38px;height:38px}
+.number{text-align:center}.rows{gap:24px}
+}

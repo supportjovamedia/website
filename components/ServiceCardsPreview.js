@@ -5,17 +5,18 @@ import { useEffect, useRef } from "react";
 import s from "./ServiceCardsPreview.module.css";
 
 const services = [
-  { title: ["Website", "Development"], slug: "web-design", photo: "/service-crafted/website-picture.webp", kind: "website" },
+  { title: ["Website", "Development"], slug: "web-design", photo: "/service-crafted/website-modern.webp", kind: "website" },
+  { title: ["Legacy Software", "Updates"], slug: "legacy-software-updates", photo: "/service-crafted/legacy-modern.webp", kind: "legacy" },
   { title: ["Copywriting"], slug: "content", photo: "/service-crafted/copywriting-picture.webp", kind: "copywriting" },
   { title: ["Social Media", "Management"], slug: "social-management", photo: "/service-crafted/social-picture.webp", kind: "social" },
-  { title: ["Brand Strategy", "& Design"], slug: "brand-strategy", photo: "/service-crafted/branding-picture.webp", kind: "branding" },
-  { title: ["Email Marketing", "& Automation"], slug: "email-marketing", photo: "/service-crafted/email-centered.webp", kind: "email" },
+  { title: ["Brand Strategy", "& Design"], slug: "brand-strategy", photo: "/service-crafted/branding-modern.webp", kind: "branding" },
+  { title: ["Email Marketing", "& Automation"], slug: "email-marketing", photo: "/service-crafted/email-modern.webp", kind: "email" },
   { title: ["Content", "Production"], slug: "content-production", photo: "/service-crafted/camera-picture.webp", kind: "camera" },
 ];
 
 
 const tags = [
-  ["Web design", "Development"], ["Brand voice", "Website copy"],
+  ["Web design", "Development"], ["Modernisation", "Integrations"], ["Brand voice", "Website copy"],
   ["Content", "Community"], ["Strategy", "Identity"],
   ["Campaigns", "Automation"], ["Photography", "Video"]
 ];
@@ -49,13 +50,13 @@ export default function ServiceCardsPreview({ paused = false }) {
       <header className={s.heading}>
         <div><p className={s.eyebrow}><span>03</span> / OUR SERVICES</p>
         <h2 id="services-heading" className={s.title}>Everything you need<br />to <em>grow.</em></h2></div>
-        <span className={s.headingNote}>Six disciplines.<br />One connected approach.</span>
+        <span className={s.headingNote}>Seven disciplines.<br />One connected approach.</span>
       </header>
       <div className={s.rows}>
         {services.map(({ title, slug, photo }, index) => <div className={s.row} data-service-row style={{'--tilt': index % 2 ? 12 : -12}} key={slug}>
           <Link className={s.card} href={`/services/${slug}`} aria-label={`Explore ${title.join(' ')}`}>
             <div className={s.visual} aria-hidden="true"><Image src={photo} alt="" fill sizes="(max-width:700px) 110px, 240px" /></div>
-            <div className={s.content}><span className={s.number}>0{index + 1} /</span><h3>{title.join(' ')}</h3><div className={s.tags}>{tags[index].map(tag => <span key={tag}>{tag}</span>)}</div></div>
+            <div className={s.content}><span className={s.number}>0{index + 1}</span><h3>{title.join(' ')}</h3><div className={s.tags}>{tags[index].map(tag => <span key={tag}>{tag}</span>)}</div></div>
             <span className={s.action} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.5" /></svg></span>
           </Link>
         </div>)}
