@@ -12,7 +12,7 @@ export default function Page() {
       <section className="page-hero">
         <div className="shell">
           <div className="kicker">Start a project</div>
-          <h1>What are you trying to make happen?</h1>
+          <h1>Let’s make<br /><em>it happen.</em></h1>
           <p className="lead">
             Tell us where the business is today, where you want it to go and
             what is getting in the way. We’ll come back with a sensible next

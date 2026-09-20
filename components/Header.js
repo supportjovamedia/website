@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 const links = [
   ["Home", "/"],
-  ["About", "/about"],
+  ["Studio", "/about"],
   ["Services", "/services"],
-  // ["Work", "/work"],
+  ["Work", "/work"],
   ["Contact", "/contact"],
 ];
 export default function Header() {
@@ -74,8 +74,8 @@ function Navigation({ pathname }) {
             <Image
               src="/brand/jova-logo.png"
               alt="JovaMedia"
-              width={754}
-              height={390}
+              width={361}
+              height={128}
               priority
               sizes="120px"
             />
@@ -94,7 +94,7 @@ function Navigation({ pathname }) {
           </nav>
           <div className="nav-actions">
             <Link className="btn small desktop-cta" href="/contact">
-              Start a project
+              Let’s talk
             </Link>
             <button
               ref={toggle}
@@ -134,7 +134,7 @@ function Navigation({ pathname }) {
               className="btn mobile-project"
               onClick={() => setOpen(false)}
             >
-              Start a project
+              Let’s talk
             </Link>
           </div>
         </nav>

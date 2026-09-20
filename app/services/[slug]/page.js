@@ -1,3 +1,5 @@
+import Image from "next/image";
+import { serviceArt } from "@/lib/service-art";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
@@ -34,11 +36,12 @@ export default async function Page({ params }) {
       <div className={styles.heroGrid}><div>
         <p className="kicker">{service.eyebrow}</p><h1>{service.name}</h1><p className="lead">{service.desc}</p>
         <div className="actions"><Link href="/contact" className="btn">Discuss your project</Link><a href="#how-we-help" className="text-link">See how we can help</a></div>
-      </div><aside className={styles.fit} aria-label="Is this service right for you?">
+      </div><div className={styles.heroArt}><Image src={`/service-crafted/${serviceArt[slug]}.webp`} alt="" fill sizes="(max-width:700px) 85vw, 40vw" preload /></div></div>
+    </div></section>
+    <section className={styles.fitSection}><div className="shell"><aside className={styles.fit} aria-label="Is this service right for you?">
         <span className={styles.serviceIndex} aria-hidden="true">{index < 0 ? "S" : `0${index + 1}`}</span>
         <h2>A good fit when…</h2><ul>{service.fit.map((item) => <li key={item}>{item}</li>)}</ul>
-      </aside></div>
-    </div></section>
+      </aside></div></section>
     <section id="how-we-help" className={`section ${styles.help}`}><div className="shell">
       <div className={styles.sectionIntro}><p className="kicker">How we can help</p><h2>The right support.<br />For what comes next.</h2><p>Choose a focused piece of work or bring these services together around your brief.</p></div>
       <div className={styles.helpGrid}>{service.help.map((item) => <article key={item.title}><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
