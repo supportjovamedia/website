@@ -1,6 +1,6 @@
 /* Shared JovaMedia identity for the pages beyond the approved homepage. */
 
-.jova-pages{--ink:#111719;--blue:#0d2940;--navy:#071b29;--navy-2:#102d41;--red:#c70022;--gold:#ef2346;--gold-deep:#c70022;--paper:#f7f7f4;--soft:#efefea;--sand:#efefea;--line:#d8dcd8;--muted:#5c686d;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;overflow:clip}
+.jova-pages{--ink:#111719;--blue:#0d2940;--navy:#071b29;--navy-2:#102d41;--red:var(--brand-red);--gold:var(--brand-red);--gold-deep:var(--brand-red);--paper:#f7f7f4;--soft:#efefea;--sand:#efefea;--line:#d8dcd8;--muted:#5c686d;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;overflow:clip}
 
 .jova-pages .shell{width:91.4%;max-width:1480px;margin-inline:auto}
 
@@ -30,7 +30,7 @@
 
 .jova-pages .page-hero .text-link{color:#f4f0e8}.jova-pages .actions{display:flex;gap:25px;align-items:center;flex-wrap:wrap;margin-top:28px}
 
-.jova-pages .btn{background:#c70022;color:#fff;border:1px solid #c70022;border-radius:4px;padding:15px 23px;min-height:46px;font-family:inherit;font-size:13px;font-weight:400;letter-spacing:0;box-shadow:none;transition:background .25s,transform .25s}
+.jova-pages .btn{background:var(--brand-red);color:#fff;border:1px solid var(--brand-red);border-radius:4px;padding:15px 23px;min-height:46px;font-family:inherit;font-size:13px;font-weight:400;letter-spacing:0;box-shadow:none;transition:background .25s,transform .25s}
 
 .jova-pages .btn:hover{background:#9e001c;transform:translateY(-2px)}.jova-pages .page-hero .btn{background:#f3eee4;color:#102330;border-color:#f3eee4}
 
@@ -38,7 +38,7 @@
 
 .jova-pages .band-navy{background:#0d2940;color:#fff}.jova-pages .band-navy p{color:#c4d0d8}.jova-pages .band-navy h2{color:#fff}
 
-.jova-pages .band-gold{background:#bd001c;color:#fff}.jova-pages .band-gold h2,.jova-pages .band-gold p{color:#fff}.jova-pages .band-gold .btn{background:#fff;color:#141c22;border-color:#fff;margin-top:22px}
+.jova-pages .band-gold{background:var(--brand-red);color:#fff}.jova-pages .band-gold h2,.jova-pages .band-gold p{color:#fff}.jova-pages .band-gold .btn{background:#fff;color:#141c22;border-color:#fff;margin-top:22px}
 
 .jova-pages .band-soft{background:#efefea}
 
@@ -64,15 +64,15 @@
 
 .jova-footer .cookie-settings{padding:0;min-height:0;width:auto;background:transparent;border:0;text-decoration:none;text-align:inherit;font-family:inherit}.jova-footer a:hover,.jova-footer .cookie-settings:hover{text-decoration:underline}
 
-.jova-pages :focus-visible{outline:2px solid #c70022;outline-offset:5px}
+.jova-pages :focus-visible{outline:2px solid var(--brand-red);outline-offset:5px}
 
-.jova-newsletter{background:#071b29;color:#fff}.jova-newsletter>section{background:#071b29;color:#fff;padding:45px 4.3%;border:0;margin:0;max-width:none}.jova-newsletter h2{color:#fff;font-size:clamp(26px,3vw,40px)}.jova-newsletter p,.jova-newsletter label{color:#c4d0d8}.jova-newsletter button{background:#c70022;color:#fff}
+.jova-newsletter{background:#071b29;color:#fff}.jova-newsletter>section{background:#071b29;color:#fff;padding:45px 4.3%;border:0;margin:0;max-width:none}.jova-newsletter h2{color:#fff;font-size:clamp(26px,3vw,40px)}.jova-newsletter p,.jova-newsletter label{color:#c4d0d8}.jova-newsletter button{background:var(--brand-red);color:#fff}
 
 .jova-pages .studio-photo{height:clamp(200px,30vw,420px);position:relative;overflow:hidden}.studio-photo img{object-fit:cover;filter:grayscale(1)}
 
 .jova-pages .editorial-split{display:grid;grid-template-columns:1fr 1fr;gap:10%;align-items:start}.jova-pages .editorial-split p{max-width:600px}
 
-.jova-pages .studio-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:35px}.studio-values article{border-top:1px solid #bac4c6;padding-top:22px}.studio-values article>span{color:#c70022;font-size:12px}.jova-pages .studio-values h2{font-size:30px;margin:26px 0 18px}
+.jova-pages .studio-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:35px}.studio-values article{border-top:1px solid #bac4c6;padding-top:22px}.studio-values article>span{color:var(--brand-red);font-size:12px}.jova-pages .studio-values h2{font-size:30px;margin:26px 0 18px}
 
 .jova-pages .contact-intro{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:8%;align-items:start}.jova-pages .contact-intro>div:first-child{position:sticky;top:35px}.jova-pages .contact-intro h2{font-size:clamp(30px,3vw,43px)}
 
@@ -119,3 +119,9 @@
 @media(max-width:700px){.jova-pages .legal,.jova-pages .legal :is(h2,h3,p,li){text-align:center}}
 
 .contact-fit{background:#fff;text-align:center}.contact-fit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;margin-top:35px}.contact-fit-grid article{padding:28px 22px;background:#f4f5f1;border-radius:6px}.contact-fit-grid article>span{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#0c2948;color:white;margin:0 auto 23px}.jova-pages .contact-fit-grid h3{font-size:23px}.contact-fit-grid p{font-size:14px;color:#5c6a73;line-height:1.7}@media(max-width:1000px){.contact-fit-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.contact-fit-grid{grid-template-columns:1fr}}
+
+/* Text links use one underline, never an underline plus a border. */
+.jova-pages .text-link{border-bottom:0;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+
+/* Pink text accents stay legible on dark section backgrounds. */
+.jova-pages .band-navy .kicker,.jova-pages .band-navy .text-link{color:var(--brand-pink)}
