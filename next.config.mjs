@@ -3,7 +3,7 @@ import { serviceRedirects } from "./lib/service-redirects.mjs";
 const nextConfig = {
   reactStrictMode: true,
   async redirects() {
-    return Object.entries(serviceRedirects).map(([source, target]) => ({ source: `/services/${source}`, destination: `/services/${target}`, permanent: true }));
+    return [{ source: "/terms-of-service", destination: "/terms", permanent: true }, ...Object.entries(serviceRedirects).map(([source, target]) => ({ source: `/services/${source}`, destination: `/services/${target}`, permanent: true }))];
   },
   devIndicators: false,
   async headers() {

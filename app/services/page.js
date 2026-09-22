@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 import { primaryServices } from "@/lib/service-catalogue";
 import styles from "./services.module.css";
 
-export const metadata = pageMetadata("/services", "Websites, Copywriting & Creative Services", "Explore websites, copywriting, social media, brand strategy and design, email automation and content production from JovaMedia, your London digital partner.");
+export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s eight services: websites, system modernization, copywriting, social media, brand design, email automation, content production and SEO.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
