@@ -64,3 +64,37 @@ test("unfinished insights stay accessible but outside search index and sitemap",
     !(await (await fetch(base + "/sitemap.xml")).text()).includes("/insights"),
   );
 });
+
+test("social previews use the current homepage capture and return a valid PNG", async () => {
+  const expected = "https://www.jovamedia.com/share/jovamedia-homepage-2026-09.png";
+  const xml = await (await fetch(base + "/sitemap.xml")).text();
+  for (const [,url] of xml.matchAll(/<loc>(.*?)<\/loc>/g)) {
+    const response = await fetch(base + new URL(url).pathname, {headers:{"User-Agent":"Twitterbot/1.0"}});
+    assert.equal(response.status, 200, url);
+    const html = await response.text();
+    assert.equal(meta(html, "og:image"), expected, url);
+    assert.equal(meta(html, "twitter:image"), expected, url);
+    assert.equal(html.match(/rel="canonical" href="([^"]+)"/)?.[1], url);
+  }
+  for (const path of [new URL(expected).pathname, "/opengraph-image", "/share/jovamedia-digital-partner", "/share/jovamedia-2026"]) {
+    const response = await fetch(base + path);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type"), /image\/png/);
+    const data = Buffer.from(await response.arrayBuffer());
+    assert.equal(data.subarray(1,4).toString(), "PNG");
+    assert.equal(data.readUInt32BE(16), 1200);
+    assert.equal(data.readUInt32BE(20), 630);
+  }
+});
+
+test("renamed pages redirect permanently and robots permits discovery", async () => {
+  for (const [from,to] of [["/services/legacy-software-updates","/services/system-modernization"],["/terms-of-service","/terms"]]) {
+    const response = await fetch(base + from, {redirect:"manual"});
+    assert.equal(response.status, 308);
+    assert.equal(new URL(response.headers.get("location"),base).pathname, to);
+  }
+  const robots = await (await fetch(base + "/robots.txt")).text();
+  assert.match(robots, /User-Agent: \*/i);
+  assert.match(robots, /Allow: \//);
+  assert.match(robots, /Sitemap: https:\/\/www\.jovamedia\.com\/sitemap.xml/);
+});
