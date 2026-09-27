@@ -3,3 +3,9 @@
 .banner{min-height:clamp(570px,56.25vw,850px);padding:clamp(80px,7.8vw,125px) 4.3% 100px;background-image:linear-gradient(to top,#0c2948 0%,transparent 18%),linear-gradient(90deg,#07172470,transparent 66%),url('/home-agency/studio-hero-desktop.webp');background-size:cover;background-position:center;background-repeat:no-repeat}.inner{display:block}.content{width:49%;max-width:720px}
 @media(max-width:700px){.banner{min-height:690px;padding:30px 6.4% 90px;background-image:linear-gradient(to top,#0c2948 0%,transparent 13%),linear-gradient(180deg,#07172450,transparent 57%),url('/home-agency/studio-hero-mobile.webp');background-size:100% 100%,100% 100%,100% auto;background-position:center,center,center bottom;background-color:#162c3c}.inner{text-align:left}.content{width:100%;max-width:none}.banner h1{font-size:clamp(33px,9.5vw,44px);line-height:1.12}.banner h1 em{font-size:1.08em}.banner .copy{font-size:15px;line-height:1.6;margin:20px 0;max-width:335px}.actions{justify-content:flex-start}.cta{padding:16px 21px}}
 @media(max-width:360px){.banner{min-height:655px}}
+/* Move only the photograph. The navy fade, text and wave stay in place. */
+.banner{isolation:isolate;background-image:none}
+.backdrop{position:absolute;inset:0;z-index:-2;background:url('/home-agency/studio-hero-desktop.webp') center/cover no-repeat;transform:translate3d(0,var(--hero-pan,0px),0);pointer-events:none}
+.banner::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(to top,#0c2948 0%,transparent 18%),linear-gradient(90deg,#07172470,transparent 66%)}
+@media(max-width:700px){.backdrop{background-image:url('/home-agency/studio-hero-mobile.webp');background-size:100% auto;background-position:center bottom}.banner::after{background:linear-gradient(to top,#0c2948 0%,transparent 13%),linear-gradient(180deg,#07172450,transparent 57%)}}
+@media(prefers-reduced-motion:reduce){.backdrop{transform:none}}

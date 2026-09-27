@@ -24,22 +24,29 @@ export default function AgencyHome(){
   function setup(){
    teardown();if(mq.matches||paused)return;
    const targets=[...el.querySelectorAll('[data-reveal]')],scrolling=[...el.querySelectorAll('[data-scroll]')];
+   const heroBanner=el.querySelector('[data-hero-parallax]');
    const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add(s.seen);observer.unobserve(e.target)}}),{threshold:.06});
    targets.forEach(e=>{if(e.getBoundingClientRect().top>innerHeight*.94){e.classList.add(s.pending);observer.observe(e)}});
    let frame=0;
    const paint=()=>{
     frame=0;
+    if(heroBanner){
+     const rect=heroBanner.getBoundingClientRect();
+     const limit=innerWidth<=700?36:64;
+     heroBanner.style.setProperty('--hero-pan',`${-Math.min(limit,Math.max(0,-rect.top)*.14)}px`);
+    }
     scrolling.forEach(e=>{const r=e.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight+100)return;const p=Math.min(1,Math.max(0,(innerHeight-r.top)/(innerHeight*.65)));e.style.setProperty('--progress',p);e.style.setProperty('--pan',`${Math.max(-65,Math.min(65,(innerHeight/2-r.top-r.height/2)*.18))}px`)});
    };
    const request=()=>{if(!frame)frame=requestAnimationFrame(paint)};
    addEventListener('scroll',request,{passive:true});addEventListener('resize',request);paint();
-   teardown=()=>{observer.disconnect();cancelAnimationFrame(frame);removeEventListener('scroll',request);removeEventListener('resize',request);targets.forEach(e=>e.classList.remove(s.pending,s.seen));scrolling.forEach(e=>{e.style.removeProperty('--progress');e.style.removeProperty('--pan')});el.style.removeProperty('--hero');el.style.removeProperty('--chapter-progress')};
+   teardown=()=>{observer.disconnect();cancelAnimationFrame(frame);removeEventListener('scroll',request);removeEventListener('resize',request);targets.forEach(e=>e.classList.remove(s.pending,s.seen));scrolling.forEach(e=>{e.style.removeProperty('--progress');e.style.removeProperty('--pan')});heroBanner?.style.removeProperty('--hero-pan');el.style.removeProperty('--hero');el.style.removeProperty('--chapter-progress')};
   }
   setup();mq.addEventListener('change',setup);return()=>{teardown();mq.removeEventListener('change',setup)};
  },[paused]);
  return <div className={`${s.home} ${paused?s.paused:''}`} ref={root}>
  <main id="agency-main">
-  <section className={hero.banner} aria-labelledby="home-title">
+  <section className={hero.banner} aria-labelledby="home-title" data-hero-parallax>
+    <div className={hero.backdrop} aria-hidden="true" />
     <div className={hero.inner}>
       <div className={hero.content}>
         <h1 id="home-title">Good ideas.<br/>Better websites.<br/><em>Brighter businesses.</em></h1>
