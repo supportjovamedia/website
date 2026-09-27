@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { serviceRedirects } from "../lib/service-redirects.mjs";
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname)) throw Error("Local tests only");
-const mainServices = ["web-design", "system-modernization", "content", "social-management", "brand-strategy", "email-marketing", "content-production", "seo"];
+const mainServices = ["web-design", "system-modernization", "social-management", "brand-strategy", "content", "email-marketing", "content-production", "seo"];
 
 test("public service pages have no commercial tables, prices or internal tiers", async () => {
   for (const path of ["/", "/services", ...[...mainServices, "seo"].map((s) => `/services/${s}`)]) {
@@ -18,9 +18,11 @@ test("public service pages have no commercial tables, prices or internal tiers",
   }
 });
 test("homepage presents the eight intended services in order", async () => {
-  const html = await (await fetch(base)).text();
-  const serviceCards = [...html.matchAll(/href="\/services\/([^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual([...new Set(serviceCards)].slice(0, 8), mainServices);
+  for (const page of ["/", "/services"]) {
+    const html = await (await fetch(base + page)).text();
+    const serviceCards = [...html.matchAll(/href="\/services\/([^"]+)"/g)].map((m) => m[1]);
+    assert.deepEqual([...new Set(serviceCards)].slice(0, 8), mainServices, page);
+  }
 });
 test("old service URLs redirect directly to a current information page", async () => {
   for (const [source, target] of Object.entries(serviceRedirects)) {
@@ -32,6 +34,6 @@ test("old service URLs redirect directly to a current information page", async (
 });
 test("contact choices match the public services and exclude paid-media sales", async () => {
   const html = await (await fetch(base + "/contact")).text();
-  for (const name of ["Website Development", "System Modernization", "Copywriting", "Social Media", "Brand Strategy &amp; Design", "Email Marketing &amp; Automation", "Content Production"]) assert.ok(html.includes(`<option>${name}</option>`), name);
+  for (const name of ["Website Development", "System Modernization", "Social Media", "Brand Strategy &amp; Design", "Copywriting", "Email Marketing &amp; Automation", "Content Production"]) assert.ok(html.includes(`<option>${name}</option>`), name);
   assert.doesNotMatch(html, /<option>Performance &amp; growth<\/option>|Social, content, paid media/);
 });

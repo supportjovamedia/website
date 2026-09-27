@@ -7,9 +7,9 @@ import s from "./ServiceCardsPreview.module.css";
 const services = [
   { title: ["Website", "Development"], slug: "web-design", photo: "/service-crafted/website-modern.webp", kind: "website" },
   { title: ["System", "Modernization"], slug: "system-modernization", photo: "/service-crafted/legacy-modern.webp", kind: "legacy" },
-  { title: ["Copywriting"], slug: "content", photo: "/service-crafted/copywriting-picture.webp", kind: "copywriting" },
   { title: ["Social Media", "Management"], slug: "social-management", photo: "/service-crafted/social-picture.webp", kind: "social" },
   { title: ["Brand Strategy", "& Design"], slug: "brand-strategy", photo: "/service-crafted/branding-modern.webp", kind: "branding" },
+  { title: ["Copywriting"], slug: "content", photo: "/service-crafted/copywriting-picture.webp", kind: "copywriting" },
   { title: ["Email Marketing", "& Automation"], slug: "email-marketing", photo: "/service-crafted/email-modern.webp", kind: "email" },
   { title: ["Content", "Production"], slug: "content-production", photo: "/service-crafted/camera-picture.webp", kind: "camera" },
   { title: ["Search &", "Local Visibility"], slug: "seo", photo: "/service-crafted/website-modern.webp", kind: "seo" },
@@ -17,8 +17,8 @@ const services = [
 
 
 const tags = [
-  ["Web design", "Development"], ["Modernisation", "Integrations"], ["Brand voice", "Website copy"],
-  ["Content", "Community"], ["Strategy", "Identity"],
+  ["Web design", "Development"], ["Modernisation", "Integrations"], ["Content", "Community"],
+  ["Strategy", "Identity"], ["Brand voice", "Website copy"],
   ["Campaigns", "Automation"], ["Photography", "Video"], ["Search", "Local visibility"]
 ];
 
