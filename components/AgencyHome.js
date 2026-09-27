@@ -46,7 +46,6 @@ export default function AgencyHome(){
         <p className={hero.copy}>We bring websites, brands and digital experiences together to help your business move forward.</p>
         <div className={hero.actions}><Link href="/services" className={hero.cta}>Explore Services</Link></div>
       </div>
-      <div className={hero.visual}><Image src="/home-agency/hero-workspace.webp" alt="A web design workspace with a desktop monitor, mobile preview and paper sketches" fill sizes="(max-width:700px) 92vw, 48vw" preload /></div>
     </div>
 
 
@@ -69,4 +68,3 @@ export default function AgencyHome(){
  <footer className={r.footer}><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128} className={r.logo}/><div><h3>Studio</h3><Link href="/about">Our story</Link><a href="#services">What we do</a><a href="#studio">Our approach</a></div><div><h3>Services</h3><Link href="/services">Explore our services</Link><Link href="/contact">Start a project</Link></div><div><h3>Contact</h3><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a><Link href="/privacy-policy">Privacy</Link><Link href="/terms">Terms</Link><CookieConsent/></div><p>© {new Date().getFullYear()} JovaMedia<br/>Distinctive digital experiences.</p></footer>
  </div>;
 }
-
