@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import RecaptchaCheckbox from "./RecaptchaCheckbox";
 
 import { serviceOptions, budgetOptions, countryOptions, validateEnquiry } from "@/lib/enquiry-fields.mjs";
 
@@ -17,6 +18,8 @@ export default function ContactForm() {
   const [purpose,setPurpose] = useState("project");
   const isProject = purpose === "project";
   const [messageLength, setMessageLength] = useState(0);
+  const [recaptchaToken, setRecaptchaToken] = useState("");
+  const recaptcha = useRef(null);
 
   const result = useRef(null);
 
@@ -33,11 +36,19 @@ export default function ContactForm() {
     const form = event.currentTarget;
 
     const values = Object.fromEntries(new FormData(form));
+    // Google adds this field. Tokens must not change an enquiry's retry identity.
+    delete values["g-recaptcha-response"];
 
     const validation = validateEnquiry(values);
     setFields(validation.errors);
     if (Object.keys(validation.errors).length) {
       form.elements.namedItem(Object.keys(validation.errors)[0])?.focus();
+      return;
+    }
+    if (!recaptchaToken) {
+      setStatus("error");
+      setError("Please complete the I'm not a robot checkbox before sending your enquiry.");
+      requestAnimationFrame(() => result.current?.focus());
       return;
     }
     const serialized = JSON.stringify(values);
@@ -60,9 +71,9 @@ export default function ContactForm() {
 
         headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.id },
 
-        body: serialized,
+        body: JSON.stringify({ ...values, recaptchaToken }),
 
-        signal: AbortSignal.timeout(18000),
+        signal: AbortSignal.timeout(25000),
 
       });
 
@@ -94,6 +105,9 @@ export default function ContactForm() {
     } finally {
 
       pending.current = false;
+      // Tokens are single-use, including when email delivery needs a retry.
+      recaptcha.current?.reset();
+      setRecaptchaToken("");
 
       requestAnimationFrame(() => result.current?.focus());
 
@@ -200,6 +214,8 @@ export default function ContactForm() {
 
       <p className="form-note">By sending your enquiry, you share these details so we can respond. Read our <a className="text-link" href="/privacy-policy">privacy policy</a>. We aim to reply within 1–3 working days.</p>
 
+      <RecaptchaCheckbox ref={recaptcha} onChange={setRecaptchaToken} />
+
       <button type="submit" className="btn blue" disabled={status === "sending" || status === "success"}>
 
         {status === "sending" ? "Sending…" : status === "success" ? "Enquiry sent" : "Send enquiry"}
@@ -208,7 +224,7 @@ export default function ContactForm() {
 
       {(status === "success" || status === "error") && <section ref={result} tabIndex={-1} role={status === "success" ? "status" : "alert"} className={`contact-feedback ${status}`}>
 
-        <h3>{status === "success" ? "Thank you — we’ve received your enquiry." : "Your enquiry needs another try."}</h3>
+        <h3>{status === "success" ? "Thank you, we’ve received your enquiry." : "Your enquiry needs another try."}</h3>
 
         <p>{status === "success" ? "We’ll reply within 1–3 working days. We look forward to hearing more about your project." : error}</p>
 
