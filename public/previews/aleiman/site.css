@@ -2,3 +2,15 @@
 @keyframes arrival{from{transform:scale(1.035);opacity:.5}to{transform:scale(1);opacity:1}}@keyframes copy-in{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
 @media(max-width:767px){.nav{gap:16px}.nav .menu-toggle{display:grid;place-items:center;width:34px;height:34px;border:1px solid #c9cdbf;border-radius:50%;background:transparent;color:var(--ink);cursor:pointer;flex-shrink:0}.menu-toggle svg{width:16px}.nav>.nav-cta{margin-left:auto;font-size:10px;gap:7px}.nav>.nav-cta svg{display:none}.nav nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--paper);padding:17px 23px 22px;border-bottom:1px solid var(--line);box-shadow:0 15px 20px #17372b12}.nav nav.is-open{display:flex;flex-direction:column;gap:5px}.nav nav a{min-height:42px;font-size:14px}.nav .brand-type{font-size:24px}.nav .brand-type small{font-size:5.5px}.nav .brand-mark{width:21px;height:31px}.nav .brand{gap:9px}.site-footer-nav{flex-wrap:wrap;gap:15px;font-size:10px}.resource-modal{padding:25px}.resource-modal h2{font-size:34px}.preview-note{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal.pending{opacity:1;transform:none}}
+/* Full-width pages and centred mobile introductions. */
+body{width:100%;max-width:none;margin:0}
+@media(max-width:767px){
+.hero-copy,.section-head,.about-title,.about-v2-copy,.testimonial-intro,.contact,.umrah-hero-copy,.umrah-intro,.preparation,.ritual-aside,.umrah-next,.poi-hero-copy,.poi-section-head,.poi-resources>div,.intro-copy,.message-panel>.eyebrow,.message-panel>h2,.form-intro,.details-heading,.location-heading{text-align:center}
+.hero-copy>p,.section-head>p,.section-intro,.poi-hero h1,.poi-hero-copy>p,.poi-resources>div>p,.umrah-hero h1,.umrah-hero p,.intro-copy>p{margin-left:auto;margin-right:auto}
+.hero-actions,.hero-copy .eyebrow,.umrah-hero .breadcrumbs,.breadcrumbs,.poi-city-note,.poi-filters,.about-values{justify-content:center}
+.poi-filters{margin-left:auto;margin-right:auto}.hero-actions{flex-wrap:wrap}
+.contact-right{width:auto;max-width:340px;margin-left:auto;margin-right:auto}.contact .eyebrow{justify-content:center}
+.contact-intro{height:auto}.intro-copy{padding-bottom:30px}.intro-copy>p{max-width:320px}.intro-photo{position:relative;top:auto;right:auto;width:calc(100% - 46px);height:230px;margin:0 auto;border-radius:140px 140px 0 0}.intro-arch{display:none}
+.ritual-title{justify-content:center;text-align:center}.ritual-nav a{justify-content:center}
+}
+
