@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="360" viewBox="0 0 600 360" fill="none">
+  <defs>
+    <linearGradient id="case" x1="345" y1="91" x2="508" y2="293" gradientUnits="userSpaceOnUse"><stop stop-color="#87A391"/><stop offset="1" stop-color="#5B7E68"/></linearGradient>
+    <linearGradient id="side" x1="476" y1="100" x2="518" y2="290" gradientUnits="userSpaceOnUse"><stop stop-color="#446D57"/><stop offset="1" stop-color="#2C5140"/></linearGradient>
+    <linearGradient id="cloth" x1="228" y1="246" x2="399" y2="313" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFDF2"/><stop offset="1" stop-color="#D9D5C6"/></linearGradient>
+    <filter id="shadow" x="-35%" y="-35%" width="170%" height="180%"><feDropShadow dx="0" dy="11" stdDeviation="9" flood-color="#153E34" flood-opacity=".13"/></filter>
+  </defs>
+  <ellipse cx="389" cy="313" rx="154" ry="16" fill="#153E34" opacity=".045"/>
+  <g transform="rotate(6 425 182)" filter="url(#shadow)">
+    <path d="M396 89V68a8 8 0 0 1 8-8h39a8 8 0 0 1 8 8v22" stroke="#153E34" stroke-width="9"/>
+    <path d="M401 85V69a4 4 0 0 1 4-4h37a4 4 0 0 1 4 4v17" stroke="#527461" stroke-width="2"/>
+    <rect x="362" y="289" width="13" height="19" rx="5" fill="#183F32"/>
+    <rect x="473" y="289" width="13" height="19" rx="5" fill="#183F32"/>
+    <rect x="343" y="91" width="167" height="206" rx="22" fill="url(#side)"/>
+    <rect x="337" y="86" width="159" height="206" rx="21" fill="url(#case)"/>
+    <rect x="344" y="94" width="145" height="191" rx="17" stroke="#B6C5AE" stroke-opacity=".57"/>
+    <path d="M374 116v145M402 116v145M430 116v145M458 116v145" stroke="#54735D" stroke-width="8" stroke-linecap="round" stroke-opacity=".48"/>
+    <path d="M373 116v145M401 116v145M429 116v145M457 116v145" stroke="#C3D0BC" stroke-width="3" stroke-linecap="round" stroke-opacity=".46"/>
+    <path d="M357 88v203M476 88v202" stroke="#41624D" stroke-opacity=".35"/>
+    <rect x="389" y="102" width="56" height="14" rx="4" fill="#658674" stroke="#AAC0AA" stroke-opacity=".5"/>
+    <rect x="404" y="106" width="26" height="6" rx="1" fill="#E3D3AC"/>
+    <path d="M503 153h7a4 4 0 0 1 4 4v34a4 4 0 0 1-4 4h-7" stroke="#183F32" stroke-width="5"/>
+    <path d="M455 80c18-4 26 9 22 27" stroke="#AA8B53" stroke-width="2"/>
+    <g transform="rotate(13 470 132)">
+      <path d="M453 107h31l5 13v51a4 4 0 0 1-4 4h-32a4 4 0 0 1-4-4v-51l4-13Z" fill="#D4B882" stroke="#AF8D52"/>
+      <circle cx="469" cy="115" r="2.5" fill="#47705A"/>
+      <rect x="456" y="130" width="26" height="30" rx="1" fill="#F1E8D1"/>
+      <path d="M461 139h16M461 145h13M461 151h9" stroke="#9C956F" stroke-width="1.2"/>
+    </g>
+  </g>
+  <g filter="url(#shadow)">
+    <path d="M223 276c0-7 5-12 12-13l134-6c10 0 17 6 18 15l3 29c0 6-5 10-12 10H242c-11 0-16-4-17-13l-2-22Z" fill="#BDAB83"/>
+    <path d="M225 287c4 8 12 10 24 10h130M236 308h144" stroke="#988761" stroke-opacity=".45"/>
+    <path d="M232 262c-1-7 4-13 12-14l124-6c9-1 15 3 17 10l5 29c2 9-3 15-13 15H246c-10 0-15-4-16-11l2-23Z" fill="url(#cloth)"/>
+    <path d="M241 264c7 6 15 8 25 8l111-4" stroke="#C9C6B6" stroke-width="1.5"/>
+    <path d="m240 255 117-7c10 0 18 3 24 9M246 279l129-4M247 285l128-3" stroke="#E6E3D6" stroke-width="1.5"/>
+    <path d="M277 249v44M287 249v44" stroke="#CAB887" stroke-width="2" opacity=".7"/>
+    <path d="M281 251v40" stroke="#EAE2CA" stroke-width="3"/>
+    <path d="M239 294v5M245 295v5M251 296v5M257 296v5M263 296v5M269 296v5" stroke="#E9E6D8" stroke-width="1.5"/>
+  </g>
+</svg>

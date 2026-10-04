@@ -1,0 +1,12 @@
+/* Only the three lower Helpful Links cards receive this type refinement. */
+.illustrated-resources .resource-art{height:204px}
+.illustrated-resources .resource-card-copy{padding:27px 26px 24px}
+.illustrated-resources .resource-card-copy .eyebrow{font-family:var(--sans);font-size:8px;font-weight:700;line-height:1.5;letter-spacing:.115em;color:#667451}
+.illustrated-resources .resource-card-copy h3{font-family:var(--sans);font-size:28px;font-weight:700;line-height:1.17;letter-spacing:-.045em;color:#173c30;margin-top:14px;min-height:66px}
+.illustrated-resources .resource-card-copy p{font-family:var(--sans);font-size:12px;font-weight:400;line-height:1.7;color:#56644e;max-width:300px;min-height:42px;margin-top:14px}
+.illustrated-resources .resource-action{font-family:var(--sans);font-size:11px;font-weight:700;line-height:1.5;color:#244737;margin-top:24px;padding-top:18px;border-top-color:#cad3be}
+.resource-health .resource-art img{object-position:50% 68%}
+.resource-quran .resource-art img{object-position:50% 45%}
+@media(min-width:768px) and (max-width:1100px){.illustrated-resources .resource-art{height:173px}.illustrated-resources .resource-card-copy{padding:24px 20px}.illustrated-resources .resource-card-copy h3{font-size:24px;min-height:57px}.illustrated-resources .resource-card-copy .eyebrow{font-size:7px;letter-spacing:.07em}.illustrated-resources .resource-card-copy p{font-size:11px;min-height:57px}.illustrated-resources .resource-action{font-size:10px}}
+@media(min-width:768px) and (max-width:900px){.illustrated-resources .resource-card-copy{padding:23px 16px}.illustrated-resources .resource-card-copy h3{font-size:22px;letter-spacing:-.05em;min-height:54px}.illustrated-resources .resource-card-copy .eyebrow{font-size:6px}.illustrated-resources .resource-card-copy p{font-size:10px;min-height:53px}}
+@media(max-width:767px){.illustrated-resources{gap:20px}.illustrated-resources .resource-card{display:block}.illustrated-resources .resource-art{height:188px;min-height:0}.illustrated-resources .resource-art img{object-fit:cover}.illustrated-resources .resource-card-copy{padding:24px 23px}.illustrated-resources .resource-card-copy .eyebrow{font-size:8px;letter-spacing:.1em}.illustrated-resources .resource-card-copy h3{font-size:27px;min-height:0;margin-top:13px}.illustrated-resources .resource-card-copy p{font-size:12px;min-height:0;margin-top:13px}.illustrated-resources .resource-action{font-size:11px;margin-top:21px;padding-top:17px}}

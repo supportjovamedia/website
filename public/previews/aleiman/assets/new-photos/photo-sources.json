@@ -1,0 +1,53 @@
+[
+  {
+    "file": "flight-wing-sunset.jpg",
+    "description": "Real aircraft wing over clouds at sunset; generic flight imagery, no route implied.",
+    "dimensions": [1600, 2400],
+    "author": "Lukas Souza",
+    "source": "https://unsplash.com/photos/the-wing-of-an-airplane-flying-above-the-clouds-OwGsBaSs8A8",
+    "download": "https://images.unsplash.com/photo-1678955084463-84bad4e085ba?fm=jpg&q=90&w=1600",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "crop_advice": "For 600x350, cover crop at center 65% to show wing and sunset.",
+    "modification": "Raw downloaded image, resized by source URL to width 1600; no local retouching."
+  },
+  {
+    "file": "hotel-twin-room.jpg",
+    "description": "Real hotel interior with twin beds, muted gold and green furnishings; generic accommodation image and not a claimed specific listed hotel.",
+    "dimensions": [1600, 1200],
+    "author": "Alex Muzenhardt",
+    "source": "https://unsplash.com/photos/a-luxurious-hotel-room-with-two-beds-4MQ0T4zBIys",
+    "download": "https://images.unsplash.com/photo-1741506131058-533fcf894483?fm=jpg&q=90&w=1600",
+    "license": "Unsplash License",
+    "license_url": "https://unsplash.com/license",
+    "crop_advice": "For 600x350, centered cover crop shows both beds.",
+    "modification": "Raw downloaded image, resized by source URL to width 1600; no local retouching."
+  },
+  {
+    "file": "haramain-train.jpg",
+    "description": "Haramain High Speed Railway, Saudi Arabia, 2023.",
+    "dimensions": [4391, 2953],
+    "author": "Saudi Press Agency (SPA)",
+    "source": "https://commons.wikimedia.org/wiki/File:%D9%82%D8%B7%D8%A7%D8%B1_%D8%A7%D9%84%D8%AD%D8%B1%D9%85%D9%8A%D9%86_2023.jpg",
+    "original_source": "https://cc.spa.gov.sa/ar#28134",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/1/15/%D9%82%D8%B7%D8%A7%D8%B1_%D8%A7%D9%84%D8%AD%D8%B1%D9%85%D9%8A%D9%86_2023.jpg",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "attribution": "Haramain High Speed Railway, Saudi Press Agency (SPA), via Wikimedia Commons, CC BY-SA 4.0.",
+    "crop_advice": "Centered wide crop retains the train.",
+    "modification": "Raw original downloaded file; no local edits. For derivatives, note cropping and retain the CC BY-SA 4.0 licence for the adapted photograph."
+  },
+  {
+    "file": "qaisaryah-market.jpg",
+    "description": "Al-Qaisaryah Market interior, Al-Ahsa, Saudi Arabia.",
+    "dimensions": [5184, 3456],
+    "author": "Yafa.naif (Wikimedia source author); embedded camera credit: Yasser Bakhsh / @ysrb10",
+    "source": "https://commons.wikimedia.org/wiki/File:%D8%B3%D9%88%D9%82_%D8%A7%D9%84%D9%82%D9%8A%D8%B5%D8%B1%D9%8A%D8%A9W5253.jpg",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/e/e6/%D8%B3%D9%88%D9%82_%D8%A7%D9%84%D9%82%D9%8A%D8%B5%D8%B1%D9%8A%D8%A9W5253.jpg",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "attribution": "Al-Qaisaryah Market, Yafa.naif / Yasser Bakhsh, via Wikimedia Commons, CC BY-SA 4.0.",
+    "crop_advice": "Centered wide crop shows the warm lantern corridor and shops.",
+    "modification": "Raw original downloaded file; no local edits. For derivatives, note cropping and retain the CC BY-SA 4.0 licence for the adapted photograph."
+  }
+]
