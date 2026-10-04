@@ -3,11 +3,11 @@ import { serviceRedirects } from "./lib/service-redirects.mjs";
 const nextConfig = {
   reactStrictMode: true,
   async redirects() {
-    return [{ source: "/terms-of-service", destination: "/terms", permanent: true }, ...Object.entries(serviceRedirects).map(([source, target]) => ({ source: `/services/${source}`, destination: `/services/${target}`, permanent: true }))];
+    return [{ source: "/previews/aleiman", destination: "/previews/aleiman/index.html", permanent: false }, { source: "/terms-of-service", destination: "/terms", permanent: true }, ...Object.entries(serviceRedirects).map(([source, target]) => ({ source: `/services/${source}`, destination: `/services/${target}`, permanent: true }))];
   },
   devIndicators: false,
   async headers() {
-    return process.env.VERCEL_ENV === "preview"
+    const previewHeaders = process.env.VERCEL_ENV === "preview"
       ? [
           {
             source: "/:path*",
@@ -15,6 +15,10 @@ const nextConfig = {
           },
         ]
       : [];
+    return [...previewHeaders, {
+      source: "/previews/aleiman/:path*",
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+    }];
   },
 };
 export default nextConfig;

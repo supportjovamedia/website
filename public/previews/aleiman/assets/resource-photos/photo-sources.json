@@ -1,0 +1,55 @@
+{
+  "checked_on": "2026-10-04",
+  "license": "Unsplash License",
+  "license_url": "https://unsplash.com/license",
+  "selected": [
+    {
+      "file": "assets/resource-photos/quran-reading-raw.jpg",
+      "resource": "My Quran V3",
+      "photographer": "GR Stocks",
+      "source": "https://unsplash.com/photos/brown-wooden-framed-black-and-white-book-YNJmz4O9py4",
+      "download": "https://images.unsplash.com/photo-1624862302031-013c53df5995?auto=format&fit=max&w=2000&q=90&fm=jpg",
+      "published": "2021-06-28",
+      "dimensions": [
+        2000,
+        1283
+      ],
+      "description": "Real photograph of Quran on wood stand with prayer beads, dark green and brown palette. Illustrative image for the resource, not its literal product cover.",
+      "recommended_css_object_position": "50% 50%",
+      "crop_guidance": "Use object-fit:cover at about 2.16:1. Central framing preserves the Quran, stand and beads while removing blank space above and below.",
+      "modification": "No local image editing; raw CDN download retained."
+    },
+    {
+      "file": "assets/courtyard.jpg",
+      "resource": "Healthy Hajj & Itinerary",
+      "photographer": "Amien Taryamin",
+      "source": "https://unsplash.com/photos/people-walking-inside-white-building-IEcqd914qpw",
+      "published": "2020-11-06",
+      "camera": "OPPO A3s",
+      "dimensions": [
+        2400,
+        1800
+      ],
+      "description": "Existing real photograph of pilgrims and shade umbrellas at Masjid Nabawi, Madinah. Reuse recommended because it is brighter and has a more suitable horizontal composition.",
+      "recommended_css_object_position": "50% 68%",
+      "crop_guidance": "Use object-fit:cover. At about 2.16:1, 68% vertical position retains the umbrellas and people below.",
+      "modification": "Existing local photograph retained unchanged."
+    }
+  ],
+  "alternative_not_recommended": [
+    {
+      "file": "assets/resource-photos/healthy-hajj-pilgrims-raw.jpg",
+      "photographer": "Mahach Gadzhiev",
+      "source": "https://unsplash.com/photos/a-group-of-people-standing-under-umbrellas-in-a-courtyard-EgbfDUsge2I",
+      "download": "https://images.unsplash.com/photo-1646931817386-f6065668963a?auto=format&fit=max&w=2000&q=90&fm=jpg",
+      "published": "2022-03-10",
+      "camera": "SONY ILCE-7RM3",
+      "dimensions": [
+        2000,
+        3556
+      ],
+      "reason": "Genuine photograph, but portrait composition and dark exposure make it weaker for this small horizontal resource card. Source original retained for recovery.",
+      "modification": "No local image editing; raw CDN download retained."
+    }
+  ]
+}
