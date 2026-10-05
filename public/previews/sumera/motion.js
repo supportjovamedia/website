@@ -15,7 +15,7 @@
     wrapper.append(element);
     return {element, wrapper};
   }
-  // Anchor wrappers stay stable while their children hold in view.
+  // Anchor wrappers stay stable during normal page scrolling.
   const hero = scene('.hero','home');
   const academy = scene('.academy','academy');
   const about = document.createElement('span');
@@ -41,25 +41,9 @@
   function start() {
     media.add({phone:'(max-width:767px)',tablet:'(min-width:768px) and (max-width:1080px)',desktop:'(min-width:1081px)',
       wide:'(min-width:1920px)',ultra:'(min-width:2560px)',tall:'(min-height:650px)',reduced:'(prefers-reduced-motion:reduce)'}, context => {
-      const {phone, tall, reduced} = context.conditions;
+      const {phone, reduced} = context.conditions;
       root.classList.toggle('motion-active', !reduced);
       if (!reduced) {
-        const headerSize = header.offsetHeight;
-        const available = innerHeight - headerSize;
-        const fits = element => tall && element.getBoundingClientRect().height <= available + 2;
-        const heroPinned = !phone && fits(hero.element);
-        const heroLayer = document.querySelector('.hero-photo .motion-photo');
-        const heroTimeline = gsap.timeline({scrollTrigger:{
-          id:'sumera-hero-depth',trigger:hero.wrapper,pin:heroPinned?hero.element:false,pinSpacing:true,
-          start:heroPinned?`top ${headerSize}px`:'clamp(top top)',
-          end:heroPinned?()=>`+=${Math.round(innerHeight*.85)}`:'bottom top',scrub:.35,invalidateOnRefresh:true,
-          onToggle:self=>heroLayer.style.willChange=self.isActive?'transform':'auto'
-        }});
-        heroTimeline.fromTo(heroLayer,{yPercent:-13,xPercent:phone?0:3,scale:1.38},
-          {yPercent:13,xPercent:phone?0:-3,scale:1.3,ease:'none',duration:1},0)
-          .fromTo('.hero-photo',{clipPath:phone?'inset(10% 5% 5% 5%)':'inset(4% 7% 4% 0%)'},
-            {clipPath:'inset(0% 0% 0% 0%)',ease:'none',duration:.6},0);
-        gsap.from('.hero h1,.hero-description,.hero .button-group',{y:24,stagger:.08,duration:.85,ease:'power3.out'});
         function photo(frame, trigger=frame, travel=12, id, scale=1.32, scrub=.35) {
           const layer = frame.querySelector('.motion-photo');
           if (!layer) return;
@@ -89,7 +73,7 @@
         gsap.from('.contact-copy',{y:45,duration:.8,ease:'power3.out',
           scrollTrigger:{trigger:'.contact',start:'top 85%',toggleActions:'play none none reverse'}});
       }
-      // Reading state is created after pin spacing establishes document flow.
+      // Reading state follows the page's normal document flow.
       ScrollTrigger.create({id:'sumera-header',start:1,end:'max',onUpdate:self=>header.classList.toggle('is-scrolled',self.scroll()>1)});
       const sections = ['home','services','academy','gallery','contact'].map(id=>document.getElementById(id));
       ScrollTrigger.create({id:'sumera-navigation',start:0,end:'max',onUpdate:()=>{

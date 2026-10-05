@@ -14,9 +14,9 @@ Responsive WebP images are exported at their native resolution or smaller, with 
 
 ## Motion and interactions
 
-Locally stored GSAP 3.15 and ScrollTrigger drive independent photo layers. The approved hero parallax and treatment sequence remain. The hero holds briefly on tall desktop and tablet viewports, with stable anchor wrappers and native scrolling. Phones and short viewports receive normal page flow.
+Locally stored GSAP 3.15 and ScrollTrigger drive independent photo layers in the sections below the hero. The hero is completely static at the user's request: no image parallax, changing mask, entrance reveal or pinned scroll hold. Its responsive layout and images remain. The treatment sequence and other section motion are retained.
 
-The academy keeps a stable frame, with smooth image movement and no pin release or changing clip mask. Gallery frames stay aligned while their photographs move gently. Opposing marble layers retain their scroll movement. Booking uses restrained photo parallax. Reduced-motion mode removes pins and animation while retaining readable content and working controls.
+The academy keeps a stable frame, with smooth image movement and no pin release or changing clip mask. Gallery frames stay aligned while their photographs move gently. Opposing marble layers retain their scroll movement. Booking uses restrained photo parallax. Reduced-motion mode removes animation while retaining readable content and working controls.
 
 Single-page navigation opens the appropriate section. Services reveal the salon's treatment menu and prices. Booking lets the visitor choose a service and open a prefilled WhatsApp enquiry or call the salon; the preview itself sends no message and confirms no appointment. Three existing course pages remain external links, as agreed for this preview. Gallery images support next/previous controls, arrow keys, Escape and focus restoration. Footer social links lead to the salon's existing accounts. Privacy, terms and cookies remain honest local preview notices pending final client policies.
 
@@ -24,9 +24,9 @@ Unverified review quotes, client counts and avatar proof were removed. No fabric
 
 ## Verification and review
 
-Normal and reduced motion passed across 360, 390, 768, 791, 1440, 1920, 2560 and 3440 pixel widths. Desktop, preview-panel and phone scene checks confirm independent photograph movement, stable text during hero holds, stable academy frames and runtime reduced-motion cleanup. Single-page anchors, service details, booking links, course links and keyboard gallery controls passed. A short 791 x 450 viewport uses no hero pin. Browser checks reported no script errors, broken images or external asset requests.
+Normal and reduced motion passed across 360, 390, 768, 791, 1440, 1920, 2560 and 3440 pixel widths. Desktop, preview-panel and phone scene checks confirm independent photograph movement, a static hero without scroll holds, stable academy frames and runtime reduced-motion cleanup. Single-page anchors, service details, booking links, course links and keyboard gallery controls passed. A short 791 x 450 viewport uses no hero pin. Browser checks reported no script errors, broken images or external asset requests.
 
-The actual page was recorded during a scroll pass and the recording was played for review. The playable proof, screenshots, verification report and metadata audit are in output/Sumera Preview/Live Review. The final image assets and review captures plus the MP4 contain no detected EXIF, XMP, ICC, C2PA or AI-tool provenance metadata. Normal media codec information is retained. Removing metadata does not change the images' origin.
+The page was recorded during the previous animated-hero revision. That recording is historical; the current preview has a static hero. The playable proof, screenshots, verification report and metadata audit are in output/Sumera Preview/Live Review. The final image assets and review captures plus the MP4 contain no detected EXIF, XMP, ICC, C2PA or AI-tool provenance metadata. Normal media codec information is retained. Removing metadata does not change the images' origin.
 
 Run node sumera-preview-server.mjs from this directory.
 
