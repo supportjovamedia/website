@@ -1,0 +1,4 @@
+/* Motion stays below the hero. Fixed photo frames prevent layout shifts. */
+.salon-photo,.academy-photo{overflow:hidden}
+.salon-photo>img,.academy-photo>img{transform-origin:50% 50%}
+@media(prefers-reduced-motion:reduce){.salon-photo>img,.academy-photo>img{transform:none!important}}
