@@ -110,6 +110,22 @@
     block.append(enquire);
     showDetail(button.hasAttribute('data-course-dates') ? 'Find Your Course Date' : 'Learn at Sumera Academy', 'Explore a course or ask the team about the next available dates.', block, button, 'Sumera Academy');
   }));
+  const treatmentPhotos = [...document.querySelectorAll('[data-treatment-photo]')];
+  const treatmentRows = [...document.querySelectorAll('.treatment-row')];
+  function previewTreatment(row) {
+    treatmentRows.forEach(item => item.classList.toggle('is-selected', item === row));
+    treatmentPhotos.forEach(image => {
+      const selected = image.dataset.treatmentPhoto === row.dataset.service;
+      image.classList.toggle('is-selected', selected);
+      image.setAttribute('aria-hidden', String(!selected));
+      if (selected) document.querySelector('#treatment-caption').textContent = image.alt;
+    });
+  }
+  treatmentRows.forEach(row => {
+    row.addEventListener('pointerenter', () => previewTreatment(row));
+    row.addEventListener('focus', () => previewTreatment(row));
+  });
+  if (treatmentRows[0]) previewTreatment(treatmentRows[0]);
   function renderGallery() {
     const entry = gallery[galleryIndex];
     const image = document.querySelector('#lightbox-image'); image.src = entry.source; image.alt = entry.alt;
@@ -127,8 +143,8 @@
     if (track.scrollWidth <= track.clientWidth + 1) { showGallery(direction > 0 ? 1 : gallery.length - 1, trigger); return; }
     track.scrollBy({ left: direction * (track.clientWidth * .8), behavior: reduceMotion.matches ? 'instant' : 'smooth' });
   };
-  document.querySelector('.gallery-prev').addEventListener('click', event => scrollGallery(-1, event.currentTarget));
-  document.querySelector('.gallery-next').addEventListener('click', event => scrollGallery(1, event.currentTarget));
+  document.querySelector('.gallery-prev')?.addEventListener('click', event => scrollGallery(-1, event.currentTarget));
+  document.querySelector('.gallery-next')?.addEventListener('click', event => scrollGallery(1, event.currentTarget));
   document.querySelectorAll('[data-social]').forEach(button => button.addEventListener('click', () => showDetail(button.dataset.social, 'Sumera’s social profile link will be added when confirmed.', null, button)));
   document.querySelectorAll('[data-info]').forEach(button => button.addEventListener('click', () => showDetail(button.dataset.info, 'This local design preview does not collect personal information, use tracking or save cookies. Salon policy text will be supplied before the website goes live.', null, button)));
 })();
