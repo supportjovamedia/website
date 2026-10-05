@@ -1,5 +1,5 @@
 {
-  "checked_on": "2026-10-04",
+  "checked_on": "2026-10-05",
   "license": "Unsplash License",
   "license_url": "https://unsplash.com/license",
   "selected": [
@@ -34,6 +34,24 @@
       "recommended_css_object_position": "50% 68%",
       "crop_guidance": "Use object-fit:cover. At about 2.16:1, 68% vertical position retains the umbrellas and people below.",
       "modification": "Existing local photograph retained unchanged."
+    },
+    {
+      "file": "assets/resource-photos/hajj-packing.webp",
+      "resource": "Hajj Safe: Hajj Packing",
+      "photographer": "SHVETS production",
+      "source": "https://www.pexels.com/photo/clothes-and-sunglasses-in-an-open-suitcase-on-a-rug-8933565/",
+      "download": "https://images.pexels.com/photos/8933565/pexels-photo-8933565.jpeg?auto=compress&cs=tinysrgb&w=960",
+      "published": "2021-07-27",
+      "camera": "SONY ILCE-7M3",
+      "license": "Pexels License",
+      "license_url": "https://www.pexels.com/license/",
+      "dimensions": [
+        960,
+        640
+      ],
+      "description": "Real photograph of an open suitcase containing folded white clothing and travel essentials. Illustrative packing imagery, not a claim that a Hajj journey was photographed.",
+      "recommended_css_object_position": "50% 50%",
+      "modification": "Resized to 960 pixels wide and compressed as WebP; no synthetic content or retouching. Metadata stripped. Source download retained separately in review/packing-source/pexels-8933565.jpg."
     }
   ],
   "alternative_not_recommended": [
