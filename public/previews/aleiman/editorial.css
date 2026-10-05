@@ -23,6 +23,7 @@ h1 em, h2 em { font-weight: 500; }
 .contact-page .nav-cta { color: #785a29; }
 .button { height: 56px; font-size: 14px; gap: 24px; }
 .button > span { width: 40px; height: 40px; }
+.button:disabled { opacity: .65; cursor: not-allowed; transform: none; }
 .text-link, .underlined { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
 .hero h1 { font-weight: 500; font-size: clamp(72px, 5.6vw, 90px); letter-spacing: -.035em; }
 .hero-copy > p { font-size: 16px; line-height: 1.8; max-width: 405px; color: #dbe1d6; }
@@ -263,6 +264,8 @@ h1 em, h2 em { font-weight: 500; }
   .intro-photo { border: 0; }
   .intro-copy { padding-top: 26px; }
   .form-intro, .details-heading > p { font-size: 15px; }
+  .form-bottom { flex-direction: column; align-items: center; gap: 12px; }
+  .form-bottom .required-note { order: 2; }
   .contact-details { margin-top: 32px; }
   .map-caption { font-size: 12px; }
 }
