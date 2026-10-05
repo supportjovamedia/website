@@ -47,7 +47,7 @@
         const headerSize = header.offsetHeight;
         const available = innerHeight - headerSize;
         const fits = element => tall && element.getBoundingClientRect().height <= available + 2;
-        const heroPinned = fits(hero.element);
+        const heroPinned = !phone && fits(hero.element);
         const heroLayer = document.querySelector('.hero-photo .motion-photo');
         const heroTimeline = gsap.timeline({scrollTrigger:{
           id:'sumera-hero-depth',trigger:hero.wrapper,pin:heroPinned?hero.element:false,pinSpacing:true,
