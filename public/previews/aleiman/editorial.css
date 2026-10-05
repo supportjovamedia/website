@@ -1,0 +1,290 @@
+/* Al Eiman finishing system. Content stays readable without JavaScript. */
+:root {
+  --body-copy: #4e6256;
+  --muted: #5c6c5c;
+  --nav-height: 86px;
+  --focus: #88672d;
+}
+html { scroll-padding-top: calc(var(--nav-height) + 24px); scrollbar-color: #8a997f #f2f3eb; }
+body { font-size: 16px; }
+::selection { background: #d9c391; color: #102f28; }
+input, textarea { caret-color: #153e34; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 5px; }
+.skip { z-index: 100; }
+h1, h2, h3 { font-weight: 600; }
+h1 em, h2 em { font-weight: 500; }
+.utility { font-size: 12px; color: #4e6256; }
+.eyebrow { color: #52664b; }
+.nav { position: sticky; top: 0; height: var(--nav-height); z-index: 30; border-bottom: 1px solid #e0e5da; }
+.nav nav { font-size: 14px; gap: 30px; }
+.nav nav a, .nav-cta { min-height: 44px; }
+.nav nav a[aria-current=page] { color: #785a29; }
+.nav-cta { font-size: 14px; font-weight: 600; }
+.contact-page .nav-cta { color: #785a29; }
+.button { height: 56px; font-size: 14px; gap: 24px; }
+.button > span { width: 40px; height: 40px; }
+.button:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+.text-link, .underlined { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
+.hero h1 { font-weight: 500; font-size: clamp(72px, 5.6vw, 90px); letter-spacing: -.035em; }
+.hero-copy > p { font-size: 16px; line-height: 1.8; max-width: 405px; color: #dbe1d6; }
+.hero-image > img, .poi-hero-photo > img, .umrah-hero-photo > img, .intro-photo > img { animation: none; transition: none; }
+.hero-image, .poi-hero-photo, .umrah-hero-photo { overflow: hidden; }
+.hero-copy, .intro-copy { animation: none; }
+.hero-note p { font-size: 12px; }
+.hero-index { display: none; }
+.image-location { bottom: 24px; font-size: 12px; padding: 8px 12px; background: #102f28b8; border-radius: 4px; }
+/* Headings carry the hierarchy; small labels no longer repeat them. */
+.about-title > .eyebrow, .section-head .eyebrow, .services-intro > .eyebrow,
+.testimonial-intro > .eyebrow, .contact .eyebrow, .message-panel > .eyebrow,
+.details-heading > .eyebrow, .location-heading .eyebrow, .poi-section-head .eyebrow,
+.poi-resources > div > .eyebrow, .umrah-intro .eyebrow, .ritual-aside > .eyebrow,
+.preparation .eyebrow, .umrah-next .eyebrow, .resource-card-copy > .eyebrow { display: none; }
+.section-head h2, .about-title h2, .services-intro h2, .testimonial-intro h2,
+.contact h2, .message-panel h2, .details-heading h2, .location-heading h2,
+.poi-section-head h2, .poi-resources h2, .umrah-intro h2, .ritual-aside h2,
+.preparation h2, .umrah-next h2 { margin-top: 0; }
+.section-head > p, .about-v2-copy p, .services-intro > p, .contact-right p,
+.umrah-prose, .preparation p, .video-guide p, .poi-controls > p,
+.poi-resources > div > p, .form-intro, .details-heading > p { font-size: 16px; line-height: 1.8; color: var(--body-copy); }
+.about-title h2 { font-size: 42px; }
+.about-v2 { gap: 36px; }
+.about-values { flex-wrap: wrap; }
+.about-values span { font-size: 12px; color: #53674f; }
+.hajj-notice .eyebrow { display: none; }
+.hajj-notice p { font-size: 14px; color: var(--body-copy); }
+.hajj-actions > a { font-size: 14px; min-height: 48px; }
+.service-track .story-panel { border: 0; box-shadow: 0 8px 25px #1939230c; border-radius: 12px; min-height: 0; }
+.service-track .service-photo { height: 285px; }
+.service-track .service-photo > span { font-size: 12px; letter-spacing: .06em; padding: 6px 10px; background: #102f28b8; border-radius: 4px; }
+.service-track .service-content { padding: 26px 30px; }
+.service-track .service-content > p, .service-track .service-content li { font-size: 15px; line-height: 1.7; }
+.service-track .service-options summary { min-height: 44px; font-size: 14px; }
+.services-intro { top: calc(var(--nav-height) + 30px); }
+.services-intro > p { max-width: 340px; }
+.services-steps a { min-height: 56px; font-size: 16px; color: #52654c; }
+.services-steps a span { font-size: 12px; color: #596d50; }
+.service-scroll-note { font-size: 12px; color: #53674a; }
+.services-scroll.motion-ready .story-panel { top: calc(var(--nav-height) + 22px); }
+.service-marker { scroll-margin-top: calc(var(--nav-height) + 24px); }
+.airlines-section h2 { font-size: 40px; }
+.airline-country { font-size: 12px; color: #56674f; }
+.airline h3 { font-weight: 600; font-size: 29px; }
+.airline > a { min-height: 44px; font-size: 14px; margin-top: 8px; }
+.essential h3 { font-size: 29px; }
+.essential p { font-size: 15px; line-height: 1.8; color: #d0dbcd; }
+.passport-cover { color: #dec99b; }
+.policy-paper > b { color: #314e35; }
+.note-front > small { color: #2e502b; }
+.essentials-section .underlined { font-size: 14px; }
+.landmark-resource { height: 305px; }
+.landmark-resource > img { transition: none; }
+.landmark-resource:hover > img { transform: none; }
+.landmark-resource h3 { font-weight: 600; font-size: 42px; }
+.landmark-resource p { font-size: 15px; color: #eef0e8; line-height: 1.7; }
+.resource-tag { font-size: 11px; }
+.round-arrow { width: 44px; height: 44px; }
+.illustrated-resources .resource-card-copy { padding: 24px; }
+.illustrated-resources .resource-card-copy h3 { margin: 0; font-size: 31px; min-height: 0; }
+.illustrated-resources .resource-card-copy p { font-size: 15px; line-height: 1.7; min-height: 51px; color: var(--body-copy); }
+.illustrated-resources .resource-action { font-size: 14px; min-height: 44px; }
+.testimonials-section blockquote footer { background: transparent; padding: 0; font-size: 13px; color: #52654b; }
+.testimonials-section blockquote footer span { font-size: 12px; color: #5c6c5c; }
+.small-quotes blockquote > p { font-size: 27px; }
+.contact-right .phone { display: block; min-height: 44px; padding-top: 14px; font-size: 16px; }
+.footer-main p, .footer-main > div { font-size: 14px; color: #4e6256; }
+.footer-main > div a { min-height: 36px; }
+.site-footer-nav { padding-top: 22px; font-size: 14px; gap: 26px; }
+.site-footer-nav a { min-height: 44px; display: inline-flex; align-items: center; border: 0; }
+.back-top { min-height: 44px; font-size: 13px; }
+.footer-bottom { font-size: 12px; color: #586853; margin-top: 24px; }
+.resource-modal .close-dialog, .poi-close { min-height: 44px; min-width: 44px; }
+.resource-modal p, .resource-modal li { font-size: 16px; }
+.breadcrumbs, .umrah-hero .breadcrumbs, .poi-breadcrumb { font-size: 12px; }
+.umrah-hero h1 { font-weight: 500; }
+.umrah-hero p, .poi-hero-copy > p, .intro-copy > p { font-size: 16px; line-height: 1.8; color: #d6dfd2; }
+.ritual-nav a { font-size: 14px; min-height: 44px; }
+.ritual-aside { top: calc(var(--nav-height) + 26px); }
+.ritual-aside p { font-size: 15px; color: var(--body-copy); }
+.ritual-aside nav { gap: 0; }
+.ritual-aside a { padding: 15px 0; font-size: 14px; color: #53674e; transition: color .2s; }
+.ritual-aside a[aria-current=step] { color: #153e34; font-weight: 700; border-color: #8e9f80; }
+.ritual-step { scroll-margin-top: calc(var(--nav-height) + 24px); }
+.ritual-step li { font-size: 16px; line-height: 1.85; color: var(--body-copy); }
+.ritual-step ol, .ritual-step > .prayer, .ritual-step > .completion { max-width: 78ch; }
+.ritual-title h2 { font-weight: 600; }
+.ritual-title > span { color: #4c6247; }
+.ritual-title small { font-size: 11px; color: #596e50; line-height: 1.6; letter-spacing: .05em; }
+.prayer > small { font-size: 11px; line-height: 1.6; color: #506542; letter-spacing: .05em; }
+.prayer > p { font-size: 16px; }
+.prayer .translation { font-size: 15px; color: #52634c; }
+.completion p, .supplication-body, .umrah-next p { font-size: 16px; line-height: 1.8; }
+.supplication-body strong { font-size: 12px; }
+.supplication-list summary { min-height: 44px; font-size: 28px; }
+.poi-city-note { font-size: 11px; }
+.poi-filters button { font-size: 14px; min-height: 44px; }
+.poi-filters button span { font-size: 11px; }
+.poi-results { font-size: 13px; color: #586853; }
+.poi-meta { font-size: 12px; color: #52664b; letter-spacing: .05em; }
+.poi-landmark { animation: none; }
+.poi-guide-number { color: #52664b; }
+.poi-landmark > p, .poi-guide-link p { font-size: 14px; color: var(--body-copy); }
+.poi-expand { width: 44px; height: 44px; }
+.poi-image-button img { transition: none; }
+.poi-image-button:hover img { transform: none; }
+.poi-lightbox { border: 0; }
+.field label { font-size: 14px; }
+.field .optional, .required-note { font-size: 12px; color: #52654c; }
+.field input, .field textarea { font-size: 16px; border-radius: 8px; box-shadow: none; }
+.field input::placeholder, .field textarea::placeholder { color: #5f6b59; }
+.form-bottom button { font-size: 14px; }
+.form-status, .preview-note { font-size: 13px; color: var(--body-copy); }
+.detail-label { font-size: 11px; color: #53684a; letter-spacing: .06em; line-height: 1.5; }
+.detail-row p, .detail-row a { font-size: 16px; }
+.detail-row a { min-height: 40px; display: flex; align-items: center; }
+.detail-row .detail-directions { font-size: 14px; min-height: 44px; }
+.makkah-live { border: 0; background: #dce5d5; }
+.makkah-live small { font-size: 10px; color: #4e653f; }
+.makkah-live strong { font-size: 14px; }
+.location-heading .underlined { font-size: 14px; }
+.map-caption { font-size: 13px; color: #51634a; }
+.map-caption > span:last-child { font-size: 10px; }
+@media (min-width: 901px) and (min-height: 950px) {
+  .service-track .service-photo { height: 320px; }
+}
+@media (max-width: 1100px) {
+  .nav nav { gap: 20px; font-size: 13px; }
+  .nav { gap: 20px; }
+  .services-intro h2 { font-size: 46px; }
+  .about-v2 { grid-template-columns: 100px 1fr 1.15fr; gap: 24px; }
+  .about-title h2 { font-size: 36px; }
+}
+@media (max-width: 900px) {
+  .nav nav { gap: 12px; font-size: 12px; }
+  .nav .brand-type { font-size: 25px; }
+  .nav-cta { font-size: 12px; }
+  .about-v2 { grid-template-columns: 100px 1fr; }
+  .about-v2-copy { grid-column: 1 / -1; }
+  .services-intro { position: relative; top: auto; }
+  .services-steps a { min-height: 44px; font-size: 14px; }
+  .services-intro > p { max-width: 420px; }
+  .service-track .service-content { padding: 24px; }
+}
+@media (max-width: 767px) {
+  :root { --nav-height: 76px; }
+  .utility { display: none; }
+  .nav { gap: 10px; }
+  .nav .brand-type { font-size: 26px; }
+  .nav > .nav-cta { font-size: 12px; }
+  .nav .menu-toggle { width: 44px; height: 44px; }
+  .nav nav a { min-height: 48px; font-size: 16px; }
+  .nav nav { gap: 4px; }
+  html:not(.js) .nav { position: relative; height: auto; padding-top: 20px; padding-bottom: 16px; flex-wrap: wrap; }
+  html:not(.js) .nav nav { display: flex; position: static; flex-basis: 100%; flex-wrap: wrap; padding: 8px 0 0; border: 0; box-shadow: none; justify-content: center; }
+  .button { font-size: 14px; }
+  .section { padding-top: 48px; padding-bottom: 50px; }
+  .hero { display: flex; flex-direction: column; min-height: 0; }
+  .hero-copy { order: 1; padding: 34px var(--gutter) 30px; width: 100%; }
+  .hero .eyebrow { font-size: 10px; }
+  .hero h1 { font-size: clamp(48px, 13vw, 58px); line-height: 1.02; margin: 17px auto; max-width: 390px; }
+  .hero h1 br:nth-of-type(2) { display: none; }
+  .hero-copy > p { font-size: 15px; max-width: 360px; line-height: 1.75; }
+  .hero-actions { flex-direction: column; gap: 8px; margin-top: 22px; }
+  .hero .text-link { font-size: 14px; }
+  .hero-image { order: 2; position: relative; inset: auto; z-index: 0; height: 250px; }
+  .hero-image > img { height: 100%; object-position: 55% 52%; }
+  .hero-image:after { background: linear-gradient(0deg,#102f2855,transparent 45%); }
+  .image-location { right: 16px; bottom: 16px; font-size: 11px; }
+  .about-v2 { display: block; padding-top: 36px; padding-bottom: 38px; }
+  .about-title h2 { font-size: 36px; }
+  .about-v2-copy { margin-top: 20px; }
+  .about-v2-copy p { font-size: 15px; line-height: 1.8; }
+  .about-values { gap: 10px 16px; }
+  .about-values span { font-size: 11px; }
+  .hajj-notice h2 { font-size: 29px; }
+  .hajj-notice p { font-size: 14px; }
+  .hajj-actions > a { font-size: 13px; padding: 10px 16px; }
+  .section-head h2 { font-size: 41px; }
+  .section-head > p, .contact-right p { font-size: 15px; }
+  .services-intro h2 { font-size: 42px; max-width: 380px; margin: 0 auto; }
+  .services-intro > p { font-size: 15px; max-width: 350px; }
+  .services-steps { gap: 8px 16px; margin-top: 18px; }
+  .services-steps a span { display: none; }
+  .service-scroll-note { display: none; }
+  .service-track .service-photo { height: 180px; }
+  .service-track .service-photo > span { top: 16px; left: 18px; font-size: 11px; }
+  .service-track .service-content { padding: 19px 22px; }
+  .service-track .service-heading h3 { font-size: 34px; }
+  .service-track .service-content > p { font-size: 14px; margin: 5px 0 10px; }
+  .service-track .service-options { padding-top: 5px; }
+  .service-track .service-content li { font-size: 14px; }
+  .service-track .service-options summary { font-size: 14px; min-height: 44px; }
+  .services-scroll.motion-ready .story-panel { top: calc(var(--nav-height) + 12px); }
+  .airlines-section h2 { font-size: 35px; }
+  .airline h3 { font-size: 26px; min-height: 57px; }
+  .airline-country { font-size: 11px; }
+  .airline > a { font-size: 13px; }
+  .essential { gap: 18px; }
+  .essential h3 { font-size: 29px; }
+  .essential p { font-size: 15px; }
+  .landmark-resource { height: 240px; }
+  .landmark-resource h3 { font-size: 35px; }
+  .landmark-resource p { font-size: 14px; max-width: 245px; }
+  .resource-tag { font-size: 10px; }
+  .illustrated-resources .resource-card { grid-template-columns: 104px minmax(0,1fr); }
+  .illustrated-resources .resource-card-copy { padding: 18px; }
+  .illustrated-resources .resource-card-copy h3 { font-size: 27px; }
+  .illustrated-resources .resource-card-copy p { font-size: 14px; min-height: 0; }
+  .illustrated-resources .resource-action { font-size: 13px; margin-top: 10px; padding-top: 8px; gap: 6px; }
+  .contact h2 { font-size: 42px; }
+  .footer-main { gap: 20px; }
+  .footer-main p, .footer-main > div { font-size: 13px; }
+  .footer-main .brand { justify-content: center; }
+  .site-footer-nav { justify-content: center; gap: 6px 20px; font-size: 13px; }
+  .footer-bottom { font-size: 11px; }
+  .footer-bottom > span:last-child { max-width: none; text-align: left; }
+  .umrah-hero h1 { font-size: 57px; }
+  .umrah-hero p, .poi-hero-copy > p, .intro-copy > p { font-size: 15px; }
+  .umrah-prose, .preparation p, .video-guide p { font-size: 15px; }
+  .ritual-aside { position: static; }
+  .ritual-aside p { font-size: 15px; }
+  .ritual-step, .ritual-step:last-child { padding: 24px 20px; }
+  .ritual-title small { font-size: 10px; }
+  .ritual-step li { font-size: 15px; padding-left: 3px; }
+  .prayer > p, .prayer .translation, .completion p, .supplication-body { font-size: 15px; }
+  .supplication-list summary { font-size: 26px; }
+  .poi-hero h1 { font-size: 53px; }
+  .poi-controls > p, .poi-resources > div > p { font-size: 15px; }
+  .poi-filters { gap: 2px; }
+  .poi-filters button { font-size: 13px; padding: 11px 13px; }
+  .poi-filters button span { font-size: 10px; }
+  .poi-meta { font-size: 11px; }
+  .poi-landmark > p { font-size: 13px; }
+  .poi-expand { width: 36px; height: 36px; }
+  .poi-guide-link p { font-size: 14px; }
+  .intro-photo { border: 0; }
+  .intro-copy { padding-top: 26px; }
+  .form-intro, .details-heading > p { font-size: 15px; }
+  .form-bottom { flex-direction: column; align-items: center; gap: 12px; }
+  .form-bottom .required-note { order: 2; }
+  .contact-details { margin-top: 32px; }
+  .map-caption { font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .nav .brand-type { font-size: 22px; }
+  .nav > .nav-cta { font-size: 11px; }
+  .nav .menu-toggle { width: 42px; height: 44px; }
+  .hero h1 { font-size: 47px; }
+  .services-intro h2 { font-size: 38px; }
+  .illustrated-resources .resource-card { grid-template-columns: 82px minmax(0,1fr); }
+  .illustrated-resources .resource-card-copy { padding: 16px; }
+  .poi-filters button { font-size: 12px; padding: 11px 10px; }
+  .poi-filters button span { margin-left: 4px; }
+}
+@media (max-height: 599px) {
+  .services-scroll.motion-ready .story-panel, .services-intro, .ritual-aside { position: relative; top: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .services-scroll .story-panel { position: relative; top: auto; }
+  .hero-image > img, .landmark-resource > img, .poi-hero-photo > img,
+  .umrah-hero-photo > img, .intro-photo > img { transform: none !important; }
+}
