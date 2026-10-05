@@ -62,12 +62,28 @@
   }, {passive: true});
   ScrollTrigger.addEventListener('refresh', updateCurrent);
   updateCurrent();
+  const goToService = (index, behavior) => window.scrollTo({
+    top: markers[index].getBoundingClientRect().top + scrollY - topOffset(), behavior
+  });
   links.forEach((link, index) => link.addEventListener('click', event => {
     if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     history.replaceState(null, '', link.hash);
-    window.scrollTo({top: markers[index].getBoundingClientRect().top + scrollY - topOffset(), behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
+    goToService(index, matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth');
   }));
+  // Zero-height markers beside sticky scenes have unreliable native hash bounds.
+  // Resolve direct links after layout settles, while preserving back/forward scroll.
+  const resolveServiceHash = () => {
+    document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+      const index = links.findIndex(link => link.hash === location.hash);
+      if (index >= 0) goToService(index, 'instant');
+    })));
+  };
+  window.addEventListener('load', () => {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    if (navigation?.type !== 'back_forward') resolveServiceHash();
+  }, {once: true});
+  window.addEventListener('hashchange', resolveServiceHash);
   root.querySelectorAll('details').forEach(details => details.addEventListener('toggle', requestRefresh));
   document.fonts.ready.then(requestRefresh);
   panels.forEach(panel => {
