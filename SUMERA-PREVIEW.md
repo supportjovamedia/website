@@ -8,6 +8,8 @@ Skills applied: Website Studio, Redesign Existing Projects, Design Taste Fronten
 
 ## Working controls and motion
 
+The full-width navigation is fixed flush to the top on desktop, tablet and phone. Its height is reserved in the page so it cannot cover the opening content. Mobile navigation can scroll within the available viewport. The reception image now spells COMMUNITY correctly and has no counter quote or underline. New hero asset names avoid retaining an older picture in browser caches; the original images remain archived outside the public website.
+
 Navigation scrolls to ordinary sections on this page. Five treatment categories change the supporting photograph on hover or keyboard focus and open the existing menu with prices. Booking lets visitors select a treatment and prepare a WhatsApp enquiry or call the salon. The preview sends no message and confirms no appointment. Course links open the existing Sumera course pages, as previously agreed. Four gallery photographs open in a keyboard-accessible native dialog. Escape dismisses dialogs and restores focus. The mobile menu, public social links, directions and telephone links remain usable.
 
 The hero has no CSS or GSAP animation, transforms, fades, changing masks or scroll pinning. Below it, two photographs move gently inside fixed frames and five section introductions make small once-only vertical entrances. Copy never fades out. There is no scroll hijacking, horizontal gallery wave or pinned academy scene. Reduced motion removes movement and supports runtime cleanup.
