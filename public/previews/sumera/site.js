@@ -21,6 +21,7 @@
     menuButton.setAttribute('aria-expanded', String(open));
     menuButton.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
     mobileNav.hidden = !open;
+    window.SumeraMotion?.menu(open);
   };
   menuButton.addEventListener('click', () => setMenu(mobileNav.hidden));
   mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
@@ -103,7 +104,7 @@
   function renderGallery() {
     const entry = gallery[galleryIndex];
     const image = document.querySelector('#lightbox-image'); image.src = entry.source; image.alt = entry.alt;
-    document.querySelector('#lightbox-caption').textContent = `${entry.alt} (${galleryIndex + 1} of ${gallery.length})`;
+    document.querySelector('#lightbox-caption').textContent = entry.alt;
   }
   function showGallery(index, trigger) { galleryIndex = index; renderGallery(); openDialog(lightbox, trigger); }
   document.querySelectorAll('[data-gallery]').forEach(button => button.addEventListener('click', () => showGallery(Number(button.dataset.gallery), button)));

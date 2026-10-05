@@ -11,6 +11,10 @@
   <link rel="preload" href="assets/serif.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/sans.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="motion.css">
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="motion.js" defer></script>
   <script src="site.js" defer></script>
 </head>
 <body>
@@ -43,9 +47,8 @@
       <div class="hero-copy" id="about">
         <p class="eyebrow">Hair Beauty Aesthetics Academy</p>
         <h1 id="hero-title">More<br>Than Beauty<br><em>A Brighter You</em></h1>
-        <p class="hero-description">At Sumera's Hair & Beauty Salon, we combine expertise, care and advanced treatments to help you look and feel your best, inside and out.</p>
+        <p class="hero-description">Hair, beauty and aesthetics, with a personal approach. Explore our treatments or find your next step at Sumera Academy.</p>
         <div class="button-group"><button class="button" data-book>Book Appointment <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></button><a class="button button-outline" href="#services">Our Services</a></div>
-        <div class="trust"><img src="assets/clients.webp" width="90" height="32" alt=""><p>Trusted by 1000+ clients<br>across London</p></div>
       </div>
       <div class="hero-photo"><img src="assets/reception.webp" width="455" height="377" alt="Pink reception at Sumera's Hair and Beauty Salon, with the salon logo and a bouquet of flowers" fetchpriority="high"></div>
     </section>
@@ -53,7 +56,7 @@
       <div class="benefit"><svg aria-hidden="true"><use href="#diamond"/></svg><p><strong>Expert Team</strong><span>Highly trained specialists</span></p></div>
       <div class="benefit"><svg aria-hidden="true"><use href="#cap"/></svg><p><strong>CPD Approved</strong><span>Professional courses</span></p></div>
       <div class="benefit"><svg aria-hidden="true"><use href="#pin"/></svg><p><strong>Convenient Location</strong><span>London</span></p></div>
-      <div class="benefit"><svg aria-hidden="true"><use href="#heart"/></svg><p><strong>Real Results</strong><span>A growing community</span></p></div>
+      <div class="benefit"><svg aria-hidden="true"><use href="#heart"/></svg><p><strong>Personal Care</strong><span>Treatments around you</span></p></div>
     </div>
     <section class="services shell section-space" id="services" aria-labelledby="services-title">
       <div class="services-heading">
@@ -70,13 +73,13 @@
       </div>
     </section>
     <section class="academy" id="academy" aria-labelledby="academy-title">
-      <div class="academy-copy"><p class="eyebrow">Sumera Academy</p><h2 id="academy-title">Learn. Practice.<br>Build Your Future.</h2><p>Our CPD-approved courses are designed to give you real skills, hands-on experience and the confidence to succeed in hair, beauty and aesthetics. Whether you're starting out or advancing your career, we're here to support you.</p><div class="button-group"><button class="button" data-courses>Explore Courses <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></button><button class="button button-outline" data-course-dates>Course Dates</button></div></div>
+      <div class="academy-copy"><p class="eyebrow">Sumera Academy</p><h2 id="academy-title">Learn. Practice.<br>Build Your Future.</h2><p>Build practical skills in hair, beauty and aesthetics. Our courses combine hands-on training with support from the team, whether you're starting out or developing your career.</p><div class="button-group"><button class="button" data-courses>Explore Courses <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></button><button class="button button-outline" data-course-dates>Course Dates</button></div></div>
       <div class="academy-benefits"><img class="cpd-badge" src="assets/cpd.webp" alt="CPD badge from the supplied Sumera design" width="98" height="97" loading="lazy"><ul><li>CPD Approved Courses</li><li>Hands-on Training</li><li>Industry Experts</li><li>Ongoing Support</li><li>Career Opportunities</li></ul></div>
       <div class="academy-photo image-window"><img src="assets/academy.webp" width="265" height="260" alt="The academy treatment room, with pink beds and training equipment" loading="lazy"></div>
     </section>
-    <section class="gift-banner" aria-labelledby="gift-title"><p class="eyebrow">Skill as a Gift</p><h2 id="gift-title">Invest in Yourself</h2><p class="gift-tagline">Learn Today. Create Tomorrow.</p></section>
+    <section class="gift-banner" aria-labelledby="gift-title"><div class="gift-art gift-art-left" aria-hidden="true"></div><div class="gift-art gift-art-right" aria-hidden="true"></div><p class="eyebrow">Sumera Academy</p><h2 id="gift-title">Invest in Yourself</h2><p class="gift-tagline">Learn Today. Create Tomorrow.</p></section>
     <section class="gallery shell section-space" id="gallery" aria-labelledby="gallery-title">
-      <div class="section-heading"><div><p class="eyebrow muted">Real People. Real Results.</p><h2 id="gallery-title">Transformations<br><span class="muted-heading">You Can Trust.</span></h2></div><button class="text-link" data-open-gallery>View Gallery <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></button></div>
+      <div class="section-heading"><div><p class="eyebrow muted">The Gallery</p><h2 id="gallery-title">A Closer Look<br><span class="muted-heading">At Our Treatments.</span></h2></div><button class="text-link" data-open-gallery>View Gallery <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></button></div>
       <div class="gallery-wrap"><div class="gallery-track" aria-label="Salon gallery">
         <button data-gallery="0" aria-label="View brunette hair styling"><img src="assets/gallery-hair.webp" width="112" height="120" alt="Brunette hair styling" loading="lazy"></button>
         <button data-gallery="1" aria-label="View blonde hair colouring"><img src="assets/gallery-colour.webp" width="116" height="120" alt="Blonde hair colouring" loading="lazy"></button>
@@ -85,11 +88,6 @@
         <button data-gallery="4" aria-label="View lip treatment"><img src="assets/gallery-lips.webp" width="116" height="120" alt="Lip treatment" loading="lazy"></button>
         <button data-gallery="5" aria-label="View nail art"><img src="assets/gallery-nails.webp" width="123" height="120" alt="Nail art" loading="lazy"></button>
       </div><button class="gallery-prev round-button" aria-label="Scroll gallery left">‹</button><button class="gallery-next round-button" aria-label="Scroll gallery right">›</button></div>
-    </section>
-    <section class="testimonials shell" aria-labelledby="testimonials-title">
-      <div><p class="eyebrow">Kind Words</p><h2 id="testimonials-title">What Our<br>Clients Say</h2></div>
-      <figure><blockquote>“Always my go-to salon! The team are so professional and make you feel comfortable every time. Wouldn't trust anyone else.”</blockquote><figcaption><span>Ayesha K.</span><span class="stars" aria-label="5 stars">★★★★★</span></figcaption></figure>
-      <figure><blockquote>“I completed an aesthetics course with Sumera and it was the best decision. Amazing teaching, support and such a welcoming environment.”</blockquote><figcaption><span>Sana R.</span><span class="stars" aria-label="5 stars">★★★★★</span></figcaption></figure>
     </section>
     <section class="contact" id="contact" aria-labelledby="contact-title">
       <div class="contact-photo image-window"><img src="assets/salon.webp" width="443" height="257" alt="Sumera's salon with pink styling chairs and a Good Hair Brighter Days sign" loading="lazy"></div>
