@@ -3,7 +3,7 @@ import { serviceRedirects } from "./lib/service-redirects.mjs";
 const nextConfig = {
   reactStrictMode: true,
   async redirects() {
-    return [{ source: "/previews/aleiman", destination: "/previews/aleiman/index.html", permanent: false }, { source: "/terms-of-service", destination: "/terms", permanent: true }, ...Object.entries(serviceRedirects).map(([source, target]) => ({ source: `/services/${source}`, destination: `/services/${target}`, permanent: true }))];
+    return [{ source: "/previews/sumera", destination: "/previews/sumera/index.html", permanent: false }, { source: "/previews/aleiman", destination: "/previews/aleiman/index.html", permanent: false }, { source: "/terms-of-service", destination: "/terms", permanent: true }, ...Object.entries(serviceRedirects).map(([source, target]) => ({ source: `/services/${source}`, destination: `/services/${target}`, permanent: true }))];
   },
   devIndicators: false,
   async headers() {
@@ -16,6 +16,9 @@ const nextConfig = {
         ]
       : [];
     return [...previewHeaders, {
+      source: "/previews/sumera/:path*",
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+    }, {
       source: "/previews/aleiman/:path*",
       headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
     }];
