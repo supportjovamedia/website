@@ -27,14 +27,36 @@
           scrollTrigger:{trigger:markers[i+1],start:'top 80%',end:'top 80px',scrub:.35,invalidateOnRefresh:true}
         });
       }
-      ScrollTrigger.create({trigger:markers[i],start:'top 50%',endTrigger:markers[i+1] || root,end:i<panels.length-1?'top 50%':'bottom 50%',
-        onEnter:()=>activate(i),onEnterBack:()=>activate(i),
-        onLeave:()=>activate(Math.min(i+1,panels.length-1)),
-        onLeaveBack:()=>activate(Math.max(0,i-1))
-      });
     });
     return () => {root.classList.remove('motion-ready');activate(0);};
   });
+  // Derive state once from stable flow markers. Refresh callbacks must not race
+  // each other when a disclosure changes the height of neighbouring cards.
+  const updateCurrent = () => {
+    const navHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 76;
+    let current = 0;
+    markers.forEach((marker, index) => {
+      const readingPosition = Math.max(navHeight + 24, innerHeight * .65 - panels[index].querySelector('.service-photo').offsetHeight - 26);
+      if (marker.getBoundingClientRect().top <= readingPosition) current = index;
+    });
+    activate(current);
+  };
+  let scheduled = false;
+  window.addEventListener('scroll', () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => { updateCurrent(); scheduled = false; });
+  }, {passive:true});
+  ScrollTrigger.addEventListener('refresh', updateCurrent);
+  updateCurrent();
+  links.forEach((link, index) => link.addEventListener('click', event => {
+    if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const navHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 76;
+    const top = markers[index].getBoundingClientRect().top + scrollY - navHeight - 24;
+    history.replaceState(null, '', link.hash);
+    window.scrollTo({top, behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+  }));
   // Layout changes from disclosures, fonts and images must update trigger positions.
   root.querySelectorAll('details').forEach(details => details.addEventListener('toggle', () => ScrollTrigger.refresh()));
   document.fonts.ready.then(() => ScrollTrigger.refresh());
@@ -45,8 +67,12 @@
     panel.addEventListener('focusin', event => {
       const rect = event.target.getBoundingClientRect();
       const visible = document.elementFromPoint(Math.max(0, Math.min(innerWidth - 1, rect.left + rect.width / 2)), Math.max(0, Math.min(innerHeight - 1, rect.top + rect.height / 2)));
-      if (!visible || !panel.contains(visible)) markers[panels.indexOf(panel)].scrollIntoView({block:'start',behavior:'auto'});
+      if (!visible || !panel.contains(visible)) {
+        const marker = markers[panels.indexOf(panel)];
+        const navHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 76;
+        window.scrollTo({top:marker.getBoundingClientRect().top + scrollY - navHeight - 24,behavior:'instant'});
+      }
     });
   });
-  window.addEventListener('pagehide',()=>media.revert(),{once:true});
+  window.addEventListener('pageshow', event => { if (event.persisted) ScrollTrigger.refresh(); });
 })();
