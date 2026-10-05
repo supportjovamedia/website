@@ -12,6 +12,8 @@ The approved pilgrimage identity remains: real photography, Manrope text, Cormor
 - Hero and landmark photographs move subtly within clipped crops. Text, buttons, captions and reading surfaces remain stationary within their sections.
 - The Umrah guide keeps its sticky contents panel and now highlights the current reading chapter. Long instructions have a bounded text measure.
 - Phone cards and secondary content are more compact, without removing the site's travel categories, resources, announcements or customer quotations.
+- A further service-motion revision replaces the small image headers with large photographic scenes and fixed titles over a dark gradient. Image frames expand from 82% to full size as they enter, photographs move independently within the frame, and the previous scene recedes on screens at least 768 pixels wide. Phone text retains its size. A progress rail and card underline follow the four services.
+- Native scroll anchoring is disabled within the transformed service sequence. Lazy-photo and font refreshes wait for scrolling to settle, preventing a refresh from cancelling native smooth category navigation.
 - Motion respects reduced-motion preferences. Short screens use static service cards. All content remains visible without animation scripts, and phone navigation is available without JavaScript.
 - Below-the-fold photography and the map load lazily. Landmark links open the appropriate city filter.
 
@@ -25,6 +27,7 @@ Browser review used actual rendered pages and interaction tests, followed by tar
 - Phone menu opening, Escape and focus restoration, city deep links and filters, photograph dialog, packing checklist, supplications and native form validation checked.
 - axe-core reported zero WCAG A/AA rule violations on all four pages at 390 and 1440 pixels, plus the open packing dialog. This is automated coverage, not an accessibility certification.
 - No page script errors or failed local resource requests in the browser checks. Production Next.js 16.3.4 build passed using webpack. The changes remain inside the isolated Al Eiman preview and this review note.
+- The stronger service scenes passed 12 width checks, 15 forward/back category-link checks, visible image/frame movement at 1440, 791 and 390 pixels, disclosure and keyboard restoration, short-screen and reduced-motion fallbacks, and no-script disclosure checks. axe-core reported zero A/AA rule violations at these three widths with service options open.
 
 ## Motion and finishing references
 

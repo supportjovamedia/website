@@ -3,6 +3,18 @@
   if (!window.gsap || !window.ScrollTrigger) return;
   const { gsap, ScrollTrigger } = window;
   gsap.registerPlugin(ScrollTrigger);
+  // A refresh writes the current scroll position and can interrupt native smooth
+  // navigation. Wait for scrolling to settle before refreshing lazy-image layouts.
+  let refreshTimer;
+  const requestRefresh = () => {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => {
+      refreshTimer = undefined;
+      ScrollTrigger.refresh();
+    }, 180);
+  };
+  window.aleimanRefreshScroll = requestRefresh;
+  window.addEventListener('scroll', () => { if (refreshTimer) requestRefresh(); }, { passive: true });
   const media = gsap.matchMedia();
   media.add({ normal: '(prefers-reduced-motion:no-preference)', desktop: '(min-width:768px)' }, context => {
     if (!context.conditions.normal) return;
@@ -11,13 +23,20 @@
       const img = frame.querySelector(':scope > img');
       if (!img) return;
       const hero = frame.closest('main > section:first-child');
-      gsap.fromTo(img, { yPercent: -4, scale: 1.1 }, {
-        yPercent: 4, scale: 1.1, ease: 'none',
+      const homeHero = frame.classList.contains('hero-image');
+      gsap.fromTo(img, { yPercent: homeHero ? -9 : -4, scale: homeHero ? 1.23 : 1.1 }, {
+        yPercent: homeHero ? 9 : 4, scale: homeHero ? 1.23 : 1.1, ease: 'none',
         scrollTrigger: {
           trigger: hero || frame, start: hero ? 'top top' : 'top bottom',
           end: 'bottom top', scrub: .35, invalidateOnRefresh: true
         }
       });
+    });
+    // A visible first impression, without hiding copy or delaying interaction.
+    const introduction = document.querySelectorAll('.hero-copy h1,.hero-copy > p,.hero-actions');
+    if (scrollY < 40 && introduction.length) gsap.from(introduction, {
+      y: 30, duration: 1.05, stagger: .12, ease: 'power3.out', delay: .1,
+      clearProps: 'transform'
     });
   });
 
@@ -42,9 +61,9 @@
     }, { passive: true });
     updateChapter();
   }
-  document.fonts.ready.then(() => ScrollTrigger.refresh());
+  document.fonts.ready.then(requestRefresh);
   document.querySelectorAll('img').forEach(img => {
-    if (!img.complete) img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+    if (!img.complete) img.addEventListener('load', requestRefresh, { once: true });
   });
-  window.addEventListener('pageshow', event => { if (event.persisted) ScrollTrigger.refresh(); });
+  window.addEventListener('pageshow', event => { if (event.persisted) requestRefresh(); });
 })();
