@@ -5,8 +5,24 @@
   ScrollTrigger.config({ignoreMobileResize:true});
   const root = document.documentElement;
   const header = document.querySelector('.site-header');
-  const frames = [...document.querySelectorAll('.hero-photo,.service-card .image-window,.academy-photo,.gallery-track>button,.contact-photo')];
-  frames.forEach(frame => {
+  function scene(selector, id) {
+    const element = document.querySelector(selector);
+    const wrapper = document.createElement('div');
+    wrapper.className = `${id}-scroll motion-scene`;
+    wrapper.id = id;
+    element.removeAttribute('id');
+    element.before(wrapper);
+    wrapper.append(element);
+    return {element, wrapper};
+  }
+  // Anchor wrappers stay stable while their children hold in view.
+  const hero = scene('.hero','home');
+  const academy = scene('.academy','academy');
+  const about = document.createElement('span');
+  about.id = 'about'; about.className = 'scene-anchor'; about.setAttribute('aria-hidden','true');
+  document.querySelector('.hero-copy').removeAttribute('id');
+  hero.wrapper.prepend(about);
+  document.querySelectorAll('.hero-photo,.service-card .image-window,.academy-photo,.gallery-track>button,.contact-photo').forEach(frame => {
     const image = frame.querySelector(':scope > img');
     if (!image) return;
     const layer = document.createElement('div');
@@ -14,107 +30,81 @@
     image.replaceWith(layer);
     layer.append(image);
   });
-  const media = gsap.matchMedia();
-  const navSections = ['home','services','academy','gallery','contact'];
-  const navLinks = [...document.querySelectorAll('.desktop-nav a,.mobile-nav a')];
-  function setActive(id) {
-    navLinks.forEach(link => {
-      if (link.hash === `#${id}`) link.setAttribute('aria-current','page');
+  const links = [...document.querySelectorAll('.desktop-nav a,.mobile-nav a')];
+  function active(id) {
+    links.forEach(link => {
+      if (link.hash === `#${id}`) link.setAttribute('aria-current','location');
       else link.removeAttribute('aria-current');
     });
   }
-  navLinks.forEach(link => link.addEventListener('click', () => setActive(link.hash.slice(1))));
-  let loaded = false;
+  const media = gsap.matchMedia();
   function start() {
-    if (loaded) return;
-    loaded = true;
-    media.add({
-      desktop:'(min-width: 1081px)',
-      tablet:'(min-width: 768px) and (max-width: 1080px)',
-      phone:'(max-width: 767px)',
-      reduced:'(prefers-reduced-motion: reduce)'
-    }, context => {
-      const {phone, reduced} = context.conditions;
+    media.add({phone:'(max-width:767px)',tablet:'(min-width:768px) and (max-width:1080px)',desktop:'(min-width:1081px)',
+      wide:'(min-width:1920px)',ultra:'(min-width:2560px)',tall:'(min-height:650px)',reduced:'(prefers-reduced-motion:reduce)'}, context => {
+      const {phone, tall, reduced} = context.conditions;
+      root.classList.toggle('motion-active', !reduced);
+      if (!reduced) {
+        const headerSize = header.offsetHeight;
+        const available = innerHeight - headerSize;
+        const fits = element => tall && element.getBoundingClientRect().height <= available + 2;
+        const heroPinned = fits(hero.element);
+        const heroLayer = document.querySelector('.hero-photo .motion-photo');
+        const heroTimeline = gsap.timeline({scrollTrigger:{
+          id:'sumera-hero-depth',trigger:hero.wrapper,pin:heroPinned?hero.element:false,pinSpacing:true,
+          start:heroPinned?`top ${headerSize}px`:'clamp(top top)',
+          end:heroPinned?()=>`+=${Math.round(innerHeight*.85)}`:'bottom top',scrub:.35,invalidateOnRefresh:true,
+          onToggle:self=>heroLayer.style.willChange=self.isActive?'transform':'auto'
+        }});
+        heroTimeline.fromTo(heroLayer,{yPercent:-13,xPercent:phone?0:3,scale:1.38},
+          {yPercent:13,xPercent:phone?0:-3,scale:1.3,ease:'none',duration:1},0)
+          .fromTo('.hero-photo',{clipPath:phone?'inset(10% 5% 5% 5%)':'inset(4% 7% 4% 0%)'},
+            {clipPath:'inset(0% 0% 0% 0%)',ease:'none',duration:.6},0);
+        gsap.from('.hero h1,.hero-description,.hero .button-group',{y:24,stagger:.08,duration:.85,ease:'power3.out'});
+        function photo(frame, trigger=frame, travel=12, id, scale=1.32, scrub=.35) {
+          const layer = frame.querySelector('.motion-photo');
+          if (!layer) return;
+          gsap.fromTo(layer,{yPercent:-travel,scale},{yPercent:travel,scale,ease:'none',
+            scrollTrigger:{id,trigger,start:'top bottom',end:'bottom top',scrub,invalidateOnRefresh:true,
+              onToggle:self=>layer.style.willChange=self.isActive?'transform':'auto'}});
+        }
+        gsap.from('.benefit',{y:35,stagger:.08,duration:.65,ease:'power3.out',
+          scrollTrigger:{trigger:'.benefit-strip',start:'top 93%',toggleActions:'play none none reverse'}});
+        const cards = [...document.querySelectorAll('.service-card')];
+        if (phone) cards.forEach((card,index) => {
+          gsap.fromTo(card,{y:72+(index%2)*24},{y:0,ease:'none',scrollTrigger:{id:`sumera-card-${index}`,trigger:card,start:'top 96%',end:'top 60%',scrub:.25}});
+        });
+        else gsap.fromTo(cards,{y:index=>80+index*25},{y:0,stagger:.065,duration:1,ease:'none',
+          scrollTrigger:{id:'sumera-treatment-sequence',trigger:'.service-grid',start:'top 96%',end:'top 43%',scrub:.3}});
+        cards.forEach((card,index)=>photo(card.querySelector('.image-window'),card,12,`sumera-treatment-${index}`));
+        // Stable frames let native scrolling carry the section without a pin release.
+        photo(document.querySelector('.academy-photo'),academy.wrapper,7,'sumera-academy-frame',1.2,.65);
+        gsap.fromTo('.gift-art-left',{xPercent:-30,scale:1.3},{xPercent:30,scale:1.3,ease:'none',
+          scrollTrigger:{id:'sumera-marble-left',trigger:'.gift-banner',start:'top bottom',end:'bottom top',scrub:.4}});
+        gsap.fromTo('.gift-art-right',{xPercent:30,scaleX:-1.3,scaleY:1.3},{xPercent:-30,scaleX:-1.3,scaleY:1.3,ease:'none',
+          scrollTrigger:{id:'sumera-marble-right',trigger:'.gift-banner',start:'top bottom',end:'bottom top',scrub:.4}});
+        document.querySelectorAll('.gallery-track>button').forEach((button,index) => {
+          photo(button,'.gallery-wrap',5,`sumera-gallery-${index}`,1.15,.65);
+        });
+        photo(document.querySelector('.contact-photo'),'.contact',5,'sumera-booking-depth',1.15,.65);
+        gsap.from('.contact-copy',{y:45,duration:.8,ease:'power3.out',
+          scrollTrigger:{trigger:'.contact',start:'top 85%',toggleActions:'play none none reverse'}});
+      }
+      // Reading state is created after pin spacing establishes document flow.
       ScrollTrigger.create({id:'sumera-header',start:1,end:'max',onUpdate:self=>header.classList.toggle('is-scrolled',self.scroll()>1)});
-      navSections.forEach(id => {
-        ScrollTrigger.create({
-          id:`sumera-nav-${id}`,
-          trigger:document.getElementById(id),
-          start:() => `top ${header.offsetHeight + 130}px`,
-          end:() => `bottom ${header.offsetHeight + 130}px`,
-          onEnter:()=>setActive(id),
-          onEnterBack:()=>setActive(id)
-        });
-      });
-      if (reduced) {
-        root.classList.remove('motion-active');
-        return () => header.classList.remove('is-scrolled');
-      }
-      root.classList.add('motion-active');
-      const opening = gsap.timeline({defaults:{duration:.85,ease:'power3.out'}});
-      opening.from('.hero h1',{y:18},0)
-        .from('.hero-description',{y:14},.08)
-        .from('.hero .button-group',{y:12},.16);
-
-      function photo(frame, {trigger=frame,travel=6,scale=1.16,endScale=scale,start='top bottom',end='bottom top',id}={}) {
-        const layer = frame.querySelector('.motion-photo');
-        if (!layer) return;
-        gsap.fromTo(layer,{yPercent:-travel,scale},{
-          yPercent:travel,scale:endScale,ease:'none',
-          scrollTrigger:{id,trigger,start,end,scrub:.65,invalidateOnRefresh:true,
-            onToggle:self=>layer.style.willChange=self.isActive?'transform':'auto'}
-        });
-      }
-      photo(document.querySelector('.hero-photo'),{
-        trigger:document.querySelector('.hero'),travel:phone?5:6,scale:1.16,endScale:1.18,
-        start:'top top',end:'bottom top',id:'sumera-hero-depth'
-      });
-
-      gsap.from('.benefit',{y:20,stagger:.075,duration:.7,ease:'power3.out',
-        scrollTrigger:{trigger:'.benefit-strip',start:'top 92%',once:true}});
-      const cards = [...document.querySelectorAll('.service-card')];
-      cards.forEach((card,index) => {
-        gsap.from(card,{y:phone?22:34,duration:.8,delay:phone?(index%2)*.065:index*.065,ease:'power3.out',
-          scrollTrigger:{trigger:card,start:'top 93%',once:true}});
-        photo(card.querySelector('.image-window'),{trigger:card,travel:5,scale:1.14,id:`sumera-treatment-${index}`});
-      });
-      const academy = document.querySelector('.academy');
-      const academyFrame = document.querySelector('.academy-photo');
-      const academyLayer = academyFrame.querySelector('.motion-photo');
-      const academyTimeline = gsap.timeline({scrollTrigger:{
-        id:'sumera-academy-frame',trigger:academy,start:'top 90%',end:'bottom 15%',scrub:.7,
-        invalidateOnRefresh:true,onToggle:self=>academyLayer.style.willChange=self.isActive?'transform':'auto'
+      const sections = ['home','services','academy','gallery','contact'].map(id=>document.getElementById(id));
+      ScrollTrigger.create({id:'sumera-navigation',start:0,end:'max',onUpdate:()=>{
+        const threshold = header.offsetHeight + 150;
+        let current = sections[0];
+        for (const section of sections) if (section.getBoundingClientRect().top <= threshold) current=section;
+        active(current.id);
       }});
-      academyTimeline.fromTo(academyLayer,{scale:1.18,yPercent:-6},{scale:1.14,yPercent:6,ease:'none'},0)
-        .fromTo(academyFrame,{clipPath:phone?'inset(8% 5% 8% 5%)':'inset(12% 9% 12% 9%)'},
-          {clipPath:'inset(0% 0% 0% 0%)',ease:'none',duration:.65},0);
-      gsap.from('.academy-copy',{y:18,duration:.8,ease:'power3.out',
-        scrollTrigger:{trigger:'.academy-copy',start:'top 92%',once:true}});
-      gsap.from('.academy-benefits li',{x:8,stagger:.08,duration:.6,ease:'power3.out',
-        scrollTrigger:{trigger:'.academy-benefits',start:'top 92%',once:true}});
-
-      gsap.fromTo('.gift-art-left',{xPercent:-9,scale:1.15},{xPercent:9,scale:1.15,ease:'none',
-        scrollTrigger:{id:'sumera-marble-left',trigger:'.gift-banner',start:'top bottom',end:'bottom top',scrub:.8}});
-      gsap.fromTo('.gift-art-right',{xPercent:9,scaleX:-1.15,scaleY:1.15},{xPercent:-9,scaleX:-1.15,scaleY:1.15,ease:'none',
-        scrollTrigger:{id:'sumera-marble-right',trigger:'.gift-banner',start:'top bottom',end:'bottom top',scrub:.8}});
-      document.querySelectorAll('.gallery-track>button').forEach((button,index) => {
-        photo(button,{trigger:'.gallery-wrap',travel:4.5,scale:1.14,id:`sumera-gallery-${index}`});
-      });
-      photo(document.querySelector('.contact-photo'),{trigger:'.contact',travel:6,scale:1.17,id:'sumera-booking-depth'});
-      gsap.from('.contact-copy',{y:18,duration:.8,ease:'power3.out',
-        scrollTrigger:{trigger:'.contact-copy',start:'top 92%',once:true}});
-      return () => root.classList.remove('motion-active');
+      return () => {root.classList.remove('motion-active');header.classList.remove('is-scrolled');};
     });
-    // Image frames reserve their size, so lazy-image loads never interrupt anchor scrolling.
     ScrollTrigger.refresh();
   }
-  if (document.fonts?.ready) document.fonts.ready.then(start);
-  else start();
-  window.SumeraMotion = {
-    menu(open) {
-      if (!open || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      gsap.fromTo('.mobile-nav a,.mobile-nav .button',{y:7},{y:0,duration:.35,stagger:.025,ease:'power3.out',overwrite:'auto'});
-    }
-  };
-  window.addEventListener('pagehide',event => { if (!event.persisted) media.revert(); },{once:true});
+  if (document.fonts?.ready) document.fonts.ready.then(start); else start();
+  window.SumeraMotion = {menu(open) {
+    if (open&&!matchMedia('(prefers-reduced-motion:reduce)').matches)gsap.fromTo('.mobile-nav a,.mobile-nav .button',{y:14},{y:0,stagger:.035,duration:.4,ease:'power3.out',overwrite:'auto'});
+  }};
+  window.addEventListener('pagehide',event=>{if(!event.persisted)media.revert();},{once:true});
 })();

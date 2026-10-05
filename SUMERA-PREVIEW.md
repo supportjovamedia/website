@@ -1,25 +1,35 @@
-# Sumera local design preview
+# Sumera local website preview
 
-Source: Google Drive > Clients > Sumera > UI > Sumera Home Page.png.
+Source: Google Drive > Clients > Sumera > UI > Sumera Home Page.png. The original 789 x 1994 design is preserved in output/Sumera Preview/Source in the parent workspace.
 
-The supplied 789 x 1994 PNG was the same pixel image as the existing JovaMedia selected concept. The original Drive file is preserved in `output/Sumera Preview/Source` in the parent workspace. This rebuild preserves its section order, pink palette, brand, photography and core messaging.
+The one-page website recreates the concept's section order, pink palette, salon reception scene, booking interior and typography using live HTML, CSS and JavaScript. Headings, copy, navigation, buttons and cards remain editable native elements. Locally stored fonts include their licences. No tracking or external assets load with the page.
 
-The preview uses semantic live text, locally stored fonts, extracted source imagery, responsive layouts, anchor navigation, a keyboard-accessible mobile menu, service details, a gallery lightbox and reduced-motion support. Booking, course dates, social links and policies show accurate preview states. No requests are sent or saved. No external services or tracking are loaded.
+## Images
 
-The unverified 1000+ client count, avatar row and two testimonial quotes were removed during the motion and anti-slop revision. The gallery now describes treatments without presenting the images as verified client results. The original branding and supplied salon and course copy remain the basis of the preview. Source imagery is limited to the resolution of the original PNG. Full-resolution client photographs would improve a future production version.
+Most treatment and training photographs come from the existing [Sumera website media library](https://sumerasalon.co.uk/). The gallery presents treatment categories, without claiming that these are verified client results. The awkward hair-colour comb image has been replaced with a photograph of hair colouring, and gallery photographs show different treatment categories. The nail close-up is a licensed [SHVETS production photograph](https://www.pexels.com/photo/hands-with-manicured-nails-9775261/) with natural hand and nail geometry, used to illustrate nail care rather than a verified client result.
 
-The motion revision uses locally stored GSAP 3.15 and ScrollTrigger. Reception, treatment, academy, gallery and booking images use separate clipped motion layers. The academy photo frame opens as it moves, and the pink marble layers travel in opposite directions. Text remains readable and settles after short entrance animations. The sticky navigation shares an offset with native anchors. Reduced-motion mode removes the parallax, reveals and frame animation. Phone, tablet and large-screen widths use the same composition with adjusted travel. Scrolling stays native, with no pinned scroll traps, decorative counters, custom cursor or looping bob animations.
+The two pink interior scenes in the concept exist only as small flattened crops. They were reconstructed with the built-in image editing tool to retain the composition, colours, signage, flowers, furniture and natural geometry. They are illustrative preview assets, not recovered original photographs or verified photographs of the premises. Full prompts and preserved originals are recorded in output/Sumera Preview/Source/image-restoration-notes.md. High-resolution photographs supplied by the salon are the preferred final production replacements. The unrelated stock model hero has been removed.
 
-Verified with normal and reduced motion across 360, 390, 768, 791, 1440, 1920, 2560 and 3440 pixel layouts. Forward and return navigation, dialog keyboard focus, gallery controls and runtime reduced-motion changes passed at desktop, preview-panel and phone widths. Browser checks reported no script errors, broken images or external requests. The live in-app preview was also inspected. The final 17 WebP assets and 25 review screenshots contain no detected EXIF, XMP, ICC, C2PA or AI-tool metadata; source and capture originals are preserved outside the public preview.
+Responsive WebP images are exported at their native resolution or smaller, with multiple sizes where useful. The original design, generated PNGs, downloaded photographs and retired variants remain preserved outside the public preview. The public site contains no full-page design bitmap.
 
-Run from this directory:
+## Motion and interactions
 
-```powershell
-node sumera-preview-server.mjs
-```
+Locally stored GSAP 3.15 and ScrollTrigger drive independent photo layers. The approved hero parallax and treatment sequence remain. The hero holds briefly on tall desktop and tablet viewports, with stable anchor wrappers and native scrolling. Phones and short viewports receive normal page flow.
+
+The academy keeps a stable frame, with smooth image movement and no pin release or changing clip mask. Gallery frames stay aligned while their photographs move gently. Opposing marble layers retain their scroll movement. Booking uses restrained photo parallax. Reduced-motion mode removes pins and animation while retaining readable content and working controls.
+
+Single-page navigation opens the appropriate section. Services reveal the salon's treatment menu and prices. Booking lets the visitor choose a service and open a prefilled WhatsApp enquiry or call the salon; the preview itself sends no message and confirms no appointment. Three existing course pages remain external links, as agreed for this preview. Gallery images support next/previous controls, arrow keys, Escape and focus restoration. Footer social links lead to the salon's existing accounts. Privacy, terms and cookies remain honest local preview notices pending final client policies.
+
+Unverified review quotes, client counts and avatar proof were removed. No fabricated customer claims or placeholder integrations are presented as live services.
+
+## Verification and review
+
+Normal and reduced motion passed across 360, 390, 768, 791, 1440, 1920, 2560 and 3440 pixel widths. Desktop, preview-panel and phone scene checks confirm independent photograph movement, stable text during hero holds, stable academy frames and runtime reduced-motion cleanup. Single-page anchors, service details, booking links, course links and keyboard gallery controls passed. A short 791 x 450 viewport uses no hero pin. Browser checks reported no script errors, broken images or external asset requests.
+
+The actual page was recorded during a scroll pass and the recording was played for review. The playable proof, screenshots, verification report and metadata audit are in output/Sumera Preview/Live Review. The final image assets and review captures plus the MP4 contain no detected EXIF, XMP, ICC, C2PA or AI-tool provenance metadata. Normal media codec information is retained. Removing metadata does not change the images' origin.
+
+Run node sumera-preview-server.mjs from this directory.
 
 Local URL: http://localhost:4176/previews/sumera/index.html
 
-Prepared on the local feature branch `codex/sumera-local-preview`. The Next.js preview redirect and indexing header are ready for a later JovaMedia PR. Do not push or publish until the user has reviewed localhost, as requested.
-
-Font licences are retained beside the fonts. Exported WebP assets are re-encoded without EXIF, XMP, ICC or C2PA data. The original PNG is preserved separately.
+Prepared on the local feature branch codex/sumera-local-preview. No push, merge or publication has been performed. JovaMedia preview publication remains a later PR after localhost review.
