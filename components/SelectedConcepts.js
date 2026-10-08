@@ -2,6 +2,9 @@ import Image from "next/image";
 import s from "./SelectedConcepts.module.css";
 
 const concepts = [
+  { name: "Qaiser Watches", image: "qaiser-watches", format: "webp", category: "Watches & retail", width: 1000, height: 3370, href: "https://www.qaiserwatches.com/" },
+  { name: "Sumera’s", image: "sumera-current", format: "webp", category: "Hair & beauty", width: 1000, height: 3778, href: "/previews/sumera/index.html" },
+  { name: "Al Eiman", image: "al-eiman", format: "webp", category: "Travel & pilgrimage", width: 1000, height: 4791, href: "/previews/aleiman/index.html" },
   { name: "Blush House", image: "blush-house", category: "Beauty & salons", width: 887, height: 1774 },
   { name: "KOVA", image: "kova", category: "Coffee & hospitality", width: 870, height: 1808 },
   { name: "Knitly", image: "knitly", category: "Handmade & lifestyle", width: 870, height: 1808 },
@@ -21,9 +24,9 @@ export default function SelectedConcepts() {
         <div className={s.preview}>
           <div className={s.browserBar} aria-hidden="true"><span>● ● ●</span><span>{concept.name}</span></div>
           <div className={s.image} tabIndex={0} role="region" aria-label={`${concept.name} website preview, scroll to explore`}>
-            <Image src={`/home-selected/${concept.image}.png`} alt={`${concept.name} website`} width={concept.width} height={concept.height} sizes="(max-width:700px) 90vw, (max-width:1050px) 45vw,31vw" draggable={false} />
+            <Image src={`/home-selected/${concept.image}.${concept.format || "png"}`} alt={`${concept.name} website`} width={concept.width} height={concept.height} sizes="(max-width:700px) 90vw, (max-width:1050px) 45vw,31vw" draggable={false} />
           </div>
-          <div className={s.hint} aria-hidden="true">Scroll to explore <span>↓</span></div>
+          {concept.href ? <a className={`${s.hint} ${s.websiteLink}`} href={concept.href} target="_blank" rel="noopener noreferrer" aria-label={`View ${concept.name} website (opens in a new tab)`}>View website <span aria-hidden="true">↗</span></a> : <div className={s.hint} aria-hidden="true">Scroll to explore <span>↓</span></div>}
         </div>
         <figcaption><strong>{concept.name}</strong><span>{concept.category}</span></figcaption>
       </figure>)}
