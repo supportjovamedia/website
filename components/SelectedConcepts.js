@@ -2,12 +2,9 @@ import Image from "next/image";
 import s from "./SelectedConcepts.module.css";
 
 const concepts = [
-  { name: "Blush House", image: "blush-house", category: "Beauty & salons", width: 887, height: 1774 },
-  { name: "KOVA", image: "kova", category: "Coffee & hospitality", width: 870, height: 1808 },
-  { name: "Knitly", image: "knitly", category: "Handmade & lifestyle", width: 870, height: 1808 },
-  { name: "NÉRA", image: "nera", category: "Fragrance & beauty", width: 787, height: 1999 },
-  { name: "NEXO", image: "nexo", category: "Construction & architecture", width: 826, height: 1904 },
-  { name: "Dolcé", image: "dolce", category: "Cakes & sweets", width: 843, height: 1866 },
+  { name: "Sumera’s", image: "sumera-current", category: "Hair & beauty", width: 1440, height: 5440 },
+  { name: "Qaiser Watches", image: "qaiser-watches", category: "Watches & retail", width: 1440, height: 4853 },
+  { name: "Al Eiman", image: "al-eiman", category: "Travel & pilgrimage", width: 1440, height: 6899 },
 ];
 
 export default function SelectedConcepts() {
