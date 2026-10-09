@@ -6,7 +6,7 @@ import {CalendarDays,ArrowUpRight,Check,ChevronLeft,Clock,LogOut,Scissors} from 
 export default function CustomerHub({api}){
  const [profile,setProfile]=useState(null),[screen,setScreen]=useState('loading'),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[cancel,setCancel]=useState(null);
  const studio=typeof window!=='undefined'?new URLSearchParams(location.search).get('studio'):null;
- const bookingLink=studio?'/preview/booking/?book='+encodeURIComponent(studio):'/preview/booking/';
+ const bookingLink='/preview/booking';
  const load=async()=>{const p=await api('customer/me');setProfile(p);setScreen('account');};
  useEffect(()=>{let active=true;(async()=>{try{const hash=new URLSearchParams(location.hash.slice(1));const token=hash.get('refresh_token');const reset=new URLSearchParams(location.search).has('reset');const authError=hash.get('error_description');if(token||authError)history.replaceState(null,'',location.pathname+location.search);if(authError)throw new Error('This email link has expired. Please request a new one.');if(token){await api('customer/confirm',{refresh_token:token});if(reset){setScreen('password');return;}}await load();}catch(e){if(active){setScreen('signin');if(!e.message.includes('sign in'))setError(e.message);}}})();return()=>{active=false;};},[]);
  const submit=async e=>{e.preventDefault();setBusy(true);setError('');setNotice('');const values=Object.fromEntries(new FormData(e.currentTarget));try{
