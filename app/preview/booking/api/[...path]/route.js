@@ -1,7 +1,8 @@
 import {NextResponse} from 'next/server';
 import {z} from 'zod';import {DateTime} from 'luxon';
-import {db,rows,identity,cookiesFor,publicBusiness,throttle,sameOrigin} from '../../../../../lib/booking/server.mjs';
-import {deploymentBusiness} from '../../../../../lib/booking/business.mjs';
+import {db,rows,identity,cookiesFor,publicBusiness,throttle,sameOrigin,credentials} from '../../../../../lib/booking/server.mjs';
+import {deploymentBusiness,bookingPolicy,websiteUrl} from '../../../../../lib/booking/business.mjs';
+import {signReceipt,readReceipt} from '../../../../../lib/booking/receipt.mjs';
 import {slotsFor} from '../../../../../lib/booking/availability.mjs';
 import {customerRoute,accountClient} from '../../../../../lib/booking/customer.mjs';
 export const runtime='nodejs';export const dynamic='force-dynamic';
@@ -24,7 +25,7 @@ async function handle(req,context){try{
  if(route==='public/catalog'){
   if(q.get('slug')&&q.get('slug')!==deployment.slug)return json({error:'Studio not found.'},404);
   const business=await rows(c.from('businesses').select(publicBusiness).eq('slug',deployment.slug).eq('active',true).single());
-  const [services,staff,links]=await Promise.all([rows(c.from('services').select('*').eq('business_id',business.id).eq('active',true).order('id')),rows(c.from('staff').select('id,name').eq('business_id',business.id).eq('active',true).order('id')),rows(c.from('staff_services').select('*').eq('business_id',business.id))]);return json({business,services,staff,links});
+  const [services,staff,links]=await Promise.all([rows(c.from('services').select('*').eq('business_id',business.id).eq('active',true).order('id')),rows(c.from('staff').select('id,name').eq('business_id',business.id).eq('active',true).order('id')),rows(c.from('staff_services').select('*').eq('business_id',business.id))]);return json({business,services,staff,links,payment:bookingPolicy()});
  }
  if(route==='public/slots'){
   const businessId=id.parse(q.get('business'));if(businessId!==deployment.id)return json({error:'Studio not found.'},404);const serviceId=id.parse(q.get('service'));const date=z.string().regex(/^\d{4}-\d{2}-\d{2}$/).parse(q.get('date'));
@@ -35,11 +36,21 @@ async function handle(req,context){try{
  }
  if(route==='public/book'){
   throttle('book:'+(req.headers.get('x-forwarded-for')||'local'),30);
-  const v=z.object({business_id:id,service_id:id,staff_id:id,starts_at:z.string().datetime({offset:true}),request_id:z.string().uuid(),website:z.string().max(0).optional()}).passthrough().parse(body);const person=contact.parse(body);
+  const v=z.object({business_id:id,service_id:id,staff_id:id,starts_at:z.string().datetime({offset:true}),request_id:z.string().uuid(),website:z.string().max(0).optional()}).passthrough().parse(body);
+  const splitName=body.first_name!==undefined||body.last_name!==undefined?z.object({first_name:z.string().trim().min(1).max(75),last_name:z.string().trim().min(1).max(74)}).parse(body):null;
+  const person=contact.parse({...body,...(splitName?{name:splitName.first_name+' '+splitName.last_name}:{}),phone:body.phone||''});
   if(v.business_id!==deployment.id)return json({error:'Studio not found.'},404);
   const account=await identity(req);if(body.use_account&&!account?.user.email_confirmed_at)return json({error:'Please sign in again before booking with your account.'},401);const clientId=!body.guest&&account?.user.email_confirmed_at?await accountClient(c,account.user,v.business_id,person):null;if(clientId)person.email=account.user.email;
   const b=await rows(c.rpc('create_booking',{p_client:clientId,p_business:v.business_id,p_staff:v.staff_id,p_service:v.service_id,p_start:v.starts_at,p_name:person.name,p_email:person.email,p_phone:person.phone,p_request:v.request_id}));
-  return json({id:b.id,starts_at:b.starts_at,ends_at:b.ends_at,price_pence:b.price_pence,status:b.status},201);
+  const response=json({id:b.id,starts_at:b.starts_at,ends_at:b.ends_at,price_pence:b.price_pence,status:b.status},201);
+  response.cookies.set('booking_receipt',signReceipt(b.id,deployment.id,credentials().key),{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'lax',path:'/preview/booking',maxAge:86400});return response;
+ }
+ if(route==='public/confirmation'){
+  const receipt=readReceipt(req.cookies.get('booking_receipt')?.value,deployment.id,credentials().key);
+  if(!receipt)return json({error:'Your confirmation has expired or is not available in this browser. Check your account or contact the studio with your booking reference.'},404);
+  const booking=await rows(c.from('bookings').select('id,business_id,client_id,service_id,staff_id,starts_at,ends_at,price_pence,status').eq('id',receipt.bookingId).eq('business_id',deployment.id).single());
+  const [business,service,staff,client,who]=await Promise.all([rows(c.from('businesses').select('name,address,currency,timezone').eq('id',deployment.id).single()),rows(c.from('services').select('name').eq('id',booking.service_id).eq('business_id',deployment.id).single()),rows(c.from('staff').select('name').eq('id',booking.staff_id).eq('business_id',deployment.id).single()),rows(c.from('clients').select('user_id').eq('id',booking.client_id).eq('business_id',deployment.id).single()),identity(req)]);
+  return json({booking,business,service_name:service.name,staff_name:staff.name,account_booking:!!who&&client.user_id===who.user.id,payment:bookingPolicy(),website_url:websiteUrl()});
  }
  const who=await identity(req);if(!who)return json({error:'Please sign in.'},401);
  if(route==='me'){const members=who.members.filter(m=>m.business_id===deployment.id);const ids=members.map(m=>m.business_id);return json({email:who.user.email,businesses:ids.length?await rows(c.from('businesses').select('*').in('id',ids)):[],members});}
