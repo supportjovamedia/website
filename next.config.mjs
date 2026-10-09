@@ -16,6 +16,9 @@ const nextConfig = {
         ]
       : [];
     return [...previewHeaders, {
+      source: "/preview/booking/:path*",
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+    }, {
       source: "/previews/sumera/:path*",
       headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
     }, {
