@@ -12,6 +12,8 @@ test('booking deployment exposes one salon and rejects a different salon on ever
  const catalog=await(await fetch(base+'/api/public/catalog')).json();
  assert.equal(catalog.business.id,businesses[0].id);
  assert(catalog.services.length);
+ assert.equal(catalog.payment.deposit_percent,25);
+ assert.equal(catalog.payment.online_payments_enabled,false);
  assert.equal((await fetch(base+'/api/public/catalog?slug=other-salon')).status,404);
  const foreignId=catalog.business.id+1;
  assert.equal((await fetch(base+`/api/public/slots?business=${foreignId}&service=1&date=2030-01-01`)).status,404);
@@ -20,6 +22,8 @@ test('booking deployment exposes one salon and rejects a different salon on ever
 });
 
 test('customer and admin have separate pages and anonymous callers cannot access private data',async()=>{
- for(const path of ['','/account','/admin'])assert.equal((await fetch(base+path)).status,200);
+ for(const path of ['','/account','/admin','/confirmation'])assert.equal((await fetch(base+path)).status,200);
+ assert.equal((await fetch(base+'/api/public/confirmation')).status,404);
+ assert.equal((await fetch(base+'/api/public/confirmation',{headers:{Cookie:'booking_receipt=forged'}})).status,404);
  for(const path of ['me','customer/me','dashboard?business=1'])assert.equal((await fetch(base+'/api/'+path)).status,401);
 });
