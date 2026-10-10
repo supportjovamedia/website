@@ -14,4 +14,3 @@ Photo sources:
 - Coffee beans: https://www.pexels.com/photo/585750/
 - Iced coffee, Khadijah Karaca: https://www.pexels.com/photo/coffee-with-ice-cubes-in-glass-17497892/
 - Croissant, Polina Tankilevitch: https://www.pexels.com/photo/a-croissant-in-close-up-photography-4828303/
-
