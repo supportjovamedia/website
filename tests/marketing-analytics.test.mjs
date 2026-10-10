@@ -12,7 +12,7 @@ test("consent fails closed for corrupt, expired, future and unavailable storage"
 
 test("booking, account, confirmation, previews and arbitrary paths are excluded", () => {
   for (const path of ["/preview/booking","/preview/booking/account","/previews/sumera/index.html","/newsletter/confirm","/api/contact","/unknown","/contact/private"]) assert.equal(publicPage(path),false,path);
-  for (const path of ["/","/contact","/about","/services","/services/seo","/privacy-policy"]) assert.equal(publicPage(path),true,path);
+  for (const path of ["/","/contact","/about","/services","/services/seo","/privacy-policy","/insights","/share/jovamedia-2026"]) assert.equal(publicPage(path),true,path);
 });
 
 test("only bounded campaign labels survive URL cleaning", () => {
