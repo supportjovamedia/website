@@ -1,4 +1,5 @@
 import JovaChat from "@/components/JovaChat";
+import MarketingAnalytics from "@/components/MarketingAnalytics";
 import GrowthSignup from "@/components/GrowthSignup";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }) {
       data-scroll-behavior="smooth"
     >
       <body>
+        <MarketingAnalytics />
         <SiteChrome header={<Header />} footer={<><div className="jova-newsletter"><GrowthSignup newsletter /></div><Footer /></>}>
         <div id="main-content" tabIndex={-1}>
           {children}

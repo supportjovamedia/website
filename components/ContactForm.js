@@ -6,6 +6,7 @@ import RecaptchaCheckbox from "./RecaptchaCheckbox";
 import { serviceOptions, budgetOptions, countryOptions, validateEnquiry } from "@/lib/enquiry-fields.mjs";
 
 import { contactEmail } from "@/lib/site";
+import { trackEvent } from "@/lib/marketing-analytics.mjs";
 
 export default function ContactForm() {
 
@@ -85,6 +86,7 @@ export default function ContactForm() {
       }
 
       setStatus("success");
+      trackEvent("generate_lead", { form_id: "contact_enquiry" });
 
       form.reset();
       setService("");
@@ -93,6 +95,7 @@ export default function ContactForm() {
       attempt.current = null;
 
     } catch (err) {
+      trackEvent("form_error", { form_id: "contact_enquiry" });
 
       setStatus("error");
 
@@ -125,6 +128,8 @@ export default function ContactForm() {
   return (
 
     <form
+      data-analytics-form="contact_enquiry"
+      data-clarity-mask="true"
 
       className="form"
       noValidate
