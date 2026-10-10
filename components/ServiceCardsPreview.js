@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import s from "./ServiceCardsPreview.module.css";
+import useScrollFocus from "./useScrollFocus";
 
 const services = [
   { title: ["Website", "Development"], slug: "web-design", photo: "/service-crafted/website-modern.webp", kind: "website" },
@@ -24,6 +25,7 @@ const tags = [
 
 export default function ServiceCardsPreview({ paused = false }) {
   const root = useRef(null);
+  useScrollFocus(root, '[data-service-row]');
   useEffect(() => {
     const section = root.current;
     const rows = [...section.querySelectorAll('[data-service-row]')];
@@ -36,7 +38,7 @@ export default function ServiceCardsPreview({ paused = false }) {
       section.dataset.static = String(staticMode);
       // Observe stable row boxes, independently of the animated card inside.
       const positions = rows.map(row => row.getBoundingClientRect().top);
-      for (const [state, boundary] of [['entered', .9], ['highlighted', .5]]) {
+      for (const [state, boundary] of [['entered', .9]]) {
         const line = innerHeight * boundary;
         rows.forEach((row, index) => { row.dataset[state] = String(staticMode || positions[index] <= line); });
         if (staticMode) continue;
@@ -65,7 +67,7 @@ export default function ServiceCardsPreview({ paused = false }) {
           <Link className={s.card} href={`/services/${slug}`} aria-label={`Explore ${title.join(' ')}`}>
             <div className={s.visual} aria-hidden="true"><Image src={photo} alt="" fill sizes="(max-width:700px) 110px, 240px" /></div>
             <div className={s.content}><h3>{title.join(' ')}</h3><div className={s.tags}>{tags[index].map(tag => <span key={tag}>{tag}</span>)}</div></div>
-            <span className={s.action} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.5" /></svg></span>
+            <span className={s.action} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" /></svg></span>
           </Link>
         </div>)}
       </div>

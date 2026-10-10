@@ -114,9 +114,11 @@
 .contact{background:#bb0016;color:#fff;display:grid;grid-template-columns:1.2fr .8fr 1fr;gap:35px;align-items:center;padding-top:27px;padding-bottom:27px}
 .contact h2{font-size:clamp(40px,5vw,75px);font-weight:750;line-height:.92;letter-spacing:-.045em}
 .contact .label{font-size:10px}
-.bigCircle{width:112px;height:112px;border-radius:50%;background:white;color:#101413!important;display:grid;place-items:center;justify-self:center;transition:transform .5s}
-.bigCircle svg{width:45px;height:45px}
-.bigCircle:hover{transform:rotate(45deg)}
+.bigCircle{width:112px;height:112px;border-radius:50%;background:white;color:#101413!important;display:grid;place-items:center;justify-self:center;transition:background .3s,box-shadow .3s}
+.bigCircle svg{width:45px;height:45px;transform:rotate(0deg);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.contact[data-highlighted=true] .bigCircle,.bigCircle:hover,.bigCircle:focus-visible{background:#eddd48;box-shadow:0 0 30px #eddd4830}
+.contact[data-highlighted=true] .bigCircle svg,.bigCircle:hover svg,.bigCircle:focus-visible svg{transform:rotate(-45deg)}
+@media(prefers-reduced-motion:reduce){.bigCircle,.bigCircle svg{transition:none}.bigCircle svg{transform:none!important}}
 .contact>div:last-child{font-size:13px;line-height:1.4}
 .contact a[href^='mailto']{display:block;font-size:16px;margin-top:18px;overflow-wrap:anywhere}
 .footer{background:#f7f7f4;color:#101213;display:grid;grid-template-columns:1fr 1fr 1fr 1.35fr 1fr;gap:30px;align-items:start;padding:22px 4.3% 26px}
