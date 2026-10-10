@@ -55,3 +55,12 @@
 
 
 .root :global(.shell){width:100%;max-width:none;margin:0}
+
+/* Use the existing transition navy as one uninterrupted hero canvas. */
+.root{background:#0c2948;color:#fff;padding:0}
+.root :global(.shell){background:#0c2948;border-radius:0}
+.root :global(.description),.root :global(.facts span){color:#c4d3df}
+.root :global(.secondary){color:#fff;border-color:#c4d3df}
+.root :global(.backdrop){display:none}
+.root :global(.enquiry){color:#202e3e}
+.root :global(a:focus-visible),.root :global(button:focus-visible){outline-color:#eddd48}
