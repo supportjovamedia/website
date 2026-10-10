@@ -66,3 +66,7 @@
 @media(max-width:900px){.catalogueLayout{grid-template-columns:1fr;gap:32px}.categoryNav{position:static;display:flex;justify-content:center;flex-wrap:wrap;gap:10px}.categoryNav>p{width:100%;text-align:center;margin-bottom:0}.categoryNav button{min-width:160px;border-color:#d0d7df}.categoryHeading{text-align:center}.categoryHeading p{margin-inline:auto}.categorySection .card h3{min-height:2.4em}.categorySection .description{max-width:none}.packageFootnote{max-width:none}}
 @media(max-width:600px){.categorySection .grid{grid-template-columns:1fr}.categorySection .card{padding:24px}.categorySection .card h3,.categorySection .description{min-height:0}.categoryNav button{min-width:0;flex:1}.categorySection .productArt{height:185px}.catalogueLayout{gap:28px}.pricingHero{padding:36px 0}.categorySection{margin-bottom:15px}}
 @media(max-width:600px){.productTerms{min-height:0}}
+.steps li{padding-left:0}
+.steps li::before{content:none}
+.price .fromPrice{font-size:.5em;font-weight:500;letter-spacing:0}
+.categorySection .card .button{justify-content:center}

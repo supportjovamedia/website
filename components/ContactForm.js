@@ -144,7 +144,7 @@ export default function ContactForm() {
 
         <p className="kicker">Your message</p>
 
-        <h2 style={{ fontSize: 28 }}>What do you have in mind?</h2>
+        <h2 style={{ fontSize: 28 }}>Get in touch</h2>
 
       </div>
 

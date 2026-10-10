@@ -67,7 +67,7 @@ export default function MarketingAnalytics() {
     const started = new WeakSet();
     const depths = new Set();
     const focus = event => {
-      const form = event.target.closest?.('form[data-analytics-form="contact_enquiry"],form[data-analytics-form="website_consultation"]');
+      const form = event.target.closest?.('form[data-analytics-form="contact_enquiry"],form[data-analytics-form="website_consultation"],form[data-analytics-form="quote_callback"]');
       if (form && !started.has(form)) { started.add(form); trackEvent("form_start", { form_id: form.dataset.analyticsForm }); }
     };
     const click = event => {

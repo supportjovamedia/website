@@ -1,0 +1,6 @@
+Photo: Andy Brown, Swatchos colour samples on a graphic designer's desk.
+Source: https://unsplash.com/photos/a-desk-with-a-keyboard-pencils-and-various-color-samples-8dgFq8Vbelo
+License: https://unsplash.com/license (free Unsplash photograph, checked 11 October 2026).
+Asset: designer-colour-workspace.webp. This is illustrative stock photography, not a photograph of JovaMedia's office or staff.
+Original retained under output/jova-white-redesign/about-photo-originals.
+Export is resized and metadata stripped. No AI generation used for this photograph.

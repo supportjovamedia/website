@@ -11,16 +11,16 @@ export default function SelectedConcepts() {
   return <section id="work" className={s.section} aria-labelledby="concepts-title">
     <header className={s.heading} data-reveal>
       <div><p>OUR WORK</p><h2 id="concepts-title">Digital experiences.<br />Made to stand out.</h2></div>
-      <span>Different businesses. Distinctive design.<br />Scroll inside each preview to explore.</span>
+      <span>Scroll inside each preview to see the full website.<br />On mobile, swipe up inside the picture.</span>
     </header>
     <div className={s.grid}>
       {concepts.map((concept, index) => <figure key={concept.image} data-reveal style={{ "--delay": `${index % 3 * 80}ms` }}>
         <div className={s.preview}>
           <div className={s.browserBar} aria-hidden="true"><span>● ● ●</span><span>{concept.name}</span></div>
-          <div className={s.image} tabIndex={0} role="region" aria-label={`${concept.name} website preview, scroll to explore`}>
+          <div className={s.hint} id={`preview-hint-${concept.image}`}><svg viewBox="0 0 20 24" width="16" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="2" width="14" height="20" rx="7"/><path d="M10 6v5"/></svg><span>Scroll to explore</span></div>
+          <div className={s.image} tabIndex={0} role="region" aria-label={`${concept.name} website preview, scroll to explore`} aria-describedby={`preview-hint-${concept.image}`}>
             <Image src={`/home-selected/${concept.image}.png`} alt={`${concept.name} website`} width={concept.width} height={concept.height} sizes="(max-width:700px) 90vw, (max-width:1050px) 45vw,31vw" draggable={false} />
           </div>
-          <div className={s.hint} aria-hidden="true">Scroll to explore</div>
         </div>
         <figcaption><strong>{concept.name}</strong><span>{concept.category}</span></figcaption>
       </figure>)}

@@ -13,7 +13,7 @@ test("public service pages have no commercial tables, prices or internal tiers",
     assert.doesNotMatch(html, /£|&pound;|&#163;|Starter|Care Plus|Care Pro|From £|\bTEAM [123]\b|<table[\s>]/, path);
     if (path.startsWith("/services/")) {
       assert.match(html, /How we can help/, path);
-      assert.match(html, /Discuss your project/, path);
+      assert.match(html, /Get a Quote/, path);
     }
   }
 });

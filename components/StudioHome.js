@@ -87,7 +87,7 @@ export default function StudioHome() {
       </section>
       <ProcessStory />
       <WhyJovaPreview />
-      <section className={s.experience} aria-labelledby="experience-title"><div><p className={s.kicker}>EXPERIENCE YOU CAN BUILD ON</p><h2 id="experience-title">Big ideas.<br />A personal approach.</h2><Link href="/about" className={s.underlined}>Get to know JovaMedia</Link></div><div className={s.stats}><article><strong>2013</strong><h3>Where it began.</h3><p>Designing websites and helping businesses bring their ideas to life.</p></article></div></section>
+      <section className={s.experience} aria-labelledby="experience-title"><div><p className={s.kicker}>EXPERIENCE YOU CAN BUILD ON</p><h2 id="experience-title">Big ideas.<br />A personal approach.</h2><Link href="/about" className={s.underlined}>Get to know JovaMedia</Link></div><div className={s.stats}><article><strong>2016</strong><h3>Where it began.</h3><p>Designing websites and helping businesses bring their ideas to life.</p></article></div></section>
       <FaqStory />
       <section className={s.finalCta} aria-labelledby="final-cta-title"><p>YOUR NEXT CHAPTER STARTS WITH A CONVERSATION.</p><h2 id="final-cta-title">Let’s make your<br />first impression count.</h2><div className={s.actions}><ConsultationLink className={s.lightButton} placement="other">Get my free consultation</ConsultationLink><Link href="/pricing" className={s.darkOutline}>View pricing</Link></div></section>
     </main>

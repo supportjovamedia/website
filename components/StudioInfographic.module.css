@@ -1,0 +1,8 @@
+.figure{margin:0;background:#edf3f9;border:1px solid #d1dfeb;border-radius:16px;overflow:hidden;min-width:0;color:#0c2948}
+.figure figcaption{padding:clamp(24px,3vw,40px)}
+.figure .eyebrow{font-size:10px;letter-spacing:.14em;font-weight:700;color:#a81f29;margin:0 0 14px}
+.figure figcaption h2{font-size:clamp(27px,2.6vw,42px);letter-spacing:-.04em;line-height:1.15;margin:0 0 12px;color:#0c2948}
+.figure figcaption>p:last-child{font-size:14px;line-height:1.65;margin:0;color:#35445a;max-width:360px}
+.photo{position:relative;aspect-ratio:3/2;background:#d8e5f1}
+.photo img{object-fit:cover;filter:none}
+@media(max-width:700px){.figure figcaption{text-align:center;padding:26px 24px}.figure figcaption>p:last-child{margin-inline:auto}.figure figcaption h2{font-size:29px}}

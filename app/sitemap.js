@@ -9,7 +9,7 @@ export default function sitemap() {
     "/work/editorial-experience",
     "/about",
     "/contact",
-    "/consultation",
+    "/get-a-quote",
     "/pricing",
     "/privacy-policy",
     "/terms",

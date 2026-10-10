@@ -27,5 +27,6 @@ export default function SiteChrome({children, header, footer}) {
   if (pathname.startsWith("/preview/booking")) return <>{children}</>;
   const navigation = <div className={`jova-pages jova-header-chrome${isHome ? ' jova-home-header' : ''}`}>{header}</div>;
   if (isHome) return <>{navigation}{children}</>;
+  if (pathname === "/get-a-quote") return <>{navigation}<div className="jova-pages" ref={root}>{children}</div></>;
   return <>{navigation}<div className={`jova-pages${pathname === "/basket" ? ` ${commerce.basketChrome}` : ""}`} ref={root}>{children}{footer}</div></>;
 }

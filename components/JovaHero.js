@@ -14,9 +14,7 @@ export default function JovaHero() {
             Brands grow<br />with <span>purpose<span className={styles.dot}>.</span></span>
           </h1>
           <p className={styles.description}>Strategy, creative, media and technology.</p>
-          <Link href="/contact" className={styles.button}>
-            Start a project
-          </Link>
+          <Link href="/get-a-quote" className={styles.button}>Get a Quote</Link>
         </div>
         <div className={styles.artwork}>
           <JovaScene />
