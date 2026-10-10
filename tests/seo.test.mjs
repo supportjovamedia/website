@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import {readFile} from "node:fs/promises";
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname))
   throw Error("Local tests only");
@@ -66,7 +67,8 @@ test("unfinished insights stay accessible but outside search index and sitemap",
 });
 
 test("social previews use the current homepage capture and return a valid PNG", async () => {
-  const expected = "https://www.jovamedia.com/share/jovamedia-homepage-2026-09.png";
+  const expected = "https://www.jovamedia.com/share/jovamedia-hero-2026-10.png";
+  const approved = await readFile(new URL("../public/share/jovamedia-hero-2026-10.png",import.meta.url));
   const xml = await (await fetch(base + "/sitemap.xml")).text();
   for (const [,url] of xml.matchAll(/<loc>(.*?)<\/loc>/g)) {
     const response = await fetch(base + new URL(url).pathname, {headers:{"User-Agent":"Twitterbot/1.0"}});
@@ -74,9 +76,13 @@ test("social previews use the current homepage capture and return a valid PNG", 
     const html = await response.text();
     assert.equal(meta(html, "og:image"), expected, url);
     assert.equal(meta(html, "twitter:image"), expected, url);
+    assert.equal(meta(html, "og:image:width"), "1200", url);
+    assert.equal(meta(html, "og:image:height"), "630", url);
+    assert.ok(meta(html, "og:image:alt")?.includes("Daybreak"), url);
+    assert.ok(!html.includes("jovamedia-homepage-2026-09.png"), url);
     assert.equal(html.match(/rel="canonical" href="([^"]+)"/)?.[1], url);
   }
-  for (const path of [new URL(expected).pathname, "/opengraph-image", "/share/jovamedia-digital-partner", "/share/jovamedia-2026"]) {
+  for (const path of [new URL(expected).pathname, "/share/jovamedia-homepage-2026-09.png", "/opengraph-image", "/share/jovamedia-digital-partner", "/share/jovamedia-2026"]) {
     const response = await fetch(base + path);
     assert.equal(response.status, 200);
     assert.match(response.headers.get("content-type"), /image\/png/);
@@ -84,6 +90,15 @@ test("social previews use the current homepage capture and return a valid PNG", 
     assert.equal(data.subarray(1,4).toString(), "PNG");
     assert.equal(data.readUInt32BE(16), 1200);
     assert.equal(data.readUInt32BE(20), 630);
+    assert.deepEqual(data, approved, path + " must serve the current image, not just any PNG");
+  }
+  for(const agent of ["facebookexternalhit/1.1","Twitterbot/1.0","LinkedInBot/1.0","WhatsApp/2.0"]){
+    const response=await fetch(base+"/?hero=navy",{headers:{"User-Agent":agent}});
+    assert.equal(response.status,200,agent);
+    const html=await response.text();
+    assert.equal(meta(html,"og:image"),expected,agent);
+    assert.equal(meta(html,"twitter:image"),expected,agent);
+    assert.equal(new URL(html.match(/rel="canonical" href="([^"]+)"/)?.[1]).href,"https://www.jovamedia.com/",agent);
   }
 });
 
