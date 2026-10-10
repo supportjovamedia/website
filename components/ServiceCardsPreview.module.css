@@ -1,24 +1,24 @@
 .section{background:#031521;color:#fff;padding:65px 4.3% 85px;scroll-margin-top:35px;overflow:clip}
 .inner{max-width:1480px;margin:auto}
 .heading{display:flex;align-items:end;justify-content:space-between;gap:40px;margin-bottom:55px}
-.section .eyebrow{font-size:11px;letter-spacing:.17em;color:#c2cdd3;margin:0 0 22px}.eyebrow span{color:#ff2348;margin-right:10px}
+.section .eyebrow{font-size:11px;letter-spacing:.17em;color:#c2cdd3;margin:0 0 22px}
 .section .title{font-size:clamp(42px,5vw,76px);font-weight:500;line-height:1.03;letter-spacing:-.045em;color:#fff;margin:0;max-width:900px}
 .title em{font-family:Georgia,'Times New Roman',serif;font-weight:400;color:#ff2348}
 .headingNote{font-size:14px;line-height:1.6;color:#acbdc8;max-width:230px;padding-bottom:5px}
 .rows{display:grid;gap:68px}
-.row{--enter:1;position:relative;min-width:0;padding:18px 0}
-.card{display:grid;grid-template-columns:clamp(155px,17vw,240px) minmax(0,1fr) 95px;gap:38px;align-items:center;position:relative;isolation:isolate;min-height:195px;padding:0 30px 0 0;color:white;transform:translateX(calc((1 - var(--enter))*65%));will-change:transform}
+.row{position:relative;min-width:0;padding:18px 0}
+.card{display:grid;grid-template-columns:clamp(155px,17vw,240px) minmax(0,1fr) 95px;gap:38px;align-items:center;position:relative;isolation:isolate;min-height:195px;padding:0 30px 0 0;color:white;--arrival-offset:65%;transform:translateX(var(--arrival-offset));transition:transform .65s cubic-bezier(.22,1,.36,1)}
 .card:before{content:'';position:absolute;inset:10px 0 10px 70px;z-index:-1;background:#0b2231;border:1px solid #ffffff08;transition:background .3s,border-color .3s}
-.visual{height:245px;position:relative;transform:rotate(calc((1 - var(--enter))*var(--tilt)*1deg));box-shadow:0 15px 35px #0004;overflow:hidden;border-radius:3px;will-change:transform}
+.visual{height:245px;position:relative;transform:rotate(calc(var(--tilt)*1deg));transition:transform .65s cubic-bezier(.22,1,.36,1);box-shadow:0 15px 35px #0004;overflow:hidden;border-radius:3px}
 .visual img{object-fit:cover;object-position:50% 55%;transition:transform .65s cubic-bezier(.2,.7,.3,1)}
-.content{padding:25px 0;min-width:0}.number{display:block;color:#90a5b2;font-size:11px;letter-spacing:.12em;margin-bottom:12px}
+.content{padding:25px 0;min-width:0}
 .section .card h3{font-size:clamp(25px,2.8vw,43px);line-height:1.1;letter-spacing:-.035em;color:white;font-weight:500;margin:0 0 20px;max-width:720px}
 .tags{display:flex;flex-wrap:wrap;gap:7px}.tags span{font-size:10px;line-height:1;padding:7px 12px;border-radius:20px;background:#e9edf0;color:#0b2231}
 .action{height:82px;width:82px;display:grid;place-items:center;background:#f9faf8;border-radius:50%;color:#ef183c;justify-self:end;transition:background .3s,color .3s,transform .3s}.action svg{width:30px;height:30px}
 .card:hover:before,.card:focus-visible:before{background:#102c40;border-color:#ffffff22}.card:hover .visual img{transform:scale(1.05)}.card:hover .action{background:#ef183c;color:#fff;transform:rotate(45deg)}
 .card:focus-visible{outline:2px solid #ff2348;outline-offset:8px;transform:none!important}.card:focus-visible .visual{transform:none}
 @media(max-width:1000px){.card{grid-template-columns:175px minmax(0,1fr) 60px;gap:25px;padding-right:23px}.visual{height:215px}.action{width:60px;height:60px}.rows{gap:40px}.section .card h3{font-size:30px}}
-@media(max-width:700px){.section{padding:42px 5% 45px}.heading{display:block;text-align:center;margin-bottom:38px}.section .title{font-size:43px}.headingNote{display:block;max-width:none;margin-top:19px;font-size:12px}.headingNote br{display:none}.headingNote br:after{content:' '}.section .eyebrow{font-size:10px;margin-bottom:16px}.rows{gap:25px}.row{padding:10px 0}.card{grid-template-columns:90px minmax(0,1fr) 32px;gap:15px;min-height:165px;padding-right:12px;transform:translateX(calc((1 - var(--enter))*26%))}.card:before{inset:4px 0 4px 24px}.visual{height:145px}.section .card h3{font-size:22px;margin-bottom:13px;line-height:1.12}.content{padding:18px 0}.number{font-size:9px;margin-bottom:10px}.tags{gap:5px}.tags span{font-size:8px;padding:5px 8px}.action{width:32px;height:32px}.action svg{width:16px;height:16px}}
+@media(max-width:700px){.section{padding:42px 5% 45px}.heading{display:block;text-align:center;margin-bottom:38px}.section .title{font-size:43px}.headingNote{display:block;max-width:none;margin-top:19px;font-size:12px}.headingNote br{display:none}.headingNote br:after{content:' '}.section .eyebrow{font-size:10px;margin-bottom:16px}.rows{gap:25px}.row{padding:10px 0}.card{grid-template-columns:90px minmax(0,1fr) 32px;gap:15px;min-height:165px;padding-right:12px;--arrival-offset:26%}.card:before{inset:4px 0 4px 24px}.visual{height:145px}.section .card h3{font-size:22px;margin-bottom:13px;line-height:1.12}.content{padding:18px 0}.tags{gap:5px}.tags span{font-size:8px;padding:5px 8px}.action{width:32px;height:32px}.action svg{width:16px;height:16px}}
 @media(max-width:370px){.card{grid-template-columns:72px minmax(0,1fr) 28px;gap:10px;padding-right:9px}.visual{height:137px}.section .card h3{font-size:19px}.action{width:28px;height:28px}.section .title{font-size:37px}.tags span{padding:5px 6px}}
 .section[data-static=true] .card,.section[data-static=true] .visual{transform:none}
 @media(prefers-reduced-motion:reduce){.card,.visual,.visual img,.action{transform:none!important;transition:none!important}}
@@ -30,5 +30,20 @@
 .content{padding:22px 0 18px;width:100%}
 .section .card h3{font-size:26px;max-width:290px;margin-inline:auto}
 .tags{justify-content:center}.action{justify-self:center;width:38px;height:38px}
-.number{text-align:center}.rows{gap:24px}
+.rows{gap:24px}
 }
+
+/* Native scroll timelines keep the entrance tied to position in both directions.
+   IntersectionObserver supplies the same readable fallback and midpoint colour. */
+.row[data-entered=true] .card{transform:translateX(0)}
+.row[data-entered=true] .visual{transform:rotate(0deg)}
+.row[data-highlighted=true] .action,.card:focus-visible .action{background:#ef183c;color:#fff}
+@supports(animation-timeline:view()){
+  .row{view-timeline:--service-entry block}
+  .card{animation:service-arrive linear both;animation-timeline:--service-entry;animation-range:entry 0% cover 50%;transition:none}
+  .visual{animation:service-straighten linear both;animation-timeline:--service-entry;animation-range:entry 0% cover 50%;transition:none}
+  @keyframes service-arrive{from{transform:translateX(var(--arrival-offset))}to{transform:translateX(0)}}
+  @keyframes service-straighten{from{transform:rotate(calc(var(--tilt)*1deg))}to{transform:rotate(0deg)}}
+}
+.section[data-static=true] .card,.section[data-static=true] .visual{animation:none;transform:none;transition:none}
+@media(prefers-reduced-motion:reduce){.card,.visual{animation:none!important}}

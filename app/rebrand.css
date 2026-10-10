@@ -34,7 +34,7 @@
 
 .jova-pages .btn:hover{background:#9e001c;transform:translateY(-2px)}.jova-pages .page-hero .btn{background:#f3eee4;color:#102330;border-color:#f3eee4}
 
-.jova-pages .text-link{font-size:13px;font-weight:400;text-decoration:underline;text-underline-offset:5px}
+.jova-pages .text-link{border-bottom:0;font-size:13px;font-weight:400;text-decoration:underline;text-underline-offset:5px}
 
 .jova-pages .band-navy{background:#0d2940;color:#fff}.jova-pages .band-navy p{color:#c4d0d8}.jova-pages .band-navy h2{color:#fff}
 
@@ -86,7 +86,7 @@
 
 .jova-pages .legal{max-width:940px;padding-block:65px}.jova-pages .legal h1{font-size:clamp(44px,6vw,76px);margin-bottom:30px}.jova-pages .legal h2{font-size:28px;margin-top:40px;padding-top:22px;border-top:1px solid #d8dcd8}.jova-pages .legal p,.jova-pages .legal li{font-size:15px;line-height:1.85}
 
-.jova-pages .article-list>div{padding:35px 0;border-bottom:1px solid #d4d9d6}.jova-pages .article-list small{color:#a3001b}.jova-pages .not-found{background:#071b29;color:#fff;padding:85px 5%;min-height:65vh}.jova-pages .not-found h1,.jova-pages .not-found p{color:#f4f0e8}
+.jova-pages .article-list>div{grid-template-columns:minmax(0,1fr) auto;padding:35px 0;border-bottom:1px solid #d4d9d6}.jova-pages .article-list small{color:#a3001b}.jova-pages .not-found{background:#071b29;color:#fff;padding:85px 5%;min-height:65vh}.jova-pages .not-found h1,.jova-pages .not-found p{color:#f4f0e8}
 
 .jova-pages .work-detail{padding-block:65px}.jova-pages .work-detail h2{font-size:40px}
 

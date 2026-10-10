@@ -10,7 +10,7 @@ const concepts = [
 export default function SelectedConcepts() {
   return <section id="work" className={s.section} aria-labelledby="concepts-title">
     <header className={s.heading} data-reveal>
-      <div><p>(02) OUR WORK</p><h2 id="concepts-title">Digital experiences.<br />Made to stand out.</h2></div>
+      <div><p>OUR WORK</p><h2 id="concepts-title">Digital experiences.<br />Made to stand out.</h2></div>
       <span>Different businesses. Distinctive design.<br />Scroll inside each preview to explore.</span>
     </header>
     <div className={s.grid}>

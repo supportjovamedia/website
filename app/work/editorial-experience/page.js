@@ -51,7 +51,7 @@ export default function EditorialStudy() {
       </div>
       <div className="shell">
         <header className="concept-heading">
-          <p className="kicker">Web & digital / Concept study 02</p>
+          <p className="kicker">Web & digital / Concept study</p>
           <h1>A more considered experience.</h1>
           <p className="lead">
             A digital experience should give people a clear way in. Perspective
@@ -71,7 +71,7 @@ export default function EditorialStudy() {
           <WorkStudy kind="digital" />
         </div>
         <section className="concept-section">
-          <p className="kicker">01 / Purpose and structure</p>
+          <p className="kicker">Purpose and structure</p>
           <h2>Give the experience a clear purpose.</h2>
           <p>
             The design starts with three straightforward actions: discover a
@@ -104,7 +104,7 @@ export default function EditorialStudy() {
           </div>
         </section>
         <section className="concept-section" id="wireframes">
-          <p className="kicker">02 / Wireframes</p>
+          <p className="kicker">Wireframes</p>
           <h2>A rhythm before a visual style.</h2>
           <p>
             These low-fidelity layouts separate the feature, navigation and
@@ -120,7 +120,7 @@ export default function EditorialStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">03 / Art direction</p>
+          <p className="kicker">Art direction</p>
           <div className="concept-columns">
             <div>
               <h2>Character and clarity.</h2>
@@ -144,7 +144,7 @@ export default function EditorialStudy() {
           </Link>
         </section>
         <section className="concept-section">
-          <p className="kicker">04 / Implementation review</p>
+          <p className="kicker">Implementation review</p>
           <h2>Check the work itself.</h2>
           <div className="review-log">
             <ul>

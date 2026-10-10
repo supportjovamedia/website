@@ -20,10 +20,9 @@ export default function Page() {
     <section className={`section ${styles.directory}`} id="services" aria-label="Our eight services">
       <div className="shell">
         <div className={styles.directoryGrid}>
-          {primaryServices.map((service, i) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard}>
+          {primaryServices.map((service) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard}>
             <div className={styles.directoryImage}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt="" fill sizes="(max-width:700px) 90vw, (max-width:1000px) 45vw, 30vw" /></div>
             <div className={styles.directoryBody}>
-              <span className={styles.number}>0{i + 1}</span>
               <p className="kicker">{service.eyebrow}</p>
               <h2>{service.name}</h2><p>{service.summary}</p>
               <div className={styles.cardFoot}><span>Explore service</span></div>
