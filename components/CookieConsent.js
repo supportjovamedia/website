@@ -3,13 +3,12 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import styles from "./CookieConsent.module.css";
+import { CONSENT_KEY, readConsent, revokeTracking } from "@/lib/marketing-analytics.mjs";
 const Analytics = dynamic(() => import("@vercel/analytics/react").then(m => m.Analytics), { ssr: false });
-const KEY = "jovamedia-consent-v1";
-const MAX_AGE = 180 * 24 * 60 * 60 * 1000;
+const KEY = CONSENT_KEY;
 function choice() {
   try {
-    const value = JSON.parse(localStorage.getItem(KEY));
-    return value && Date.now() - value.time < MAX_AGE && ["accepted", "rejected"].includes(value.choice) ? value.choice : null;
+    return readConsent(localStorage);
   } catch { return null; }
 }
 function subscribe(callback) {
@@ -51,19 +50,19 @@ export default function CookieConsent() {
     setConfiguring(false);
     setStorageError(false);
     // Reload after withdrawal to also remove the already-loaded analytics runtime.
-    if (wasAccepted && next !== "accepted") window.location.reload();
+    if (wasAccepted && next !== "accepted") { revokeTracking(); window.location.reload(); }
   }
   return <>
     {enabled && consent === "accepted" && <Analytics beforeSend={beforeSend} />}
     <button type="button" className="cookie-settings" onClick={() => { configure(); setEditing(true); }}>Cookie settings</button>
     <dialog ref={dialog} className={styles.panel} aria-labelledby="cookie-title" aria-describedby="cookie-description" data-nosnippet onCancel={event => { event.preventDefault(); setEditing(false); dialog.current.close(); }}>
       <h2 id="cookie-title">{configuring ? "Cookies configuration" : "Cookies Policy"}</h2>
-      <p id="cookie-description">We store your privacy choice so we can remember it. Optional analytics helps us understand how people use our website, and only runs with your permission.</p>
+      <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits and clicks, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept.</p>
       {configuring ? <div className={styles.options}>
         <div className={styles.row}><span>Necessary storage</span><span className={styles.active}>Always active</span></div>
         <div className={styles.row}>
-          <label htmlFor="cookie-analytics">Analytics</label>
-          <button id="cookie-analytics" className={styles.toggle} type="button" role="switch" aria-checked={analytics} aria-label="Analytics" onClick={() => setAnalytics(!analytics)}><span /></button>
+          <label htmlFor="cookie-analytics">Analytics and session replays</label>
+          <button id="cookie-analytics" className={styles.toggle} type="button" role="switch" aria-checked={analytics} aria-label="Analytics and session replays" onClick={() => setAnalytics(!analytics)}><span /></button>
         </div>
       </div> : <p>You can accept, reject or manage your preferences below, and change them any time through Cookie settings. Read more in our <Link href="/privacy-policy">Privacy Policy</Link>.</p>}
       <div className={styles.actions}>
