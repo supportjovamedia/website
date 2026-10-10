@@ -8,6 +8,7 @@ const sharp=require('sharp');
 const imagePath='public/share/jovamedia-hero-2026-10.png';
 const sourcePaths=['components/DaybreakHero.js','components/DaybreakHero.module.css','scripts/capture-social-preview.cjs','public/brand/jova-logo-white.png'];
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const sourceSha=(bytes,file)=>sha(file.endsWith('.png')?bytes:bytes.toString('utf8').replace(/\r\n/g,'\n'));
 (async()=>{
  const base=process.env.SOCIAL_PREVIEW_URL||'http://127.0.0.1:4887/';
  if(!['localhost','127.0.0.1'].includes(new URL(base).hostname))throw Error('Capture the current local build, not a possibly stale live deployment.');
@@ -58,7 +59,7 @@ const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
   await sharp(raw).png().toFile(imagePath);
   // Cached metadata may still reference the previous static URL. Keep its origin current too.
   await fs.copyFile(imagePath,'public/share/jovamedia-homepage-2026-09.png');
-  const sources={};for(const p of sourcePaths)sources[p]=sha(await fs.readFile(p));
+  const sources={};for(const p of sourcePaths)sources[p]=sourceSha(await fs.readFile(p),p);
   await fs.writeFile('public/share/social-preview-manifest.json',JSON.stringify({image:'/share/jovamedia-hero-2026-10.png',width:1200,height:630,sha256:sha(await fs.readFile(imagePath)),sources},null,2)+'\n');
   console.log('Captured current hero, 1200x630. Saved image and source-freshness manifest.');
  }finally{await browser.close()}

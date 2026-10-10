@@ -5,6 +5,7 @@ import {createHash} from "node:crypto";
 import {socialPreview} from "../lib/social-preview.mjs";
 
 const sha=bytes=>createHash("sha256").update(bytes).digest("hex");
+const sourceSha=(bytes,file)=>sha(file.endsWith(".png")?bytes:bytes.toString("utf8").replace(/\r\n/g,"\n"));
 test("share image is refreshed whenever its hero, logo or capture layout changes",async()=>{
  const manifest=JSON.parse(await readFile(new URL("../public/share/social-preview-manifest.json",import.meta.url)));
  assert.equal(socialPreview.url,manifest.image);
@@ -12,7 +13,7 @@ test("share image is refreshed whenever its hero, logo or capture layout changes
   assert.ok(manifest.sources[required],`Missing freshness check for ${required}`);
  }
  for(const [file,expected] of Object.entries(manifest.sources)){
-  assert.equal(sha(await readFile(new URL("../"+file,import.meta.url))),expected,`${file} changed. Recapture the social preview before publishing.`);
+  assert.equal(sourceSha(await readFile(new URL("../"+file,import.meta.url)),file),expected,`${file} changed. Recapture the social preview before publishing.`);
  }
  const image=await readFile(new URL("../public"+socialPreview.url,import.meta.url));
  assert.equal(sha(image),manifest.sha256);

@@ -4,9 +4,9 @@
   "height": 630,
   "sha256": "dc81e51be8a2b664f4282e867449c76becc86f87abdc696d4bbeaabee1d3abed",
   "sources": {
-    "components/DaybreakHero.js": "8b12fa5b7855397fa554ab6f5c6f7b371bf29fc6d2aa1e27d266bd92b021a731",
-    "components/DaybreakHero.module.css": "1e11af2a436bd5a47df63fa542d2484ef4f177383052dfa7a7a1a55901091e4e",
-    "scripts/capture-social-preview.cjs": "9b1270cd6026019e0146b64935e9a0bfda030a551f0a95e97822c128294418e7",
+    "components/DaybreakHero.js": "2438f6996a9b7c9047bac8f2169538cfd6179f932750afe0692d87138158c0b3",
+    "components/DaybreakHero.module.css": "76617c34126cb113e2e34237f11397fe2af7ab7f16ed08d304e52b51eb4bb15e",
+    "scripts/capture-social-preview.cjs": "bec74ec99f4800d742cb47f95e2a2c30de9f5bc7ffd497925c17fc33e8e9f722",
     "public/brand/jova-logo-white.png": "193e06d7a2b17adb7c8a7c26224ea5d001feda5916d94faf23c953265463adf2"
   }
 }
