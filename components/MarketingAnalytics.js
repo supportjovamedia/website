@@ -22,15 +22,16 @@ function script(id, src) {
 export default function MarketingAnalytics() {
   const pathname = usePathname();
   const consent = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID || "GTM-MDZ4RQQQ";
+  const enabled = process.env.NEXT_PUBLIC_ENABLE_MARKETING_ANALYTICS === "true";
   useEffect(() => {
-    const allowed = process.env.NEXT_PUBLIC_ENABLE_MARKETING_ANALYTICS === "true" && consent === "accepted" && publicPage(pathname);
+    const allowed = enabled && consent === "accepted" && publicPage(pathname);
     if (!allowed) {
       if (window.__jovaAnalytics) { revokeTracking(); window.location.reload(); }
       return;
     }
     const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
     const clarityId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "";
-    const gtmId = process.env.NEXT_PUBLIC_GTM_ID || "";
     if (!window.__jovaAnalytics) {
       window.dataLayer = window.dataLayer || [];
       window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
@@ -88,6 +89,9 @@ export default function MarketingAnalytics() {
     document.addEventListener("focusin", focus);
     window.addEventListener("scroll", scroll, { passive: true });
     return () => { document.removeEventListener("click", click); document.removeEventListener("focusin", focus); window.removeEventListener("scroll", scroll); };
-  }, [pathname, consent]);
-  return null;
+  }, [pathname, consent, enabled, gtmId]);
+  // Insert the vendor's body snippet only after consent. With JavaScript disabled,
+  // consent cannot be checked, so optional tracking deliberately remains absent.
+  if (!enabled || consent !== "accepted" || !publicPage(pathname) || !/^GTM-[A-Z0-9]+$/.test(gtmId)) return null;
+  return <noscript dangerouslySetInnerHTML={{ __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe>` }} />;
 }

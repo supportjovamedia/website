@@ -1,8 +1,10 @@
 # JovaMedia visitor measurement
 
-Status: integration prepared; provider accounts, IDs, account settings, live collection and saved funnel still pending. This document is not proof of a live installation.
+Status: integration prepared; GTM account/container created and verified as GTM-MDZ4RQQQ. GA4 and Clarity terms, IDs, account settings, live collection and saved funnel still pending. This document is not proof of a live installation.
 
-Owner: support.jovamedia@gmail.com. Website: https://www.jovamedia.com. Use free GTM, GA4 and Microsoft Clarity plans. Account creation is paused before terms acceptance, which requires action-time confirmation under the browser policy.
+Owner: support.jovamedia@gmail.com. Website: https://www.jovamedia.com. Use free GTM, GA4 and Microsoft Clarity plans. The user accepted GTM terms and created its container. GA4 and Clarity creation are paused before their separate terms acceptance, which requires action-time confirmation under the browser policy.
+
+GTM installation: the consent-gated loader adds the vendor script to document.head. The vendor body noscript markup is placed at the beginning of the body via MarketingAnalytics after consent. It is absent for JavaScript-disabled visits because the browser cannot check the stored opt-in. Do not add an unconditional noscript iframe, which would contact Google before consent. GTM account ID: 6381766731; container ID: 266724068.
 
 ## Account configuration before enabling
 
