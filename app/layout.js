@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SiteChrome from "@/components/SiteChrome";
 import { socialProfiles } from "@/lib/site";
+import { socialPreview } from "@/lib/social-preview.mjs";
 const jakarta = localFont({
   src: "./fonts/plus-jakarta-sans.woff2",
   display: "swap",
@@ -32,8 +33,9 @@ export const metadata = {
     siteName: "JovaMedia",
     locale: "en_GB",
     type: "website",
+    images: [socialPreview],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary_large_image", images: [{ url: socialPreview.url, alt: socialPreview.alt }] },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,
     other: process.env.BING_SITE_VERIFICATION
