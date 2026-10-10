@@ -6,7 +6,7 @@ import RecaptchaCheckbox from "./RecaptchaCheckbox";
 import { serviceOptions, budgetOptions, countryOptions, validateEnquiry } from "@/lib/enquiry-fields.mjs";
 
 import { contactEmail } from "@/lib/site";
-import { trackEvent } from "@/lib/marketing-analytics.mjs";
+import { browserConsent, trackEvent } from "@/lib/marketing-analytics.mjs";
 
 export default function ContactForm() {
 
@@ -21,6 +21,16 @@ export default function ContactForm() {
   const [messageLength, setMessageLength] = useState(0);
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const recaptcha = useRef(null);
+  const messageStarted = useRef(false);
+
+  function changeMessage(event) {
+    const length = event.target.value.trim().length;
+    setMessageLength(length);
+    if (length > 0 && !messageStarted.current && browserConsent() === "accepted") {
+      messageStarted.current = true;
+      trackEvent("message_started", { form_id: "contact_enquiry" });
+    }
+  }
 
   const result = useRef(null);
 
@@ -206,7 +216,7 @@ export default function ContactForm() {
         </label>
         </> : <input type="hidden" name="service" value={purpose === "support" ? "Existing client support" : "General enquiry"} />}
         <label><span>{isProject ? "Tell us a little about the project" : "Your message"} <Required /></span>
-          <textarea name="message" required minLength={isProject ? 100 : 10} maxLength={3000} rows={5} placeholder={isProject ? "Tell us about your business, what you need and what you’d like to achieve." : "Ask your question or tell us what you need help with."} onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
+          <textarea name="message" required minLength={isProject ? 100 : 10} maxLength={3000} rows={5} placeholder={isProject ? "Tell us about your business, what you need and what you’d like to achieve." : "Ask your question or tell us what you need help with."} onChange={changeMessage} {...fieldProps("message", "message-hint")} />
           <span className="field-hint" id="message-hint">At least {isProject ? 100 : 10} characters. {messageLength.toLocaleString("en-GB")} / 3,000 characters.</span>
           {fieldError("message")}
         </label>
