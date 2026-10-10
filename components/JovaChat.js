@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, MessageCircle, X } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import ConsultationLink from "./ConsultationLink";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 import s from "./JovaChat.module.css";
@@ -30,8 +30,8 @@ export default function JovaChat() {
   return <aside className={s.widget} aria-label="JovaMedia website guide">
     {open && <section className={s.panel} role="dialog" aria-label="Website guide">
       <header><span className={s.mark}>J</span><div><strong>Let’s find your next step.</strong><span>JovaMedia website guide</span></div><button type="button" ref={close} onClick={() => { setOpen(false); launch.current?.focus(); }} aria-label="Close website guide"><X size={19} /></button></header>
-      <div className={s.body}><p className={s.welcome}>Hello. What are you planning?</p><p className={s.note}>Quick answers, then a real conversation with us.</p><div className={s.choices}>{Object.keys(answers).map(label => <button key={label} type="button" aria-pressed={choice === label} onClick={() => { setChoice(label); trackEvent("ui_click", { element_type: "button" }); }}>{label}<ArrowUpRight size={15} aria-hidden="true" /></button>)}</div>
-        {choice && <div className={s.answer} role="status"><p>{answers[choice]}</p>{choice === "Branding or marketing" ? <Link href="/contact" className={s.cta}>Tell us about your project <ArrowUpRight size={17} aria-hidden="true" /></Link> : <ConsultationLink className={s.cta} placement="other">Request a free consultation <ArrowUpRight size={17} aria-hidden="true" /></ConsultationLink>}<Link href="/pricing" className={s.pricing}>Explore website packages</Link></div>}
+      <div className={s.body}><p className={s.welcome}>Hello. What are you planning?</p><p className={s.note}>Quick answers, then a real conversation with us.</p><div className={s.choices}>{Object.keys(answers).map(label => <button key={label} type="button" aria-pressed={choice === label} onClick={() => { setChoice(label); trackEvent("ui_click", { element_type: "button" }); }}>{label}</button>)}</div>
+        {choice && <div className={s.answer} role="status"><p>{answers[choice]}</p>{choice === "Branding or marketing" ? <Link href="/contact" className={s.cta}>Tell us about your project</Link> : <ConsultationLink className={s.cta} placement="other">Request a free consultation</ConsultationLink>}<Link href="/pricing" className={s.pricing}>Explore website packages</Link></div>}
       </div><footer>Prefer email? <a href="mailto:support.jovamedia@gmail.com">Talk to JovaMedia</a></footer>
     </section>}
     <button ref={launch} type="button" className={s.launcher} aria-expanded={open} aria-label={open ? "Hide website guide" : "Open website guide"} onClick={() => { setOpen(!open); trackEvent("ui_click", { element_type: "button" }); }}><MessageCircle size={20} aria-hidden="true" /><span>Let’s talk websites</span></button>

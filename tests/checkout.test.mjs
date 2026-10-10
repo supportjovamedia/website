@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createCheckoutHandler, createStripeWebhookHandler, paidOrder, checkoutConfigured } from "../lib/checkout.mjs";
 import { products, validBasket } from "../lib/products.mjs";
-const catalog = products.map((item, index) => ({ ...item, amount: [45000, 55000, 200000][index] })); // Test fixtures, not published prices.
+const catalog = products.filter(item => !item.interval).map((item, index) => ({ ...item, amount: [45000, 55000, 200000][index] })); // Test fixtures, not published prices.
 const env = { CHECKOUT_ENABLED: "true", COMMERCE_TERMS_APPROVED: "true", STRIPE_SECRET_KEY: "sk_test_fixture", STRIPE_WEBHOOK_SECRET: "whsec_fixture", RESEND_API_KEY: "fixture", CONTACT_FROM_EMAIL: "Website <hello@example.com>", CONTACT_TO_EMAIL: "business@example.com" };
 const request = (body = { productIds: ["landing-page"], termsAccepted: true }, headers = {}) => new Request("https://www.jovamedia.com/api/checkout", { method: "POST", headers: { origin: "https://www.jovamedia.com", "content-type": "application/json", "idempotency-key": "12345678-1234-1234-1234-123456789abc", ...headers }, body: JSON.stringify(body) });
 const paid = { id: "cs_test_12345678901234567890", mode: "payment", status: "complete", payment_status: "paid", currency: "gbp", amount_total: 45000, livemode: false, metadata: { source: "jovamedia-packages", product_ids: "landing-page", expected_total: "45000" }, customer_details: { name: "Private Customer", email: "private@example.com" } };
@@ -61,4 +61,18 @@ test("verified paid orders notify the configured inbox once and retain durable d
 test("failed order notification returns a retryable status and does not mark sent", async () => {
   const stripe = { webhooks: { constructEvent: () => ({ type: "checkout.session.completed", data: { object: { id: paid.id } } }) }, checkout: { sessions: { retrieve: async () => paid, update: () => assert.fail("Rejected notifications must not be marked sent") } } };
   assert.equal((await createStripeWebhookHandler({ env, stripe, send: async () => Response.json({ error: "rejected" }, { status: 500 }) })(webhookRequest())).status, 502);
+});
+
+test("care checkout uses monthly recurring prices and website builds remain one-off", async () => {
+ let call;
+ const handler=createCheckoutHandler({env,catalog:products,stripe:{checkout:{sessions:{create:async value=>{call=value;return {url:"https://checkout.stripe.com/c/pay/recurring-test"};}}}}});
+ assert.equal((await handler(request({productIds:["business-website","web-care"],termsAccepted:true}))).status,200);
+ assert.equal(call.mode,"subscription");assert.equal(call.customer_creation,undefined);
+ const recurring=call.line_items.find(item=>item.price_data.recurring);
+ assert.equal(recurring.price_data.unit_amount,3900);assert.equal(recurring.price_data.recurring.interval,"month");
+ assert.equal(call.line_items.find(item=>!item.price_data.recurring).price_data.unit_amount,55000);
+ assert.equal((await handler(request({productIds:["web-care","web-care-pro"],termsAccepted:true}))).status,400);
+ assert.equal(validBasket(["web-care","web-care-pro"]),false);
+ const session={...paid,mode:"subscription",amount_total:58900,metadata:{...paid.metadata,product_ids:"business-website,web-care",expected_total:"58900"}};
+ assert.equal(paidOrder(session).recurringAmount,3900);assert.equal(paidOrder({...session,mode:"payment"}),null);
 });

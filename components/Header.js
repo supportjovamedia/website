@@ -40,7 +40,7 @@ function Navigation({ pathname }) {
     const setSticky = pastIntro => {
       // An open menu must keep its close button on screen while the viewport
       // changes. Recheck the intro as soon as the menu closes.
-      if (menu.current.hidden) element.dataset.stuck = String(pastIntro);
+      if (menu.current?.hidden && element.isConnected) element.dataset.stuck = String(pastIntro);
     };
     const measure = () => {
       const height = element.getBoundingClientRect().height;
@@ -120,6 +120,7 @@ function Navigation({ pathname }) {
         <div className="shell nav">
           <a href="/" className="brand-logo" aria-label="JovaMedia home">
             <Image
+              className="logo-light-surface"
               src="/brand/jova-logo.png"
               alt="JovaMedia"
               width={361}
@@ -127,6 +128,7 @@ function Navigation({ pathname }) {
               priority
               sizes="120px"
             />
+            <Image className="logo-dark-surface" src="/brand/jova-logo-white.png" alt="" aria-hidden="true" width={361} height={128} sizes="132px" />
           </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
             {links.map(([name, href]) => (

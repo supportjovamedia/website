@@ -21,11 +21,10 @@ export default async function Page({ params }) {
   const relatedSlugs = {
     "system-modernization": ["web-design", "email-marketing", "seo"],
     "web-design": ["content", "brand-strategy", "seo"],
-    content: ["web-design", "content-production", "email-marketing"],
-    "social-management": ["content-production", "brand-strategy", "email-marketing"],
+    content: ["web-design", "seo", "email-marketing"],
+    "social-management": ["seo", "brand-strategy", "email-marketing"],
     "brand-strategy": ["web-design", "content", "social-management"],
     "email-marketing": ["web-design", "content", "social-management"],
-    "content-production": ["social-management", "content", "brand-strategy"],
     seo: ["web-design", "content", "social-management"],
   };
   const related = relatedSlugs[slug].map((id) => services.find((s) => s.slug === id));

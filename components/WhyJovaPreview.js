@@ -15,11 +15,10 @@ export default function WhyJovaPreview() {
         <p className={s.label}>WHY JOVA</p>
         <h2 id="why-jova-heading">A digital partner.<br />Not just a deliverable.</h2>
         <p className={s.introCopy}>One partner for strategy, design, content and delivery.<br className={s.desktopBreak} /> Less chasing. Fewer handoffs. Better work.</p>
-        <Link className={s.cta} href="/contact">Start a project <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></Link>
+        <Link className={s.cta} href="/contact">Start a project</Link>
       </div>
       <div className={s.values}>
         {values.map(({ photo, title, copy }, index) => <article className={s.value} data-scroll style={{ "--order": index }} key={photo}>
-          <div className={`${s.art} ${s[photo]}`} aria-hidden="true" />
           <span className={s.rule} aria-hidden="true" />
           <h3>{title.map(line => <span key={line}>{line}</span>)}</h3>
           <p>{copy}</p>

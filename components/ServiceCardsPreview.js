@@ -12,7 +12,6 @@ const services = [
   { title: ["Brand Strategy", "& Design"], slug: "brand-strategy", photo: "/service-crafted/branding-modern.webp", kind: "branding" },
   { title: ["Copywriting"], slug: "content", photo: "/service-crafted/copywriting-picture.webp", kind: "copywriting" },
   { title: ["Email Marketing", "& Automation"], slug: "email-marketing", photo: "/service-crafted/email-modern.webp", kind: "email" },
-  { title: ["Content", "Production"], slug: "content-production", photo: "/service-crafted/camera-picture.webp", kind: "camera" },
   { title: ["Search &", "Local Visibility"], slug: "seo", photo: "/service-crafted/website-modern.webp", kind: "seo" },
 ];
 

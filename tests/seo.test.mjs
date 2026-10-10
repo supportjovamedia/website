@@ -78,7 +78,7 @@ test("social previews use the current homepage capture and return a valid PNG", 
     assert.equal(meta(html, "twitter:image"), expected, url);
     assert.equal(meta(html, "og:image:width"), "1200", url);
     assert.equal(meta(html, "og:image:height"), "630", url);
-    assert.ok(meta(html, "og:image:alt")?.includes("Your next great website"), url);
+    assert.ok(meta(html, "og:image:alt")?.includes("Good ideas"), url);
     assert.ok(!html.includes("jovamedia-homepage-2026-09.png"), url);
     assert.equal(html.match(/rel="canonical" href="([^"]+)"/)?.[1], url);
   }

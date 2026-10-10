@@ -137,3 +137,12 @@ test("fresh CAPTCHA retries verify before delivery and preserve email idempotenc
  assert.equal(emails[0].body,emails[1].body);
  assert.doesNotMatch(emails[0].body,/first-token|fresh-token|private-captcha-key/);
 });
+
+test("short contact enquiries require both names and deliver the optional phone without qualification fields", async () => {
+ let mail;
+ const handler=createContactHandler({env,send:async(url,options)=>{mail=JSON.parse(options.body);return Response.json({id:"short-form-id"});}});
+ const body={firstName:"Alex",lastName:"Morgan",email:"alex@example.com",phone:"+44 7700 900123",service:"General enquiry",message:"0123456789",website:"",recaptchaToken:"fresh-token"};
+ assert.equal((await handler(req(body))).status,200);assert.match(mail.text,/Name: Alex Morgan/);assert.match(mail.text,/Phone: \+44 7700 900123/);
+ assert.equal((await handler(req({...body,phone:""}))).status,200);
+ for(const change of [{firstName:""},{lastName:""},{message:"123456789"},{phone:"hello"},{phone:"123\n456789"}]) assert.equal((await handler(req({...body,...change}))).status,400,JSON.stringify(change));
+});

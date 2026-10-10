@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 import { primaryServices } from "@/lib/service-catalogue";
 import styles from "./services.module.css";
 
-export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s eight services: websites, system modernization, social media, brand design, copywriting, email automation, content production and SEO.");
+export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s seven services: websites, system modernization, social media, brand design, copywriting, email automation and SEO.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
@@ -17,7 +17,7 @@ export default function Page() {
         <div className="actions"><a className="btn" href="#services">Find your service</a><Link className="text-link" href="/contact">Talk through your brief</Link></div>
       </div>
     </section>
-    <section className={`section ${styles.directory}`} id="services" aria-label="Our eight services">
+    <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
       <div className="shell">
         <div className={styles.directoryGrid}>
           {primaryServices.map((service) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard}>

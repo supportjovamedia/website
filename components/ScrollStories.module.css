@@ -13,7 +13,7 @@
 .stepIcon svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
 .stepBody{margin-top:28px;position:relative;width:100%;padding:27px 22px 23px;border-radius:12px;background:#fff;box-shadow:0 10px 30px #11263808;transition:background .5s,color .5s,box-shadow .5s}
 .stepBody:before{content:"";position:absolute;top:-7px;left:calc(50% - 7px);width:14px;height:14px;transform:rotate(45deg);background:inherit}
-.step:nth-child(2) .stepBody{background:#071e30;color:white}.step:nth-child(4) .stepBody{background:#ed1039;color:white}
+.step:nth-child(2) .stepBody{background:#071e30;color:white}.step:nth-child(4) .stepBody{background:#071e30;color:white}
 .step .stepBody h3{font-size:25px;letter-spacing:-.04em;margin:0 0 13px;font-weight:600}
 .step .stepBody p{font-size:14px;line-height:1.55;margin:0;opacity:.8}
 .detail{display:block;border-top:1px solid currentColor;margin-top:23px;padding-top:12px;font-size:10px;letter-spacing:.045em;opacity:.65}
@@ -49,3 +49,5 @@
 @media(max-width:700px){.process{text-align:center}.stepIcon{margin-inline:auto}.stepBody{text-align:center}.detail{justify-content:center}.faq .bubble{text-align:center}.faq .introCopy{margin-inline:auto}}
 
 .stepBody{text-align:center}.stepIcon{margin-inline:auto}.detail{justify-content:center}
+
+.step:nth-child(2) .stepBody p,.step:nth-child(4) .stepBody p{color:#fff}

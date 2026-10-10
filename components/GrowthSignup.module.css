@@ -12,4 +12,9 @@
 
 .newsletter.whiteNewsletter { background: #fff; }
 
+.newsletter{padding-inline:5vw;background:#f1f3f4;color:#172b42}
+.newsletter h2,.newsletter .label,.newsletter label{color:#172b42}
+.newsletter p:not(.message){color:#35445a!important}
+.newsletter .form button{background:#0c2948;color:#fff}
+
 @media(max-width:700px){.newsletter .form{text-align:center}.newsletter .form input{text-align:left}}

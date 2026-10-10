@@ -2,13 +2,15 @@
   "image": "/share/jovamedia-hero-2026-10.png",
   "width": 1200,
   "height": 630,
-  "sha256": "fcf4dbe707bf36d4c52d22cca275f6d6425a240d680da228d51b613f26a770e5",
+  "sha256": "e8a1dfaefc3ec4d56d961c82ca8cd358a4628ce76672835e2ec282bf4b6452d0",
   "sources": {
-    "components/StudioHome.js": "97c95e3a394225925269f94f7ce34877ee4cca3483d5d22f6c5601031b3d2761",
-    "components/StudioHome.module.css": "4563b8f5408d01306faf971d7757f6f33dfc363515311d23356d664bdf942e4c",
-    "app/studio.css": "258fde791cc429eb7103fbacc0eb444ab297b3844e03b7c8968a0116929603c1",
-    "components/Header.js": "7934e537d47651db958595e4ed949c0441e60174b15ee3c28ae0f417a4639b4f",
-    "scripts/capture-social-preview.cjs": "335825ab67d61294dcb1f9e9ae5d14f211a9266e824e45fefd1ffeb9f2691c93",
+    "components/StudioHome.js": "ecd2a672493c2ddfa238d43f53d18fe07b899fc8248d4cf872e18f2873273571",
+    "components/DaybreakHero.js": "e53c0b783164d95bf5f6d1d33bf6e043f09ad0ce1563992defdb4ed3b5310e82",
+    "components/DaybreakHero.module.css": "76617c34126cb113e2e34237f11397fe2af7ab7f16ed08d304e52b51eb4bb15e",
+    "components/StudioHome.module.css": "6b31ecfc372577c575220d7cae2cf982034da071bc5cf29fd5656ad1e519c6ad",
+    "app/studio.css": "1fdc002e5b6df5cf206cf53c77ccebd516e13c7393519d5b2c0acfedda72c874",
+    "components/Header.js": "c2e5d3647d794df71692b11323f46b60b59b82b953ebe9887f2c3cbc34ac62d3",
+    "scripts/capture-social-preview.cjs": "35532f402157fe3329056d527fb8062fc6392010930d2739525f298b47d22a2f",
     "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55"
   }
 }

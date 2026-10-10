@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import RecaptchaCheckbox from "./RecaptchaCheckbox";
 
-import { serviceOptions, budgetOptions, countryOptions, validateEnquiry } from "@/lib/enquiry-fields.mjs";
+import { validateEnquiry } from "@/lib/enquiry-fields.mjs";
 
 import { contactEmail } from "@/lib/site";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
@@ -16,8 +16,6 @@ export default function ContactForm() {
 
   const [fields, setFields] = useState({});
   const [service, setService] = useState("");
-  const [purpose,setPurpose] = useState("project");
-  const isProject = purpose === "project";
   const [messageLength, setMessageLength] = useState(0);
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const recaptcha = useRef(null);
@@ -152,53 +150,18 @@ export default function ContactForm() {
 
       <p className="form-note">Fields marked <span className="required-mark" aria-hidden="true">*</span> are required. Please complete them so we can understand your enquiry.</p>
       <fieldset className="contact-fields" disabled={status === "sending"}>
-        <label><span>How can we help?</span><select value={purpose} onChange={event=>{setPurpose(event.target.value);setFields({});}}><option value="project">Start a project</option><option value="question">General enquiry</option><option value="support">Existing client support</option></select></label>
+        <input type="hidden" name="service" value="General enquiry" />
         <div className="two">
-          <label><span>Your name <Required /></span>
-            <input name="name" autoComplete="name" required maxLength={100} placeholder="Alex Morgan" {...fieldProps("name")} />
-            {fieldError("name")}
-          </label>
-          <label><span>Email address <Required /></span>
-            <input name="email" type="email" autoComplete="email" required maxLength={200} placeholder="alex@yourcompany.com" {...fieldProps("email")} />
-            {fieldError("email")}
-          </label>
+          <label><span>First name <Required /></span><input name="firstName" autoComplete="given-name" required maxLength={50} placeholder="Alex" {...fieldProps("firstName")} />{fieldError("firstName")}</label>
+          <label><span>Last name <Required /></span><input name="lastName" autoComplete="family-name" required maxLength={50} placeholder="Morgan" {...fieldProps("lastName")} />{fieldError("lastName")}</label>
         </div>
-        {isProject ? <>
         <div className="two">
-          <label><span>Country <Required /></span>
-            <select name="country" autoComplete="country" defaultValue="" required {...fieldProps("country")}>
-              <option value="" disabled>Select your country</option>
-              {countryOptions.map(({code, name}) => <option key={code} value={code}>{name}</option>)}
-            </select>
-            {fieldError("country")}
-          </label>
-          <label><span>Budget <Required /></span>
-            <select name="budget" defaultValue="" required {...fieldProps("budget", "budget-hint")}>
-              <option value="" disabled>Select your budget</option>
-              {budgetOptions.map(budget => <option key={budget}>{budget}</option>)}
-            </select>
-            <span className="field-hint" id="budget-hint">Your estimated budget in British pounds (GBP).</span>
-            {fieldError("budget")}
-          </label>
+          <label><span>Email address <Required /></span><input name="email" type="email" autoComplete="email" required maxLength={200} placeholder="alex@example.com" {...fieldProps("email")} />{fieldError("email")}</label>
+          <label><span>Contact number <span className="field-hint">(optional)</span></span><input name="phone" type="tel" autoComplete="tel" maxLength={40} placeholder="Your phone number" {...fieldProps("phone")} />{fieldError("phone")}</label>
         </div>
-        <label><span>I’m interested in <Required /></span>
-          <select name="service" value={service} onChange={event => setService(event.target.value)} required {...fieldProps("service")}>
-            <option value="" disabled>Select a service</option>
-            {serviceOptions.map(name => <option key={name}>{name}</option>)}
-            <option>Other</option>
-          </select>
-          {fieldError("service")}
-        </label>
-        {service === "Other" && <label><span>Please specify <Required /></span>
-          <input name="other" required minLength={10} maxLength={500} placeholder="Tell us what support you need" {...fieldProps("other", "other-hint")} />
-          <span className="field-hint" id="other-hint">At least 10 characters.</span>
-          {fieldError("other")}
-        </label>}
-        </> : <input type="hidden" name="service" value={purpose === "support" ? "Existing client support" : "General enquiry"} />}
-        <label><span>{isProject ? "Tell us a little about the project" : "Your message"} <Required /></span>
-          <textarea name="message" required minLength={10} maxLength={3000} rows={5} placeholder={isProject ? "Tell us about your business, what you need and what you’d like to achieve." : "Ask your question or tell us what you need help with."} onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
-          <span className="field-hint" id="message-hint">At least 10 characters. {messageLength.toLocaleString("en-GB")} / 3,000 characters.</span>
-          {fieldError("message")}
+        <label><span>Message <Required /></span>
+          <textarea name="message" required minLength={10} maxLength={3000} rows={5} placeholder="Tell us what you have in mind." onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
+          <span className="field-hint" id="message-hint">At least 10 characters. {messageLength.toLocaleString("en-GB")} / 3,000 characters.</span>{fieldError("message")}
         </label>
       </fieldset>
       <div className="contact-trap" aria-hidden="true">
