@@ -5,6 +5,16 @@ const env={RESEND_API_KEY:"test-key",CONTACT_FROM_EMAIL:"Website <hello@example.
 const createContactHandler=options=>createHandler({verifyFetch:async()=>Response.json({success:true,hostname:"www.jovamedia.com"}),...options});
 const data={name:"Test Visitor",email:"test@example.com",company:"Company",country:"GB",budget:"£201–£500",service:"Website Development",timing:"Soon",message:"Please help with our website. We run a local business and need a clear, mobile-friendly site that explains our services and encourages enquiries.",website:"",recaptchaToken:"fresh-captcha-token"};
 const req=(body=data,headers={})=>new Request("https://www.jovamedia.com/api/contact",{method:"POST",headers:{"Content-Type":"application/json",Origin:"https://www.jovamedia.com","Idempotency-Key":"12345678-1234-1234-1234-123456789abc",...headers},body:JSON.stringify(body)});
+
+test("free consultation requests reach the business inbox without requiring a project budget", async () => {
+ let mail;
+ const handler=createContactHandler({env,send:async(url,options)=>{mail=JSON.parse(options.body);return Response.json({id:"consultation-id"});}});
+ const body={name:"Test Visitor",email:"test@example.com",country:"GB",service:"Free website consultation",message:"Free website consultation requested. Website: example.com",website:"",recaptchaToken:"fresh-token"};
+ assert.equal((await handler(req(body))).status,200);
+ assert.equal(mail.subject,"New JovaMedia free consultation request");
+ assert.equal(mail.reply_to,body.email);
+ assert.equal((await handler(req({...body,country:""}))).status,400);
+});
 test("contact sends only to configured inbox, uses reply-to, and reuses provider key on retry",async()=>{
  const sent=[];const handler=createContactHandler({env,send:async(url,options)=>{sent.push({url,...options});return Response.json({id:"message-id"})}});
  assert.equal((await handler(req())).status,200);assert.equal((await handler(req({...data,recaptchaToken:"fresh-retry-token"}))).status,200);

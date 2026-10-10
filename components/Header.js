@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Keep primary navigation browser-native across deployments and history restores. */
 "use client";
 import Image from "next/image";
+import BasketLink from "./BasketLink";
 /* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +9,7 @@ const links = [
   ["Home", "/"],
   ["About", "/about"],
   ["Services", "/services"],
+  ["Pricing", "/pricing"],
   ["Contact", "/contact"],
 ];
 export default function Header() {
@@ -139,6 +141,7 @@ function Navigation({ pathname }) {
             ))}
           </nav>
           <div className="nav-actions">
+            <BasketLink />
             <a className="btn small desktop-cta" href="/contact">
               Let’s talk
             </a>

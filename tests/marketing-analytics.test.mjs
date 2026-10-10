@@ -30,6 +30,17 @@ test("event allowlist discards arbitrary names, enquiry fields and contact targe
   assert.deepEqual(eventPayload("generate_lead",{form_id:"contact_enquiry",name:"Private",email:"private@example.com",message:"secret",destination:"mailto:private@example.com"},href),{page_path:"/contact",page_location:"https://www.jovamedia.com/contact",form_id:"contact_enquiry"});
 });
 
+test("consultation and ecommerce events contain only curated fields, never session or customer details", () => {
+  const payload=eventPayload("begin_checkout",{product_ids:["landing-page"],value:550,email:"private@example.com",session_id:"cs_private",card:"1234"},"https://www.jovamedia.com/basket?checkout=cancelled");
+  assert.equal(payload.currency,"GBP");assert.equal(payload.items[0].item_id,"landing-page");
+  assert.doesNotMatch(JSON.stringify(payload),/private|1234|cancelled/);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/checkout/complete"),false);
+  assert.equal(eventPayload("purchase",{transaction_id:"cs_private",value:550,product_ids:["landing-page"]},"https://www.jovamedia.com/checkout/complete"),null);
+  const purchase=eventPayload("purchase",{transaction_id:"JV-ABCDEF0123456789",value:550,product_ids:["landing-page"]},"https://www.jovamedia.com/checkout/complete?session_id=cs_private");
+  assert.equal(purchase.transaction_id,"JV-ABCDEF0123456789");assert.doesNotMatch(JSON.stringify(purchase),/cs_private/);
+  assert.equal(eventPayload("generate_lead",{form_id:"website_consultation",message:"private"},"https://www.jovamedia.com/consultation").form_id,"website_consultation");
+});
+
 test("nothing is queued before consent; accepted events reach all configured destinations", () => {
   const sent=[]; let choice="rejected";
   globalThis.window={location:{href:"https://www.jovamedia.com/contact"},localStorage:{getItem:key=>key===CONSENT_KEY?JSON.stringify({choice,time:Date.now()}):null},__jovaAnalytics:{ga:true,clarity:true},dataLayer:[],gtag:(...args)=>sent.push(args),clarity:(...args)=>sent.push(args)};

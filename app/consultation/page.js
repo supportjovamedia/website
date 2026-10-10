@@ -1,0 +1,8 @@
+import Link from "next/link";
+import ConsultationForm from "@/components/ConsultationForm";
+import { pageMetadata } from "@/lib/seo";
+import s from "@/components/Commerce.module.css";
+export const metadata = pageMetadata("/consultation", "Free Website Consultation | JovaMedia", "Get practical advice on your website with a free JovaMedia consultation. Discuss your goals, your current website and your next step.");
+export default function ConsultationPage() {
+  return <main><section className={s.pageHero}><div className={s.container}><p className={s.eyebrow}>FREE WEBSITE CONSULTATION</p><h1>A better website<br />starts with a conversation.</h1><p>Tell us where you want your business to go. We’ll talk through your website and help you find a practical next step.</p></div></section><section className={s.consultation}><div className={`${s.container} ${s.consultationGrid}`}><ConsultationForm /><div className={s.consultationInfo}><p className={s.eyebrow}>CLARITY BEFORE COMMITMENT</p><h2>Useful advice.<br />No obligation.</h2><p>Whether your website needs a fresh start or a few considered changes, we’ll help you think through the options.</p><ol className={s.steps}><li><strong>Tell us a little about your business.</strong>Share your goals and your website, if you have one.</li><li><strong>We’ll arrange a conversation.</strong>We’ll email you to find a suitable time and understand what you need.</li><li><strong>Leave with a clearer next step.</strong>Discuss what’s working, what could improve and which approach fits your business. If we can help, we’ll explain the options.</li></ol><Link href="/work" className={s.proofLink}>See examples of our work</Link></div></div></section></main>;
+}

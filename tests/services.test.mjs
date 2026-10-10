@@ -17,11 +17,11 @@ test("public service pages have no commercial tables, prices or internal tiers",
     }
   }
 });
-test("homepage presents the eight intended services in order", async () => {
+test("homepage showcases three services and the directory retains all eight services", async () => {
   for (const page of ["/", "/services"]) {
     const html = await (await fetch(base + page)).text();
     const serviceCards = [...html.matchAll(/href="\/services\/([^"]+)"/g)].map((m) => m[1]);
-    assert.deepEqual([...new Set(serviceCards)].slice(0, 8), mainServices, page);
+    assert.deepEqual([...new Set(serviceCards)].slice(0, 8), page === "/" ? ["web-design", "brand-strategy", "social-management"] : mainServices, page);
   }
 });
 test("old service URLs redirect directly to a current information page", async () => {
