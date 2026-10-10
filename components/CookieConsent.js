@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import styles from "./CookieConsent.module.css";
 import { CONSENT_KEY, readConsent, revokeTracking } from "@/lib/marketing-analytics.mjs";
 const Analytics = dynamic(() => import("@vercel/analytics/react").then(m => m.Analytics), { ssr: false });
@@ -34,6 +35,7 @@ export default function CookieConsent() {
   const enabled = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true";
   const visible = consent !== undefined && (consent === null || editing);
   useEffect(() => {
+    if (!dialog.current) return;
     if (visible && !dialog.current.open) dialog.current.showModal();
     else if (!visible && dialog.current.open) dialog.current.close();
   }, [visible]);
@@ -55,7 +57,7 @@ export default function CookieConsent() {
   return <>
     {enabled && consent === "accepted" && <Analytics beforeSend={beforeSend} />}
     <button type="button" className="cookie-settings" onClick={() => { configure(); setEditing(true); }}>Cookie settings</button>
-    <dialog ref={dialog} className={styles.panel} aria-labelledby="cookie-title" aria-describedby="cookie-description" data-nosnippet onCancel={event => { event.preventDefault(); setEditing(false); dialog.current.close(); }}>
+    {consent !== undefined && createPortal(<dialog ref={dialog} className={styles.panel} aria-labelledby="cookie-title" aria-describedby="cookie-description" data-nosnippet onCancel={event => { event.preventDefault(); setEditing(false); dialog.current.close(); }}>
       <h2 id="cookie-title">{configuring ? "Cookies configuration" : "Cookies Policy"}</h2>
       <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits and clicks, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept.</p>
       {configuring ? <div className={styles.options}>
@@ -73,6 +75,6 @@ export default function CookieConsent() {
         </div>
       </div>
       {storageError && <p role="status">Your browser could not save this choice. Analytics remains off unless a valid acceptance is stored.</p>}
-    </dialog>
+    </dialog>, document.body)}
   </>;
 }
