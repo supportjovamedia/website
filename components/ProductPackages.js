@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Check, PanelsTopLeft, AppWindow, CalendarDays, ShieldCheck } from "lucide-react";
+import { Check } from "lucide-react";
 import { products, productCategories, formatPrice, taxNote } from "@/lib/products.mjs";
 import { useBasket, addToBasket } from "@/lib/basket-store";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
@@ -39,14 +39,13 @@ export default function ProductPackages({ homepage = false }) {
       <section className={s.categorySection} key={category.id} id={category.id} aria-labelledby={category.id + "-heading"}>
         <header className={s.categoryHeading}><h2 id={category.id + "-heading"}>{category.name}</h2><p>{category.description}</p></header>
         <div className={s.grid}>{products.filter(product => product.category === category.id).map(product => {
-          const Icon = product.interval ? ShieldCheck : product.id === "landing-page" ? PanelsTopLeft : product.id === "business-website" ? AppWindow : CalendarDays;
           return <article key={product.id} className={s.card}>
-            <div className={s.productArt} aria-hidden="true"><div className={s.productWindow}><span className={s.windowDots}>● ● ●</span><Icon size={52} strokeWidth={1.2} /><div className={s.windowLines}><i /><i /><i /></div></div></div>
             <div className={s.cardTop}><p className={s.eyebrow}>{product.eyebrow}</p></div>
-            <h3>{product.name}</h3><p className={s.description}>{product.description}</p>
+            <h3>{product.name}</h3>
             <p className={s.price}>{formatPrice(product.amount)}{product.interval && <small> / month</small>}<span>{product.interval ? "Billed monthly. Renews until cancelled." : "One-off payment"}</span></p>
+            <ul className={s.productFeatures} aria-label={`${product.name} includes`}>{product.includes.map(item => <li key={item}><Check size={17} aria-hidden="true" /><span>{item}</span></li>)}</ul>
             {ids.includes(product.id) ? <Link href="/basket" className={s.button}>In basket · View basket</Link> : <button type="button" disabled={!ready} className={s.button} onClick={() => add(product)}>Add to basket</button>}
-            <details className={s.productDetails}><summary>What’s included</summary><ul>{product.includes.map(item => <li key={item}><Check size={17} aria-hidden="true" /><span>{item}</span></li>)}</ul><p className={s.cardNote}>{product.note}</p>{product.interval && <p className={s.cardNote}>Email support.jovamedia@gmail.com before your next renewal to cancel future billing.</p>}</details>
+            <div className={s.productTerms}><p className={s.cardNote}>{product.note}</p>{product.interval && <p className={s.cardNote}>Email support.jovamedia@gmail.com before your next renewal to cancel future billing.</p>}</div>
           </article>;
         })}</div>
       </section>

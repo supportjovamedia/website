@@ -15,12 +15,18 @@
 .jova-pages .btn:hover,.jova-pages .page-hero .btn:hover{background:#414141}
 .jova-pages .mobile-menu{background:#fff;color:#242424}
 .jova-pages .menu-toggle span{background:#242424}
-.jova-pages .page-hero{background:#f8f8f7;color:#242424}
-.jova-pages .page-hero h1{color:#242424}
-.jova-pages .page-hero .kicker,.jova-pages .kicker{color:#777}
-.jova-pages .page-hero .lead,.jova-pages .page-hero .text-link{color:#666}
+.jova-pages .page-hero{position:relative;background:#0c2948;color:#fff;border-bottom:1px solid #0c2948}
+.jova-pages .page-hero::after{content:"";position:absolute;bottom:18px;left:calc(50% - 24px);width:48px;height:3px;background:#c1292e}
+.jova-pages .page-hero h1{color:#fff}
+.jova-pages .page-hero h1 em{color:#fff}
+.jova-pages .kicker{color:#777}
+.jova-pages .page-hero .kicker{color:#fff}
+.jova-pages .page-hero .lead,.jova-pages .page-hero .text-link{color:#fff}
 .jova-pages .band-navy,.jova-pages .band-gold{background:#242424}
 .jova-newsletter{background:#f5f5f4;color:#242424}
+.jova-newsletter>section{background:#f1f3f4;color:#172b42}
+.jova-newsletter h2,.jova-newsletter label{color:#172b42}
+.jova-newsletter p{color:#35445a}
 .jova-footer{background:#fff;color:#242424;padding:55px 5vw;gap:32px;grid-template-columns:1.1fr .8fr 1fr 1.6fr}
 .jova-footer>p{grid-column:1/-1;border:0;border-top:1px solid #eee;padding:24px 0 0;margin:12px 0 0;color:#777}
 .jova-footer>a img{width:132px}
@@ -47,14 +53,14 @@
 
 .jova-pages .contact-page .page-hero{text-align:center;padding:clamp(48px,6vw,84px) 0}
 .jova-pages .contact-page .page-hero h1,.jova-pages .contact-page .page-hero .lead{margin-inline:auto}
-.jova-pages .contact-page .page-hero h1 em{color:#0c2948}
-.jova-pages .contact-page .page-hero .kicker{color:#bd0018}
+.jova-pages .contact-page .page-hero h1 em{color:#fff}
+.jova-pages .contact-page .page-hero .kicker{color:#fff}
 .jova-pages .contact-page .contact-intro{align-items:start;gap:clamp(28px,5vw,80px)}
-.jova-pages .contact-page .contact-intro>div:first-child{background:#0c2948;color:#fff;border-radius:16px;padding:clamp(26px,3.5vw,50px);min-width:0}
-.jova-pages .contact-page .contact-intro>div:first-child h2{color:#fff}
-.jova-pages .contact-page .contact-intro>div:first-child p,.jova-pages .contact-page .contact-intro>div:first-child .lead{color:#d4deea}
-.jova-pages .contact-page .contact-intro>div:first-child .kicker{color:#ffb9be}
-.jova-pages .contact-page .contact-intro>div:first-child a{color:#fff;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:4px}
+.jova-pages .contact-page .contact-intro>div:first-child{background:#eef4f9;color:#172b42;border:1px solid #cad9e5;border-radius:16px;padding:clamp(26px,3.5vw,50px);min-width:0}
+.jova-pages .contact-page .contact-intro>div:first-child h2{color:#0c2948}
+.jova-pages .contact-page .contact-intro>div:first-child p,.jova-pages .contact-page .contact-intro>div:first-child .lead{color:#35445a}
+.jova-pages .contact-page .contact-intro>div:first-child .kicker{color:#a81f29}
+.jova-pages .contact-page .contact-intro>div:first-child a{color:#0c2948;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:4px}
 .jova-pages .contact-page .contact-fit h2{color:#0c2948}
 .jova-pages .contact-page .contact-fit-grid article>span{color:#bd0018}
 @media(max-width:700px){.jova-pages .contact-page .page-hero{padding:40px 0 46px}.jova-pages .contact-page .contact-intro>div:first-child{text-align:center}}
