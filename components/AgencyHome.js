@@ -14,10 +14,12 @@ import Industries from "./Industries";
 import CapabilityStrip from "./CapabilityStrip";
 import { ProcessStory, FaqStory } from "./ScrollStories";
 import DaybreakHero from "./DaybreakHero";
-function Arrow(){return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.6"/></svg>}
+import useScrollFocus from "./useScrollFocus";
+function Arrow(){return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.6"/></svg>}
 function Photo({name,alt=""}){return <div className={s.photo} data-photo><Image src={`/home-agency/${name}.webp`} alt={alt} fill sizes="(max-width:700px) 100vw, 55vw"/></div>}
 export default function AgencyHome(){
  const root=useRef(null);
+ useScrollFocus(root, '[data-contact-focus]');
  const paused=false;
  useEffect(()=>{
   const el=root.current,mq=matchMedia('(prefers-reduced-motion: reduce)');let teardown=()=>{};
@@ -57,7 +59,7 @@ export default function AgencyHome(){
   <ProcessStory paused={paused}/>
   <WhyJovaPreview/>
   <FaqStory paused={paused}/>
-  <section className={r.contact}><div data-reveal><p className={r.label}>LET&apos;S TALK</p><h2>LET&apos;S MAKE<br/>IT HAPPEN.</h2></div><Link className={r.bigCircle} href="/contact" aria-label="Start a project"><Arrow/></Link><div><p>Get in touch and let&apos;s build<br/>something great together.</p><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a></div></section>
+  <section className={r.contact} data-contact-focus><div data-reveal><p className={r.label}>LET&apos;S TALK</p><h2>LET&apos;S MAKE<br/>IT HAPPEN.</h2></div><Link className={r.bigCircle} href="/contact" aria-label="Start a project"><Arrow/></Link><div><p>Get in touch and let&apos;s build<br/>something great together.</p><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a></div></section>
   </div>
  </main>
  <GrowthSignup newsletter/>

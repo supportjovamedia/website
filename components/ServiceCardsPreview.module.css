@@ -14,14 +14,14 @@
 .content{padding:25px 0;min-width:0}
 .section .card h3{font-size:clamp(25px,2.8vw,43px);line-height:1.1;letter-spacing:-.035em;color:white;font-weight:500;margin:0 0 20px;max-width:720px}
 .tags{display:flex;flex-wrap:wrap;gap:7px}.tags span{font-size:10px;line-height:1;padding:7px 12px;border-radius:20px;background:#e9edf0;color:#0b2231}
-.action{height:82px;width:82px;display:grid;place-items:center;background:#f9faf8;border-radius:50%;color:#ef183c;justify-self:end;transition:background .3s,color .3s,transform .3s}.action svg{width:30px;height:30px}
-.card:hover:before,.card:focus-visible:before{background:#102c40;border-color:#ffffff22}.card:hover .visual img{transform:scale(1.05)}.card:hover .action{background:#ef183c;color:#fff;transform:rotate(45deg)}
+.action{height:82px;width:82px;display:grid;place-items:center;background:#f9faf8;border-radius:50%;color:#ef183c;justify-self:end;transition:background .3s,color .3s,box-shadow .3s}.action svg{width:30px;height:30px;transform:rotate(0deg);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.card:hover:before,.card:focus-visible:before{background:#102c40;border-color:#ffffff22}.card:hover .visual img{transform:scale(1.05)}
 .card:focus-visible{outline:2px solid #ff2348;outline-offset:8px;transform:none!important}.card:focus-visible .visual{transform:none}
 @media(max-width:1000px){.card{grid-template-columns:175px minmax(0,1fr) 60px;gap:25px;padding-right:23px}.visual{height:215px}.action{width:60px;height:60px}.rows{gap:40px}.section .card h3{font-size:30px}}
 @media(max-width:700px){.section{padding:42px 5% 45px}.heading{display:block;text-align:center;margin-bottom:38px}.section .title{font-size:43px}.headingNote{display:block;max-width:none;margin-top:19px;font-size:12px}.headingNote br{display:none}.headingNote br:after{content:' '}.section .eyebrow{font-size:10px;margin-bottom:16px}.rows{gap:25px}.row{padding:10px 0}.card{grid-template-columns:90px minmax(0,1fr) 32px;gap:15px;min-height:165px;padding-right:12px;--arrival-offset:26%}.card:before{inset:4px 0 4px 24px}.visual{height:145px}.section .card h3{font-size:22px;margin-bottom:13px;line-height:1.12}.content{padding:18px 0}.tags{gap:5px}.tags span{font-size:8px;padding:5px 8px}.action{width:32px;height:32px}.action svg{width:16px;height:16px}}
 @media(max-width:370px){.card{grid-template-columns:72px minmax(0,1fr) 28px;gap:10px;padding-right:9px}.visual{height:137px}.section .card h3{font-size:19px}.action{width:28px;height:28px}.section .title{font-size:37px}.tags span{padding:5px 6px}}
 .section[data-static=true] .card,.section[data-static=true] .visual{transform:none}
-@media(prefers-reduced-motion:reduce){.card,.visual,.visual img,.action{transform:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.card,.visual,.visual img,.action,.action svg{transform:none!important;transition:none!important}}
 
 @media(max-width:700px){
 .card{grid-template-columns:1fr;gap:0;padding:22px 18px;text-align:center;min-height:0}
@@ -37,7 +37,8 @@
    IntersectionObserver supplies the same readable fallback and midpoint colour. */
 .row[data-entered=true] .card{transform:translateX(0)}
 .row[data-entered=true] .visual{transform:rotate(0deg)}
-.row[data-highlighted=true] .action,.card:focus-visible .action{background:#ef183c;color:#fff}
+.row[data-highlighted=true] .action{background:#ef183c;color:#fff;box-shadow:0 0 28px #ef183c30}
+.row[data-highlighted=true] .action svg{transform:rotate(-45deg)}
 @supports(animation-timeline:view()){
   .row{view-timeline:--service-entry block}
   .card{animation:service-arrive linear both;animation-timeline:--service-entry;animation-range:entry 0% cover 50%;transition:none}

@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Keep primary navigation browser-native across deployments and history restores. */
 "use client";
 import Image from "next/image";
-import Link from "next/link";
+/* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 const links = [
@@ -69,7 +70,7 @@ function Navigation({ pathname }) {
       </a>
       <header className="header">
         <div className="shell nav">
-          <Link href="/" className="brand-logo" aria-label="JovaMedia home">
+          <a href="/" className="brand-logo" aria-label="JovaMedia home">
             <Image
               src="/brand/jova-logo.png"
               alt="JovaMedia"
@@ -78,23 +79,23 @@ function Navigation({ pathname }) {
               priority
               sizes="120px"
             />
-          </Link>
+          </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
             {links.map(([name, href]) => (
-              <Link
+              <a
                 key={href}
                 href={href}
                 className={active(href) ? "active" : ""}
                 aria-current={active(href) ? "page" : undefined}
               >
                 {name}
-              </Link>
+              </a>
             ))}
           </nav>
           <div className="nav-actions">
-            <Link className="btn small desktop-cta" href="/contact">
+            <a className="btn small desktop-cta" href="/contact">
               Let’s talk
-            </Link>
+            </a>
             <button
               ref={toggle}
               className="menu-toggle"
@@ -119,22 +120,22 @@ function Navigation({ pathname }) {
         >
           <div className="mobile-menu-inner">
             {links.map(([name, href]) => (
-              <Link
+              <a
                 key={href}
                 href={href}
                 onClick={() => setOpen(false)}
                 aria-current={active(href) ? "page" : undefined}
               >
                 {name}
-              </Link>
+              </a>
             ))}
-            <Link
+            <a
               href="/contact"
               className="btn mobile-project"
               onClick={() => setOpen(false)}
             >
               Let’s talk
-            </Link>
+            </a>
           </div>
         </nav>
       </header>
