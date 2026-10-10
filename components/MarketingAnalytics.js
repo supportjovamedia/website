@@ -67,8 +67,8 @@ export default function MarketingAnalytics() {
     const started = new WeakSet();
     const depths = new Set();
     const focus = event => {
-      const form = event.target.closest?.('form[data-analytics-form="contact_enquiry"]');
-      if (form && !started.has(form)) { started.add(form); trackEvent("form_start", { form_id: "contact_enquiry" }); }
+      const form = event.target.closest?.('form[data-analytics-form="contact_enquiry"],form[data-analytics-form="website_consultation"],form[data-analytics-form="quote_callback"]');
+      if (form && !started.has(form)) { started.add(form); trackEvent("form_start", { form_id: form.dataset.analyticsForm }); }
     };
     const click = event => {
       const element = event.target.closest?.("a,button");
@@ -88,6 +88,7 @@ export default function MarketingAnalytics() {
     document.addEventListener("click", click);
     document.addEventListener("focusin", focus);
     window.addEventListener("scroll", scroll, { passive: true });
+    window.dispatchEvent(new Event("jova-analytics-ready"));
     return () => { document.removeEventListener("click", click); document.removeEventListener("focusin", focus); window.removeEventListener("scroll", scroll); };
   }, [pathname, consent, enabled, gtmId]);
   // Insert the vendor's body snippet only after consent. With JavaScript disabled,

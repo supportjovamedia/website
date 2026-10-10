@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 import { primaryServices } from "@/lib/service-catalogue";
 import styles from "./services.module.css";
 
-export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s eight services: websites, system modernization, social media, brand design, copywriting, email automation, content production and SEO.");
+export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s seven services: websites, system modernization, social media, brand design, copywriting, email automation and SEO.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
@@ -14,10 +14,10 @@ export default function Page() {
         <p className="kicker">What we offer</p>
         <h1>Everything you need<br /><em>to grow.</em></h1>
         <p className="lead">A new website, a clearer message or a more consistent presence. Start with one service, or bring a few together around your business.</p>
-        <div className="actions"><a className="btn" href="#services">Find your service</a><Link className="text-link" href="/contact">Talk through your brief</Link></div>
+        <div className="actions"><Link className="btn" href="/contact">Contact Us</Link></div>
       </div>
     </section>
-    <section className={`section ${styles.directory}`} id="services" aria-label="Our eight services">
+    <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
       <div className="shell">
         <div className={styles.directoryGrid}>
           {primaryServices.map((service) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard}>
@@ -32,6 +32,6 @@ export default function Page() {
 
       </div>
     </section>
-    <section className={`section ${styles.custom}`}><div className="shell"><p className="kicker">Made around your brief</p><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><Link href="/contact" className="btn">Let’s plan your project</Link></div></section>
+    <section className={`section ${styles.custom}`}><div className="shell"><p className="kicker">Made around your brief</p><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><Link href="/get-a-quote" className="btn">Get a Quote</Link></div></section>
   </main>;
 }

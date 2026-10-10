@@ -13,11 +13,7 @@
 .value:not(:first-child)::before { content: ""; position: absolute; left: calc(var(--value-gap) * -.5); top: 0; bottom: 0; width: 1px; background: #6f8da82e; }
 .value:first-child { border-left: 0; padding-left: 0; }
 .value:last-child { padding-right: 0; }
-.art { position: relative; width: 100%; aspect-ratio: 200 / 186; overflow: hidden; border-radius: 8px; background: #06192b url('/why-jova/reference-panels.png') no-repeat; background-size: 836% 505.913978%; background-position: var(--art-x) 33.907285%; transform: translateY(calc((1 - var(--arrival)) * 22px)); opacity: calc(.25 + var(--arrival) * .75); }
-.compass { --art-x: 41.779891%; }
-.pen { --art-x: 59.578804%; }
-.laptop { --art-x: 77.377717%; }
-.headphones { --art-x: 95.108696%; }
+.art { position: relative; width: 100%; aspect-ratio: 200 / 186; overflow: hidden; border-radius: 8px; background: #06192b; background-size: cover; background-position: center; transform: translateY(calc((1 - var(--arrival)) * 22px)); opacity: calc(.25 + var(--arrival) * .75); }
 .rule { display: block; width: 41px; height: 3px; margin: 15px 0 19px; border-radius: 3px; background: #ff1740; transform-origin: left; transform: scaleX(calc(.25 + var(--arrival) * .75)); }
 .section .value h3 { margin: 0; color: #f7f9fc; font: 600 clamp(15px, 1.35vw, 22px)/1.18 Arial, Helvetica, sans-serif; letter-spacing: -.045em; opacity: calc(.35 + var(--arrival) * .65); }
 .value h3 span { display: block; }
@@ -58,3 +54,8 @@
 }
 
 .value{text-align:center}.value .rule{margin-inline:auto}.value>p{margin-inline:auto}
+
+.pen{background-position:center 85%}.headphones{background-position:center 55%}
+
+.art{aspect-ratio:4/3;background-position:center;background-size:cover}.pen,.headphones{background-position:center}
+.art img{display:block;width:100%;height:100%;object-fit:cover}

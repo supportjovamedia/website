@@ -1,4 +1,4 @@
-import JovaChat from "@/components/JovaChat";
+import LiveChat from "@/components/LiveChat";
 import MarketingAnalytics from "@/components/MarketingAnalytics";
 import GrowthSignup from "@/components/GrowthSignup";
 import localFont from "next/font/local";
@@ -6,6 +6,7 @@ import "./globals.css";
 import "./direction.css";
 import "./readiness.css";
 import "./rebrand.css";
+import "./studio.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SiteChrome from "@/components/SiteChrome";
@@ -74,7 +75,7 @@ export default function RootLayout({ children }) {
           {children}
         </div>
         </SiteChrome>
-        <JovaChat/>
+        <LiveChat/>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

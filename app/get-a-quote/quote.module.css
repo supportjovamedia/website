@@ -1,0 +1,14 @@
+.page{background:#f1f3f5;min-height:calc(100svh - 96px);padding:24px 24px 40px;display:flex;justify-content:center;align-items:flex-start}
+.page :global(.form){width:100%;max-width:640px;margin:0;background:#fff;border:1px solid #d4dfe8;border-top:4px solid #235789;border-radius:12px;padding:24px;gap:12px}
+.page h1{font-size:32px;line-height:1.15;letter-spacing:-.04em;margin:0 0 10px;color:#0c2948}
+.page :global(.form-note){font-size:13px;margin:0;color:#4b5968}
+.page :global(.contact-fields){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 16px}
+.page :global(.form label){gap:6px}
+.page :global(.form input),.page :global(.form select){min-height:44px;padding:10px 12px;border-radius:4px}
+.page :global(.quote-optional){color:#4b5968;font-size:12px}
+.page :global(.quote-select){position:relative;display:block}
+.page :global(.form select){appearance:none;padding-right:36px;text-overflow:ellipsis}
+.page :global(.quote-select)::after{content:"";position:absolute;right:15px;top:50%;width:7px;height:7px;border-right:1.5px solid #0c2948;border-bottom:1.5px solid #0c2948;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.page :global(.form select:focus-visible){outline:2px solid #235789;outline-offset:2px}
+.page :global(.btn){justify-content:center;width:100%}
+@media(max-width:600px){.page{padding:18px 16px 32px}.page :global(.form){padding:20px}.page :global(.contact-fields){grid-template-columns:minmax(0,1fr)}.page h1{font-size:29px}}

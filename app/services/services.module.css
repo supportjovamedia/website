@@ -109,3 +109,14 @@
 }
 
 .directoryCard,.helpGrid article,.processGrid>div,.relatedGrid>a{text-align:center}.directoryCard{align-items:center}
+
+.hero{text-align:center;padding:clamp(48px,6vw,80px) 0}
+.hero h1,.hero :global(.lead){margin-inline:auto}
+.catalogue .hero :global(.shell) h1,.catalogue .hero :global(.shell) :global(.lead){margin-inline:auto}
+.hero :global(.actions){justify-content:center;margin-top:28px}
+.heroGrid{grid-template-columns:1fr;gap:36px;justify-items:center}
+.heroGrid>div:first-child{width:100%}
+.heroArt{width:min(100%,860px);max-width:860px;height:clamp(260px,30vw,400px);justify-self:center;box-shadow:none}
+.hero h1 em{color:#0c2948}
+.custom{background:#0c2948}
+@media(max-width:700px){.hero{padding:40px 0 46px}.heroArt{height:270px}.hero :global(.actions){gap:20px}.hero h1{font-size:clamp(36px,9vw,50px)}}

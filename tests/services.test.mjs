@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { serviceRedirects } from "../lib/service-redirects.mjs";
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname)) throw Error("Local tests only");
-const mainServices = ["web-design", "system-modernization", "social-management", "brand-strategy", "content", "email-marketing", "content-production", "seo"];
+const mainServices = ["web-design", "system-modernization", "social-management", "brand-strategy", "content", "email-marketing", "seo"];
 
 test("public service pages have no commercial tables, prices or internal tiers", async () => {
   for (const path of ["/", "/services", ...[...mainServices, "seo"].map((s) => `/services/${s}`)]) {
@@ -13,15 +13,15 @@ test("public service pages have no commercial tables, prices or internal tiers",
     assert.doesNotMatch(html, /£|&pound;|&#163;|Starter|Care Plus|Care Pro|From £|\bTEAM [123]\b|<table[\s>]/, path);
     if (path.startsWith("/services/")) {
       assert.match(html, /How we can help/, path);
-      assert.match(html, /Discuss your project/, path);
+      assert.match(html, /Get a Quote/, path);
     }
   }
 });
-test("homepage presents the eight intended services in order", async () => {
+test("homepage showcases three services and the directory retains all seven services", async () => {
   for (const page of ["/", "/services"]) {
     const html = await (await fetch(base + page)).text();
     const serviceCards = [...html.matchAll(/href="\/services\/([^"]+)"/g)].map((m) => m[1]);
-    assert.deepEqual([...new Set(serviceCards)].slice(0, 8), mainServices, page);
+    assert.deepEqual([...new Set(serviceCards)].slice(0, 8), page === "/" ? ["web-design", "social-management", "brand-strategy"] : mainServices, page);
   }
 });
 test("old service URLs redirect directly to a current information page", async () => {
@@ -32,8 +32,8 @@ test("old service URLs redirect directly to a current information page", async (
     assert.equal((await fetch(`${base}/services/${target}`)).status, 200);
   }
 });
-test("contact choices match the public services and exclude paid-media sales", async () => {
+test("contact form asks for the short enquiry fields only", async () => {
   const html = await (await fetch(base + "/contact")).text();
-  for (const name of ["Website Development", "System Modernization", "Social Media", "Brand Strategy &amp; Design", "Copywriting", "Email Marketing &amp; Automation", "Content Production"]) assert.ok(html.includes(`<option>${name}</option>`), name);
-  assert.doesNotMatch(html, /<option>Performance &amp; growth<\/option>|Social, content, paid media/);
+  for (const field of ["firstName", "lastName", "email", "phone", "message"]) assert.ok(html.includes('name="' + field + '"'), field);
+  assert.doesNotMatch(html, /<select|name="country"|name="budget"|name="company"/);
 });

@@ -12,7 +12,7 @@ const steps = [
 ];
 const questions = [
   ["Can you redesign my existing website?", "Yes. We start by understanding your goals and reviewing your current site, then agree what to keep, improve or rebuild."],
-  ["What digital services do you offer?", "Website development, system modernization, social media, brand strategy and design, copywriting, email marketing and automation, content production, and search and local visibility."],
+  ["What digital services do you offer?", "Website development, system modernization, social media, brand strategy and design, copywriting, email marketing and automation and search and local visibility."],
   ["How does a project get started?", "Tell us about your business and what you want to achieve. We will discuss priorities, scope and a practical plan before work begins."],
   ["Can you support us after launch?", "Yes. Website care, content and ongoing support can be agreed around what your business needs."],
 ];
@@ -79,13 +79,13 @@ export function FaqStory({ paused }) {
       <p className={s.eyebrow}>FAQ</p>
       <h2 id="faq-title" className={s.heading}>Good questions.<br />Clear answers.</h2>
       <p className={s.introCopy}>A little clarity before your next big move.</p>
-      <Link href="/contact" className={s.contact}>Have something else in mind? Let&apos;s talk.</Link>
+      <Link href="/contact" className={s.contact}>Contact Us</Link>
       <div className={s.questionArt} aria-hidden="true"><span>?</span><i /></div>
     </div>
     <ol className={s.answers}>
-      {questions.map(([question, answer], i) => <li className={s.answer} key={question} data-story-card>
+      {questions.map(([question, answer]) => <li className={s.answer} key={question} data-story-card>
         <span className={s.marker} aria-hidden="true">?</span>
-        <article className={s.bubble}><span className={s.answerNumber}>QUESTION 0{i + 1}</span><h3>{question}</h3><p>{answer}</p></article>
+        <article className={s.bubble}><h3>{question}</h3><p>{answer}</p></article>
       </li>)}
     </ol>
   </section>;

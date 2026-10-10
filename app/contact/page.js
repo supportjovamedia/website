@@ -8,7 +8,7 @@ export const metadata = pageMetadata(
 );
 export default function Page() {
   return (
-    <main>
+    <main className="contact-page">
       <section className="page-hero">
         <div className="shell">
           <div className="kicker">GET IN TOUCH</div>
@@ -21,10 +21,10 @@ export default function Page() {
       <section id="enquiry" className="band band-soft">
         <div className="shell split contact-intro">
           <div>
-            <div className="kicker">LET’S TALK</div>
-            <h2>You don’t need a perfect brief to start.</h2>
+            <div className="kicker">CONTACT US</div>
+            <h2>We’re here to help.</h2>
             <p className="lead small-lead">
-              Choose the type of enquiry that fits. For a quick question or existing-client support, just leave your name, email and message.
+              Leave your name, email and a short message. You can add a phone number if you would like us to call.
             </p>
             <p>
               <a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a>
