@@ -13,7 +13,7 @@ import SelectedConcepts from "./SelectedConcepts";
 import Industries from "./Industries";
 import CapabilityStrip from "./CapabilityStrip";
 import { ProcessStory, FaqStory } from "./ScrollStories";
-import hero from "./UnifiedHero.module.css";
+import DaybreakHero from "./DaybreakHero";
 function Arrow(){return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.6"/></svg>}
 function Photo({name,alt=""}){return <div className={s.photo} data-photo><Image src={`/home-agency/${name}.webp`} alt={alt} fill sizes="(max-width:700px) 100vw, 55vw"/></div>}
 export default function AgencyHome(){
@@ -45,18 +45,7 @@ export default function AgencyHome(){
  },[paused]);
  return <div className={`${s.home} ${paused?s.paused:''}`} ref={root}>
  <main id="agency-main">
-  <section className={hero.banner} aria-labelledby="home-title" data-hero-parallax>
-    <div className={hero.backdrop} aria-hidden="true" />
-    <div className={hero.inner}>
-      <div className={hero.content}>
-        <h1 id="home-title">Good ideas.<br/>Better websites.<br/><em>Brighter businesses.</em></h1>
-        <p className={hero.copy}>We bring websites, brands and digital experiences together to help your business move forward.</p>
-        <div className={hero.actions}><Link href="/services" className={hero.cta}>Explore Services</Link></div>
-      </div>
-    </div>
-
-
-  </section>
+  <DaybreakHero/>
   <div className={r.body}>
   <section id="get-started" className={r.startSection} aria-labelledby="start-heading"><svg className={r.heroWave} viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1440V25C1170 125 1020 100 720 35S250 150 0 35Z" fill="#0c2948"/></svg><div className={r.startInner}><div><p className={r.label}>YOUR NEXT MOVE</p><h2 id="start-heading">Ready to make it happen?</h2><p>Tell us what you have in mind. We’ll help you find the right place to start.</p></div><Link href="/contact" className={r.startButton}>Get started</Link></div></section>
   <div className={r.studioBanner}><div className={r.bannerImage} data-scroll><Photo name="sketch" alt="Creative team working together on website plans"/></div><div className={r.bannerWords} aria-hidden="true">Strategy<br/>Design<br/>Better Websites<br/>Brighter Brands</div></div>
