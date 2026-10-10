@@ -60,7 +60,7 @@ export function ProcessStory({ paused }) {
       <p className={s.eyebrow}>(04) OUR PROCESS</p>
       <h2 id="process-title" className={s.heading}>From first idea<br />to final launch.</h2>
       <p className={s.introCopy}>A clear direction. A considered design.<br />Every step moves your business forward.</p>
-      <a href="#process-steps" className={s.explore}>Explore the process <span aria-hidden="true">↓</span></a>
+      <a href="#process-steps" className={s.explore}>Explore the process</a>
     </div>
     <ol className={s.steps} id="process-steps">
       {steps.map(([name, copy, detail, path], i) => <li className={s.step} data-story-card key={name} style={{ "--speed": [0.75, 1.3, .95, 1.6][i] }}>

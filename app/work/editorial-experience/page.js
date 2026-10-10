@@ -82,7 +82,7 @@ export default function EditorialStudy() {
             <div>
               <h3>Sitemap</h3>
               <p>
-                Home → Stories → Topics → About → Article. Stories and Topics
+                Home, Stories, Topics, About and Article. Stories and Topics
                 are anchored sections of the homepage; About and each article
                 have their own route.
               </p>
@@ -90,7 +90,7 @@ export default function EditorialStudy() {
             <div>
               <h3>Reading flow</h3>
               <p>
-                Homepage → topic filter → article → related story. The links and
+                Homepage, topic filter, article, then related story. The links and
                 filters are implemented in the prototype.
               </p>
             </div>

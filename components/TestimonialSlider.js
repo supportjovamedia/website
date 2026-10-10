@@ -63,7 +63,7 @@ export default function TestimonialSlider() {
           aria-label="Previous testimonial"
           className="flex h-11 w-11 items-center justify-center rounded-full border border-navy/15 text-navy transition-colors hover:border-gold hover:text-gold"
         >
-          &larr;
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m14 6-6 6 6 6" /></svg>
         </button>
 
         <div className="flex gap-2">
@@ -86,7 +86,7 @@ export default function TestimonialSlider() {
           aria-label="Next testimonial"
           className="flex h-11 w-11 items-center justify-center rounded-full border border-navy/15 text-navy transition-colors hover:border-gold hover:text-gold"
         >
-          &rarr;
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m10 6 6 6-6 6" /></svg>
         </button>
       </div>
     </div>

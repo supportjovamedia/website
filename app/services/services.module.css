@@ -11,14 +11,14 @@
 .directory { padding-top: 0; }
 .directoryGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .directoryCard { min-width: 0; padding: 30px; border: 1px solid var(--line); display: flex; flex-direction: column; transition: background .18s; }
-.directoryCard:first-child { background: var(--blue); color: var(--paper); border-color: var(--blue); }
-.directoryCard:first-child p { color: var(--paper); }
+
+
 .directoryCard:hover { background: var(--soft); }
-.directoryCard:first-child:hover { background: var(--navy-2); }
+
 .number { display: block; font-size: 14px; margin-bottom: 32px; }
 .directoryCard :global(.kicker) { margin-bottom: 12px; }
 .directoryCard h2 { font-size: 26px; line-height: 1.2; margin-bottom: 18px; }
-.directoryCard > p { font-size: 15px; line-height: 1.7; }
+.directoryBody > p { font-size: 15px; line-height: 1.7; }
 .cardFoot { margin-top: auto; padding-top: 28px; font-size: 13px; line-height: 1.5; font-weight: 650; }
 .supportLink { display: flex; gap: 40px; align-items: center; justify-content: space-between; padding-top: 48px; border-top: 1px solid var(--line); margin-top: 48px; }
 .supportLink h2 { font-size: 26px; }
@@ -89,7 +89,7 @@
 .heroArt{position:relative;height:470px;max-width:420px;width:100%;justify-self:end;border-radius:6px;overflow:hidden;box-shadow:0 25px 60px #0003}
 .heroArt img{object-fit:cover;object-position:center}
 .fitSection{padding:40px 0;background:#efefea}.fitSection .fit{display:grid;grid-template-columns:80px 1fr 2fr;gap:35px;align-items:start;background:none;color:#15232a;padding:0}.fitSection .serviceIndex{color:#c70022;font-size:48px;margin:0}.fitSection .fit h2{font-size:28px;margin:0}.fitSection .fit ul{display:grid;gap:12px}.fitSection .fit li{border:0;padding:0 0 10px;border-bottom:1px solid #d1d8d4;font-size:14px;line-height:1.55}
-.directory{padding-top:55px}.directoryGrid{gap:35px 24px}.directoryCard{position:relative;padding:0 0 25px;border:0;border-bottom:1px solid #cbd3cf;background:transparent!important;color:#131c21!important;overflow:hidden}.directoryCard:first-child p{color:inherit}.directoryCard:hover{background:transparent}.directoryCard .number{color:#b80020;font-size:11px;margin:24px 0 13px}.directoryCard h2{font-size:30px}.directoryCard>p{font-size:14px;color:#59676d}.directoryImage{position:relative;height:300px;width:100%;background:#071b29;border-radius:5px;overflow:hidden}.directoryImage img{object-fit:cover;object-position:50% 48%;transition:transform .7s}.directoryCard:hover img{transform:scale(1.04)}.cardFoot{font-weight:400;color:#a5001b;padding-top:10px}
+.directory{padding-top:55px}.directoryGrid{gap:35px 24px}.directoryCard{position:relative;padding:0;border:1px solid var(--line);border-radius:8px;background:#fff;color:#131c21;overflow:hidden;transition:border-color .2s}.directoryCard:hover{background:#fff;border-color:#8c9ba2}.directoryBody{display:flex;flex-direction:column;align-items:center;flex:1;width:100%;padding:26px 24px 28px}.directoryCard:focus-visible{outline:2px solid var(--red);outline-offset:5px}.directoryCard:hover .cardFoot,.directoryCard:focus-visible .cardFoot{text-decoration:underline;text-underline-offset:4px}.directoryCard .number{color:#b80020;font-size:11px;margin:0 0 13px}.directoryCard h2{font-size:30px}.directoryBody>p{font-size:14px;color:#59676d}.directoryBody>p:not(:global(.kicker)){margin-bottom:24px}.directoryImage{position:relative;height:300px;width:100%;background:#071b29;border-radius:0;overflow:hidden}.directoryImage img{object-fit:cover;object-position:50% 48%;transition:transform .7s}.directoryCard:hover img{transform:scale(1.04)}.cardFoot{font-weight:400;color:#a5001b;padding-top:10px}
 .help{background:#f7f7f4}.helpGrid article{border-top:1px solid #b7c4c8;padding-top:25px}.helpGrid h3{font-size:25px}.helpGrid p{font-size:15px;color:#59666d;line-height:1.7}
 .process{background:#0d2940;color:#f4f0e8}.process h2,.processGrid h3{color:#f4f0e8}.processGrid{gap:28px}.processGrid>div{border-color:#ffffff30}.processGrid span{color:#ff4161;font-size:20px}.processGrid p{color:#c4d1d8}
 .questions{padding-block:60px}.question summary>span:first-child{font-weight:400;font-size:18px}.plus{color:#c70022}.custom{background:#bd001c;color:white}.custom h2,.custom p{color:white}.custom :global(.btn){background:#fff!important;border-color:#fff!important;color:#14212b!important}.relatedGrid>a{border-top:1px solid #b9c6ca}.relatedGrid h3{font-size:25px}.relatedGrid p{color:#59666d}
