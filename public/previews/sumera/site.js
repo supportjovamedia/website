@@ -105,7 +105,7 @@
   });
   document.querySelectorAll('[data-courses], [data-course-dates]').forEach(button => button.addEventListener('click', () => {
     const block = document.createElement('div');
-    [['Hair Cutting','hair-cutting-course'],['Facial & Skincare','facial-and-skincare-course'],['Dermaplaning','dermaplaning-training-course']].forEach(([name,slug])=>{const link=document.createElement('a');link.className='course-link';link.href=`https://sumerasalon.co.uk/product/${slug}/`;link.target='_blank';link.rel='noopener noreferrer';link.textContent=`${name} →`;block.append(link);});
+    [['Hair Cutting','hair-cutting-course'],['Facial & Skincare','facial-and-skincare-course'],['Dermaplaning','dermaplaning-training-course']].forEach(([name,slug])=>{const link=document.createElement('a');link.className='course-link';link.href=`https://sumerasalon.co.uk/product/${slug}/`;link.target='_blank';link.rel='noopener noreferrer';link.textContent=`${name}`;block.append(link);});
     const enquire=document.createElement('a');enquire.className='button';enquire.href='https://wa.me/447950891055?text='+encodeURIComponent("Hello Sumera, I'd like to enquire about your academy courses and upcoming dates.");enquire.target='_blank';enquire.rel='noopener noreferrer';enquire.textContent='Ask About Course Dates';
     block.append(enquire);
     showDetail(button.hasAttribute('data-course-dates') ? 'Find Your Course Date' : 'Learn at Sumera Academy', 'Explore a course or ask the team about the next available dates.', block, button, 'Sumera Academy');

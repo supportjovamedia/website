@@ -56,7 +56,7 @@ function Branding() {
 
 function Email() {
   return <div className={s.newsletter}>
-    <div className={s.mailToolbar}><span>● ● ●</span><span>Inbox</span><span>↗</span></div>
+    <div className={s.mailToolbar}><span>● ● ●</span><span>Inbox</span></div>
     <div className={s.mailPaper}>
       <span className={s.mailBrand}>THE WEEKLY EDIT</span>
       <div className={s.mailHeadline}>A warmer<br /><em>inbox.</em></div>

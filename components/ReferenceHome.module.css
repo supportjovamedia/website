@@ -79,7 +79,6 @@
 .process h2{font-size:clamp(29px,3vw,45px)}
 .process ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .process li{padding:11px 14px 13px;position:relative;border-radius:3px;transition:background .45s,color .45s,transform .45s}
-.process li:not(:last-child):after{content:'→';position:absolute;right:-12px;top:18px;color:#777e79;font-size:20px}
 .process li>span{font-size:29px;font-weight:700;line-height:1}
 .process h3{font-size:17px;margin:4px 0 7px;font-weight:600;letter-spacing:-.035em}
 .process li p{font-size:12px;line-height:1.25;max-width:155px}

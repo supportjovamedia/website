@@ -20,7 +20,7 @@ export default function SelectedConcepts() {
           <div className={s.image} tabIndex={0} role="region" aria-label={`${concept.name} website preview, scroll to explore`}>
             <Image src={`/home-selected/${concept.image}.png`} alt={`${concept.name} website`} width={concept.width} height={concept.height} sizes="(max-width:700px) 90vw, (max-width:1050px) 45vw,31vw" draggable={false} />
           </div>
-          <div className={s.hint} aria-hidden="true">Scroll to explore <span>↓</span></div>
+          <div className={s.hint} aria-hidden="true">Scroll to explore</div>
         </div>
         <figcaption><strong>{concept.name}</strong><span>{concept.category}</span></figcaption>
       </figure>)}

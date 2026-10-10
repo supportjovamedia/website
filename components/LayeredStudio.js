@@ -41,7 +41,7 @@ export default function LayeredStudio({ paused = false }) {
       <div className={s.copy}>
         <h2 id="studio-title">Small details.<br /><em>Big difference.</em></h2>
         <p>Clear thinking. Distinctive design.<br />Digital experiences that move<br />your business forward.</p>
-        <Link href="/about" className={s.link}>Meet your digital partner <span aria-hidden="true">↗</span></Link>
+        <Link href="/about" className={s.link}>Meet your digital partner</Link>
       </div>
       <div className={s.stage} aria-label="Strategy, Design and Technology, working together">
         <article className={`${s.paper} ${s.strategy}`}>
