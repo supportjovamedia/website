@@ -13,8 +13,8 @@ import { trackEvent } from "@/lib/marketing-analytics.mjs";
 import s from "./StudioHome.module.css";
 
 const rows = [
-  [["qaiser-watches", "Qaiser Watches"], ["sumera-current", "Sumera’s"], ["al-eiman", "Al Eiman"]],
-  [["nera", "Nera"], ["nexo", "Nexo"], ["sumera-current", "Sumera’s"]],
+  [["qaiser-watches", "Qaiser Watches"], ["monolith", "Monolith"], ["elise", "Elise"], ["stem-club", "Stem Club"], ["sumera-current", "Sumera’s"], ["tamarind", "Tamarind"], ["bare-form", "Bare Form"], ["margin", "Margin"]],
+  [["casa-lenta", "Casa Lenta"], ["al-eiman", "Al Eiman"], ["fern-stone", "Fern & Stone"], ["nera", "Nera"], ["reform", "Reform"], ["sable", "Sable"], ["alma", "Alma"]],
 ];
 const services = [
   { name: "Website Design", image: "websites", alt: "Fern & Field garden website design displayed on a graphite MacBook", caption: "Fern & Field · Website design concept", intro: "A great first impression. A clear next step.", copy: "A website that feels like your business and makes it easy for the right people to get in touch.", points: ["Designed around your business", "Thoughtful on every screen", "Your feedback at each stage", "A clear path to enquiry"], href: "/services/web-design" },
@@ -61,7 +61,7 @@ export default function StudioHome() {
         {rows.map((row, index) => <div key={index} className={s.galleryWindow} data-direction={index % 2 ? "right" : "left"}>
           <div className={s.pan}><div className={s.track}>{[...row, ...row].map(([image, name], item) => <figure key={`${image}-${item}`} className={s.preview} aria-hidden={item >= row.length ? "true" : undefined}>
             <div className={s.browserBar}><span aria-hidden="true">● ● ●</span><span>{name}</span></div>
-            <Image src={`/studio-2026/${image}.webp`} alt={item >= row.length ? "" : `${name} website`} width={800} height={544} sizes="(max-width: 600px) 70vw, 30vw" priority={index === 0 && item < 4} draggable={false} />
+            <Image src={`/studio-2026/${image}.webp`} alt={item >= row.length ? "" : `${name} website preview`} width={1672} height={941} sizes="(max-width: 600px) 70vw, 30vw" draggable={false} />
           </figure>)}</div></div>
         </div>)}
 
