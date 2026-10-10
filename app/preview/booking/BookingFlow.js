@@ -30,7 +30,7 @@ export default function BookingFlow({slug}){
  },[slug]);
  useEffect(()=>{
   if(!service||!catalog||!date)return;let alive=true;setSlot(null);setBusy(true);setSlots([]);
-  api(`public/slots?business=${catalog.business.id}&service=${service.id}&date=${date}${staff?'&staff='+staff:''}`).then(v=>{
+  api(`public/slots?service=${service.id}&date=${date}${staff?'&staff='+staff:''}`).then(v=>{
    if(!alive)return;setSlots(v);
    if(restore.current){const wanted=restore.current.slot;restore.current=null;const match=v.find(s=>s.staff_id===wanted.staff_id&&Date.parse(s.starts_at)===Date.parse(wanted.starts_at));if(match){setSlot(match);setStep(3);}else{setStep(2);setError('That time is no longer available. Please choose another time.');}}
   }).catch(e=>{if(alive)setError(e.message);}).finally(()=>{if(alive)setBusy(false);});
@@ -47,7 +47,7 @@ export default function BookingFlow({slug}){
   e.preventDefault();if(submitting)return;setSubmitting(true);setError('');
   try{
    const values=Object.fromEntries(new FormData(e.currentTarget));
-   await api('public/book',{...values,guest,use_account:!!account&&!guest,business_id:catalog.business.id,service_id:service.id,staff_id:slot.staff_id,starts_at:slot.starts_at,request_id:requestId.current});
+   await api('public/book',{...values,guest,use_account:!!account&&!guest,service_id:service.id,staff_id:slot.staff_id,starts_at:slot.starts_at,request_id:requestId.current});
    try{sessionStorage.removeItem(draftKey(slug));}catch{}
    location.assign('/preview/booking/confirmation');
   }catch(e){setError(e.message);setSubmitting(false);}
