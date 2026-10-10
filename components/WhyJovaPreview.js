@@ -3,10 +3,10 @@ import Image from "next/image";
 import s from "./WhyJovaPreview.module.css";
 
 const values = [
-  { photo: "compass", title: ["Strategy", "with a reason."], copy: "Every decision starts with what your business needs to achieve." },
-  { photo: "pen", image: "/why-jova/approved/design-bakery.webp", alt: "Coordinated bakery branding with burgundy packaging, a patterned cup and a croissant", title: ["Design", "people remember."], copy: "Distinctive work built around your brand, not a template." },
+  { photo: "compass", image: "/why-jova/approved/strategy-planning.webp", alt: "Creative planning with reference books, photographs, pencils and material swatches", title: ["Strategy", "with a reason."], copy: "Every decision starts with what your business needs to achieve." },
+  { photo: "pen", image: "/why-jova/approved/design-gelato.webp", alt: "Pistachio gelato with a coordinated lilac and coral visual identity across packaging and photography", title: ["Design", "people remember."], copy: "Distinctive work built around your brand, not a template." },
   { photo: "laptop", title: ["Everything", "works together."], copy: "Design, content and technology developed as one system." },
-  { photo: "headphones", title: ["We don’t", "disappear at launch."], copy: "You still have a partner when the website goes live." },
+  { photo: "headphones", image: "/why-jova/approved/launch-campaign.webp", alt: "Coordinated coffee packaging and photographic campaign assets prepared for launch", title: ["We don’t", "disappear at launch."], copy: "You still have a partner when the website goes live." },
 ];
 
 export default function WhyJovaPreview() {
