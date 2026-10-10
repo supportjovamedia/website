@@ -57,7 +57,7 @@ export function ProcessStory({ paused }) {
   useStoryMotion(root, paused);
   return <section id="process" className={s.process} ref={root} aria-labelledby="process-title">
     <div className={s.processIntro}>
-      <p className={s.eyebrow}>(04) OUR PROCESS</p>
+      <p className={s.eyebrow}>OUR PROCESS</p>
       <h2 id="process-title" className={s.heading}>From first idea<br />to final launch.</h2>
       <p className={s.introCopy}>A clear direction. A considered design.<br />Every step moves your business forward.</p>
       <a href="#process-steps" className={s.explore}>Explore the process</a>
@@ -65,7 +65,6 @@ export function ProcessStory({ paused }) {
     <ol className={s.steps} id="process-steps">
       {steps.map(([name, copy, detail, path], i) => <li className={s.step} data-story-card key={name} style={{ "--speed": [0.75, 1.3, .95, 1.6][i] }}>
         <div className={s.stepIcon} aria-hidden="true"><svg viewBox="0 0 24 24"><path d={path} /></svg></div>
-        <span className={s.number}>0{i + 1}</span>
         <div className={s.stepBody}><h3>{name}</h3><p>{copy}</p><span className={s.detail}>{detail}</span></div>
       </li>)}
     </ol>
@@ -77,7 +76,7 @@ export function FaqStory({ paused }) {
   useStoryMotion(root, paused);
   return <section id="faq" className={s.faq} ref={root} aria-labelledby="faq-title">
     <div className={s.faqIntro}>
-      <p className={s.eyebrow}>(06) FAQ</p>
+      <p className={s.eyebrow}>FAQ</p>
       <h2 id="faq-title" className={s.heading}>Good questions.<br />Clear answers.</h2>
       <p className={s.introCopy}>A little clarity before your next big move.</p>
       <Link href="/contact" className={s.contact}>Have something else in mind? Let&apos;s talk.</Link>

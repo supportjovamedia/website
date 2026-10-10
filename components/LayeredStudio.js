@@ -36,7 +36,7 @@ export default function LayeredStudio({ paused = false }) {
   }, [paused]);
 
   return <section className={s.studio} id="studio" ref={section} aria-labelledby="studio-title">
-    <div className={s.eyebrow}><span>01 / THE STUDIO</span><span>THINK. MAKE. MOVE.</span></div>
+    <div className={s.eyebrow}><span>THE STUDIO</span><span>THINK. MAKE. MOVE.</span></div>
     <div className={s.layout}>
       <div className={s.copy}>
         <h2 id="studio-title">Small details.<br /><em>Big difference.</em></h2>
@@ -45,17 +45,17 @@ export default function LayeredStudio({ paused = false }) {
       </div>
       <div className={s.stage} aria-label="Strategy, Design and Technology, working together">
         <article className={`${s.paper} ${s.strategy}`}>
-          <div className={s.paperHeader}><span>01</span><span>JOVA</span></div>
+          <div className={s.paperHeader}><span>JOVA</span></div>
           <div className={s.map} aria-hidden="true"><i /><i /><i /><i /><b /><b /><b /></div>
           <div className={s.paperFooter}><h3>Strategy.</h3><p>A clearer direction.</p></div>
         </article>
         <article className={`${s.paper} ${s.design}`}>
-          <div className={s.paperHeader}><span>02</span><span>JOVA</span></div>
+          <div className={s.paperHeader}><span>JOVA</span></div>
           <div className={s.typeStudy} aria-hidden="true">Aa<span /></div>
           <div className={s.paperFooter}><h3>Design.</h3><p>Impossible to ignore.</p></div>
         </article>
         <article className={`${s.paper} ${s.technology}`}>
-          <div className={s.paperHeader}><span>03</span><span>JOVA</span></div>
+          <div className={s.paperHeader}><span>JOVA</span></div>
           <div className={s.browser} aria-hidden="true"><div><i /><i /><i /></div><b>Make<br />your mark.</b><span /><section><i /><i /><i /></section></div>
           <div className={s.paperFooter}><h3>Technology.</h3><p>Built to work beautifully.</p></div>
         </article>

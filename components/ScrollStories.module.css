@@ -11,9 +11,7 @@
 .step:nth-child(2){margin-top:95px}.step:nth-child(3){margin-top:160px}.step:nth-child(4){margin-top:40px}
 .stepIcon{height:66px;width:66px;display:grid;place-items:center;background:#ec1039;color:#fff;border-radius:50%;transform:rotate(calc(var(--travel)*.16deg));box-shadow:0 10px 24px #d8153020}
 .stepIcon svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
-.number{display:grid;place-items:center;background:#f0f1f0;border:1px solid #c9cccb;border-radius:50%;width:30px;height:30px;font-size:10px;margin:17px 0;position:relative;z-index:1}
-.number:before{content:"";position:absolute;height:20px;bottom:29px;width:1px;background:#c9cccb}
-.stepBody{position:relative;width:100%;padding:27px 22px 23px;border-radius:12px;background:#fff;box-shadow:0 10px 30px #11263808;transition:background .5s,color .5s,box-shadow .5s}
+.stepBody{margin-top:28px;position:relative;width:100%;padding:27px 22px 23px;border-radius:12px;background:#fff;box-shadow:0 10px 30px #11263808;transition:background .5s,color .5s,box-shadow .5s}
 .stepBody:before{content:"";position:absolute;top:-7px;left:calc(50% - 7px);width:14px;height:14px;transform:rotate(45deg);background:inherit}
 .step:nth-child(2) .stepBody{background:#071e30;color:white}.step:nth-child(4) .stepBody{background:#ed1039;color:white}
 .step .stepBody h3{font-size:25px;letter-spacing:-.04em;margin:0 0 13px;font-weight:600}

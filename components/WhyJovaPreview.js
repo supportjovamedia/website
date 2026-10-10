@@ -12,7 +12,7 @@ export default function WhyJovaPreview() {
   return <section className={s.section} id="why-jova" aria-labelledby="why-jova-heading">
     <div className={s.inner}>
       <div className={s.intro} data-reveal>
-        <p className={s.label}><span>(05)</span> WHY JOVA</p>
+        <p className={s.label}>WHY JOVA</p>
         <h2 id="why-jova-heading">A digital partner.<br />Not just a deliverable.</h2>
         <p className={s.introCopy}>One partner for strategy, design, content and delivery.<br className={s.desktopBreak} /> Less chasing. Fewer handoffs. Better work.</p>
         <Link className={s.cta} href="/contact">Start a project <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></Link>

@@ -31,7 +31,7 @@ const values = [
 export default function HomeVisualSections() {
   return <>
     <section id="services" className={`shell ${styles.section}`}>
-      <header className={styles.heading}><p className="kicker">02 / WHAT WE OFFER</p><h2>What we do.</h2></header>
+      <header className={styles.heading}><p className="kicker">WHAT WE OFFER</p><h2>What we do.</h2></header>
       <div className={styles.services}>
         {primaryServices.map((service, i) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.service} data-motion-order={i % 3}>
           <Artwork sheet="services" crop={services[i]} />
@@ -42,15 +42,15 @@ export default function HomeVisualSections() {
     </section>
     <section id="process" className={styles.processBand}>
       <div className={`shell ${styles.section}`}>
-        <header className={styles.heading}><p className="kicker">03 / HOW WE WORK</p><h2>From first idea<span>to final result.</span></h2></header>
+        <header className={styles.heading}><p className="kicker">HOW WE WORK</p><h2>From first idea<span>to final result.</span></h2></header>
         <ol className={styles.steps}>{steps.map(([title, crop], i) => <li key={title} data-motion-order={i}>
-          <Artwork sheet="process" crop={crop} /><span className={styles.number}>0{i + 1}</span><h3>{title}</h3>
+          <Artwork sheet="process" crop={crop} /><h3>{title}</h3>
         </li>)}</ol>
         <div className={styles.action}><Link className="btn" href="/about">How we work</Link></div>
       </div>
     </section>
     <section id="why-jova" className={`shell ${styles.section}`}>
-      <header className={styles.heading}><p className="kicker">04 / WHY JOVA?</p><h2>Built around<span>your ambition.</span></h2></header>
+      <header className={styles.heading}><p className="kicker">WHY JOVA?</p><h2>Built around<span>your ambition.</span></h2></header>
       <div className={styles.values} data-motion-group="values">{values.map(([title, crop]) => <div className={styles.value} key={title}>
         <Artwork sheet="values" crop={crop} /><h3>{title}</h3>
       </div>)}</div>

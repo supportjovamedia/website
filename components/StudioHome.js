@@ -105,28 +105,28 @@ export default function StudioHome() {
         <div className={styles.heroBottom}><span>Ideas made tangible.</span><a href="#studio">Scroll to discover</a><span>Selected studio explorations</span></div>
       </section>
       <section id="studio" className={styles.studio}>
-        <div className={styles.sectionLabel}><span>01 / THE STUDIO</span><Mark /></div>
+        <div className={styles.sectionLabel}><span>THE STUDIO</span><Mark /></div>
         <div data-reveal className={styles.studioCopy}><h2>Good design gets noticed.<br /><span>Great thinking makes it matter.</span></h2><div className={styles.studioBottom}><p>We’re JovaMedia, your creative digital partner. Whether you’re starting something new or have outgrown your current look, we connect the strategy, design and content that move your business forward.</p><Link href="/about" className={styles.textLink}>A little about us <Arrow /></Link></div><div className={styles.studioFacts}><div><h3>One joined-up direction.</h3><p>Your website, brand and content should feel like the same business.</p></div><div><h3>Built around your goals.</h3><p>A focused scope, a clear plan and room to grow at your pace.</p></div><div><h3>Care beyond the launch.</h3><p>Practical support to keep your digital presence moving forward.</p></div></div></div>
       </section>
       <div className={styles.marquee}><div className={styles.marqueeTrack} aria-hidden="true">{[0, 1].map(i => <div key={i}><span>Fresh thinking</span><Mark /><span>Considered design</span><Mark /><span>Real connection</span><Mark /></div>)}</div><span className={styles.srOnly}>Fresh thinking. Considered design. Real connection.</span><button className={styles.motionToggle} onClick={() => setPaused(!paused)} aria-label={paused ? "Play scrolling text" : "Pause scrolling text"}>{paused ? "▶" : "Ⅱ"}</button></div>
       <section id="work" className={styles.work}>
-        <div className={styles.workHeading} data-reveal><div><p className={styles.eyebrow}>02 / SELECTED EXPLORATIONS</p><h2>A taste of<br />what’s possible<span>.</span></h2></div><p>New perspectives.<br />Made to move you.</p></div>
+        <div className={styles.workHeading} data-reveal><div><p className={styles.eyebrow}>SELECTED EXPLORATIONS</p><h2>A taste of<br />what’s possible<span>.</span></h2></div><p>New perspectives.<br />Made to move you.</p></div>
         <div className={styles.projectGrid}>
           {projects.map((project, index) => <article className={`${styles.project} ${styles[`project${index}`]}`} key={project.name} data-reveal><button className={`${styles.projectImage} ${styles[project.tone]}`} onClick={event => openProject(index, event)} aria-label={`View ${project.name}`}><div data-parallax={index === 1 ? "-50" : "55"}><Image src={`/home-studio/${project.image}.webp`} alt={project.description} fill sizes="(max-width:700px) 100vw,50vw" /></div><span className={styles.projectOpen}><Arrow /></span></button><div className={styles.projectMeta}><h3>{project.name}</h3><span>{project.type}</span></div></article>)}
           <div className={styles.projectInvitation} data-reveal><span>YOUR NEXT CHAPTER</span><h3>Something<br />good starts<br />with a hello.</h3><Link href="/contact" className={styles.textLink}>Tell us what you have in mind <Arrow /></Link></div>
         </div><p className={styles.workNote}>A selection of self-initiated concepts and independent design studies.</p>
       </section>
       <section id="services" className={styles.services}>
-        <div className={styles.servicesHeading} data-reveal><div><p className={styles.eyebrow}>03 / WHAT WE DO</p><h2>From the first idea<br />to the next big thing.</h2></div><p>The right mix of strategy,<br />creativity and digital craft.</p></div>
-        <div className={styles.serviceList}>{services.map((service, index) => <article key={service.name} className={styles.service} data-reveal><div className={styles.serviceArt}><Image src={`/home-studio/${service.image}.webp`} alt="" fill sizes="180px" /></div><div className={styles.serviceContent}><span className={styles.serviceNumber}>0{index + 1}</span><h3>{service.name}</h3><p>{service.summary}</p><div className={styles.tags}>{service.tags.map(tag => <span key={tag}>{tag}</span>)}</div><div className={styles.serviceLinks}>{service.links.map(([label, slug]) => <Link href={`/services/${slug}`} key={slug}>{label}</Link>)}</div></div><Link href={service.href} className={styles.serviceArrow} aria-label={`Explore ${service.name}`}><Arrow /></Link></article>)}</div>
+        <div className={styles.servicesHeading} data-reveal><div><p className={styles.eyebrow}>WHAT WE DO</p><h2>From the first idea<br />to the next big thing.</h2></div><p>The right mix of strategy,<br />creativity and digital craft.</p></div>
+        <div className={styles.serviceList}>{services.map((service) => <article key={service.name} className={styles.service} data-reveal><div className={styles.serviceArt}><Image src={`/home-studio/${service.image}.webp`} alt="" fill sizes="180px" /></div><div className={styles.serviceContent}><h3>{service.name}</h3><p>{service.summary}</p><div className={styles.tags}>{service.tags.map(tag => <span key={tag}>{tag}</span>)}</div><div className={styles.serviceLinks}>{service.links.map(([label, slug]) => <Link href={`/services/${slug}`} key={slug}>{label}</Link>)}</div></div><Link href={service.href} className={styles.serviceArrow} aria-label={`Explore ${service.name}`}><Arrow /></Link></article>)}</div>
         <Link href="/services" className={styles.allServices}>Explore all our services <Arrow /></Link>
       </section>
       <section className={styles.process}>
-        <div className={styles.processHeading} data-reveal><p className={styles.eyebrow}>04 / HOW WE WORK</p><h2>A clear path.<br />A shared ambition.</h2></div>
+        <div className={styles.processHeading} data-reveal><p className={styles.eyebrow}>HOW WE WORK</p><h2>A clear path.<br />A shared ambition.</h2></div>
         <ol className={styles.processSteps}>
-          <li data-reveal><span>01</span><h3>Find the focus.</h3><p>We get to know your business, your audience and what needs to change. Together, we agree the priorities and scope.</p></li>
-          <li data-reveal><span>02</span><h3>Make it happen.</h3><p>We shape the words, design and experience. You’re involved at the right moments, with clear progress and room for feedback.</p></li>
-          <li data-reveal><span>03</span><h3>Launch with confidence.</h3><p>We check the details, prepare your handover and agree any ongoing support. You know what’s ready and what comes next.</p></li>
+          <li data-reveal><h3>Find the focus.</h3><p>We get to know your business, your audience and what needs to change. Together, we agree the priorities and scope.</p></li>
+          <li data-reveal><h3>Make it happen.</h3><p>We shape the words, design and experience. You’re involved at the right moments, with clear progress and room for feedback.</p></li>
+          <li data-reveal><h3>Launch with confidence.</h3><p>We check the details, prepare your handover and agree any ongoing support. You know what’s ready and what comes next.</p></li>
         </ol>
       </section>
       <section className={styles.faq}>

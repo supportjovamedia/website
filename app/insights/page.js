@@ -28,9 +28,8 @@ export default function Page() {
       </section>
       <section className="section">
         <div className="shell article-list">
-          {posts.map((p, i) => (
+          {posts.map((p) => (
             <div key={p}>
-              <span>0{i + 1}</span>
               <h3>{p}</h3>
               <small>COMING SOON</small>
             </div>

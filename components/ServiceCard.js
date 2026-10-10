@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function ServiceCard({ title, short, slug, index }) {
+export default function ServiceCard({ title, short, slug }) {
   return (
     <Link
       href={`/services#${slug}`}
@@ -11,10 +11,7 @@ export default function ServiceCard({ title, short, slug, index }) {
         className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-gold/0 via-gold/0 to-navy/0 opacity-0 transition-opacity duration-500 group-hover:from-gold/10 group-hover:via-transparent group-hover:to-navy/5 group-hover:opacity-100"
       />
       <div>
-        <span className="font-serif-brand text-2xl text-gold transition-transform duration-300 group-hover:scale-110 group-hover:text-navy inline-block">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <h3 className="mt-4 font-serif-brand text-2xl text-navy">{title}</h3>
+        <h3 className="font-serif-brand text-2xl text-navy">{title}</h3>
         <p className="mt-3 text-sm leading-relaxed text-navy/65">{short}</p>
       </div>
       <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-navy transition-colors group-hover:text-gold">

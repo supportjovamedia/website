@@ -17,7 +17,7 @@ export default function BrandStudy() {
       </div>
       <div className="shell">
         <header className="concept-heading">
-          <p className="kicker">Brand & creative / Concept study 01</p>
+          <p className="kicker">Brand & creative / Concept study</p>
           <h1>A bolder brand direction.</h1>
           <p className="lead">
             How do you make an unfamiliar product feel immediately recognisable?
@@ -37,7 +37,7 @@ export default function BrandStudy() {
           <WorkStudy kind="brand" />
         </div>
         <section className="concept-section" id="creative-brief">
-          <p className="kicker">01 / The creative brief</p>
+          <p className="kicker">The creative brief</p>
           <h2>Starting with one idea.</h2>
           <p>
             Make a fictional sparkling drink easy to notice and easy to
@@ -70,7 +70,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">02 / Art direction</p>
+          <p className="kicker">Art direction</p>
           <h2>Building a visual language.</h2>
           <div className="concept-columns">
             <div>
@@ -112,7 +112,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">03 / Format adaptations</p>
+          <p className="kicker">Format adaptations</p>
           <h2>One idea. Different spaces.</h2>
           <div className="asset-grid">
             <figure>
@@ -173,7 +173,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">04 / The layout exploration</p>
+          <p className="kicker">The layout exploration</p>
           <h2>Two routes, one decision.</h2>
           <div className="layout-options">
             <figure>
@@ -201,7 +201,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">05 / Responsive expression</p>
+          <p className="kicker">Responsive expression</p>
           <h2>From the poster to the screen.</h2>
           <p>
             The landing concept brings the same art direction into a responsive
