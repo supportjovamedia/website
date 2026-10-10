@@ -24,6 +24,7 @@ export default function SiteChrome({children, header, footer}) {
     return () => { cleanup(); media.removeEventListener('change',setup); };
   }, [pathname,isHome]);
   if (pathname.startsWith("/preview/booking")) return <>{children}</>;
-  if (isHome) return <><div className="jova-pages jova-home-header">{header}</div>{children}</>;
-  return <div className="jova-pages" ref={root}>{header}{children}{footer}</div>;
+  const navigation = <div className={`jova-pages jova-header-chrome${isHome ? ' jova-home-header' : ''}`}>{header}</div>;
+  if (isHome) return <>{navigation}{children}</>;
+  return <>{navigation}<div className="jova-pages" ref={root}>{children}{footer}</div></>;
 }

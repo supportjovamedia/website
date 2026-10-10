@@ -44,11 +44,14 @@
 
 .jova-pages .header{position:relative;top:auto;background:#f7f7f4;border-bottom:1px solid #dde0da;box-shadow:none;color:#131719;z-index:20}
 
-/* The homepage wraps only its header. Do not clip its fixed mobile menu. */
-.jova-pages.jova-home-header{overflow:visible;position:relative;z-index:50}
+/* Keep navigation outside the clipped page body, including its fixed mobile menu. */
+.jova-pages.jova-header-chrome{overflow:visible;position:relative;z-index:50}
+.jova-header-chrome .navigation-slot{height:var(--navigation-height,auto)}
+.jova-pages .header[data-stuck=true]{position:fixed;inset:0 0 auto;box-shadow:0 5px 20px #071b2914}
+#main-content,#main-content :is(section,div,h1,h2)[id]{scroll-margin-top:110px}
 @media screen and (max-width:900px){
-  .jova-home-header .mobile-menu{top:79px;transition:none}
-  .jova-home-header .mobile-menu:not([hidden]) .mobile-menu-inner>a{animation:none}
+  .jova-header-chrome .mobile-menu{top:var(--navigation-height,79px);transition:none}
+  .jova-header-chrome .mobile-menu:not([hidden]) .mobile-menu-inner>a{animation:none}
 }
 
 .jova-pages .nav{height:94px;min-height:0;display:flex;align-items:center;justify-content:space-between;gap:25px}

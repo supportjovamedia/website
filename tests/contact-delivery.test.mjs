@@ -35,12 +35,13 @@ test("contact enforces qualification fields and trimmed description minimums bef
  }
 });
 
-test("country, monthly budget and Other details reach the inbox; optional fields can be omitted", async () => {
+test("country, budget and Other details reach the inbox; optional fields can be omitted", async () => {
  let mail;
  const handler=createContactHandler({env,send:async(url,options)=>{mail=JSON.parse(options.body);return Response.json({id:"accepted"})}});
  assert.equal((await handler(req({...data,country:"US",service:"Other",other:"A customer booking system",company:undefined,timing:undefined,message:"x".repeat(100)}))).status,200);
  assert.match(mail.text,/Country: United States/);
- assert.match(mail.text,/Monthly budget \(GBP\): £201–£500/);
+ assert.match(mail.text,/Budget \(GBP\): £201–£500/);
+ assert.doesNotMatch(mail.text,/monthly budget/i);
  assert.match(mail.text,/Other: A customer booking system/);
  assert.match(mail.text,/Company: Not provided/);
 });

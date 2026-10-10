@@ -171,12 +171,12 @@ export default function ContactForm() {
             </select>
             {fieldError("country")}
           </label>
-          <label><span>Monthly budget (GBP) <Required /></span>
+          <label><span>Budget <Required /></span>
             <select name="budget" defaultValue="" required {...fieldProps("budget", "budget-hint")}>
-              <option value="" disabled>Select your monthly budget</option>
+              <option value="" disabled>Select your budget</option>
               {budgetOptions.map(budget => <option key={budget}>{budget}</option>)}
             </select>
-            <span className="field-hint" id="budget-hint">For ongoing support, in British pounds. For a one-off project, include your total budget in the description too.</span>
+            <span className="field-hint" id="budget-hint">Your estimated budget in British pounds (GBP).</span>
             {fieldError("budget")}
           </label>
         </div>

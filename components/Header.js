@@ -18,6 +18,52 @@ function Navigation({ pathname }) {
   const [open, setOpen] = useState(false);
   const toggle = useRef(null);
   const menu = useRef(null);
+  const header = useRef(null);
+  const slot = useRef(null);
+  const measureNavigation = useRef(null);
+
+  useEffect(() => {
+    const main = document.querySelector('#main-content main');
+    if (!main) return;
+    // Full hero/intro sections take priority. Legal pages use their title intro,
+    // rather than waiting until the entire document has passed the viewport.
+    const title = main.querySelector('h1');
+    const intro = main.querySelector('section[aria-labelledby="home-title"], .page-hero, .concept-heading, .drink-hero')
+      || title?.nextElementSibling || title || main.firstElementChild;
+    if (!intro) return;
+    const element = header.current;
+    const placeholder = slot.current;
+    const previousMarker = intro.getAttribute('data-navigation-intro');
+    intro.setAttribute('data-navigation-intro', '');
+    const setSticky = pastIntro => {
+      // An open menu must keep its close button on screen while the viewport
+      // changes. Recheck the intro as soon as the menu closes.
+      if (menu.current.hidden) element.dataset.stuck = String(pastIntro);
+    };
+    const measure = () => {
+      const height = element.getBoundingClientRect().height;
+      const pastIntro = intro.getBoundingClientRect().bottom <= 0;
+      placeholder.style.setProperty('--navigation-height', `${height}px`);
+      setSticky(pastIntro);
+    };
+    measureNavigation.current = measure;
+    measure();
+    const observer = new IntersectionObserver(entries => {
+      setSticky(entries[0].boundingClientRect.bottom <= 0);
+    }, { threshold: 0 });
+    observer.observe(intro);
+    const resize = new ResizeObserver(measure);
+    resize.observe(element);
+    addEventListener('pageshow', measure);
+    return () => {
+      observer.disconnect();
+      resize.disconnect();
+      removeEventListener('pageshow', measure);
+      measureNavigation.current = null;
+      if (previousMarker === null) intro.removeAttribute('data-navigation-intro');
+      else intro.setAttribute('data-navigation-intro', previousMarker);
+    };
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width:901px)");
@@ -28,7 +74,7 @@ function Navigation({ pathname }) {
     return () => mq.removeEventListener("change", close);
   }, []);
   useEffect(() => {
-    if (!open) return;
+    if (!open) { measureNavigation.current?.(); return; }
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const content = document.getElementById("main-content");
@@ -64,11 +110,11 @@ function Navigation({ pathname }) {
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
   return (
-    <>
+    <div className="navigation-slot" ref={slot}>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <header className="header">
+      <header className="header" ref={header}>
         <div className="shell nav">
           <a href="/" className="brand-logo" aria-label="JovaMedia home">
             <Image
@@ -139,6 +185,6 @@ function Navigation({ pathname }) {
           </div>
         </nav>
       </header>
-    </>
+    </div>
   );
 }
