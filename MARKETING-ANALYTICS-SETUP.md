@@ -1,8 +1,8 @@
 # JovaMedia visitor measurement
 
-Status: integration prepared; GTM account/container created and verified as GTM-MDZ4RQQQ. GA4 and Clarity terms, IDs, account settings, live collection and saved funnel still pending. This document is not proof of a live installation.
+Status: GTM GTM-MDZ4RQQQ, GA4 G-YGPGYJ9L9B (stream 16102789838) and Clarity yvnjaisape created. GA4 Enhanced Measurement disabled and Clarity Strict masking saved. Live collection verification and saved funnels pending.
 
-Owner: support.jovamedia@gmail.com. Website: https://www.jovamedia.com. Use free GTM, GA4 and Microsoft Clarity plans. The user accepted GTM terms and created its container. GA4 and Clarity creation are paused before their separate terms acceptance, which requires action-time confirmation under the browser policy.
+Owner: support.jovamedia@gmail.com. Website: https://www.jovamedia.com. Use free GTM, GA4 and Microsoft Clarity plans. The user completed provider terms acceptance.
 
 GTM installation: the consent-gated loader adds the vendor script to document.head. The vendor body noscript markup is placed at the beginning of the body via MarketingAnalytics after consent. It is absent for JavaScript-disabled visits because the browser cannot check the stored opt-in. Do not add an unconditional noscript iframe, which would contact Google before consent. GTM account ID: 6381766731; container ID: 266724068.
 
@@ -11,7 +11,7 @@ GTM installation: the consent-gated loader adds the vendor script to document.he
 1. GTM: account JovaMedia, country United Kingdom, Web container www.jovamedia.com. Keep anonymous data sharing off. Publish only a reviewed container. This code loads GA4 and Clarity directly; do not add duplicate GA4, Clarity or page-view tags to GTM. Sanitized jova_* data-layer events are available for future tags.
 2. GA4: account JovaMedia, property JovaMedia Website, Europe/London, GBP, web stream https://www.jovamedia.com. Choose business objectives covering leads and traffic. Keep optional account sharing, Google Signals, advertising personalisation and user-provided data collection off. Turn Enhanced Measurement OFF: this integration supplies page views, clicks, scroll depth and form events explicitly. This prevents duplicate page views and unintended form/URL collection. Check retention and document the selected value here after saving it. Register generate_lead as a key event. Register channel, destination and form_id as event-scoped custom dimensions and percent_scrolled as a numeric event-scoped custom metric if needed in reports.
 3. Clarity: project JovaMedia, website https://www.jovamedia.com, category matching business services. Require cookie consent and use Strict masking. Confirm forms remain masked. Do not install its snippet again via GTM. Check current recording retention in the account. Link GA4 only if needed after both projects exist; linking is not required for collection.
-4. Set production NEXT_PUBLIC_GA_MEASUREMENT_ID, NEXT_PUBLIC_CLARITY_PROJECT_ID and NEXT_PUBLIC_GTM_ID from the actual accounts, then NEXT_PUBLIC_ENABLE_MARKETING_ANALYTICS=true. Keep NEXT_PUBLIC_ANALYTICS_DEBUG=false in production. Rebuild after setting NEXT_PUBLIC variables. No IDs have been invented or enabled in this change.
+4. Verified public IDs are code defaults because the Vercel connector refused environment writes for this team. NEXT_PUBLIC_GA_MEASUREMENT_ID, NEXT_PUBLIC_CLARITY_PROJECT_ID and NEXT_PUBLIC_GTM_ID can override them. Measurement is enabled by default but always requires visitor opt-in; NEXT_PUBLIC_ENABLE_MARKETING_ANALYTICS=false disables it. Keep NEXT_PUBLIC_ANALYTICS_DEBUG=false in production. Rebuild after changing NEXT_PUBLIC variables.
 
 ## Measurement and funnel
 

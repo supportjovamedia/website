@@ -23,15 +23,15 @@ export default function MarketingAnalytics() {
   const pathname = usePathname();
   const consent = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID || "GTM-MDZ4RQQQ";
-  const enabled = process.env.NEXT_PUBLIC_ENABLE_MARKETING_ANALYTICS === "true";
+  const enabled = process.env.NEXT_PUBLIC_ENABLE_MARKETING_ANALYTICS !== "false";
   useEffect(() => {
     const allowed = enabled && consent === "accepted" && publicPage(pathname);
     if (!allowed) {
       if (window.__jovaAnalytics) { revokeTracking(); window.location.reload(); }
       return;
     }
-    const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
-    const clarityId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "";
+    const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-YGPGYJ9L9B";
+    const clarityId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "yvnjaisape";
     if (!window.__jovaAnalytics) {
       window.dataLayer = window.dataLayer || [];
       window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
