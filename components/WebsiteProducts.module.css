@@ -1,0 +1,48 @@
+.products{max-width:1160px;margin:auto;color:#0c2948}
+.websiteGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start}
+.websiteCard{min-width:0;background:#fff;border:1px solid #d9e2e9;border-radius:16px;padding:28px 25px;transition:border-color .25s,box-shadow .25s}
+.businessCard{background:#0c2948;border-color:#0c2948;color:#fff;box-shadow:0 12px 32px #0c294814}
+.summary{min-width:0;text-align:center}
+.productHeader{display:flex;flex-direction:column;align-items:center}
+.eyebrow{margin:0 0 14px;font-size:10px;line-height:1.5;font-weight:500;letter-spacing:.09em;color:#547187}
+.productHeader h3{font-size:28px;line-height:1.12;letter-spacing:-.045em;margin:0 0 20px;min-height:63px;display:grid;align-content:center;max-width:16ch;text-wrap:balance}
+.price{display:grid;grid-template-columns:auto auto;align-items:baseline;gap:4px 7px;margin:0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.price>span{font-size:12px;color:#617c90}
+.price strong{font-size:48px;line-height:1.05;font-weight:500;letter-spacing:-.055em;color:#0c2948}
+.price small{grid-column:1/-1;justify-self:center;font-size:11px;line-height:1.6;color:#617c90;font-weight:400}
+.introduction{font-size:13px;line-height:1.75;color:#547187;margin:18px auto 20px;max-width:35ch;min-height:69px;text-wrap:pretty}
+.quote{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:999px;background:#285d8e;color:#fff;font-size:12px;line-height:1.5;font-weight:500;padding:14px 17px;min-height:50px;margin:auto;transition:background-color .2s,transform .18s,box-shadow .2s}
+.quote>span{font-size:20px;line-height:1;font-weight:400;transition:transform .25s}
+.quote:active{transform:scale(.98)}
+.quote:focus-visible{outline:3px solid #0071e3;outline-offset:4px}
+.details{min-width:0;text-align:left;border-top:1px solid #d9e3eb;margin-top:24px;padding-top:22px}
+.inclusions,.bookingExtras{padding:0;margin:0}
+.bookingExtras{border-top:1px solid #d9e3eb;padding-top:22px;margin-top:24px}
+.inclusions h4,.bookingExtras h4{font-size:12px;line-height:1.5;font-weight:500;margin:0 0 18px;color:#0c2948}
+.inclusions h4,.bookingExtras h4{text-align:center}
+.features{list-style:none;padding:0;margin:0;display:grid;gap:11px;align-content:start}
+.features li{display:flex;align-items:start;gap:9px;font-size:14px;line-height:1.55;color:#36536a}
+.features .unavailable{justify-content:center;color:#8c9caa}
+.placeholder{visibility:hidden}
+.features svg{width:16px;height:16px;flex:0 0 16px;margin-top:2px;color:#33735a}
+.businessCard .eyebrow{color:#f4df8d}
+.businessCard .introduction,.businessCard .price>span,.businessCard .price small{color:#bbd0e0}
+.businessCard .price strong,.businessCard .features li,.businessCard h4{color:#fff}
+.businessCard .features svg{color:#a6d5ba}
+.businessCard .details{border-color:#ffffff26}
+.businessCard .quote{background:#fff;color:#0c2948}
+@media(hover:hover){.websiteCard:hover{border-color:#a8c0d1;box-shadow:0 10px 30px #0c29480b}.quote:hover{background:#1c4a73;box-shadow:0 5px 16px #0c294812}.quote:hover>span{transform:translate(2px,-2px)}.businessCard .quote:hover{background:#e8f1f7}}
+@media(min-width:1800px){.products{max-width:1240px}.websiteCard{padding:32px 28px}.productHeader h3{font-size:30px;min-height:68px}.price strong{font-size:52px}.quote{font-size:13px}}
+@media(max-width:1000px){.products{max-width:460px}.websiteGrid{grid-template-columns:1fr;gap:22px}.websiteCard{padding:28px 24px}.productHeader h3{font-size:30px;min-height:0;margin-bottom:22px}.price strong{font-size:48px}.introduction{font-size:14px;min-height:0;margin-block:20px}.quote{font-size:13px;min-height:52px}.features{gap:13px}.inclusions h4,.bookingExtras h4{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.websiteCard,.quote,.quote>span{transition:none}.quote:active,.quote:hover>span{transform:none}}
+/* Share each content row across desktop columns, including wrapped feature text. */
+@media(min-width:1001px){
+ .websiteGrid{row-gap:11px}
+ .websiteCard{display:grid;grid-template-rows:subgrid;grid-row:span 21;row-gap:11px}
+ .details{display:grid;grid-template-rows:subgrid;grid-row:span 20;row-gap:11px}
+ .inclusions{display:grid;grid-template-rows:subgrid;grid-row:span 13;row-gap:11px}
+ .bookingExtras{display:grid;grid-template-rows:subgrid;grid-row:span 7;row-gap:11px}
+ .features{grid-template-rows:subgrid;grid-row:span 12;row-gap:11px}
+ .bookingExtras .features{grid-row:span 6}
+}
+@media(max-width:1000px){.features .unavailable,.unavailableExtras{display:none}}

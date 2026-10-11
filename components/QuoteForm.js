@@ -1,11 +1,14 @@
 "use client";
 import { useRef, useState } from "react";
+import Link from "next/link";
+import { productById, formatPrice } from "@/lib/products.mjs";
 import RecaptchaCheckbox from "./RecaptchaCheckbox";
 import { quoteOptions, validateQuote } from "@/lib/quote-fields.mjs";
 import { contactEmail } from "@/lib/site";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 
 export default function QuoteForm({ product = "" }) {
+  const selectedProduct = productById(product);
   const [status, setStatus] = useState("idle");
   const [fields, setFields] = useState({});
   const [error, setError] = useState("");
@@ -31,7 +34,7 @@ export default function QuoteForm({ product = "" }) {
     if (!token) {
       trackEvent("form_validation_error", { form_id: "quote_callback", error_stage: "verification" });
       setStatus("error");
-      setError("Please complete the I'm not a robot checkbox before requesting a callback.");
+      setError("Please complete the I'm not a robot checkbox before requesting a quote.");
       requestAnimationFrame(() => result.current?.focus());
       return;
     }
@@ -65,9 +68,10 @@ export default function QuoteForm({ product = "" }) {
   }
   const props = name => ({ "aria-invalid": fields[name] ? true : undefined, "aria-describedby": fields[name] ? `quote-${name}-error` : undefined });
   const feedback = name => fields[name] && <span className="field-error" id={`quote-${name}-error`}>{fields[name]}</span>;
-  return <form className="form" noValidate onSubmit={submit} data-analytics-form="quote_callback" data-clarity-mask="true" aria-busy={status === "sending"} onChange={() => { if (status === "success") setStatus("idle"); }}>
+  return <form className="form" data-enquiry-form noValidate onSubmit={submit} data-analytics-form="quote_callback" data-clarity-mask="true" aria-busy={status === "sending"} onChange={() => { if (status === "success") setStatus("idle"); }}>
     <div><h1>Get a Quote</h1><p className="form-note">Leave your details and we’ll get in touch about what you need.</p></div>
     <p className="form-note">Fields marked <Required /> are required.</p>
+    {selectedProduct && <section className="quote-package" aria-label="Selected product"><div><span className="quote-package-label">Selected product</span><h2>{selectedProduct.name}</h2><p>{selectedProduct.interval ? "" : "From "}{formatPrice(selectedProduct.amount)}{selectedProduct.interval ? " / month" : " · One-off build"}</p></div><Link href="/pricing">Change product</Link></section>}
     {product && <input type="hidden" name="product" value={product} />}
     <fieldset className="contact-fields" disabled={status === "sending"}>
       <label><span>Name <Required /></span><input name="name" autoComplete="name" required maxLength={100} {...props("name")} />{feedback("name")}</label>
@@ -81,8 +85,8 @@ export default function QuoteForm({ product = "" }) {
     <div className="contact-trap" aria-hidden="true"><label>Leave this field empty<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
     <p className="form-note">We’ll use these details to respond to your request. Read our <a className="text-link" href="/privacy-policy">privacy policy</a>.</p>
     <RecaptchaCheckbox ref={recaptcha} onChange={setToken} />
-    <button className="btn blue" type="submit" disabled={status === "sending" || status === "success"}>{status === "sending" ? "Sending…" : status === "success" ? "Request sent" : "Request a callback"}</button>
-    {["success", "error"].includes(status) && <section ref={result} tabIndex={-1} role={status === "success" ? "status" : "alert"} className={`contact-feedback ${status}`}><h3>{status === "success" ? "Thank you, we’ve received your request." : "Your request needs another try."}</h3><p>{status === "success" ? "We’ll get in touch within 1–3 working days to arrange your callback." : error}</p>{status === "error" && <a href={`mailto:${contactEmail}`}>Email {contactEmail}</a>}</section>}
+    <button className="btn blue" type="submit" disabled={status === "sending" || status === "success"}>{status === "sending" ? "Sending…" : status === "success" ? "Request sent" : "Request a quote"}</button>
+    {["success", "error"].includes(status) && <section ref={result} tabIndex={-1} role={status === "success" ? "status" : "alert"} className={`contact-feedback ${status}`}><h3>{status === "success" ? "Thank you, we’ve received your request." : "Your request needs another try."}</h3><p>{status === "success" ? "We aim to reply within 1–3 working days to discuss your project." : error}</p>{status === "error" && <a href={`mailto:${contactEmail}`}>Email {contactEmail}</a>}</section>}
   </form>;
 }
 

@@ -36,14 +36,15 @@
 .processGrid h3 { font-size: 22px; line-height: 1.3; }
 .questions { padding-top: 0; }
 .question { border-bottom: 1px solid var(--line); }
-.question summary { list-style: none; display: grid; grid-template-columns: minmax(0,1fr) 20px; gap: 24px; align-items: center; padding: 24px 0; cursor: pointer; }
+.question summary { list-style: none; display: grid; grid-template-columns: minmax(0,1fr) 32px; gap: 24px; align-items: center; padding: 24px 0; cursor: pointer; }
 .question summary::-webkit-details-marker { display: none; }
 .question summary > span:first-child { font-size: 17px; line-height: 1.5; font-weight: 600; }
-.plus { font-size: 23px; font-weight: 400; color: var(--blue); transition: transform .18s; }
-.question[open] .plus { transform: rotate(45deg); }
+.plus { display:grid;place-items:center;width:30px;height:30px;flex-shrink:0;border:1.5px solid currentColor;border-radius:50%;font-size:0;color:#151c23; }
+.plus::before { content:"+";font:400 24px/1 Arial,sans-serif; }
+.question[open] .plus::before { content:"\2212"; }
 .question > div { padding: 0 36px 24px 0; max-width: 900px; }
 .question > div p { font-size: 15px; line-height: 1.8; margin-bottom: 0; }
-.question summary:focus-visible { outline: 3px solid #7198c6; outline-offset: 5px; }
+.question summary:focus-visible { outline: 2px solid #151c23; outline-offset: 4px; }
 .custom { background: var(--sand); padding-block: clamp(56px, 7vw, 96px); }
 .custom :global(.lead) { max-width: 850px; margin-bottom: 28px; }
 .relatedGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 28px; margin-block: 32px; }
@@ -88,7 +89,7 @@
 .directory{padding-top:55px}.directoryGrid{gap:35px 24px}.directoryCard{position:relative;padding:0;border:1px solid var(--line);border-radius:8px;background:#fff;color:#131c21;overflow:hidden;transition:border-color .2s}.directoryCard:hover{background:#fff;border-color:#8c9ba2}.directoryBody{display:flex;flex-direction:column;align-items:center;flex:1;width:100%;padding:26px 24px 28px}.directoryCard:focus-visible{outline:2px solid var(--red);outline-offset:5px}.directoryCard:hover .cardFoot,.directoryCard:focus-visible .cardFoot{text-decoration:underline;text-underline-offset:4px}.directoryCard h2{font-size:30px}.directoryBody>p{font-size:14px;color:#59676d}.directoryBody>p:not(:global(.kicker)){margin-bottom:24px}.directoryImage{position:relative;height:300px;width:100%;background:#071b29;border-radius:0;overflow:hidden}.directoryImage img{object-fit:cover;object-position:50% 48%;transition:transform .7s}.directoryCard:hover img{transform:scale(1.04)}.cardFoot{font-weight:400;color:#a5001b;padding-top:10px}
 .help{background:#f7f7f4}.helpGrid article{border-top:1px solid #b7c4c8;padding-top:25px}.helpGrid h3{font-size:25px}.helpGrid p{font-size:15px;color:#59666d;line-height:1.7}
 .process{background:#0d2940;color:#f4f0e8}.process h2,.processGrid h3{color:#f4f0e8}.processGrid{gap:28px}.processGrid>div{border-color:#ffffff30}.processGrid span{color:#ff4161;font-size:20px}.processGrid p{color:#c4d1d8}
-.questions{padding-block:60px}.question summary>span:first-child{font-weight:400;font-size:18px}.plus{color:#c70022}.custom{background:#bd001c;color:white}.custom h2,.custom p{color:white}.custom :global(.btn){background:#fff!important;border-color:#fff!important;color:#14212b!important}.relatedGrid>a{border-top:1px solid #b9c6ca}.relatedGrid h3{font-size:25px}.relatedGrid p{color:#59666d}
+.questions{padding-block:60px}.question summary>span:first-child{font-weight:400;font-size:18px}.plus{color:#151c23}.custom{background:#bd001c;color:white}.custom h2,.custom p{color:white}.custom :global(.btn){background:#fff!important;border-color:#fff!important;color:#14212b!important}.relatedGrid>a{border-top:1px solid #b9c6ca}.relatedGrid h3{font-size:25px}.relatedGrid p{color:#59666d}
 @media(max-width:1000px){.heroArt{height:380px}.fitSection .fit{grid-template-columns:1fr 1.5fr;gap:20px}}
 @media(max-width:700px){.heroGrid{grid-template-columns:1fr;gap:30px}.heroArt{height:340px;max-width:300px;justify-self:center}.hero h1{font-size:46px}.fitSection .fit{grid-template-columns:1fr;text-align:left}.fitSection .fit ul{grid-column:1/-1}.directoryImage{height:340px}.directoryCard h2{font-size:29px}.processGrid>div{padding:22px;border:1px solid #ffffff25;border-radius:4px}.directoryGrid{gap:30px}.sectionIntro{text-align:center}.custom{text-align:center}}
 @media(prefers-reduced-motion:reduce){.directoryImage img{transition:none}}
@@ -102,8 +103,8 @@
 .directoryCard{align-items:center;text-align:center}
 .sectionIntro{margin-inline:auto}
 .helpGrid article,.processGrid>div,.relatedGrid>a{text-align:center}
-.question summary{position:relative;display:block;padding-inline:28px;text-align:center}
-.question .plus{position:absolute;right:0;top:24px}
+.question summary{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 32px;padding-inline:0;text-align:left}
+.question .plus{position:static}
 .question>div{padding-inline:0;margin-inline:auto}
 .supportLink,.custom,.questions,.related,.process{text-align:center}
 }
@@ -121,3 +122,49 @@
 .custom{background:#0c2948}
 .custom :global(.kicker){color:#fff}
 @media(max-width:700px){.hero{padding:40px 0 46px}.heroArt{height:270px}.hero :global(.actions){gap:20px}.hero h1{font-size:clamp(36px,9vw,50px)}}
+
+
+/* Alternating service chapters with complete artwork and staggered copy. */
+.directory{padding-block:40px 56px}
+.directoryGrid{grid-template-columns:1fr;gap:28px}
+.directoryCard{display:grid;grid-template-columns:1.12fr .88fr;min-height:clamp(340px,28vw,500px);border:0;border-radius:20px;background:#edf3f7;isolation:isolate}
+.directoryCard:nth-child(even){background:#f3f0e9;grid-template-columns:.88fr 1.12fr}
+.directoryCard:nth-child(even) .directoryImage{order:2}
+.directoryImage{height:100%;min-height:340px;align-self:stretch}
+.directoryImage img{object-fit:cover;transform:translateY(var(--motion-drift,0px)) scale(1.14);transition:none}
+.directoryBody{justify-content:center;padding:clamp(24px,4vw,64px);gap:0}
+.directoryCard h2{font-size:clamp(30px,3.4vw,60px);line-height:1.08;letter-spacing:-.05em;max-width:16ch;margin:0 0 22px;text-wrap:balance}
+.directoryBody>p:not(:global(.kicker)){max-width:40ch;font-size:clamp(14px,1.1vw,18px);line-height:1.7;margin:0 0 24px}
+.directoryBody :global(.kicker){font-size:10px;max-width:38ch;line-height:1.6;color:#56738a}
+.cardFoot{margin:0;padding:0;color:#285d8e}
+.cardFoot span{display:inline-flex;align-items:center;gap:12px;border-bottom:1px solid #285d8e6b;padding-bottom:5px}
+.directoryCard:hover .cardFoot,.directoryCard:focus-visible .cardFoot{text-decoration:none}
+.directoryCard::after{content:"";position:absolute;bottom:0;left:0;width:100%;height:3px;background:#285d8e;transform:scaleX(var(--motion-progress,0));transform-origin:left}
+.directoryCard .directoryBody>*{transition:opacity .7s,transform .9s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--card-delay,0ms) + 80ms)}
+.directoryCard .directoryBody>h2{transition-delay:calc(var(--card-delay,0ms) + 140ms)}
+.directoryCard .directoryBody>p:not(:global(.kicker)){transition-delay:calc(var(--card-delay,0ms) + 210ms)}
+.directoryCard .directoryBody>.cardFoot{transition-delay:calc(var(--card-delay,0ms) + 270ms)}
+.directoryCard[data-motion-ready=true]:not([data-revealed=true]) .directoryBody>*{opacity:0;transform:translateY(24px)}
+
+
+@media(hover:hover){.directoryCard:hover{background:#e4eef5}.directoryCard:nth-child(even):hover{background:#ece7dd}.directoryCard:hover .cardFoot span{border-bottom-color:#285d8e}}
+@media(max-width:700px){
+ .directory{padding-block:24px 36px}.directoryGrid{gap:24px}
+ .directoryCard,.directoryCard:nth-child(even){grid-template-columns:1fr;min-height:0;border-radius:16px}
+ .directoryCard:nth-child(even) .directoryImage{order:0}
+ .directoryImage{height:clamp(230px,68vw,340px);min-height:0}
+ .directoryBody{padding:26px 22px 30px}.directoryCard h2{font-size:32px;margin-bottom:16px}
+ .directoryBody>p:not(:global(.kicker)){font-size:14px;line-height:1.65;margin-bottom:18px}
+}
+@media(prefers-reduced-motion:reduce){.directoryCard,.directoryCard .directoryBody>*,.directoryCard .directoryImage{transition:none;opacity:1!important;transform:none!important;clip-path:none!important}.directoryImage img{transform:none}.directoryCard::after{transform:scaleX(1)}}
+.directoryCard .directoryImage img{transform:translateY(var(--motion-drift,0px)) scale(1.14)}
+@media(prefers-reduced-motion:reduce){.directoryCard .directoryImage img{transform:none}}
+
+/* Composed artwork contains headings and browser bars: show its full canvas. */
+.directoryCard,.directoryCard:nth-child(even){background:#f3f4f6}
+.directoryImage{height:auto;min-height:0;aspect-ratio:4/3;align-self:center;background:transparent}
+.directoryCard .directoryImage img,.directoryCard:hover .directoryImage img{object-fit:contain;object-position:center;transform:none;transition:none}
+.heroArt{height:auto;aspect-ratio:4/3;background:transparent}
+.heroArt img{object-fit:contain;object-position:center}
+@media(hover:hover){.directoryCard:hover,.directoryCard:nth-child(even):hover{background:#edf0f3}}
+@media(max-width:700px){.directoryImage{height:auto;aspect-ratio:4/3}.heroArt{height:auto}}

@@ -130,6 +130,7 @@ export default function ContactForm() {
 
     <form
       data-analytics-form="contact_enquiry"
+      data-enquiry-form
       data-clarity-mask="true"
 
       className="form"

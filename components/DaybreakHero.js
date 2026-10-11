@@ -15,9 +15,16 @@ export default function DaybreakHero(){
  const root=useRef(null);
  useEffect(()=>{
   const el=root.current,showcase=el.querySelector('.showcase'),tracks=[...el.querySelectorAll('.scrollTrack')],media=matchMedia('(prefers-reduced-motion: reduce)');
-  let disposed=false,visible=true,frame=0;
-  const measure=()=>{for(const track of tracks){const copies=[...track.children];copies.forEach(copy=>copy.style.height='auto');const height=Math.ceil(copies[0].getBoundingClientRect().height);copies.forEach(copy=>copy.style.height=height+'px');track.style.setProperty('--loop-end',-height+'px');}};
-  const paint=()=>{frame=0;for(const track of tracks){const animation=track.getAnimations()[0],time=animation&&Number(animation.currentTime)||0,phase=(time%20000)/20000,progress=Math.max(0,Math.min(1,(phase-.1)/.8)),distance=-parseFloat(track.style.getPropertyValue('--loop-end'))||0;for(const copy of track.children){const hero=copy.querySelector('.coffeeHero'),scroll=media.matches?0:Math.max(0,Math.min(hero.offsetHeight,distance*progress-copy.offsetTop-hero.offsetTop));hero.style.setProperty('--product-y',scroll*.12+'px');hero.style.setProperty('--product-angle',scroll*.012+'deg');hero.style.setProperty('--outline-y',-scroll*.1+'px');hero.style.setProperty('--leaf-y',-scroll*.08+'px');hero.style.setProperty('--bean-y',scroll*.06+'px');}}if(!disposed&&visible&&!document.hidden&&!media.matches)frame=requestAnimationFrame(paint);};
+  let disposed=false,visible=false,frame=0,geometry=[];
+  // Geometry changes only after layout, asset loading or resize, never per frame.
+  const measure=()=>{
+    const groups=tracks.map(track=>({track,copies:[...track.children]}));
+    groups.forEach(({copies})=>copies.forEach(copy=>{copy.style.height='auto';}));
+    const heights=groups.map(({copies})=>Math.ceil(copies[0].getBoundingClientRect().height));
+    groups.forEach(({track,copies},index)=>{copies.forEach(copy=>{copy.style.height=heights[index]+'px';});track.style.setProperty('--loop-end',-heights[index]+'px');});
+    geometry=groups.map(({track,copies},index)=>({track,distance:heights[index],copies:copies.map(copy=>{const hero=copy.querySelector('.coffeeHero');return {hero,height:hero.offsetHeight,top:copy.offsetTop+hero.offsetTop};})}));
+  };
+  const paint=()=>{frame=0;for(const {track,distance,copies} of geometry){const animation=track.getAnimations()[0],time=animation&&Number(animation.currentTime)||0,phase=(time%20000)/20000,progress=Math.max(0,Math.min(1,(phase-.1)/.8));for(const {hero,height,top} of copies){const scroll=media.matches?0:Math.max(0,Math.min(height,distance*progress-top));hero.style.setProperty('--product-y',scroll*.12+'px');hero.style.setProperty('--product-angle',scroll*.012+'deg');hero.style.setProperty('--outline-y',-scroll*.1+'px');hero.style.setProperty('--leaf-y',-scroll*.08+'px');hero.style.setProperty('--bean-y',scroll*.06+'px');}}if(!disposed&&visible&&!document.hidden&&!media.matches)frame=requestAnimationFrame(paint);};
   const sync=()=>{showcase.classList.toggle('paused',!visible||document.hidden||media.matches);cancelAnimationFrame(frame);paint();};
   const resize=new ResizeObserver(measure);tracks.forEach(track=>resize.observe(track.parentElement));
   const intersection=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();});intersection.observe(el);

@@ -70,3 +70,21 @@
 .steps li::before{content:none}
 .price .fromPrice{font-size:.5em;font-weight:500;letter-spacing:0}
 .categorySection .card .button{justify-content:center}
+
+/* Consistent, centred pricing with one shared scope note. */
+.pageHero,.pricingHero{background:#071b29;border-bottom-color:#071b29}
+.categoryHeading{text-align:center}.categoryHeading p{margin-inline:auto}
+.categorySection .card{text-align:center;align-items:center}
+.categorySection .cardTop{justify-content:center;width:100%}
+.categorySection .price,.categorySection .card h3{width:100%;text-align:center}
+.categorySection .price span{width:100%;text-align:center;margin-inline:auto}
+.categorySection .productFeatures{width:100%}
+.categorySection .productFeatures li{justify-content:center;align-items:center;text-align:center}
+.categorySection .productFeatures li span{max-width:34ch;text-wrap:pretty}
+.categorySection .productFeatures li svg{margin-top:0}
+.categorySection .card .button{margin-top:auto;margin-bottom:0}
+.packageFootnote{display:block;text-align:center;max-width:760px;margin:8px auto 0}
+.packageFootnote p{font-size:12px;line-height:1.7;margin-inline:auto;text-wrap:pretty}
+.categorySection{animation:priceCategoryIn .35s ease-out}
+@keyframes priceCategoryIn{from{opacity:.5;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.categorySection{animation:none}}
