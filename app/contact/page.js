@@ -2,6 +2,7 @@ import ProjectFAQ from "@/components/ProjectFAQ";
 import { pageMetadata } from "@/lib/seo";
 import ContactForm from "@/components/ContactForm";
 import MotionRegion from "@/components/MotionRegion";
+import BusinessContact from "@/components/BusinessContact";
 export const metadata = pageMetadata(
   "/contact",
   "Contact JovaMedia",
@@ -32,6 +33,7 @@ export default function Page() {
               <br />
               London, United Kingdom
             </p>
+            <BusinessContact />
           </div>
           <div data-motion-card className="contact-form-panel" style={{ "--card-delay": "100ms" }}><ContactForm /></div>
         </MotionRegion>

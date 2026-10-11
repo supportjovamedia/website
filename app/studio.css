@@ -60,7 +60,7 @@
 .jova-pages .contact-page .contact-intro>div:first-child h2{color:#0c2948}
 .jova-pages .contact-page .contact-intro>div:first-child p,.jova-pages .contact-page .contact-intro>div:first-child .lead{color:#35445a}
 .jova-pages .contact-page .contact-intro>div:first-child .kicker{color:#a81f29}
-.jova-pages .contact-page .contact-intro>div:first-child a{color:#0c2948;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:4px}
+.jova-pages .contact-page .contact-intro>div:first-child>p a{color:#0c2948;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:4px}
 .jova-pages .contact-page .contact-fit h2{color:#0c2948}
 .jova-pages .contact-page .contact-fit-grid article>span{color:#fff}
 @media(max-width:700px){.jova-pages .contact-page .page-hero{padding:40px 0 46px}.jova-pages .contact-page .contact-intro>div:first-child{text-align:center}}

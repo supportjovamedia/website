@@ -97,7 +97,7 @@ export default function MarketingAnalytics() {
       const placement = element.closest("header") ? "header" : element.closest("footer") ? "footer" : element.closest("main")?.querySelector("section")?.contains(element) ? "hero" : "content";
       if (url.origin === window.location.origin && ["/get-a-quote", "/contact"].includes(url.pathname)) trackEvent("cta_click", { destination: url.pathname, placement });
       const channel = url.protocol === "mailto:" ? "email" : url.protocol === "tel:" ? "phone" : ["wa.me", "api.whatsapp.com", "web.whatsapp.com"].includes(url.hostname) ? "whatsapp" : url.origin === window.location.origin && url.pathname === "/contact" ? "contact_page" : url.origin === window.location.origin ? "navigation" : "outbound";
-      trackEvent(["email", "phone", "whatsapp", "contact_page"].includes(channel) ? "contact_click" : "select_content", { channel, ...(url.origin === window.location.origin ? { destination: url.pathname } : {}) });
+      trackEvent(["email", "phone", "whatsapp", "contact_page"].includes(channel) ? "contact_click" : "select_content", { channel, placement: element.dataset.contactPlacement || placement, ...(url.origin === window.location.origin ? { destination: url.pathname } : {}) });
     };
     const scroll = () => {
       const distance = document.documentElement.scrollHeight - window.innerHeight;
