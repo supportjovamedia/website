@@ -40,3 +40,14 @@
 .benefitGrid article[data-in-view=true] .benefitPhoto{transform:scale(1.025)}
 @media(max-width:900px){.serviceVisual img{transition:transform 1s cubic-bezier(.16,1,.3,1);transform:scale(1.04)}.serviceVisual[data-in-view=true] img{transform:scale(1)}.serviceCopy>p{margin-inline:auto}.chapters{flex-wrap:wrap}.serviceActions{justify-content:center}}
 @media(prefers-reduced-motion:reduce){.benefitPhoto,.serviceVisual img{transform:none!important;transition:none}}
+
+/* Stronger scroll movement on the existing homepage imagery. */
+.benefitGrid article{overflow:hidden;border-radius:12px}
+.benefitGrid article .benefitPhoto{transform:translateY(var(--motion-drift,0px)) scale(1.08);transition:none}
+.benefitGrid article h3,.benefitGrid article p{position:relative}
+.serviceVisual[data-motion-ready=true]{overflow:clip;border-radius:16px}
+.serviceVisual[data-motion-ready=true] img{transform:translateY(var(--motion-drift,0px)) scale(1.04);transition:transform .3s ease-out}
+.experience{padding-block:clamp(54px,6vw,88px)}
+.finalCta{margin-block:28px}
+@media(max-width:700px){.benefits{padding-block:48px 54px}.benefitGrid{margin-top:28px;gap:30px}.serviceCopy{padding-block:10px}.serviceCopy h3{text-wrap:balance}.finalCta{padding:42px 22px}}
+@media(prefers-reduced-motion:reduce){.benefitGrid article .benefitPhoto,.serviceVisual[data-motion-ready=true] img{transform:none;transition:none}}

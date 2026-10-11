@@ -68,7 +68,7 @@ export default function StudioHome() {
 
       </section>
       <section className={s.benefits} aria-labelledby="benefits-title">
-        <div className={s.sectionIntro}><p className={s.kicker}>LESS COMPLICATED. MORE CONSIDERED.</p><h2 id="benefits-title">Good design.<br />Built for your business.</h2><p>You bring the ambition. We help turn it into a website, a brand and a clear way forward.</p></div>
+        <div className={s.sectionIntro} data-site-reveal><p className={s.kicker}>LESS COMPLICATED. MORE CONSIDERED.</p><h2 id="benefits-title">Good design.<br />Built for your business.</h2><p>You bring the ambition. We help turn it into a website, a brand and a clear way forward.</p></div>
         <MotionRegion className={s.benefitGrid}>
           <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/sketch.webp" alt="Design sketches and ideas" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Made around you.</h3><p>Your goals, your customers and your personality shape the work. We start with your business.</p></article>
           <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/desk.webp" alt="A workspace for planning and collaboration" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Clear at every stage.</h3><p>Review the design, ask questions and share feedback. You know what is happening and what comes next.</p></article>
@@ -88,9 +88,9 @@ export default function StudioHome() {
       </section>
       <ProcessStory />
       <WhyJovaPreview />
-      <section className={s.experience} aria-labelledby="experience-title"><div><p className={s.kicker}>EXPERIENCE YOU CAN BUILD ON</p><h2 id="experience-title">Big ideas.<br />A personal approach.</h2><Link href="/about" className={s.underlined}>Get to know JovaMedia</Link></div><div className={s.stats}><article><strong>2016</strong><h3>Where it began.</h3><p>Designing websites and helping businesses bring their ideas to life.</p></article></div></section>
+      <section className={s.experience} aria-labelledby="experience-title"><div data-site-reveal><p className={s.kicker}>EXPERIENCE YOU CAN BUILD ON</p><h2 id="experience-title">Big ideas.<br />A personal approach.</h2><Link href="/about" className={s.underlined}>Get to know JovaMedia</Link></div><div className={s.stats}><article><strong>2016</strong><h3>Where it began.</h3><p>Designing websites and helping businesses bring their ideas to life.</p></article></div></section>
       <FaqStory />
-      <section className={s.finalCta} aria-labelledby="final-cta-title"><p>YOUR NEXT CHAPTER STARTS WITH A CONVERSATION.</p><h2 id="final-cta-title">Let’s make your<br />first impression count.</h2><div className={s.actions}><ConsultationLink className={s.lightButton} placement="other">Get my free consultation</ConsultationLink><Link href="/pricing" className={s.darkOutline}>View pricing</Link></div></section>
+      <section className={s.finalCta} data-site-reveal aria-labelledby="final-cta-title"><p>YOUR NEXT CHAPTER STARTS WITH A CONVERSATION.</p><h2 id="final-cta-title">Let’s make your<br />first impression count.</h2><div className={s.actions}><ConsultationLink className={s.lightButton} placement="other">Get my free consultation</ConsultationLink><Link href="/pricing" className={s.darkOutline}>View pricing</Link></div></section>
     </main>
     <div className="jova-pages"><GrowthSignup newsletter /><Footer /></div>
   </div>;
