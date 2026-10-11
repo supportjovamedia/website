@@ -3,6 +3,7 @@ import { pageMetadata } from "@/lib/seo";
 import ContactForm from "@/components/ContactForm";
 import MotionRegion from "@/components/MotionRegion";
 import BusinessContact from "@/components/BusinessContact";
+import PhotoHero from "@/components/PhotoHero";
 export const metadata = pageMetadata(
   "/contact",
   "Contact JovaMedia",
@@ -11,7 +12,7 @@ export const metadata = pageMetadata(
 export default function Page() {
   return (
     <main className="contact-page">
-      <section className="page-hero">
+      <PhotoHero image="contact" className="page-hero">
         <div className="shell">
           <div className="kicker">GET IN TOUCH</div>
           <h1>Let’s make<br /><em>it happen.</em></h1>
@@ -19,7 +20,7 @@ export default function Page() {
             A new project, a quick question or support with existing work. Tell us what you need and we’ll help you find the next step.
           </p>
         </div>
-      </section>
+      </PhotoHero>
       <section id="enquiry" className="band band-soft">
         <MotionRegion className="shell split contact-intro">
           <div data-motion-card>

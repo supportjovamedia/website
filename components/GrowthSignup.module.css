@@ -12,6 +12,8 @@
 
 .newsletter.whiteNewsletter { background: #fff; }
 
+.newsletter { border-top: 1px solid #d7e0e6; }
+
 .newsletter{padding-inline:5vw;background:#f1f3f4;color:#172b42}
 .newsletter h2,.newsletter .label,.newsletter label{color:#172b42}
 .newsletter p:not(.message){color:#35445a!important}

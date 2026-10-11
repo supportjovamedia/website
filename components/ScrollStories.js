@@ -96,19 +96,19 @@ export function ProcessStory({ paused }) {
   </section>;
 }
 
-export function FaqStory({ paused }) {
+export function FaqStory({ paused, items = questions, contactHref = "/contact", contactLabel = "Contact Us" }) {
   const root = useRef(null);
   useStoryMotion(root, paused);
-  return <section id="faq" className={s.faq} ref={root} aria-labelledby="faq-title">
+  return <section id="faq" className={s.faq} ref={root} aria-labelledby="faq-title" data-site-faq>
     <div className={s.faqIntro}>
       <p className={s.eyebrow}>FAQ</p>
       <h2 id="faq-title" className={s.heading}>Good questions.<br />Clear answers.</h2>
       <p className={s.introCopy}>A little clarity before your next big move.</p>
-      <Link href="/contact" className={s.contact}>Contact Us</Link>
+      <Link href={contactHref} className={s.contact}>{contactLabel}</Link>
       <div className={s.questionArt} aria-hidden="true"><span>?</span><i /></div>
     </div>
     <ol className={s.answers}>
-      {questions.map(([question, answer]) => <li className={s.answer} key={question} data-story-card>
+      {items.map(([question, answer]) => <li className={s.answer} key={question} data-story-card>
         <span className={s.marker} aria-hidden="true">?</span>
         <article className={s.bubble}><h3>{question}</h3><p>{answer}</p></article>
       </li>)}

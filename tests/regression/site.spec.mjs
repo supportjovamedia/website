@@ -177,40 +177,87 @@ test('each product quote button selects the correct product and keeps phone opti
   }
 });
 
-test('FAQs swap simultaneously, settle exclusively and support keyboard and reduced motion', async ({ page }) => {
-  for (const path of ['/contact', '/services/web-design']) {
+test('homepage FAQ cards are shared by contact and service pages, with readable answers on every screen', async ({ page }) => {
+  let homeStyle;
+  for (const path of ['/', '/contact', '/services', '/services/web-design']) {
     await page.goto(path);
-    const rows = page.locator('[data-accordion] details');
-    const summaries = rows.locator('summary');
-    await expect.poll(() => rows.first().getAttribute('name')).toBe(null); // Hydration finished.
-    await summaries.nth(0).click();
-    await expect.poll(() => rows.first().evaluate(el => el.getAnimations().length)).toBe(0);
-    await summaries.nth(1).evaluate(el => {
-      el.addEventListener('click', () => requestAnimationFrame(() => {
-        window.__faqMotion = [...el.closest('[data-accordion]').querySelectorAll('details')].slice(0, 2).map(row => ({
-          running: row.getAnimations().some(animation => animation.playState === 'running'),
-          duration: row.getAnimations()[0]?.effect.getTiming().duration,
-        }));
-      }), { once: true });
+    const faq = page.locator('[data-site-faq]');
+    await expect(faq).toHaveCount(1);
+    await faq.scrollIntoViewIfNeeded();
+    await expect(faq.getByRole('heading', { level: 2 })).toHaveText('Good questions.Clear answers.');
+    const cards = faq.locator('article');
+    expect(await cards.count()).toBeGreaterThanOrEqual(3);
+    const style = await cards.first().evaluate(el => {
+      const css = getComputedStyle(el);
+      return { border: css.borderRadius, background: css.backgroundColor, padding: css.padding, heading: getComputedStyle(el.querySelector('h3')).fontSize };
     });
-    await summaries.nth(1).click();
-    await expect.poll(() => page.evaluate(() => window.__faqMotion)).toEqual([{ running: true, duration: 250 }, { running: true, duration: 250 }]);
-    await expect.poll(() => rows.evaluateAll(elements => elements.filter(el => el.open).length)).toBe(1);
-    await expect(rows.nth(1)).toHaveAttribute('open', '');
-    await summaries.nth(0).focus();
-    await page.keyboard.press('Enter');
-    await expect.poll(() => rows.evaluateAll(elements => elements.filter(el => el.open).length)).toBe(1);
-    await expect(rows.first()).toHaveAttribute('open', '');
-    // Quick reversals must leave the final selected question open.
-    await summaries.nth(1).click();
-    await summaries.nth(0).click();
-    await expect.poll(() => rows.evaluateAll(elements => elements.filter(el => el.open).length)).toBe(1);
-    await expect(rows.first()).toHaveAttribute('open', '');
+    if (path === '/') homeStyle = style;
+    else expect(style, path).toEqual(homeStyle);
+    for (const card of await cards.all()) {
+      await card.scrollIntoViewIfNeeded();
+      await expect(card).toBeVisible();
+      await expect(card.locator('p')).toBeVisible();
+      expect(await card.locator('p').innerText()).not.toBe('');
+    }
+    await noOverflow(page);
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await summaries.nth(1).click();
-    await expect(rows.nth(1)).toHaveAttribute('open', '');
-    expect(await rows.evaluateAll(elements => elements.reduce((count, el) => count + el.getAnimations().length, 0))).toBe(0);
+    await expect.poll(() => cards.first().evaluate(el => getComputedStyle(el).transform)).toBe('none');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
+  }
+  await page.goto('/contact#faq');
+  await expect(page.locator('[data-site-faq]').getByRole('link', { name: 'Get a Quote', exact: true })).toHaveAttribute('href', '/get-a-quote');
+});
+
+test('technology hero photos cover their banners with readable navy overlays and safe parallax', async ({ page }, testInfo) => {
+  const sources = new Set();
+  for (const path of ['/about', '/services', '/pricing', '/contact']) {
+    await page.goto(path);
+    const hero = page.locator('[data-photo-hero]');
+    const image = hero.locator('img');
+    const backdrop = hero.locator('[data-hero-backdrop]');
+    await expect.poll(() => image.evaluate(el => el.complete && el.naturalWidth > 0)).toBe(true);
+    sources.add(await image.getAttribute('src'));
+    await expect(image).toHaveCSS('opacity', '1');
+    await expect(hero.locator('[data-hero-overlay]')).toHaveCSS('background-color', 'rgba(7, 27, 41, 0.85)');
+    await expect(hero.locator('h1')).toHaveCSS('color', 'rgb(255, 255, 255)');
+    const first = await backdrop.evaluate(el => getComputedStyle(el).transform);
+    await page.evaluate(() => window.scrollTo({ top: 220, behavior: 'instant' }));
+    if (testInfo.project.name === 'desktop') {
+      await expect.poll(() => backdrop.evaluate(el => getComputedStyle(el).transform)).not.toBe(first);
+    } else await expect(backdrop).toHaveCSS('transform', 'none');
+    expect(await hero.evaluate(el => {
+      const a = el.getBoundingClientRect(), b = el.querySelector('[data-hero-backdrop]').getBoundingClientRect();
+      return b.top <= a.top && b.bottom >= a.bottom && b.left <= a.left && b.right >= a.right;
+    })).toBe(true);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(backdrop).toHaveCSS('transform', 'none');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await noOverflow(page);
+  }
+  expect(sources.size).toBe(4);
+});
+
+test('newsletters remain distinct from preceding sections, with white related-service panels', async ({ page }) => {
+  for (const path of ['/', '/about', '/services', '/pricing', '/contact', '/privacy-policy', '/terms', '/services/web-design', '/services/email-marketing']) {
+    await page.goto(path);
+    const newsletter = page.getByRole('region', { name: 'A little perspective for your inbox.', exact: true });
+    await newsletter.scrollIntoViewIfNeeded();
+    await expect(newsletter).toBeVisible();
+    const backgrounds = await page.evaluate(() => {
+      const background = el => {
+        while (el && ['rgba(0, 0, 0, 0)', 'transparent'].includes(getComputedStyle(el).backgroundColor)) el = el.parentElement;
+        return el ? getComputedStyle(el).backgroundColor : 'rgb(255, 255, 255)';
+      };
+      const sections = [...document.querySelectorAll('main > section')];
+      const newsletter = document.querySelector('[data-analytics-form="newsletter"]').closest('section');
+      return [background(sections.at(-1)), background(newsletter)];
+    });
+    expect(backgrounds[0], path).not.toBe(backgrounds[1]);
+    if (path.startsWith('/services/')) {
+      const related = page.getByRole('heading', { name: 'Explore related services', exact: true }).locator('xpath=ancestor::section');
+      await expect(related).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    }
+    await noOverflow(page);
   }
 });
 

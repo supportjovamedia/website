@@ -5,19 +5,21 @@ import { pageMetadata } from "@/lib/seo";
 import { primaryServices } from "@/lib/service-catalogue";
 import styles from "./services.module.css";
 import MotionRegion from "@/components/MotionRegion";
+import PhotoHero from "@/components/PhotoHero";
+import { FaqStory } from "@/components/ScrollStories";
 
 export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s seven services: websites, system modernization, social media, brand design, copywriting, email automation and SEO.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
-    <section className={`page-hero ${styles.hero}`}>
+    <PhotoHero image="services" className={`page-hero ${styles.hero}`}>
       <div className="shell">
         <p className="kicker">What we offer</p>
         <h1>Everything you need<br /><em>to grow.</em></h1>
         <p className="lead">A new website, a clearer message or a more consistent presence. Start with one service, or bring a few together around your business.</p>
         <div className="actions"><Link className="btn" href="/contact">Contact Us</Link></div>
       </div>
-    </section>
+    </PhotoHero>
     <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
       <div className="shell">
         <MotionRegion className={styles.directoryGrid}>
@@ -33,6 +35,7 @@ export default function Page() {
 
       </div>
     </section>
+    <FaqStory />
     <section className={`section ${styles.custom}`}><div className="shell"><p className="kicker">Made around your brief</p><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><Link href="/get-a-quote" className="btn">Get a Quote</Link></div></section>
   </main>;
 }
