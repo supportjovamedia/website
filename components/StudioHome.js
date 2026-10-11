@@ -30,7 +30,7 @@ export default function StudioHome() {
   const [pinned, setPinned] = useState(false);
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = matchMedia("(min-width: 901px) and (min-height: 820px) and (hover: hover) and (pointer: fine)");
+    const desktop = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
     let frame = 0;
     let lastChapter = -1;
     const paint = () => {
@@ -60,7 +60,7 @@ export default function StudioHome() {
     return () => { cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); media.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
   }, []);
   function jump(index) {
-    const media = matchMedia("(min-width: 901px) and (min-height: 820px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+    const media = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
     if (media.matches) {
       const top = story.current.getBoundingClientRect().top + scrollY;
       scrollTo({ top: top + (story.current.offsetHeight - innerHeight) * (index + .15) / 3, behavior: "instant" });
