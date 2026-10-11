@@ -21,8 +21,8 @@ function productFeatures(product, booking = false) {
   let inBooking = false;
   return comparisonForProduct(product.id).filter(row => {
     if (row.bookingOnly) inBooking = true;
-    return !row.heading && !!row.value && inBooking === booking;
-  }).map(row => row.value === true ? row.label : row.value);
+    return !row.heading && inBooking === booking && (!!row.value || booking || row.label === "Custom functionality");
+  }).map(row => row.value === false ? { unavailable: row.label } : row.value === true ? row.label : row.value);
 }
 
 function Tick() {
@@ -30,7 +30,7 @@ function Tick() {
 }
 
 function Features({ items, label }) {
-  return <ul className={s.features} aria-label={label}>{items.map(item => <li key={item}><Tick /><span>{item}</span></li>)}</ul>;
+  return <ul className={s.features} aria-label={label}>{items.map(item => typeof item === "string" ? <li key={item}><Tick /><span>{item}</span></li> : <li className={s.unavailable} key={item.unavailable} aria-label={`${item.unavailable}: not included`}><span aria-hidden="true">-</span></li>)}</ul>;
 }
 
 function QuoteLink({ product, homepage }) {
@@ -45,12 +45,12 @@ export default function WebsiteProducts({ homepage = false }) {
   const websites = products.filter(product => product.category === "websites");
   return <div className={s.products}>
     <MotionRegion className={s.websiteGrid}>{websites.map((product, index) => <article className={`${s.websiteCard} ${product.id === "business-website" ? s.businessCard : ""}`} key={product.id} data-motion-card style={{ "--card-delay": `${index * 80}ms` }}>
-      <div className={s.summary}><header className={s.productHeader}><p className={s.eyebrow}><span aria-hidden="true">0{index + 1} / </span>{product.eyebrow}</p><h3>{product.name}</h3><Price product={product} /></header>
+      <div className={s.summary}><header className={s.productHeader}><p className={s.eyebrow}>{product.eyebrow}</p><h3>{product.name}</h3><Price product={product} /></header>
       <p className={s.introduction}>{introductions[product.id]}</p>
       <QuoteLink product={product} homepage={homepage} /></div>
       <div className={s.details}>
-      {product.id === "booking-system" && <section className={s.bookingExtras}><h4>Your booking system</h4><Features items={productFeatures(product, true)} label="Booking system features" /></section>}
       <section className={s.inclusions}><h4>{product.id === "booking-system" ? "Your complete website" : "Your website includes"}</h4><Features items={productFeatures(product)} label={`${product.name} features`} /></section>
+      <section className={`${s.bookingExtras} ${product.id !== "booking-system" ? s.unavailableExtras : ""}`}><h4 aria-hidden={product.id !== "booking-system"} className={product.id !== "booking-system" ? s.placeholder : undefined}>Plus your booking system</h4><Features items={productFeatures(product, true)} label={`${product.name} booking system features`} /></section>
       </div>
     </article>)}</MotionRegion>
   </div>;

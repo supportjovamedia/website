@@ -102,7 +102,7 @@
  .jova-pages .page-hero .shell>.lead{animation-delay:.14s}
  .jova-pages .page-hero .shell>.actions{animation-delay:.21s}
 }
-@keyframes pageCopyArrival{from{opacity:0;transform:translateY(24px);clip-path:inset(0 0 18%)}to{opacity:1;transform:none;clip-path:inset(0)}}
+@keyframes pageCopyArrival{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 
 /* Enquiry pages arrive quickly, then stay still while someone fills them in. */
 .contact-form-panel{min-width:0}

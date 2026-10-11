@@ -92,7 +92,9 @@
 @media(min-width:801px){
  .root :global(.hero){padding:30px 3.2% 24px;grid-template-columns:40% 60%;column-gap:0;row-gap:8px}
  .root :global(.message h1){font-size:clamp(30px,3.7vw,92px);white-space:normal;text-wrap:balance}
- .root :global(.showcase){width:min(100%,calc((100svh - 230px) * .85));max-width:1100px;aspect-ratio:.91;justify-self:end}
+ .root :global(.showcase){width:100%;max-width:1100px;aspect-ratio:1.02;justify-self:end}
+ .root :global(.browser>.screen){height:66cqw}
+ .root :global(.phone){width:28%;top:43%}
  .root :global(.launch){width:43%}
 
 
@@ -102,5 +104,5 @@
  .root :global(.facts span){font-size:clamp(12px,1vw,16px)}
  .root :global(.actions){font-size:14px}.root :global(.actions a){min-height:48px;padding:15px 24px}
 }
-@media(min-width:801px) and (max-height:740px){.root :global(.showcase){width:min(100%,480px)}.root :global(.message h1){font-size:clamp(30px,3.6vw,62px)}}
+@media(min-width:801px) and (max-height:740px){.root :global(.message h1){font-size:clamp(30px,3.6vw,62px)}}
 @media(max-width:800px){.root :global(.showcase){margin-top:28px}.root :global(.message h1){font-size:clamp(28px,7.1vw,54px)}.root :global(.description){font-size:16px}.root :global(.actions){font-size:14px}.root :global(.actions a){min-height:48px;padding:15px 22px}.root :global(.facts span){font-size:12px}}

@@ -14,47 +14,39 @@ export default function AnimatedAccordion({ children }) {
     rows.forEach(row => row.removeAttribute("name"));
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let wanted = rows.find(row => row.open) || null;
-    let busy = false;
     let disposed = false;
-    let animation;
+    const animations = new Map();
 
     async function transition(row, opening) {
       const start = row.getBoundingClientRect().height;
+      animations.get(row)?.cancel();
+      animations.delete(row);
       if (opening) row.open = true;
       const style = getComputedStyle(row);
       const closedHeight = row.querySelector("summary").getBoundingClientRect().height
         + parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth)
         + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
       const end = opening ? row.getBoundingClientRect().height : closedHeight;
-      if (!reducedMotion.matches && row.animate) {
+      let animation;
+      if (!reducedMotion.matches && row.animate && Math.abs(start - end) > 0.5) {
         row.style.overflow = "hidden";
         row.style.willChange = "height";
         animation = row.animate([{ height: `${start}px` }, { height: `${end}px` }], {
-          duration: opening ? 250 : 170,
+          duration: 250,
           easing: "cubic-bezier(0.22, 1, 0.36, 1)",
           fill: "both",
         });
+        animations.set(row, animation);
         try { await animation.finished; } catch { /* Unmounted during motion. */ }
+        // A newer click may already be animating this row in the other direction.
+        if (animations.get(row) !== animation) return;
       }
       if (disposed) return;
       row.open = opening;
       animation?.cancel();
-      animation = undefined;
+      animations.delete(row);
       row.style.removeProperty("overflow");
       row.style.removeProperty("will-change");
-    }
-
-    async function settle() {
-      if (busy) return;
-      busy = true;
-      while (!disposed) {
-        const current = rows.find(row => row.open) || null;
-        if (current === wanted) break;
-        if (current) await transition(current, false);
-        // Re-read the latest choice after closing, including rapid clicks.
-        if (!disposed && wanted) await transition(wanted, true);
-      }
-      busy = false;
     }
 
     function onClick(event) {
@@ -63,12 +55,16 @@ export default function AnimatedAccordion({ children }) {
       event.preventDefault();
       const row = summary.parentElement;
       wanted = wanted === row ? null : row;
-      void settle();
+      // Start both directions in this frame, so the surrounding content moves once.
+      rows.forEach(item => {
+        if (item.open || item === wanted) void transition(item, item === wanted);
+      });
     }
     group.addEventListener("click", onClick);
     return () => {
       disposed = true;
-      animation?.cancel();
+      animations.forEach(animation => animation.cancel());
+      animations.clear();
       group.removeEventListener("click", onClick);
       rows.forEach((row, index) => {
         row.style.removeProperty("overflow");
