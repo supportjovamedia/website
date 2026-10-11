@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 // Content is visible before hydration and when motion is disabled.
-export default function MotionRegion({ children, className }) {
+export default function MotionRegion({ children, className, style }) {
   const root = useRef(null);
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
@@ -63,5 +63,5 @@ export default function MotionRegion({ children, className }) {
       removeEventListener("scroll", request); removeEventListener("resize", request);
     };
   }, []);
-  return <div className={className} ref={root}>{children}</div>;
+  return <div className={className} style={style} ref={root}>{children}</div>;
 }

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
 import StructuredData from "@/components/StructuredData";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import AnimatedAccordion from "@/components/AnimatedAccordion";
 import SelectedConcepts from "@/components/SelectedConcepts";
 import { services } from "@/lib/service-catalogue";
 import styles from "../services.module.css";
@@ -47,7 +48,7 @@ export default async function Page({ params }) {
     </div></section>
     {slug === "web-design" && <SelectedConcepts />}
     <section className={`section ${styles.process}`}><div className="shell"><p className="kicker">Working together</p><h2>A clear path from brief to delivery.</h2><div className={styles.processGrid}>{service.process.map((step) => <div key={step.title}><h3>{step.title}</h3><p>{step.text}</p></div>)}</div></div></section>
-    <section className={`section ${styles.questions}`}><div className="shell"><h2>A few useful answers.</h2>{service.faq.map(([question, answer]) => <details name="service-faq" className={styles.question} key={question}><summary><span>{question}</span><span className={styles.plus} aria-hidden="true">+</span></summary><div><p>{answer}</p></div></details>)}</div></section>
+    <section className={`section ${styles.questions}`}><div className="shell"><h2>A few useful answers.</h2><AnimatedAccordion>{service.faq.map(([question, answer]) => <details name="service-faq" className={styles.question} key={question}><summary><span>{question}</span><span className={styles.plus} aria-hidden="true">+</span></summary><div><p>{answer}</p></div></details>)}</AnimatedAccordion></div></section>
     <section className={`section ${styles.custom}`}><div className="shell"><p className="kicker">Made around your brief</p><h2>Let’s make the next step clear.</h2><p className="lead">{service.custom}</p><Link href="/get-a-quote" className="btn">Get a Quote</Link></div></section>
     <section className={`section ${styles.related}`}><div className="shell"><h2>Explore related services</h2><div className={styles.relatedGrid}>{related.map((item) => <Link key={item.slug} href={`/services/${item.slug}`}><h3>{item.name}</h3><p>{item.summary}</p><span className="text-link">Explore service</span></Link>)}</div><Link className="text-link" href="/services">View all services</Link></div></section>
   </main>;

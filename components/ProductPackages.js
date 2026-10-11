@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import MotionRegion from "./MotionRegion";
-import { products, productCategories, formatPrice } from "@/lib/products.mjs";
+import { products, productCategories, formatPrice, websiteComparison, comparisonForProduct } from "@/lib/products.mjs";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 import s from "./ProductPackages.module.css";
 
@@ -32,13 +32,20 @@ export default function ProductPackages({ homepage = false }) {
       <nav className={s.categoryNav} aria-label="Product categories"><p>Categories</p>{productCategories.map(item => <button type="button" key={item.id} aria-pressed={item.id === categoryId} onClick={() => setCategoryId(item.id)}><span>{item.name}</span><span className={s.categoryCount}>{products.filter(product => product.category === item.id).length}</span></button>)}</nav>
       <section className={s.categorySection} key={category.id} id={category.id} aria-labelledby={category.id + "-heading"}>
         <header className={s.categoryHeading}><h2 id={category.id + "-heading"}>{category.name}</h2><p>{category.description}</p></header>
-        <MotionRegion className={`${s.grid} ${categoryId === "subscriptions" ? s.careGrid : ""}`}>{products.filter(product => product.category === category.id).map((product, index) => {
+        <MotionRegion className={`${s.grid} ${categoryId === "subscriptions" ? s.careGrid : s.comparisonGrid}`} style={{ "--comparison-rows": websiteComparison.length }}>{products.filter(product => product.category === category.id).map((product, index) => {
           return <article key={product.id} className={`${s.card} ${product.id === "business-website" ? s.featured : ""}`} data-motion-card style={{ "--card-delay": `${index * 100}ms` }}>
             <div className={s.cardTop}>{product.id === "business-website" && <span className={s.recommendation}>Recommended for small businesses</span>}<p className={s.eyebrow}>{product.eyebrow}</p></div>
             <h3>{product.name}</h3>
             <p className={s.description}>{packageIntroductions[product.id] || product.description}</p>
             <p className={s.price}>{!product.interval && <small className={s.fromPrice}>From </small>}{formatPrice(product.amount)}{product.interval && <small> / month</small>}<span>{product.interval ? "Monthly website care" : "One-off project"}</span></p>
-            <ul className={s.productFeatures} aria-label={`${product.name} includes`}>{product.includes.map(item => <li key={item}>{item}</li>)}</ul>
+            <ul className={s.productFeatures} aria-label={`${product.name} features`}>{product.category === "websites" ? comparisonForProduct(product.id).map(row => row.heading
+              ? <li key={row.heading} className={s.featureHeading}>{row.heading}</li>
+              : <li key={row.label} data-feature={row.label} className={`${s.comparisonFeature} ${row.value === false ? s.unavailable : ""}`}>
+                <span className={s.featureContent}>
+                  {row.value === false ? <span className={s.status} aria-hidden="true">−</span> : <svg className={s.status} aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                  <span>{typeof row.value === "string" ? <><span className={s.featureLabel}>{row.label}</span>{row.value}</> : row.label}{row.value === false && <span className={s.screenReader}>: Not included</span>}{row.value === true && <span className={s.screenReader}>: Included</span>}</span>
+                </span>
+              </li>) : product.includes.map(item => <li key={item}>{item}</li>)}</ul>
             <Link href={`/get-a-quote?product=${product.id}`} className={s.button} aria-label={`Get a Quote for ${product.name}`} onClick={() => trackEvent("quote_click", { product_id: product.id, placement: homepage ? "home_packages" : "pricing" })}>Get a Quote</Link>
           </article>;
         })}</MotionRegion>
