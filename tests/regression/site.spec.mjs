@@ -233,6 +233,48 @@ test('navigation works after scrolling and mobile menu releases its scroll lock'
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
 });
 
+test('service chapters pin on short laptops and keep every chapter usable', async ({ page }, testInfo) => {
+  await page.goto('/');
+  const story = page.getByRole('region', { name: 'A little more than a website.', exact: true });
+  if (testInfo.project.name === 'phone') {
+    await expect(story).toHaveAttribute('data-pinned', 'false');
+    for (const card of await story.locator('article').all()) {
+      await expect(card).not.toHaveAttribute('inert', '');
+      await expect(card).toHaveCSS('position', 'relative');
+    }
+    return;
+  }
+  for (const [width, height] of [[901, 540], [1024, 600], [1366, 650], [1440, 800], [1920, 1080], [2560, 650]]) {
+    await page.setViewportSize({ width, height });
+    await expect(story).toHaveAttribute('data-pinned', 'true');
+    await expect(story.locator(':scope > div')).toHaveCSS('position', 'sticky');
+    for (let chapter = 0; chapter < 3; chapter++) {
+      await story.getByRole('navigation', { name: 'Explore services' }).getByRole('button').nth(chapter).click();
+      await expect(story).toHaveAttribute('data-chapter', String(chapter));
+      const active = story.locator('article[data-active=true]');
+      await expect(active).not.toHaveAttribute('inert', '');
+      await expect(active.getByRole('link', { name: 'Learn more', exact: true })).toBeVisible();
+      const bounds = await active.evaluate(card => {
+        const parts = [...card.children];
+        return parts.every(part => {
+          const rect = part.getBoundingClientRect();
+          return rect.top >= 86 - 1 && rect.bottom <= innerHeight + 1 && rect.left >= 0 && rect.right <= innerWidth;
+        });
+      });
+      expect(bounds, `${width}x${height}, chapter ${chapter}: full image and copy fit below navigation`).toBe(true);
+      await expect(story.locator('article[inert]')).toHaveCount(2);
+    }
+    // Actual page scrolling, as well as chapter buttons, must advance the story.
+    await story.evaluate(el => window.scrollTo({ top: scrollY + el.getBoundingClientRect().top + (el.offsetHeight - innerHeight) * .45, behavior: 'instant' }));
+    await expect(story).toHaveAttribute('data-chapter', '1');
+    await noOverflow(page);
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(story).toHaveAttribute('data-pinned', 'false');
+  await expect(story.locator('article[inert]')).toHaveCount(0);
+  await expect(story.locator(':scope > div')).toHaveCSS('position', 'static');
+});
+
 test('layout stays within phone, tablet, short desktop and ultrawide viewports', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'One shared responsive sweep avoids duplicate work.');
   for (const [width, height] of [[320, 740], [768, 900], [1001, 900], [1440, 650], [1920, 1080], [2560, 1440], [3440, 1440]]) {
