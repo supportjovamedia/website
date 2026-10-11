@@ -49,3 +49,13 @@ Mark `generate_lead` as the enquiry key event. Use `form_id` to separate contact
 Build an open funnel: page view, CTA click, quote or contact page view, form input, form submit, generate lead. Break down by campaign source and form. Use Clarity form-specific events to inspect sessions that started typing but did not reach a successful delivery.
 
 Dashboard configuration and live event receipt must be verified separately from source tests. Custom dimensions apply to newly collected events, not historical missing data. Browser privacy settings, blockers, consent and reporting delays prevent a promise of complete visitor coverage.
+
+## Verification on 11 October 2026
+
+- GA4: all 10 event-scoped dimensions registered; `generate_lead` verified as a key event.
+- GA4 Realtime received preview `cta_click`, `form_input`, `form_field_complete`, `form_attempt` and campaign context after a tagged entry and internal navigation.
+- Clarity: saved `Enquiry journey to successful delivery` with page_view, form_start and generate_lead. The older Homepage to contact funnel is retained. New API events and form-specific variants become selectable as Clarity processes them; do not substitute its automatic Submit form event for successful delivery.
+- Contact and quote production tests reached the business Gmail inbox. PR 58 removes obsolete fields from the contact notification template.
+- Contact alignment checked at 320, 390, 768 and 1536 CSS pixels; navy text contrast audited across main marketing pages. Production build and 56 focused tests passed.
+- Free Upstash database restored from the 7 October backup and connected only to JovaMedia Production and Preview. PR 58 uses its managed integration credentials. Preview email delivery is disabled by missing production-only email configuration, so the welcome automation receipt still needs a production test after merge.
+- PR 58 requires explicit merge approval. Its Ready Vercel preview does not mean the source changes are live on the production domain.
