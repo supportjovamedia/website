@@ -29,23 +29,33 @@ export default function StudioHome() {
   const [chapter, setChapter] = useState(0);
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
+    const desktop = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
     let frame = 0;
     let lastChapter = -1;
     const paint = () => {
       frame = 0;
+      if (media.matches || !desktop.matches) {
+        gallery.current.style.setProperty("--gallery-pan", "0px");
+        return;
+      }
       const rect = gallery.current.getBoundingClientRect();
-      gallery.current.style.setProperty("--gallery-pan", `${media.matches ? 0 : Math.max(-220, Math.min(220, -rect.top * .12))}px`);
+      gallery.current.style.setProperty("--gallery-pan", `${media.matches || !desktop.matches ? 0 : Math.max(-220, Math.min(220, -rect.top * .12))}px`);
       const stage = story.current.getBoundingClientRect();
       const progress = Math.max(0, Math.min(1, -stage.top / Math.max(1, stage.height - innerHeight)));
       const next = Math.min(2, Math.floor(progress * 3));
       if (next !== lastChapter) { lastChapter = next; setChapter(next); }
     };
     const request = () => { if (!frame) frame = requestAnimationFrame(paint); };
-    addEventListener("scroll", request, { passive: true });
+    const setup = () => {
+      removeEventListener("scroll", request);
+      if (desktop.matches && !media.matches) addEventListener("scroll", request, { passive: true });
+      request();
+    };
     addEventListener("resize", request);
-    media.addEventListener("change", request);
-    paint();
-    return () => { cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); media.removeEventListener("change", request); };
+    media.addEventListener("change", setup);
+    desktop.addEventListener("change", setup);
+    setup();
+    return () => { cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); media.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
   }, []);
   function jump(index) {
     const media = matchMedia("(min-width: 901px) and (prefers-reduced-motion: no-preference)");

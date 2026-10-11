@@ -65,7 +65,7 @@ export default function QuoteForm({ product = "" }) {
   }
   const props = name => ({ "aria-invalid": fields[name] ? true : undefined, "aria-describedby": fields[name] ? `quote-${name}-error` : undefined });
   const feedback = name => fields[name] && <span className="field-error" id={`quote-${name}-error`}>{fields[name]}</span>;
-  return <form className="form" noValidate onSubmit={submit} data-analytics-form="quote_callback" data-clarity-mask="true" aria-busy={status === "sending"} onChange={() => { if (status === "success") setStatus("idle"); }}>
+  return <form className="form" data-enquiry-form noValidate onSubmit={submit} data-analytics-form="quote_callback" data-clarity-mask="true" aria-busy={status === "sending"} onChange={() => { if (status === "success") setStatus("idle"); }}>
     <div><h1>Get a Quote</h1><p className="form-note">Leave your details and we’ll get in touch about what you need.</p></div>
     <p className="form-note">Fields marked <Required /> are required.</p>
     {product && <input type="hidden" name="product" value={product} />}

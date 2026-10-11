@@ -7,6 +7,7 @@ export default function MotionRegion({ children, className }) {
   const root = useRef(null);
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
+    const desktop = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
     let observer, frame = 0;
     const visible = new Set();
     const paint = () => {
@@ -21,9 +22,11 @@ export default function MotionRegion({ children, className }) {
         card.style.setProperty("--motion-progress", progress);
       });
     };
-    const request = () => { if (!frame && !media.matches) frame = requestAnimationFrame(paint); };
+    const request = () => { if (!frame && !media.matches && desktop.matches) frame = requestAnimationFrame(paint); };
     const setup = () => {
       observer?.disconnect();
+      cancelAnimationFrame(frame); frame = 0;
+      removeEventListener("scroll", request);
       visible.clear();
       const cards = root.current.querySelectorAll("[data-motion-card]");
       cards.forEach(card => {
@@ -38,19 +41,25 @@ export default function MotionRegion({ children, className }) {
       observer = new IntersectionObserver(entries => {
         entries.forEach(({ target, isIntersecting }) => {
           target.dataset.inView = String(isIntersecting);
-          if (isIntersecting) { target.dataset.revealed = "true"; visible.add(target); }
+          if (isIntersecting) {
+            target.dataset.revealed = "true";
+            if (desktop.matches) visible.add(target);
+            else observer.unobserve(target);
+          }
           else visible.delete(target);
         });
         request();
       }, { threshold: .12, rootMargin: "0px 0px -8% 0px" });
       cards.forEach(card => observer.observe(card));
+      if (desktop.matches) addEventListener("scroll", request, { passive: true });
     };
     setup();
     media.addEventListener("change", setup);
-    addEventListener("scroll", request, { passive: true });
+    desktop.addEventListener("change", setup);
     addEventListener("resize", request);
     return () => {
       observer?.disconnect(); cancelAnimationFrame(frame); media.removeEventListener("change", setup);
+      desktop.removeEventListener("change", setup);
       removeEventListener("scroll", request); removeEventListener("resize", request);
     };
   }, []);

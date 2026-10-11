@@ -49,5 +49,7 @@
 .serviceVisual[data-motion-ready=true] img{transform:translateY(var(--motion-drift,0px)) scale(1.04);transition:transform .3s ease-out}
 .experience{padding-block:clamp(54px,6vw,88px)}
 .finalCta{margin-block:28px}
-@media(max-width:700px){.benefits{padding-block:48px 54px}.benefitGrid{margin-top:28px;gap:30px}.serviceCopy{padding-block:10px}.serviceCopy h3{text-wrap:balance}.finalCta{padding:42px 22px}}
+.benefits{padding-top:clamp(44px,4vw,64px)}
+@media(max-width:900px){.benefits{padding-block:36px 54px}.pan,.galleryWindow[data-direction=right] .pan{transform:none}.benefitGrid article .benefitPhoto,.serviceVisual[data-motion-ready=true] img{transform:none;transition:none}}
+@media(max-width:700px){.benefits{padding-top:30px}.benefitGrid{margin-top:28px;gap:30px}.serviceCopy{padding-block:10px}.serviceCopy h3{text-wrap:balance}.finalCta{padding:42px 22px}}
 @media(prefers-reduced-motion:reduce){.benefitGrid article .benefitPhoto,.serviceVisual[data-motion-ready=true] img{transform:none;transition:none}}

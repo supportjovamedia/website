@@ -103,3 +103,35 @@
  .jova-pages .page-hero .shell>.actions{animation-delay:.21s}
 }
 @keyframes pageCopyArrival{from{opacity:0;transform:translateY(24px);clip-path:inset(0 0 18%)}to{opacity:1;transform:none;clip-path:inset(0)}}
+
+/* Enquiry pages arrive quickly, then stay still while someone fills them in. */
+.contact-form-panel{min-width:0}
+.jova-pages [data-enquiry-form] input,.jova-pages [data-enquiry-form] select,.jova-pages [data-enquiry-form] textarea{transition:border-color .18s,box-shadow .18s,background-color .18s}
+.jova-pages [data-enquiry-form] :is(input,select,textarea):focus-visible{border-color:#235789;box-shadow:0 0 0 3px #2357891a;outline:2px solid #235789;outline-offset:2px}
+[data-enquiry-cta],.jova-pages .btn[href="/get-a-quote"],.jova-pages [data-enquiry-form] button[type=submit]{position:relative;overflow:hidden;isolation:isolate;transition:background-color .2s,box-shadow .2s,transform .18s}
+[data-enquiry-cta]::after,.jova-pages .btn[href="/get-a-quote"]::after,.jova-pages [data-enquiry-form] button[type=submit]::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 25%,#ffffff30 48%,transparent 72%);transform:translateX(-125%);pointer-events:none}
+@media(hover:hover){
+ [data-enquiry-cta]:hover,.jova-pages .btn[href="/get-a-quote"]:hover,.jova-pages [data-enquiry-form] button[type=submit]:enabled:hover{transform:translateY(-2px);box-shadow:0 6px 18px #123c681a}
+ [data-enquiry-cta]:hover::after,.jova-pages .btn[href="/get-a-quote"]:hover::after,.jova-pages [data-enquiry-form] button[type=submit]:enabled:hover::after{animation:enquirySheen .65s ease-out}
+}
+[data-enquiry-cta]:active,.jova-pages .btn[href="/get-a-quote"]:active,.jova-pages [data-enquiry-form] button[type=submit]:enabled:active{transform:scale(.98);box-shadow:none}
+@media(prefers-reduced-motion:no-preference){
+ .jova-pages [data-enquiry-form]>div:first-child{animation:enquiryArrival .5s cubic-bezier(.16,1,.3,1) both}
+ .jova-pages [data-enquiry-form]>.contact-fields{animation:enquiryArrival .55s cubic-bezier(.16,1,.3,1) .08s both}
+ .jova-pages [data-enquiry-form]>button[type=submit]{animation:enquiryArrival .55s cubic-bezier(.16,1,.3,1) .16s both}
+ .jova-pages .contact-feedback{animation:enquiryArrival .3s ease-out both}
+ .jova-pages [data-enquiry-form]:focus-within>div:first-child,.jova-pages [data-enquiry-form]:focus-within>.contact-fields,.jova-pages [data-enquiry-form]:focus-within>button{animation:none}
+}
+@keyframes enquiryArrival{from{opacity:0;translate:0 16px}to{opacity:1;translate:0 0}}
+@keyframes enquirySheen{to{transform:translateX(125%)}}
+@media(max-width:900px){
+ [data-motion-card][data-motion-ready=true]{transition-duration:.4s,.55s;transition-delay:var(--phone-delay,0ms)}
+ [data-motion-card][data-motion-ready=true]:not([data-revealed=true]){transform:translateY(18px)}
+ .site-motion-home .route-reveal,.jova-pages .route-reveal{transition-duration:.4s,.55s}
+ .site-motion-home .route-pending,.jova-pages .route-pending{transform:translateY(16px)}
+}
+[data-motion-card]:focus-within,.route-pending:focus-within{opacity:1!important;transform:none!important}
+@media(prefers-reduced-motion:reduce){
+ [data-enquiry-cta],.jova-pages .btn[href="/get-a-quote"],.jova-pages [data-enquiry-form] button[type=submit]{transition:none;transform:none}
+ [data-enquiry-cta]::after,.jova-pages .btn[href="/get-a-quote"]::after,.jova-pages [data-enquiry-form] button[type=submit]::after{display:none}
+}

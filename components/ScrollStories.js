@@ -22,7 +22,8 @@ function useStoryMotion(ref, paused) {
   useEffect(() => {
     const root = ref.current;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-    let frame = 0;
+    const desktop = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
+    let frame = 0, observer;
     const paint = () => {
       frame = 0;
       const staticMode = paused || reduced.matches;
@@ -43,12 +44,36 @@ function useStoryMotion(ref, paused) {
       cards.forEach((card, i) => { card.dataset.current = String(i === nearest); });
       root.style.setProperty("--line", `${(nearest + .5) / cards.length * 100}%`);
     };
-    const request = () => { if (!frame) frame = requestAnimationFrame(paint); };
-    paint();
-    addEventListener("scroll", request, { passive: true });
+    const request = () => { if (!frame && desktop.matches && !reduced.matches && !paused) frame = requestAnimationFrame(paint); };
+    const setup = () => {
+      observer?.disconnect(); cancelAnimationFrame(frame); frame = 0;
+      removeEventListener("scroll", request);
+      const cards = [...root.querySelectorAll("[data-story-card]")];
+      cards.forEach(card => { delete card.dataset.mobileMotion; delete card.dataset.mobileVisible; });
+      if (!desktop.matches || reduced.matches || paused) {
+        root.dataset.static = "true";
+        root.style.setProperty("--travel", 0); root.style.setProperty("--ink", "100%");
+        cards.forEach(card => card.style.setProperty("--reveal", 1));
+        if (!reduced.matches && !paused) {
+          cards.forEach((card, index) => {
+            card.dataset.mobileMotion = "true";
+            card.style.setProperty("--phone-delay", `${index % 2 * 60}ms`);
+          });
+          observer = new IntersectionObserver(entries => entries.forEach(({ target, isIntersecting }) => {
+            if (isIntersecting) { target.dataset.mobileVisible = "true"; observer.unobserve(target); }
+          }), { threshold: .12 });
+          cards.forEach(card => observer.observe(card));
+        }
+        return;
+      }
+      paint();
+      addEventListener("scroll", request, { passive: true });
+    };
+    setup();
     addEventListener("resize", request);
-    reduced.addEventListener("change", request);
-    return () => { cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); reduced.removeEventListener("change", request); };
+    reduced.addEventListener("change", setup);
+    desktop.addEventListener("change", setup);
+    return () => { observer?.disconnect(); cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); reduced.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
   }, [ref, paused]);
 }
 

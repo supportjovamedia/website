@@ -17,10 +17,10 @@ export default function WhyJovaPreview() {
         <p className={s.label}>WHY JOVA</p>
         <h2 id="why-jova-heading">A digital partner.<br />Not just a deliverable.</h2>
         <p className={s.introCopy}>One partner for strategy, design, content and delivery.<br className={s.desktopBreak} /> Less chasing. Fewer handoffs. Better work.</p>
-        <Link className={s.cta} href="/get-a-quote">Get a Quote</Link>
+        <Link className={s.cta} data-enquiry-cta href="/get-a-quote">Get a Quote</Link>
       </div>
       <MotionRegion className={s.values}>
-        {values.map(({ photo, image, alt, title, copy }, index) => <article className={s.value} data-motion-card style={{ "--card-delay": `${index * 90}ms` }} key={photo}>
+        {values.map(({ photo, image, alt, title, copy }, index) => <article className={s.value} data-motion-card style={{ "--card-delay": `${index * 100}ms`, "--phone-delay": `${index % 2 * 70}ms` }} key={photo}>
           {image && <div className={s.art}><Image src={image} alt={alt} width={1448} height={1086} sizes="(max-width: 700px) 43vw, (max-width: 1100px) 22vw, 14vw" /></div>}
           <span className={s.rule} aria-hidden="true" />
           <h3>{title.map(line => <span key={line}>{line}</span>)}</h3>
