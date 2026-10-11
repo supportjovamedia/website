@@ -119,4 +119,5 @@
 .heroArt{width:min(100%,860px);max-width:860px;height:clamp(260px,30vw,400px);justify-self:center;box-shadow:none}
 .hero h1 em{color:#0c2948}
 .custom{background:#0c2948}
+.custom :global(.kicker){color:#fff}
 @media(max-width:700px){.hero{padding:40px 0 46px}.heroArt{height:270px}.hero :global(.actions){gap:20px}.hero h1{font-size:clamp(36px,9vw,50px)}}

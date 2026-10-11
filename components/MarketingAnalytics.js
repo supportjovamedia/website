@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
-import { browserConsent, measurementUrl, publicPage, replaySafeUrl, revokeTracking, trackEvent } from "@/lib/marketing-analytics.mjs";
+import { browserConsent, campaignAttribution, measurementUrl, publicPage, replaySafeUrl, revokeTracking, trackEvent } from "@/lib/marketing-analytics.mjs";
 
 function subscribe(callback) {
   window.addEventListener("jova-consent", callback);
@@ -57,6 +57,7 @@ export default function MarketingAnalytics() {
     } else if (window.__jovaAnalytics.clarity && !replaySafeUrl(window.location.href)) {
       revokeTracking(); window.location.reload(); return;
     }
+    try { window.__jovaAnalytics.campaign = campaignAttribution(window.location.href, window.sessionStorage); } catch { window.__jovaAnalytics.campaign = campaignAttribution(window.location.href); }
     if (window.__jovaAnalytics.page !== pathname) {
       window.__jovaAnalytics.page = pathname;
       const referrer = document.referrer ? new URL(document.referrer).origin + "/" : "";
@@ -65,17 +66,36 @@ export default function MarketingAnalytics() {
       trackEvent("page_view");
     }
     const started = new WeakSet();
+    const inputs = new WeakSet();
+    const completed = new WeakSet();
     const depths = new Set();
     const focus = event => {
-      const form = event.target.closest?.('form[data-analytics-form="contact_enquiry"],form[data-analytics-form="website_consultation"],form[data-analytics-form="quote_callback"]');
+      const form = event.target.closest?.('form[data-analytics-form]');
       if (form && !started.has(form)) { started.add(form); trackEvent("form_start", { form_id: form.dataset.analyticsForm }); }
     };
+    const input = event => {
+      const field = event.target;
+      const form = field.closest?.('form[data-analytics-form]');
+      if (!form || !["firstName", "lastName", "name", "email", "phone", "message", "service"].includes(field.name)) return;
+      // Read only whether the visitor interacted, never copy typed values into tracking.
+      if (!inputs.has(form)) { inputs.add(form); trackEvent("form_input", { form_id: form.dataset.analyticsForm }); }
+    };
+    const complete = event => {
+      const field = event.target;
+      const form = field.closest?.('form[data-analytics-form]');
+      if (!form || completed.has(field) || !["firstName", "lastName", "name", "email", "phone", "message", "service"].includes(field.name) || !field.value?.trim() || !field.validity?.valid) return;
+      completed.add(field); trackEvent("form_field_complete", { form_id: form.dataset.analyticsForm, field_name: field.name });
+    };
+    const attempt = event => { const form = event.target.closest?.('form[data-analytics-form]'); if (form) trackEvent("form_attempt", { form_id: form.dataset.analyticsForm }); };
+    const invalid = event => { const form = event.target.closest?.('form[data-analytics-form]'); if (form) trackEvent("form_validation_error", { form_id: form.dataset.analyticsForm, field_name: event.target.name, error_stage: "validation" }); };
     const click = event => {
       const element = event.target.closest?.("a,button");
       if (!element || element.closest("dialog,form,[data-analytics-ignore]")) return;
       trackEvent("ui_click", { element_type: element.tagName === "A" ? "link" : "button" });
       if (element.tagName !== "A") return;
       const url = new URL(element.href, window.location.href);
+      const placement = element.closest("header") ? "header" : element.closest("footer") ? "footer" : element.closest("main")?.querySelector("section")?.contains(element) ? "hero" : "content";
+      if (url.origin === window.location.origin && ["/get-a-quote", "/contact"].includes(url.pathname)) trackEvent("cta_click", { destination: url.pathname, placement });
       const channel = url.protocol === "mailto:" ? "email" : url.protocol === "tel:" ? "phone" : ["wa.me", "api.whatsapp.com", "web.whatsapp.com"].includes(url.hostname) ? "whatsapp" : url.origin === window.location.origin && url.pathname === "/contact" ? "contact_page" : url.origin === window.location.origin ? "navigation" : "outbound";
       trackEvent(["email", "phone", "whatsapp", "contact_page"].includes(channel) ? "contact_click" : "select_content", { channel, ...(url.origin === window.location.origin ? { destination: url.pathname } : {}) });
     };
@@ -87,9 +107,14 @@ export default function MarketingAnalytics() {
     };
     document.addEventListener("click", click);
     document.addEventListener("focusin", focus);
+    document.addEventListener("input", input);
+    document.addEventListener("change", input);
+    document.addEventListener("focusout", complete);
+    document.addEventListener("submit", attempt, true);
+    document.addEventListener("invalid", invalid, true);
     window.addEventListener("scroll", scroll, { passive: true });
     window.dispatchEvent(new Event("jova-analytics-ready"));
-    return () => { document.removeEventListener("click", click); document.removeEventListener("focusin", focus); window.removeEventListener("scroll", scroll); };
+    return () => { document.removeEventListener("click", click); document.removeEventListener("focusin", focus); document.removeEventListener("input", input); document.removeEventListener("change", input); document.removeEventListener("focusout", complete); document.removeEventListener("submit", attempt, true); document.removeEventListener("invalid", invalid, true); window.removeEventListener("scroll", scroll); };
   }, [pathname, consent, enabled, gtmId]);
   // Insert the vendor's body snippet only after consent. With JavaScript disabled,
   // consent cannot be checked, so optional tracking deliberately remains absent.

@@ -39,6 +39,18 @@ test('disabled automation makes no calls; missing storage fails closed',async()=
   const f=fixture();await run(f,{env:{}});assert.equal(f.records.size,0);
   await assert.rejects(run(f,{env:{...env,UPSTASH_REDIS_REST_URL:''}}));assert.equal(f.events.length,0);
 });
+test('managed restored storage takes precedence and never mixes credential pairs',async()=>{
+  const f=fixture(); const calls=[];
+  const managed={...env,JOVA_NEWSLETTER_KV_REST_API_URL:'https://restored.example.com',JOVA_NEWSLETTER_KV_REST_API_TOKEN:'restored-token'};
+  await run(f,{env:managed,send:async(url,options)=>{
+    calls.push([url,options.headers.Authorization]);
+    return f.send(url.replace('https://restored.example.com',env.UPSTASH_REDIS_REST_URL),options);
+  }});
+  assert.equal(f.events.length,1);
+  assert.equal(calls.filter(([url])=>url.startsWith('https://restored.example.com')).length,2);
+  assert.ok(calls.filter(([url])=>url.startsWith('https://restored.example.com')).every(([,auth])=>auth==='Bearer restored-token'));
+  await assert.rejects(run(f,{env:{...managed,JOVA_NEWSLETTER_KV_REST_API_TOKEN:''},send:async()=>assert.fail('Incomplete managed credentials must not dispatch')}));
+});
 const request=data=>new Request('https://example.com/api/growth',{method:'POST',headers:{origin:'https://example.com','content-type':'application/json'},body:JSON.stringify(data)});
 test('confirmation persists consent and segment before event; repeated confirmation is safe',async()=>{
   const f=fixture();const data={kind:'confirm',token:seal({purpose:'newsletter',email:'sam@example.com',expires:Date.now()+60000},env.NEWSLETTER_TOKEN_SECRET)};

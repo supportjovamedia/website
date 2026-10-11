@@ -1337,5 +1337,7 @@ margin-top: 20px;
 .reference-footer-links .cookie-settings { padding: 0; border: 0; background: none; color: inherit; font-family: inherit; text-align: left; text-decoration: none; cursor: pointer; }
 .form .required-mark { color: #c90000; }
 .form .field-hint { display: block; font-size: 12px; line-height: 1.6; margin-top: 7px; color: #526078; }
+.form .contact-phone-label { display: flex; align-items: baseline; gap: 6px; }
+.form .contact-phone-label .field-hint { display: inline; margin-top: 0; }
 .form .field-error { display: block; color: #b40000; font-size: 13px; line-height: 1.5; margin-top: 7px; }
 .form [aria-invalid="true"] { border-color: #b40000; }
