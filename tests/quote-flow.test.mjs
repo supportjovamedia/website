@@ -18,7 +18,7 @@ test("product quote links retain each selected product in the short form", async
     assert.doesNotMatch(phone, /required/);
     for (const name of ["name", "email", "phone", "service"]) assert.ok(html.includes(`name="${name}"`));
     assert.doesNotMatch(html, /<textarea|name="message"|name="budget"|name="country"|Add to basket/);
-    assert.match(html, /aria-label="Selected package"/);
+    assert.match(html, /aria-label="Selected product"/);
     assert.ok(html.includes(product.name));
     assert.equal((html.match(/<h1[\s>]/g) || []).length, 1);
   }

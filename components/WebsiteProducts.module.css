@@ -1,0 +1,36 @@
+.products{max-width:1160px;margin:auto;color:#0c2948}
+.websiteGrid{display:grid;gap:24px}
+.websiteCard{min-width:0;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.55fr);gap:56px;align-items:center;background:#fff;border:1px solid #d9e2e9;border-radius:14px;padding:38px 42px;transition:border-color .25s,box-shadow .25s}
+.businessCard{background:#0c2948;border-color:#0c2948;color:#fff;box-shadow:0 16px 36px #0c294812}
+.summary{min-width:0;text-align:center}
+.productHeader{display:flex;flex-direction:column;align-items:center}
+.eyebrow{margin:0 0 16px;font-size:10px;line-height:1.5;font-weight:500;letter-spacing:.09em;color:#547187}
+.eyebrow>span{opacity:.65}
+.productHeader h3{font-size:clamp(30px,3vw,42px);line-height:1.08;letter-spacing:-.045em;margin:0 0 22px;max-width:15ch;text-wrap:balance}
+.price{display:grid;grid-template-columns:auto auto;align-items:baseline;gap:4px 7px;margin:0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.price>span{font-size:13px;color:#617c90}
+.price strong{font-size:58px;line-height:1.05;font-weight:500;letter-spacing:-.06em;color:#0c2948}
+.price small{grid-column:1/-1;justify-self:center;font-size:11px;line-height:1.6;color:#617c90;font-weight:400}
+.introduction{font-size:13px;line-height:1.75;color:#547187;margin:18px auto 22px;max-width:36ch;text-wrap:pretty}
+.quote{display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:999px;background:#285d8e;color:#fff;font-size:13px;line-height:1.5;font-weight:500;padding:14px 19px;min-height:50px;max-width:310px;margin:auto;transition:background-color .2s,transform .18s,box-shadow .2s}
+.quote>span{font-size:21px;line-height:1;font-weight:400;transition:transform .25s}
+.quote:active{transform:scale(.98)}
+.quote:focus-visible{outline:3px solid #0071e3;outline-offset:4px}
+.details{min-width:0;text-align:left;border-left:1px solid #d9e3eb;padding-left:38px}
+.inclusions,.bookingExtras{padding:0;margin:0}
+.bookingExtras{border-bottom:1px solid #d9e3eb;padding-bottom:26px;margin-bottom:26px}
+.inclusions h4,.bookingExtras h4{font-size:13px;line-height:1.5;font-weight:500;margin:0 0 22px;color:#0c2948}
+.features{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 26px;align-content:start}
+.features li{display:flex;align-items:start;gap:9px;font-size:14px;line-height:1.55;color:#36536a}
+.features svg{width:17px;height:17px;flex:0 0 17px;margin-top:2px;color:#33735a}
+.businessCard .eyebrow{color:#f4df8d}
+.businessCard .introduction,.businessCard .price>span,.businessCard .price small{color:#bbd0e0}
+.businessCard .price strong,.businessCard .features li,.businessCard h4{color:#fff}
+.businessCard .features svg{color:#a6d5ba}
+.businessCard .details{border-color:#ffffff26}
+.businessCard .quote{background:#fff;color:#0c2948}
+@media(hover:hover){.websiteCard:hover{border-color:#a8c0d1;box-shadow:0 12px 30px #0c29480b}.quote:hover{background:#1c4a73;box-shadow:0 5px 16px #0c294812}.quote:hover>span{transform:translate(2px,-2px)}.businessCard .quote:hover{background:#e8f1f7}}
+@media(min-width:1800px){.products{max-width:1240px}.websiteCard{padding:42px 48px;gap:64px}.productHeader h3{font-size:44px}.price strong{font-size:64px}.features{gap:20px 30px}.features li{font-size:15px}}
+@media(min-width:701px) and (max-width:1000px){.websiteCard{grid-template-columns:minmax(0,.85fr) minmax(0,1.2fr);padding:30px 26px;gap:28px}.details{padding-left:26px}.features{grid-template-columns:1fr;gap:12px}.productHeader h3{font-size:32px}.price strong{font-size:50px}}
+@media(max-width:700px){.products{max-width:430px}.websiteGrid{gap:22px}.websiteCard{grid-template-columns:1fr;padding:28px 24px;gap:28px}.productHeader h3{font-size:32px;margin-bottom:22px}.eyebrow{margin-bottom:14px}.price strong{font-size:48px}.introduction{font-size:14px;margin-block:20px}.quote{font-size:13px;min-height:52px;max-width:none}.details{border-left:0;border-top:1px solid #d9e3eb;padding:24px 0 0}.features{grid-template-columns:1fr;gap:13px}.inclusions h4,.bookingExtras h4{font-size:13px;margin-bottom:18px}.bookingExtras{padding-bottom:24px;margin-bottom:24px}}
+@media(prefers-reduced-motion:reduce){.websiteCard,.quote,.quote>span{transition:none}.quote:active,.quote:hover>span{transform:none}}

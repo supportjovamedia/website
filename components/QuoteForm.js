@@ -8,7 +8,7 @@ import { contactEmail } from "@/lib/site";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 
 export default function QuoteForm({ product = "" }) {
-  const selectedPackage = productById(product);
+  const selectedProduct = productById(product);
   const [status, setStatus] = useState("idle");
   const [fields, setFields] = useState({});
   const [error, setError] = useState("");
@@ -71,7 +71,7 @@ export default function QuoteForm({ product = "" }) {
   return <form className="form" data-enquiry-form noValidate onSubmit={submit} data-analytics-form="quote_callback" data-clarity-mask="true" aria-busy={status === "sending"} onChange={() => { if (status === "success") setStatus("idle"); }}>
     <div><h1>Get a Quote</h1><p className="form-note">Leave your details and we’ll get in touch about what you need.</p></div>
     <p className="form-note">Fields marked <Required /> are required.</p>
-    {selectedPackage && <section className="quote-package" aria-label="Selected package"><div><span className="quote-package-label">Selected package</span><h2>{selectedPackage.name}</h2><p>{selectedPackage.interval ? "" : "From "}{formatPrice(selectedPackage.amount)}{selectedPackage.interval ? " / month" : " · One-off project"}</p></div><Link href="/pricing">Change package</Link></section>}
+    {selectedProduct && <section className="quote-package" aria-label="Selected product"><div><span className="quote-package-label">Selected product</span><h2>{selectedProduct.name}</h2><p>{selectedProduct.interval ? "" : "From "}{formatPrice(selectedProduct.amount)}{selectedProduct.interval ? " / month" : " · One-off build"}</p></div><Link href="/pricing">Change product</Link></section>}
     {product && <input type="hidden" name="product" value={product} />}
     <fieldset className="contact-fields" disabled={status === "sending"}>
       <label><span>Name <Required /></span><input name="name" autoComplete="name" required maxLength={100} {...props("name")} />{feedback("name")}</label>
