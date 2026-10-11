@@ -6,11 +6,6 @@ import { products, productCategories, formatPrice } from "@/lib/products.mjs";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 import s from "./ProductPackages.module.css";
 
-const launchDetails = {
-  "landing-page": ["Design shaped around your business", "Mobile and desktop checks before launch"],
-  "business-website": ["Design review and your feedback before launch", "Mobile and desktop checks before launch"],
-  "booking-system": ["Design shaped around your business", "Mobile and desktop checks before launch"],
-};
 const packageIntroductions = {
   "landing-page": "A focused first impression for a new offer, a campaign or a business getting started.",
   "business-website": "Room to tell your story, showcase your services and turn interest into enquiries.",
@@ -43,7 +38,7 @@ export default function ProductPackages({ homepage = false }) {
             <h3>{product.name}</h3>
             <p className={s.description}>{packageIntroductions[product.id] || product.description}</p>
             <p className={s.price}>{!product.interval && <small className={s.fromPrice}>From </small>}{formatPrice(product.amount)}{product.interval && <small> / month</small>}<span>{product.interval ? "Monthly website care" : "One-off project"}</span></p>
-            <ul className={s.productFeatures} aria-label={`${product.name} includes`}>{[...product.includes, ...(launchDetails[product.id] || [])].map(item => <li key={item}>{item}</li>)}</ul>
+            <ul className={s.productFeatures} aria-label={`${product.name} includes`}>{product.includes.map(item => <li key={item}>{item}</li>)}</ul>
             <Link href={`/get-a-quote?product=${product.id}`} className={s.button} aria-label={`Get a Quote for ${product.name}`} onClick={() => trackEvent("quote_click", { product_id: product.id, placement: homepage ? "home_packages" : "pricing" })}>Get a Quote</Link>
           </article>;
         })}</MotionRegion>
