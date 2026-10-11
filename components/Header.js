@@ -143,7 +143,7 @@ function Navigation({ pathname }) {
           </nav>
           <div className="nav-actions">
             <a className="btn small desktop-cta" href="/get-a-quote">
-              {pathname === "/" ? "get Free website preview" : "Get a Quote"}
+              Get a Quote
             </a>
             <button
               ref={toggle}
@@ -183,7 +183,7 @@ function Navigation({ pathname }) {
               className="btn mobile-project"
               onClick={() => setOpen(false)}
             >
-              {pathname === "/" ? "get Free website preview" : "Get a Quote"}
+              Get a Quote
             </a>
           </div>
         </nav>
