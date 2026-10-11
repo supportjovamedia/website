@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CONSENT_KEY, CONSENT_MAX_AGE, readConsent, browserConsent, publicPage, measurementUrl, replaySafeUrl, eventPayload, trackEvent, revokeTracking } from "../lib/marketing-analytics.mjs";
+import { CONSENT_KEY, CONSENT_MAX_AGE, readConsent, browserConsent, publicPage, measurementUrl, replaySafeUrl, eventPayload, trackEvent, revokeTracking, campaignAttribution } from "../lib/marketing-analytics.mjs";
 
 test("consent fails closed for corrupt, expired, future and unavailable storage", () => {
   const now = Date.now();
@@ -49,8 +49,29 @@ test("nothing is queued before consent; accepted events reach all configured des
     choice="accepted"; trackEvent("generate_lead",{form_id:"contact_enquiry",email:"secret"});
     assert.equal(sent[0][0],"event"); assert.equal(sent[0][1],"generate_lead"); assert.equal(sent[0][2].email,undefined);
     assert.deepEqual(sent[1],["event","generate_lead"]); assert.equal(window.dataLayer[0].event,"jova_generate_lead");
-    choice="rejected"; trackEvent("page_view"); assert.equal(sent.length,2);
+    assert.ok(sent.some(args=>args[0]==="event" && args[1]==="generate_lead_contact_enquiry"));
+    const sentCount=sent.length;
+    choice="rejected"; trackEvent("page_view"); assert.equal(sent.length,sentCount);
   } finally { delete globalThis.window; }
+});
+
+test("campaign attribution survives internal navigation and rejects stored arbitrary data",()=>{
+  let saved=null;const storage={getItem:()=>saved,setItem:(key,value)=>{saved=value;}};
+  const campaign=campaignAttribution("https://www.jovamedia.com/?utm_source=reddit&utm_medium=social&utm_campaign=launch&utm_content=post_01&email=private",storage);
+  assert.deepEqual(campaign,{campaign_source:"reddit",campaign_medium:"social",campaign_campaign:"launch",campaign_content:"post_01"});
+  assert.deepEqual(campaignAttribution("https://www.jovamedia.com/get-a-quote",storage),campaign);
+  saved=JSON.stringify({email:"private",campaign_source:"private@example.com",campaign_medium:"social"});
+  assert.deepEqual(campaignAttribution("https://www.jovamedia.com/",storage),{campaign_medium:"social"});
+  assert.doesNotThrow(()=>campaignAttribution("https://www.jovamedia.com/",{getItem(){throw Error();}}));
+});
+
+test("form funnel details are bounded and quote product links remain replay safe",()=>{
+  const payload=eventPayload("form_validation_error",{form_id:"quote_callback",field_name:"email",error_stage:"validation",email:"secret",value:"secret",campaign_source:"facebook"},"https://www.jovamedia.com/get-a-quote?product=landing-page");
+  assert.equal(payload.field_name,"email");assert.equal(payload.error_stage,"validation");assert.equal(payload.campaign_source,"facebook");
+  assert.doesNotMatch(JSON.stringify(payload),/secret/);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/get-a-quote?product=landing-page&utm_source=facebook"),true);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/get-a-quote?product=private@example.com"),false);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/contact?product=landing-page"),false);
 });
 
 test("blocked localStorage access cannot enable tracking or crash consent reads", () => {

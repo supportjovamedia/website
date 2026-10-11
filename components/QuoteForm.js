@@ -24,10 +24,12 @@ export default function QuoteForm({ product = "" }) {
     const validation = validateQuote(data);
     setFields(validation.errors);
     if (Object.keys(validation.errors).length) {
+      trackEvent("form_validation_error", { form_id: "quote_callback", error_stage: "validation", field_name: Object.keys(validation.errors)[0] });
       form.elements.namedItem(Object.keys(validation.errors)[0])?.focus();
       return;
     }
     if (!token) {
+      trackEvent("form_validation_error", { form_id: "quote_callback", error_stage: "verification" });
       setStatus("error");
       setError("Please complete the I'm not a robot checkbox before requesting a callback.");
       requestAnimationFrame(() => result.current?.focus());
@@ -53,7 +55,7 @@ export default function QuoteForm({ product = "" }) {
     } catch (err) {
       setStatus("error");
       setError(["TimeoutError", "AbortError"].includes(err.name) ? "We could not confirm receipt. Please try again; your details are still here." : err.message || "Please try again or email us directly.");
-      trackEvent("form_error", { form_id: "quote_callback" });
+      trackEvent("form_error", { form_id: "quote_callback", error_stage: "delivery" });
     } finally {
       pending.current = false;
       recaptcha.current?.reset();

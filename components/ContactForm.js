@@ -41,10 +41,12 @@ export default function ContactForm() {
     const validation = validateEnquiry(values);
     setFields(validation.errors);
     if (Object.keys(validation.errors).length) {
+      trackEvent("form_validation_error", { form_id: "contact_enquiry", error_stage: "validation", field_name: Object.keys(validation.errors)[0] });
       form.elements.namedItem(Object.keys(validation.errors)[0])?.focus();
       return;
     }
     if (!recaptchaToken) {
+      trackEvent("form_validation_error", { form_id: "contact_enquiry", error_stage: "verification" });
       setStatus("error");
       setError("Please complete the I'm not a robot checkbox before sending your enquiry.");
       requestAnimationFrame(() => result.current?.focus());
@@ -61,6 +63,7 @@ export default function ContactForm() {
     setStatus("sending");
 
     setError("");
+    trackEvent("form_submit", { form_id: "contact_enquiry" });
 
     try {
 
@@ -93,7 +96,7 @@ export default function ContactForm() {
       attempt.current = null;
 
     } catch (err) {
-      trackEvent("form_error", { form_id: "contact_enquiry" });
+      trackEvent("form_error", { form_id: "contact_enquiry", error_stage: "delivery" });
 
       setStatus("error");
 
@@ -148,19 +151,18 @@ export default function ContactForm() {
 
       </div>
 
-      <p className="form-note">Fields marked <span className="required-mark" aria-hidden="true">*</span> are required. Please complete them so we can understand your enquiry.</p>
       <fieldset className="contact-fields" disabled={status === "sending"}>
         <input type="hidden" name="service" value="General enquiry" />
         <div className="two">
-          <label><span>First name <Required /></span><input name="firstName" autoComplete="given-name" required maxLength={50} placeholder="Alex" {...fieldProps("firstName")} />{fieldError("firstName")}</label>
-          <label><span>Last name <Required /></span><input name="lastName" autoComplete="family-name" required maxLength={50} placeholder="Morgan" {...fieldProps("lastName")} />{fieldError("lastName")}</label>
+          <label><span>First name <Required /></span><input name="firstName" autoComplete="given-name" required maxLength={50} placeholder="First name" {...fieldProps("firstName")} />{fieldError("firstName")}</label>
+          <label><span>Last name <Required /></span><input name="lastName" autoComplete="family-name" required maxLength={50} placeholder="Last name" {...fieldProps("lastName")} />{fieldError("lastName")}</label>
         </div>
         <div className="two">
-          <label><span>Email address <Required /></span><input name="email" type="email" autoComplete="email" required maxLength={200} placeholder="alex@example.com" {...fieldProps("email")} />{fieldError("email")}</label>
-          <label><span>Contact number <span className="field-hint">(optional)</span></span><input name="phone" type="tel" autoComplete="tel" maxLength={40} placeholder="Your phone number" {...fieldProps("phone")} />{fieldError("phone")}</label>
+          <label><span>Email address <Required /></span><input name="email" type="email" autoComplete="email" required maxLength={200} placeholder="name@example.com" {...fieldProps("email")} />{fieldError("email")}</label>
+          <label><span className="contact-phone-label">Contact number <span className="field-hint">(optional)</span></span><input name="phone" type="tel" autoComplete="tel" maxLength={40} placeholder="Your phone number" {...fieldProps("phone")} />{fieldError("phone")}</label>
         </div>
         <label><span>Message <Required /></span>
-          <textarea name="message" required minLength={10} maxLength={3000} rows={5} placeholder="Tell us what you have in mind." onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
+          <textarea name="message" required minLength={10} maxLength={3000} rows={5} placeholder="Send a message" onChange={event => setMessageLength(event.target.value.trim().length)} {...fieldProps("message", "message-hint")} />
           <span className="field-hint" id="message-hint">At least 10 characters. {messageLength.toLocaleString("en-GB")} / 3,000 characters.</span>{fieldError("message")}
         </label>
       </fieldset>

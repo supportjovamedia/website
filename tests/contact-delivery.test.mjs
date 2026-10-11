@@ -45,15 +45,13 @@ test("contact enforces qualification fields and trimmed description minimums bef
  }
 });
 
-test("country, budget and Other details reach the inbox; optional fields can be omitted", async () => {
+test("email retains service details without obsolete qualification fields", async () => {
  let mail;
  const handler=createContactHandler({env,send:async(url,options)=>{mail=JSON.parse(options.body);return Response.json({id:"accepted"})}});
  assert.equal((await handler(req({...data,country:"US",service:"Other",other:"A customer booking system",company:undefined,timing:undefined,message:"x".repeat(10)}))).status,200);
- assert.match(mail.text,/Country: United States/);
- assert.match(mail.text,/Budget \(GBP\): £201–£500/);
- assert.doesNotMatch(mail.text,/monthly budget/i);
+ assert.doesNotMatch(mail.text,/Country:|Budget|Company:|Timing:/i);
  assert.match(mail.text,/Other: A customer booking system/);
- assert.match(mail.text,/Company: Not provided/);
+ assert.match(mail.text,/Message:\nx{10}/);
 });
 
 
@@ -63,7 +61,7 @@ test("general questions and client support can send without project qualificatio
   const handler=createContactHandler({env,send:async(url,options)=>{mail=JSON.parse(options.body);return Response.json({id:"accepted"})}});
   const body={name:"Test Visitor",email:"test@example.com",service,message:"Could you help me with my existing website?",website:"",recaptchaToken:"fresh-captcha-token"};
   assert.equal((await handler(req(body))).status,200);
-  assert.ok(mail.text.includes(service));
+  if(service !== "General enquiry") assert.ok(mail.text.includes(service));
   assert.doesNotMatch(mail.text,/undefined/);
   assert.equal((await handler(req({...body,message:"short"}))).status,400);
  }
@@ -143,6 +141,8 @@ test("short contact enquiries require both names and deliver the optional phone 
  const handler=createContactHandler({env,send:async(url,options)=>{mail=JSON.parse(options.body);return Response.json({id:"short-form-id"});}});
  const body={firstName:"Alex",lastName:"Morgan",email:"alex@example.com",phone:"+44 7700 900123",service:"General enquiry",message:"0123456789",website:"",recaptchaToken:"fresh-token"};
  assert.equal((await handler(req(body))).status,200);assert.match(mail.text,/Name: Alex Morgan/);assert.match(mail.text,/Phone: \+44 7700 900123/);
+ assert.doesNotMatch(mail.text,/Country:|Budget|Company:|Timing:|Interested in:/i);
+ assert.match(mail.text,/Message:\n0123456789/);
  assert.equal((await handler(req({...body,phone:""}))).status,200);
  for(const change of [{firstName:""},{lastName:""},{message:"123456789"},{phone:"hello"},{phone:"123\n456789"}]) assert.equal((await handler(req({...body,...change}))).status,400,JSON.stringify(change));
 });
