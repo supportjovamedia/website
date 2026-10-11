@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { products, productCategories, formatPrice } from "@/lib/products.mjs";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
-import ConsultationLink from "./ConsultationLink";
 import s from "./Commerce.module.css";
 
 export default function ProductPackages({ homepage = false }) {
@@ -34,12 +33,11 @@ export default function ProductPackages({ homepage = false }) {
             <p className={s.price}>{!product.interval && <small className={s.fromPrice}>From </small>}{formatPrice(product.amount)}{product.interval && <small> / month</small>}<span>{product.interval ? "Monthly website care" : "One-off project"}</span></p>
             <ul className={s.productFeatures} aria-label={`${product.name} includes`}>{product.includes.map(item => <li key={item}><Check size={17} aria-hidden="true" /><span>{item}</span></li>)}</ul>
             <Link href={`/get-a-quote?product=${product.id}`} className={s.button} aria-label={`Get a Quote for ${product.name}`} onClick={() => trackEvent("quote_click", { product_id: product.id, placement: homepage ? "home_packages" : "pricing" })}>Get a Quote</Link>
-            <div className={s.productTerms}><p className={s.cardNote}>{product.note}</p></div>
           </article>;
         })}</div>
       </section>
       </div>
-      <div className={s.packageFootnote}><p>Website prices start from the stated amount and depend on the agreed scope. Hosting, domains and paid software are separate. You supply the copy and images. We confirm the brief, scope and platform compatibility before starting work. Care plans cover one website and the stated monthly allowance.</p><ConsultationLink className={s.textLink} placement={homepage ? "home_packages" : "pricing"} /></div>
+      <div className={s.packageFootnote}><p>{categoryId === "websites" ? "Website prices start from the stated amount. We agree your scope and any separate costs before work begins." : "Care plans cover one website. We agree any work beyond your monthly allowance separately."}</p></div>
     </div>
   </section>;
 }

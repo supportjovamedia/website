@@ -64,3 +64,24 @@
 .jova-pages .contact-page .contact-fit h2{color:#0c2948}
 .jova-pages .contact-page .contact-fit-grid article>span{color:#fff}
 @media(max-width:700px){.jova-pages .contact-page .page-hero{padding:40px 0 46px}.jova-pages .contact-page .contact-intro>div:first-child{text-align:center}}
+
+/* Match all inner-page banners to the homepage navy. */
+.jova-pages .page-hero{background:#071b29;border-bottom-color:#071b29}
+.jova-pages .page-hero h1 em{color:#fff}
+/* Native exclusive disclosures, enhanced where intrinsic-size transitions exist. */
+.jova-pages .site-faq details{padding:0;transition:background .25s}
+.jova-pages .site-faq summary{position:relative;list-style:none;padding:23px 44px;line-height:1.55;min-height:64px}
+.jova-pages .site-faq summary::-webkit-details-marker{display:none}
+.jova-pages .site-faq summary::after{content:"+";position:absolute;right:14px;top:50%;font-size:25px;line-height:1;transform:translateY(-50%);transition:transform .3s cubic-bezier(.16,1,.3,1);color:#235789}
+.jova-pages .site-faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.jova-pages .site-faq details[open]{background:#edf3f7;border-radius:12px}
+.jova-pages .site-faq details p{margin:0 auto;padding:0 24px 26px;text-align:center;text-wrap:pretty}
+.jova-pages .site-faq summary:focus-visible{outline:3px solid #0071e3;outline-offset:-3px;border-radius:8px}
+@supports(interpolate-size:allow-keywords){
+  .jova-pages details[name]{interpolate-size:allow-keywords}
+  .jova-pages details[name]::details-content{block-size:0;opacity:0;overflow:clip;transition:block-size .32s cubic-bezier(.16,1,.3,1),opacity .25s,content-visibility .32s;transition-behavior:allow-discrete}
+  .jova-pages details[name][open]::details-content{block-size:auto;opacity:1}
+}
+[data-motion-card][data-revealed=true]{animation:jovaCardArrival .65s cubic-bezier(.16,1,.3,1) both}
+@keyframes jovaCardArrival{from{opacity:.35;transform:translateY(20px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){[data-motion-card][data-revealed=true]{animation:none}.jova-pages details[name]::details-content,.jova-pages .site-faq details,.jova-pages .site-faq summary::after{transition:none}}

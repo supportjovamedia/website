@@ -4,6 +4,7 @@ import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 import { primaryServices } from "@/lib/service-catalogue";
 import styles from "./services.module.css";
+import MotionRegion from "@/components/MotionRegion";
 
 export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s seven services: websites, system modernization, social media, brand design, copywriting, email automation and SEO.");
 
@@ -19,8 +20,8 @@ export default function Page() {
     </section>
     <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
       <div className="shell">
-        <div className={styles.directoryGrid}>
-          {primaryServices.map((service) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard}>
+        <MotionRegion className={styles.directoryGrid}>
+          {primaryServices.map((service, index) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard} data-motion-card style={{ "--card-delay": `${index % 3 * 70}ms` }}>
             <div className={styles.directoryImage}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt="" fill sizes="(max-width:700px) 90vw, (max-width:1000px) 45vw, 30vw" /></div>
             <div className={styles.directoryBody}>
               <p className="kicker">{service.eyebrow}</p>
@@ -28,7 +29,7 @@ export default function Page() {
               <div className={styles.cardFoot}><span>Explore service</span></div>
             </div>
           </Link>)}
-        </div>
+        </MotionRegion>
 
       </div>
     </section>

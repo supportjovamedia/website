@@ -121,3 +121,16 @@
 .custom{background:#0c2948}
 .custom :global(.kicker){color:#fff}
 @media(max-width:700px){.hero{padding:40px 0 46px}.heroArt{height:270px}.hero :global(.actions){gap:20px}.hero h1{font-size:clamp(36px,9vw,50px)}}
+
+/* Scroll entrances and touch-friendly visual focus. */
+.directoryCard{transition:box-shadow .35s ease,border-color .35s ease,background .35s ease;}
+.directoryCard[data-revealed=true]{animation:serviceArrival .7s cubic-bezier(.16,1,.3,1) both;animation-delay:var(--card-delay,0ms)}
+.directoryCard:nth-child(3n+2){background:#f4f7fa}.directoryCard:nth-child(3n){background:#fff8ed}
+.directoryImage img{transform:scale(1.06);transition:transform 1.1s cubic-bezier(.16,1,.3,1)}
+.directoryCard[data-in-view=true] .directoryImage img{transform:scale(1)}
+@media(hover:hover){.directoryCard:hover{box-shadow:0 16px 35px #071b2914;border-color:#235789}.directoryCard:hover .directoryImage img{transform:scale(1.035)}}
+.cardFoot span{display:inline-flex;align-items:center;gap:12px}.cardFoot span::after{content:"";display:inline-block;width:7px;height:7px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transition:transform .3s}
+.directoryCard:hover .cardFoot span::after,.directoryCard:focus-visible .cardFoot span::after{transform:translate(3px,-3px)}
+@keyframes serviceArrival{from{opacity:.35;transform:translateY(24px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:700px){.directoryImage{height:clamp(230px,72vw,340px)}.directoryCard{border-radius:16px}.directoryCard[data-in-view=true]{border-color:#91acbf;box-shadow:0 12px 28px #071b2910}.directoryBody>p{max-width:38ch}}
+@media(prefers-reduced-motion:reduce){.directoryCard[data-revealed=true]{animation:none}.directoryCard,.directoryImage img,.cardFoot span::after{transition:none;transform:none!important}}
