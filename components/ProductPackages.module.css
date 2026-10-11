@@ -38,12 +38,11 @@
 .careGrid .cardTop{height:18px}
 .featureContent{display:flex;align-items:center;justify-content:center;gap:9px;max-width:100%}
 .status{width:17px;height:17px;flex:0 0 17px;color:#267052;font:400 22px/17px Arial,sans-serif}
-.featureLabel{display:block;font-size:10px;line-height:1.5;letter-spacing:.04em;color:#647b8b;margin-bottom:3px}
 .productFeatures .featureHeading{padding:16px 0 10px;min-height:48px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#0c2948}
 .productFeatures .unavailable{color:#778795}
 .unavailable .status{color:currentColor}
 .featured .status{color:#9de2bd}
-.featured .featureLabel,.featured .unavailable{color:#a8bdce}
+.featured .unavailable{color:#a8bdce}
 .featured .featureHeading{color:#fce59c}
 .featured .unavailable .status{color:#a8bdce}
 /* Shared tracks align every feature, even when text wraps in another card. */

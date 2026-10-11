@@ -39,11 +39,11 @@ export default function ProductPackages({ homepage = false }) {
             <p className={s.description}>{packageIntroductions[product.id] || product.description}</p>
             <p className={s.price}>{!product.interval && <small className={s.fromPrice}>From </small>}{formatPrice(product.amount)}{product.interval && <small> / month</small>}<span>{product.interval ? "Monthly website care" : "One-off project"}</span></p>
             <ul className={s.productFeatures} aria-label={`${product.name} features`}>{product.category === "websites" ? comparisonForProduct(product.id).map(row => row.heading
-              ? <li key={row.heading} className={s.featureHeading}>{row.heading}</li>
-              : <li key={row.label} data-feature={row.label} className={`${s.comparisonFeature} ${row.value === false ? s.unavailable : ""}`}>
+              ? <li key={row.heading} className={s.featureHeading}>{row.bookingOnly && product.id !== "booking-system" ? <><span className={s.status} aria-hidden="true">−</span><span className={s.screenReader}>{row.heading}: Not included</span></> : row.heading}</li>
+              : <li key={row.label} data-feature={row.label} className={row.value === false ? s.unavailable : undefined}>
                 <span className={s.featureContent}>
                   {row.value === false ? <span className={s.status} aria-hidden="true">−</span> : <svg className={s.status} aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-                  <span>{typeof row.value === "string" ? <><span className={s.featureLabel}>{row.label}</span>{row.value}</> : row.label}{row.value === false && <span className={s.screenReader}>: Not included</span>}{row.value === true && <span className={s.screenReader}>: Included</span>}</span>
+                  {row.value === false ? <span className={s.screenReader}>{row.label}: Not included</span> : <span>{typeof row.value === "string" ? row.value : row.label}{row.value === true && <span className={s.screenReader}>: Included</span>}</span>}
                 </span>
               </li>) : product.includes.map(item => <li key={item}>{item}</li>)}</ul>
             <Link href={`/get-a-quote?product=${product.id}`} className={s.button} aria-label={`Get a Quote for ${product.name}`} onClick={() => trackEvent("quote_click", { product_id: product.id, placement: homepage ? "home_packages" : "pricing" })}>Get a Quote</Link>
