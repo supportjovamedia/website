@@ -2,12 +2,10 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
-  view-timeline-name: --hero-photo;
-  view-timeline-axis: block;
 }
 .backdrop {
   position: absolute;
-  inset: -36px 0;
+  inset: -180px 0;
   z-index: -2;
   pointer-events: none;
 }
@@ -16,21 +14,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: rgb(7 27 41 / 85%);
+  background: rgb(7 27 41 / 92%);
   pointer-events: none;
 }
-/* Only the photograph moves. Touch, reduced-motion and older browsers retain
-   the same readable design without scroll-linked movement. */
-@supports (animation-timeline: view()) {
-  @media (min-width: 901px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .backdrop {
-      animation: photoDrift 1s linear both;
-      animation-timeline: --hero-photo;
-      animation-range: entry 0% exit 100%;
-    }
-  }
-}
-@keyframes photoDrift {
-  from { transform: translateY(-24px); }
-  to { transform: translateY(24px); }
-}
+/* ScrollTrigger moves only this oversized background, never the copy. */

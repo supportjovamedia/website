@@ -1,12 +1,10 @@
 "use client";
 import { useId, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import styles from "./GrowthSignup.module.css";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 export default function GrowthSignup({ newsletter = false }) {
- const pathname = usePathname();
- const whiteNewsletter = newsletter && pathname === "/";
+ const whiteNewsletter = newsletter;
  const id=useId(); const [state,setState]=useState({busy:false,message:"",error:false});
  async function submit(event){event.preventDefault();const form=event.currentTarget;const fields=new FormData(form);trackEvent("form_submit",{form_id:newsletter?"newsletter":"checklist"});setState({busy:true,message:"",error:false});
  try{const response=await fetch("/api/growth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({kind:newsletter?"newsletter":"checklist",email:fields.get("email"),name:fields.get("name")||"",website:fields.get("website")||""})});const result=await response.json();if(!response.ok)throw Error(result.error||"Please try again.");setState({busy:false,message:result.status==="already_subscribed"?"You’re already subscribed. Thanks for being part of JovaMedia.":newsletter?"Check your inbox to confirm your subscription. You are not subscribed until you confirm.":"Your checklist is on its way. Check your inbox and spam folder.",error:false});trackEvent(newsletter?"newsletter_signup":"resource_request",{form_id:newsletter?"newsletter":"checklist"});form.reset();}catch(error){trackEvent("form_error",{form_id:newsletter?"newsletter":"checklist",error_stage:"delivery"});setState({busy:false,message:error.message||"We could not send that. Please try again.",error:true});}}

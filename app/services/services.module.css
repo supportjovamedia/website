@@ -161,7 +161,7 @@
 @media(prefers-reduced-motion:reduce){.directoryCard .directoryImage img{transform:none}}
 
 /* Composed artwork contains headings and browser bars: show its full canvas. */
-.related{background:#fff}
+.related{background:#f3f4f6}
 .directoryCard,.directoryCard:nth-child(even){background:#f3f4f6}
 .directoryImage{height:auto;min-height:0;aspect-ratio:4/3;align-self:center;background:transparent}
 .directoryCard .directoryImage img,.directoryCard:hover .directoryImage img{object-fit:contain;object-position:center;transform:none;transition:none}

@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import CookieConsent from "./CookieConsent";
+import styles from "./Footer.module.css";
 import { businessPhone, whatsappLink } from "@/lib/business-contact.mjs";
-export default function Footer(){return <footer className="jova-footer">
+export default function Footer(){return <footer className={`jova-footer ${styles.footer}`}>
  <Link href="/" aria-label="JovaMedia home"><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128}/></Link>
  <div><h3>Studio</h3><Link href="/about">Our story</Link><Link href="/work">Our work</Link><Link href="/services">Our approach</Link></div>
  <div><h3>Services</h3><Link href="/services">Explore our services</Link><Link href="/get-a-quote">Get a Quote</Link><Link href="/contact">Contact Us</Link></div>
