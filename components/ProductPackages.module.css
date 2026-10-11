@@ -41,3 +41,8 @@
 .productFeatures li{line-height:1.45;padding:3px 4px}
 .packages .packageFootnote{max-width:86ch;line-height:1.65}
 @media(max-width:700px){.careGrid{grid-template-columns:1fr}.productFeatures{grid-auto-rows:minmax(40px,auto)}.productFeatures li{padding:8px 4px}}
+
+@media(min-width:701px) and (max-width:1000px){.grid{grid-template-columns:1fr;max-width:640px;margin-inline:auto;gap:24px}.card{padding:30px;gap:16px}.card h3{font-size:30px;min-height:0}.price{font-size:48px}.productFeatures{grid-auto-rows:minmax(44px,auto)}.productFeatures li{font-size:15px}.careGrid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none}.careGrid .card{padding:26px 20px}.careGrid .productFeatures{grid-auto-rows:minmax(64px,auto)}}
+.button{transition:background .25s,transform .16s ease-out;box-shadow:none}.button:active{transform:scale(.97)}
+@media(hover:none){.button:hover{transform:none;box-shadow:none}.categoryNav button:hover:not([aria-pressed=true]){background:transparent}}
+@media(prefers-reduced-motion:reduce){.button,.categoryNav button{transition:none}.button:active{transform:none}}

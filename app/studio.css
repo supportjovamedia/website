@@ -135,3 +135,24 @@
  [data-enquiry-cta],.jova-pages .btn[href="/get-a-quote"],.jova-pages [data-enquiry-form] button[type=submit]{transition:none;transform:none}
  [data-enquiry-cta]::after,.jova-pages .btn[href="/get-a-quote"]::after,.jova-pages [data-enquiry-form] button[type=submit]::after{display:none}
 }
+
+/* A shared motion rhythm keeps navigation, cards and forms feeling related. */
+.jova-pages .btn{min-height:48px;border-radius:999px;font-size:14px;transition:background-color 250ms cubic-bezier(.22,1,.36,1),transform 160ms ease-out,box-shadow 250ms cubic-bezier(.22,1,.36,1)}
+.jova-pages .btn:active{transform:scale(.97)}
+[data-motion-card][data-motion-ready=true]{transition-duration:400ms,500ms}
+[data-motion-card][data-motion-ready=true]:not([data-revealed=true]){transform:translateY(24px)}
+.site-motion-home .route-reveal,.jova-pages .route-reveal{transition-duration:400ms,500ms}
+.site-motion-home .route-pending,.jova-pages .route-pending{transform:translateY(20px)}
+@media(prefers-reduced-motion:no-preference){
+ .jova-pages .page-hero .shell>.kicker,.jova-pages .page-hero .shell>h1,.jova-pages .page-hero .shell>.lead,.jova-pages .page-hero .shell>.actions{animation-duration:500ms}
+ .jova-pages .page-hero .shell>h1{animation-delay:40ms}
+ .jova-pages .page-hero .shell>.lead{animation-delay:80ms}
+ .jova-pages .page-hero .shell>.actions{animation-delay:120ms}
+}
+@media(max-width:900px){
+ [data-motion-card][data-motion-ready=true]:not([data-revealed=true]){transform:translateY(14px)}
+ .site-motion-home .route-pending,.jova-pages .route-pending{transform:translateY(12px)}
+}
+@media(prefers-reduced-motion:reduce){
+ .jova-pages .btn,[data-motion-card][data-motion-ready=true],.site-motion-home .route-reveal,.jova-pages .route-reveal{transition:none;transform:none;opacity:1}
+}

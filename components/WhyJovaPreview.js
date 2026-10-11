@@ -20,8 +20,8 @@ export default function WhyJovaPreview() {
         <Link className={s.cta} data-enquiry-cta href="/get-a-quote">Get a Quote</Link>
       </div>
       <MotionRegion className={s.values}>
-        {values.map(({ photo, image, alt, title, copy }, index) => <article className={s.value} data-motion-card style={{ "--card-delay": `${index * 100}ms`, "--phone-delay": `${index % 2 * 70}ms` }} key={photo}>
-          {image && <div className={s.art}><Image src={image} alt={alt} width={1448} height={1086} sizes="(max-width: 700px) 43vw, (max-width: 1100px) 22vw, 14vw" /></div>}
+        {values.map(({ photo, image, alt, title, copy }, index) => <article className={s.value} data-motion-card style={{ "--card-delay": `${index * 40}ms`, "--phone-delay": `${index % 2 * 40}ms` }} key={photo}>
+          {image && <div className={s.art}><Image src={image} alt={alt} width={1448} height={1086} sizes="(max-width: 359px) 90vw, (max-width: 700px) 43vw, (max-width: 1100px) 22vw, 16vw" /></div>}
           <span className={s.rule} aria-hidden="true" />
           <h3>{title.map(line => <span key={line}>{line}</span>)}</h3>
           <p>{copy}</p>

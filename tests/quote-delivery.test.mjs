@@ -16,7 +16,7 @@ test("seven services and the unsure option can request contact without a phone, 
   let mail;
   const handler = createQuoteHandler({ ...options, send: async (url, init) => { mail = JSON.parse(init.body); return Response.json({ id: "received" }); } });
   assert.equal((await handler(request())).status, 200);
-  assert.equal(mail.subject, "New JovaMedia quote callback request");
+  assert.equal(mail.subject, "New JovaMedia quote request");
   assert.deepEqual(mail.to, [env.CONTACT_TO_EMAIL]);
   assert.equal(mail.reply_to, data.email);
   assert.match(mail.text, /Landing Page/);
@@ -24,7 +24,7 @@ test("seven services and the unsure option can request contact without a phone, 
   assert.doesNotMatch(mail.text, /Budget|Country|undefined/);
   assert.equal((await handler(request({ ...data, phone: "", product: "web-care-pro" }))).status, 200);
   assert.match(mail.text, /Web Care Pro/);
-  assert.match(mail.text, /please email to arrange contact/);
+  assert.match(mail.text, /please reply by email/);
 });
 test("invalid callback fields, honeypots and origins never reach delivery", async () => {
   const handler = createQuoteHandler({ ...options, send: async () => assert.fail("Invalid data must not be delivered") });

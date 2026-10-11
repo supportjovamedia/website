@@ -21,8 +21,8 @@ export default function Page() {
     <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
       <div className="shell">
         <MotionRegion className={styles.directoryGrid}>
-          {primaryServices.map((service, index) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard} data-motion-card style={{ "--card-delay": `${index % 3 * 70}ms` }}>
-            <div className={styles.directoryImage}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt="" fill sizes="(max-width:700px) 90vw, (max-width:1000px) 45vw, 30vw" /></div>
+          {primaryServices.map((service, index) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard} data-motion-card style={{ "--card-delay": `${index % 3 * 40}ms` }}>
+            <div className={styles.directoryImage}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt="" fill sizes="(max-width:700px) 100vw, 60vw" /></div>
             <div className={styles.directoryBody}>
               <p className="kicker">{service.eyebrow}</p>
               <h2>{service.name}</h2><p>{service.summary}</p>

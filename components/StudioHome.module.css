@@ -53,3 +53,46 @@
 @media(max-width:900px){.benefits{padding-block:36px 54px}.pan,.galleryWindow[data-direction=right] .pan{transform:none}.benefitGrid article .benefitPhoto,.serviceVisual[data-motion-ready=true] img{transform:none;transition:none}}
 @media(max-width:700px){.benefits{padding-top:30px}.benefitGrid{margin-top:28px;gap:30px}.serviceCopy{padding-block:10px}.serviceCopy h3{text-wrap:balance}.finalCta{padding:42px 22px}}
 @media(prefers-reduced-motion:reduce){.benefitGrid article .benefitPhoto,.serviceVisual[data-motion-ready=true] img{transform:none;transition:none}}
+
+/* Services flow naturally unless a desktop has enough room for the full stage. */
+.story{height:auto;background:#f4f6f8}
+.sticky{position:static;height:auto;min-height:0;padding:44px 5vw 0}
+.stage{display:grid;gap:24px;min-height:0;flex:auto;margin-top:24px}
+.service{position:relative;inset:auto;opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:none;min-width:0;padding:28px;border-radius:20px;scroll-margin-top:110px;background:#eef3f8}
+.service:nth-child(2){background:#fff6da}.service:nth-child(3){background:#fff0f2}
+.serviceCopy h3{font-size:clamp(36px,4.4vw,70px);text-wrap:balance}
+.sticky .moreServices{padding:24px 0 40px}
+.chapters{flex-wrap:wrap;gap:8px;max-width:780px;margin-inline:auto}
+.chapters button{min-height:44px;padding:10px 16px;font-size:13px;max-width:none;border:1px solid #cad5df;border-radius:999px;background:#fff;color:#36536a;line-height:1.45;text-align:center;transition:background .25s,color .25s,border-color .25s}
+.chapters button[aria-current]{background:#0c2948;border-color:#0c2948;color:#fff}
+.chapters button:focus-visible,.galleryNote button:focus-visible{outline:3px solid #0071e3;outline-offset:4px}
+.galleryNote{gap:18px;flex-wrap:wrap}
+.galleryNote p{font-size:13px}.galleryNote button{font:inherit;font-size:12px;min-height:44px;cursor:pointer}
+.primary,.secondary,.lightButton,.darkOutline{font-size:14px;min-height:48px;transition:background .25s,transform .16s ease-out}
+.serviceActions .primary,.serviceActions .underlined{font-size:14px}
+@media(min-width:901px) and (min-height:820px) and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ .story[data-pinned=true]{height:270vh}
+ .story[data-pinned=true] .sticky{position:sticky;top:86px;height:calc(100svh - 86px);min-height:0;padding-top:24px;padding-bottom:20px}
+ .story[data-pinned=true] .stage{display:block;flex:1;min-height:0;margin-top:12px}
+ .story[data-pinned=true] .service{position:absolute;inset:0;grid-template-columns:1.1fr 1fr;gap:4vw;padding:0;border-radius:0;background:transparent;pointer-events:none}
+ .story[data-pinned=true] .service[data-active=true]{pointer-events:auto}
+ .story[data-pinned=true] .serviceVisual{opacity:0;transition:opacity .4s ease-in-out}
+ .story[data-pinned=true] .serviceCopy{opacity:0;visibility:hidden;translate:0 4px;transition:opacity .15s ease-in-out,translate .15s ease-in-out,visibility 0s .15s}
+ .story[data-pinned=true] .service[data-active=true] .serviceVisual{opacity:1}
+ .story[data-pinned=true] .service[data-active=true] .serviceCopy{opacity:1;visibility:visible;translate:0 0;transition-delay:.15s,.15s,0s}
+ .story[data-pinned=true] .serviceCopy h3{font-size:clamp(36px,4vw,68px);margin-bottom:16px}
+ .story[data-pinned=true] .serviceCopy h4{font-size:17px;margin-bottom:10px}
+ .story[data-pinned=true] .serviceCopy>p{font-size:14px;line-height:1.65;margin-bottom:14px}
+ .story[data-pinned=true] .serviceCopy ul{margin-bottom:18px;gap:8px}
+ .story[data-pinned=true] .serviceCopy li{font-size:13px}
+ .story[data-pinned=true] .serviceVisual img{max-height:53svh}
+ .story[data-pinned=true] .moreServices{padding:8px 0 0}
+}
+@media(min-width:1800px) and (min-height:820px){.story[data-pinned=true] .sticky{top:100px;height:calc(100svh - 100px)}}
+@media(max-width:900px){
+ .service{padding:28px 24px;margin:0}.sticky{padding-inline:5vw}.serviceCopy>p{font-size:14px;line-height:1.75}.serviceCopy li{font-size:13px}.benefitGrid p{font-size:14px;line-height:1.75}.stats p{font-size:14px}.stats h3{font-size:19px}.underlined{font-size:14px}
+}
+@media(max-width:600px){
+ .stage{gap:22px;margin-top:24px}.chapters{gap:8px}.chapters button{font-size:13px;padding:10px 14px;flex:1 1 140px}.chapters button:last-child{flex-grow:0;flex-basis:100%}.storyHeading .kicker,.sectionIntro .kicker{font-size:10px}.service{grid-template-columns:1fr;gap:22px}.serviceCopy h3{font-size:36px}.serviceCopy h4{font-size:17px}.serviceActions{gap:20px}.serviceCopy ul{max-width:290px}.galleryNote{text-align:center;padding-inline:22px;gap:12px}.galleryNote p{font-size:12px;flex-basis:100%}.galleryNote button{font-size:12px}.sectionIntro>p:last-child{font-size:15px}.experience .kicker{font-size:10px}.finalCta>p{font-size:10px;max-width:35ch}
+}
+@media(prefers-reduced-motion:reduce){.galleryNote button{display:none}.serviceCopy,.serviceVisual{opacity:1;visibility:visible;translate:none;transition:none}.primary,.secondary,.lightButton,.darkOutline,.chapters button{transition:none}}
