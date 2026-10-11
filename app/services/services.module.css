@@ -123,7 +123,7 @@
 @media(max-width:700px){.hero{padding:40px 0 46px}.heroArt{height:270px}.hero :global(.actions){gap:20px}.hero h1{font-size:clamp(36px,9vw,50px)}}
 
 
-/* Alternating service chapters with image parallax and staggered copy. */
+/* Alternating service chapters with complete artwork and staggered copy. */
 .directory{padding-block:40px 56px}
 .directoryGrid{grid-template-columns:1fr;gap:28px}
 .directoryCard{display:grid;grid-template-columns:1.12fr .88fr;min-height:clamp(340px,28vw,500px);border:0;border-radius:20px;background:#edf3f7;isolation:isolate}
@@ -144,8 +144,8 @@
 .directoryCard .directoryBody>p:not(:global(.kicker)){transition-delay:calc(var(--card-delay,0ms) + 210ms)}
 .directoryCard .directoryBody>.cardFoot{transition-delay:calc(var(--card-delay,0ms) + 270ms)}
 .directoryCard[data-motion-ready=true]:not([data-revealed=true]) .directoryBody>*{opacity:0;transform:translateY(24px)}
-.directoryCard[data-motion-ready=true] .directoryImage{clip-path:inset(0 round 0);transition:clip-path 1.1s cubic-bezier(.16,1,.3,1)}
-.directoryCard[data-motion-ready=true]:not([data-revealed=true]) .directoryImage{clip-path:inset(8% 8% round 18px)}
+
+
 @media(hover:hover){.directoryCard:hover{background:#e4eef5}.directoryCard:nth-child(even):hover{background:#ece7dd}.directoryCard:hover .cardFoot span{border-bottom-color:#285d8e}}
 @media(max-width:700px){
  .directory{padding-block:24px 36px}.directoryGrid{gap:24px}
@@ -158,3 +158,12 @@
 @media(prefers-reduced-motion:reduce){.directoryCard,.directoryCard .directoryBody>*,.directoryCard .directoryImage{transition:none;opacity:1!important;transform:none!important;clip-path:none!important}.directoryImage img{transform:none}.directoryCard::after{transform:scaleX(1)}}
 .directoryCard .directoryImage img{transform:translateY(var(--motion-drift,0px)) scale(1.14)}
 @media(prefers-reduced-motion:reduce){.directoryCard .directoryImage img{transform:none}}
+
+/* Composed artwork contains headings and browser bars: show its full canvas. */
+.directoryCard,.directoryCard:nth-child(even){background:#f3f4f6}
+.directoryImage{height:auto;min-height:0;aspect-ratio:4/3;align-self:center;background:transparent}
+.directoryCard .directoryImage img,.directoryCard:hover .directoryImage img{object-fit:contain;object-position:center;transform:none;transition:none}
+.heroArt{height:auto;aspect-ratio:4/3;background:transparent}
+.heroArt img{object-fit:contain;object-position:center}
+@media(hover:hover){.directoryCard:hover,.directoryCard:nth-child(even):hover{background:#edf0f3}}
+@media(max-width:700px){.directoryImage{height:auto;aspect-ratio:4/3}.heroArt{height:auto}}

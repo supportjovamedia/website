@@ -6,6 +6,17 @@ import { products, productCategories, formatPrice } from "@/lib/products.mjs";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 import s from "./ProductPackages.module.css";
 
+const launchDetails = {
+  "landing-page": ["Design shaped around your business", "Mobile and desktop checks before launch"],
+  "business-website": ["Design review and your feedback before launch", "Mobile and desktop checks before launch"],
+  "booking-system": ["Design shaped around your business", "Mobile and desktop checks before launch"],
+};
+const packageIntroductions = {
+  "landing-page": "A focused first impression for a new offer, a campaign or a business getting started.",
+  "business-website": "Room to tell your story, showcase your services and turn interest into enquiries.",
+  "booking-system": "Let customers explore your services and book an appointment when it suits them.",
+};
+
 export default function ProductPackages({ homepage = false }) {
   const root = useRef(null);
   const [categoryId, setCategoryId] = useState(productCategories[0].id);
@@ -27,11 +38,12 @@ export default function ProductPackages({ homepage = false }) {
       <section className={s.categorySection} key={category.id} id={category.id} aria-labelledby={category.id + "-heading"}>
         <header className={s.categoryHeading}><h2 id={category.id + "-heading"}>{category.name}</h2><p>{category.description}</p></header>
         <MotionRegion className={`${s.grid} ${categoryId === "subscriptions" ? s.careGrid : ""}`}>{products.filter(product => product.category === category.id).map((product, index) => {
-          return <article key={product.id} className={s.card} data-motion-card style={{ "--card-delay": `${index * 100}ms` }}>
-            <div className={s.cardTop}><p className={s.eyebrow}>{product.eyebrow}</p></div>
+          return <article key={product.id} className={`${s.card} ${product.id === "business-website" ? s.featured : ""}`} data-motion-card style={{ "--card-delay": `${index * 100}ms` }}>
+            <div className={s.cardTop}>{product.id === "business-website" && <span className={s.recommendation}>Recommended for small businesses</span>}<p className={s.eyebrow}>{product.eyebrow}</p></div>
             <h3>{product.name}</h3>
+            <p className={s.description}>{packageIntroductions[product.id] || product.description}</p>
             <p className={s.price}>{!product.interval && <small className={s.fromPrice}>From </small>}{formatPrice(product.amount)}{product.interval && <small> / month</small>}<span>{product.interval ? "Monthly website care" : "One-off project"}</span></p>
-            <ul className={s.productFeatures} aria-label={`${product.name} includes`}>{product.includes.map(item => <li key={item}>{item}</li>)}</ul>
+            <ul className={s.productFeatures} aria-label={`${product.name} includes`}>{[...product.includes, ...(launchDetails[product.id] || [])].map(item => <li key={item}>{item}</li>)}</ul>
             <Link href={`/get-a-quote?product=${product.id}`} className={s.button} aria-label={`Get a Quote for ${product.name}`} onClick={() => trackEvent("quote_click", { product_id: product.id, placement: homepage ? "home_packages" : "pricing" })}>Get a Quote</Link>
           </article>;
         })}</MotionRegion>

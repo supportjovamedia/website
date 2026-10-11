@@ -36,7 +36,7 @@ export default async function Page({ params }) {
       <div className={styles.heroGrid}><div>
         <p className="kicker">{service.eyebrow}</p><h1>{service.name}</h1><p className="lead">{service.desc}</p>
         <div className="actions"><Link href="/get-a-quote" className="btn">Get a Quote</Link><Link href="/contact" className="text-link">Contact Us</Link></div>
-      </div><div className={styles.heroArt}><Image src={`/service-crafted/${serviceArt[slug]}.webp`} alt="" fill sizes="(max-width:700px) 85vw, 40vw" preload /></div></div>
+      </div><div className={styles.heroArt} style={{ aspectRatio: slug === "system-modernization" ? "1" : "4 / 3" }}><Image src={`/service-crafted/${serviceArt[slug]}.webp`} alt="" fill sizes="(max-width:700px) 85vw, 40vw" preload /></div></div>
     </div></section>
     <section className={styles.fitSection}><div className="shell"><aside className={styles.fit} aria-label="Is this service right for you?">
         <h2>A good fit when…</h2><ul>{service.fit.map((item) => <li key={item}>{item}</li>)}</ul>

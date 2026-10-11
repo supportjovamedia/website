@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Check, Pause, Play } from "lucide-react";
+import { Check } from "lucide-react";
 import ConsultationLink from "./ConsultationLink";
 import Footer from "./Footer";
 import DaybreakHero from "./DaybreakHero";
@@ -27,7 +27,6 @@ export default function StudioHome() {
   const story = useRef(null);
   const panels = useRef([]);
   const [chapter, setChapter] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [pinned, setPinned] = useState(false);
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
@@ -42,7 +41,7 @@ export default function StudioHome() {
         return;
       }
       const rect = gallery.current.getBoundingClientRect();
-      gallery.current.style.setProperty("--gallery-pan", `${paused ? 0 : Math.max(-220, Math.min(220, -rect.top * .12))}px`);
+      gallery.current.style.setProperty("--gallery-pan", `${Math.max(-220, Math.min(220, -rect.top * .12))}px`);
       const stage = story.current.getBoundingClientRect();
       const progress = Math.max(0, Math.min(1, -stage.top / Math.max(1, stage.height - innerHeight)));
       const next = Math.min(2, Math.floor(progress * 3));
@@ -59,7 +58,7 @@ export default function StudioHome() {
     desktop.addEventListener("change", setup);
     setup();
     return () => { cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); media.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
-  }, [paused]);
+  }, []);
   function jump(index) {
     const media = matchMedia("(min-width: 901px) and (min-height: 820px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
     if (media.matches) {
@@ -70,15 +69,14 @@ export default function StudioHome() {
   }
   return <div className={s.home}>
     <main>
-      <DaybreakHero paused={paused} onToggleMotion={() => setPaused(value => !value)} />
-      <section className={s.gallery} ref={gallery} data-paused={paused} aria-label="Website design previews">
+      <DaybreakHero />
+      <section className={s.gallery} ref={gallery} aria-label="Website design previews">
         {rows.map((row, index) => <div key={index} className={s.galleryWindow} data-direction={index % 2 ? "right" : "left"}>
           <div className={s.pan}><div className={s.track}>{[...row, ...row].map(([image, name], item) => <figure key={`${image}-${item}`} className={s.preview} aria-hidden={item >= row.length ? "true" : undefined}>
             <div className={s.browserBar}><span aria-hidden="true">● ● ●</span><span>{name}</span></div>
             <Image src={`/studio-2026/${image}.webp`} alt={item >= row.length ? "" : `${name} website preview`} width={1672} height={941} sizes="(max-width: 600px) 70vw, 30vw" draggable={false} />
           </figure>)}</div></div>
         </div>)}
-        <div className={s.galleryNote}><p>A few different directions. All made with care.</p><button type="button" aria-pressed={paused} aria-label={paused ? "Resume preview animations" : "Pause preview animations"} onClick={() => setPaused(value => !value)}>{paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}{paused ? "Resume motion" : "Pause motion"}</button></div>
       </section>
       <section className={s.benefits} aria-labelledby="benefits-title">
         <div className={s.sectionIntro} data-site-reveal><p className={s.kicker}>LESS COMPLICATED. MORE CONSIDERED.</p><h2 id="benefits-title">Good design.<br />Built for your business.</h2><p>You bring the ambition. We help turn it into a website, a brand and a clear way forward.</p></div>
@@ -99,10 +97,10 @@ export default function StudioHome() {
           <div className={s.moreServices}><Link href="/services" className={s.secondary}>View more services</Link></div>
         </div>
       </section>
-      <ProcessStory paused={paused} />
+      <ProcessStory />
       <WhyJovaPreview />
       <section className={s.experience} aria-labelledby="experience-title"><div data-site-reveal><p className={s.kicker}>EXPERIENCE YOU CAN BUILD ON</p><h2 id="experience-title">Big ideas.<br />A personal approach.</h2><Link href="/about" className={s.underlined}>Get to know JovaMedia</Link></div><div className={s.stats}><article><strong>2016</strong><h3>Where it began.</h3><p>Designing websites and helping businesses bring their ideas to life.</p></article></div></section>
-      <FaqStory paused={paused} />
+      <FaqStory />
       <section className={s.finalCta} data-site-reveal aria-labelledby="final-cta-title"><p>YOUR NEXT CHAPTER STARTS WITH A CONVERSATION.</p><h2 id="final-cta-title">Let’s make your<br />first impression count.</h2><div className={s.actions}><ConsultationLink className={s.lightButton} placement="other">Get my free consultation</ConsultationLink><Link href="/pricing" className={s.darkOutline}>View pricing</Link></div></section>
     </main>
     <div className="jova-pages"><GrowthSignup newsletter /><Footer /></div>

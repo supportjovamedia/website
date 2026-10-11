@@ -86,22 +86,21 @@
 
 /* The full-width canvas scales to screen height as well as screen width. */
 .root{font-family:var(--font-jakarta),Arial,sans-serif}
-.root :global(.previewControls){grid-column:2;display:flex;align-items:center;justify-content:space-between;gap:16px;color:#c4d3df;font-size:12px;width:100%;max-width:1100px;justify-self:end;padding-top:8px}
-.root :global(.previewControls button){display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 14px;border:1px solid #657887;border-radius:999px;background:transparent;color:#fff;font-size:12px;white-space:nowrap;cursor:pointer;transition:background .25s}
-@media(hover:hover) and (pointer:fine){.root :global(.previewControls button:hover){background:#ffffff14}}
+
+
+
 @media(min-width:801px){
  .root :global(.hero){padding:30px 3.2% 24px;grid-template-columns:40% 60%;column-gap:0;row-gap:8px}
  .root :global(.message h1){font-size:clamp(30px,3.7vw,92px);white-space:normal;text-wrap:balance}
  .root :global(.showcase){width:min(100%,calc((100svh - 230px) * .85));max-width:1100px;aspect-ratio:.91;justify-self:end}
  .root :global(.launch){width:43%}
- .root :global(.previewControls){max-width:min(1100px,calc((100svh - 230px) * .85));justify-content:flex-start}
- .root :global(.previewControls button){order:-1}
+
+
  .root :global(.description){font-size:clamp(16px,1.25vw,22px);max-width:40ch}
  .root :global(.facts){margin-top:42px;gap:clamp(30px,4vw,70px)}
  .root :global(.facts strong){font-size:clamp(36px,3vw,52px)}
  .root :global(.facts span){font-size:clamp(12px,1vw,16px)}
  .root :global(.actions){font-size:14px}.root :global(.actions a){min-height:48px;padding:15px 24px}
 }
-@media(min-width:801px) and (max-height:740px){.root :global(.showcase){width:min(100%,480px)}.root :global(.previewControls){max-width:480px}.root :global(.message h1){font-size:clamp(30px,3.6vw,62px)}}
-@media(max-width:800px){.root :global(.previewControls){justify-content:center;flex-wrap:wrap;gap:10px;font-size:11px;padding-top:18px}.root :global(.previewControls span){flex-basis:100%;text-align:center}.root :global(.showcase){margin-top:28px}.root :global(.message h1){font-size:clamp(28px,7.1vw,54px)}.root :global(.description){font-size:16px}.root :global(.actions){font-size:14px}.root :global(.actions a){min-height:48px;padding:15px 22px}.root :global(.facts span){font-size:12px}}
-@media(prefers-reduced-motion:reduce){.root :global(.previewControls button){display:none}.root :global(.previewControls){justify-content:flex-start}}
+@media(min-width:801px) and (max-height:740px){.root :global(.showcase){width:min(100%,480px)}.root :global(.message h1){font-size:clamp(30px,3.6vw,62px)}}
+@media(max-width:800px){.root :global(.showcase){margin-top:28px}.root :global(.message h1){font-size:clamp(28px,7.1vw,54px)}.root :global(.description){font-size:16px}.root :global(.actions){font-size:14px}.root :global(.actions a){min-height:48px;padding:15px 22px}.root :global(.facts span){font-size:12px}}
