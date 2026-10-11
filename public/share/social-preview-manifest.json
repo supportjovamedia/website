@@ -2,13 +2,13 @@
   "image": "/share/jovamedia-hero-2026-10.png",
   "width": 1200,
   "height": 630,
-  "sha256": "35cfd2d5e5a9f91df7f97c3ebc5b09347df0a956f850b96ee1bbc7fb911e331d",
+  "sha256": "06130497811a0ec4e0d75fb198db9c208be0bc90d49ff13aad1d8a6dfa73c791",
   "sources": {
     "components/StudioHome.js": "fd7575c285ffa534398052d57083cdd5fbfe965d41cb8a0d20eb6c93619fd7ea",
-    "components/DaybreakHero.js": "d544a668ffc81230e5a793ef13096035f95fdd960750e48db879abee466b7f97",
-    "components/DaybreakHero.module.css": "95e9f480a7f6fef7ab5a9e6fc0cb77e153bf4255b39bbf35f954c597edcedcaf",
+    "components/DaybreakHero.js": "59fae891731403531bc2fdec8f782a9866e9fc6b2fe38adbf6c5b3c36b2e8aaf",
+    "components/DaybreakHero.module.css": "e54fa2db75515c7d6ad4e90445fae170d50b72950ffc4c9826322c1622872728",
     "components/StudioHome.module.css": "057f571d3f15cb0d5cb427a52b5530f4790898e6d01486f2a906bdb6462ef8a7",
-    "app/studio.css": "f2e0489da6b130e44bebccdba459bbb44ef42bd7bb09ab44612d003aa0562354",
+    "app/studio.css": "318c46e83820c795ca7faf1d0f36ddf23e7af66b7c0c85b2be2533b65cc233a7",
     "components/Header.js": "ef9d92bc2af1c0d633ba8cd448cc64916e4761d58775f94434e484e045cd346c",
     "scripts/capture-social-preview.cjs": "35532f402157fe3329056d527fb8062fc6392010930d2739525f298b47d22a2f",
     "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55"

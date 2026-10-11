@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 import { CONSENT_KEY } from '../../lib/marketing-analytics.mjs';
+import { businessPhone } from '../../lib/business-contact.mjs';
 
 const trackedAssets = new Set(execFileSync('git', ['-c', `safe.directory=${process.cwd().replaceAll('\\', '/')}`, 'ls-files', 'public'], { encoding: 'utf8' }).trim().split(/\r?\n/));
 
@@ -32,6 +33,29 @@ test.beforeEach(async ({ context, page, baseURL }) => {
 
 test.afterEach(async ({ page }) => {
   expect(page.__regressionErrors).toEqual([]);
+});
+
+test('WhatsApp and call routes use the verified business number without requiring a form', async ({ page }) => {
+  for (const path of ['/', '/contact', '/get-a-quote']) {
+    await page.goto(path);
+    const link = page.locator('main').getByRole('link', { name: 'Chat on WhatsApp', exact: true });
+    await expect(link).toBeVisible();
+    const url = new URL(await link.getAttribute('href'));
+    expect(url.origin + url.pathname).toBe(businessPhone.whatsapp);
+    expect(url.searchParams.get('text')).toMatch(/^Hi JovaMedia,/);
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(link).toHaveCSS('text-decoration-line', 'none');
+    const box = await link.boundingBox();
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    if (path !== '/') {
+      const call = page.locator('main').getByRole('link', { name: `Call ${businessPhone.display}`, exact: true });
+      await expect(call).toBeVisible();
+      await expect(call).toHaveAttribute('href', businessPhone.tel);
+      await expect(page.locator('main')).not.toContainText(/(?:27|57) minutes/);
+    }
+    await noOverflow(page);
+  }
 });
 
 async function noOverflow(page) {
