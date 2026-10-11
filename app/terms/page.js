@@ -1,4 +1,5 @@
 import { pageMetadata } from "@/lib/seo";
+import styles from "@/components/LegalSurface.module.css";
 export const metadata = pageMetadata(
   "/terms",
   "Terms of Use",
@@ -6,7 +7,7 @@ export const metadata = pageMetadata(
 );
 export default function Page() {
   return (
-    <main>
+    <main className={styles.surface}>
       <section className="legal shell">
         <h1>Website Terms</h1>
         <p>Last updated: 3 September 2026</p>

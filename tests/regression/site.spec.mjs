@@ -218,12 +218,17 @@ test('technology hero photos cover their banners with readable navy overlays and
     await expect.poll(() => image.evaluate(el => el.complete && el.naturalWidth > 0)).toBe(true);
     sources.add(await image.getAttribute('src'));
     await expect(image).toHaveCSS('opacity', '1');
-    await expect(hero.locator('[data-hero-overlay]')).toHaveCSS('background-color', 'rgba(7, 27, 41, 0.85)');
+    await expect(hero.locator('[data-hero-overlay]')).toHaveCSS('background-color', 'rgba(7, 27, 41, 0.92)');
     await expect(hero.locator('h1')).toHaveCSS('color', 'rgb(255, 255, 255)');
-    const first = await backdrop.evaluate(el => getComputedStyle(el).transform);
+    if (testInfo.project.name === 'desktop') await expect.poll(() => backdrop.evaluate(el => getComputedStyle(el).transform)).not.toBe('none');
+    const offset = () => backdrop.evaluate(el => {
+      const transform = getComputedStyle(el).transform;
+      return transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m42;
+    });
+    const first = await offset();
     await page.evaluate(() => window.scrollTo({ top: 220, behavior: 'instant' }));
     if (testInfo.project.name === 'desktop') {
-      await expect.poll(() => backdrop.evaluate(el => getComputedStyle(el).transform)).not.toBe(first);
+      await expect.poll(async () => (await offset()) - first).toBeGreaterThan(20);
     } else await expect(backdrop).toHaveCSS('transform', 'none');
     expect(await hero.evaluate(el => {
       const a = el.getBoundingClientRect(), b = el.querySelector('[data-hero-backdrop]').getBoundingClientRect();
@@ -237,7 +242,7 @@ test('technology hero photos cover their banners with readable navy overlays and
   expect(sources.size).toBe(4);
 });
 
-test('newsletters remain distinct from preceding sections, with white related-service panels', async ({ page }) => {
+test('white newsletters separate preceding sections from compact gray footers', async ({ page }) => {
   for (const path of ['/', '/about', '/services', '/pricing', '/contact', '/privacy-policy', '/terms', '/services/web-design', '/services/email-marketing']) {
     await page.goto(path);
     const newsletter = page.getByRole('region', { name: 'A little perspective for your inbox.', exact: true });
@@ -253,9 +258,12 @@ test('newsletters remain distinct from preceding sections, with white related-se
       return [background(sections.at(-1)), background(newsletter)];
     });
     expect(backgrounds[0], path).not.toBe(backgrounds[1]);
+    await expect(newsletter).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('footer')).toHaveCSS('background-color', 'rgb(243, 244, 246)');
+    await expect(page.locator('footer')).toHaveCSS('padding-bottom', '18px');
     if (path.startsWith('/services/')) {
       const related = page.getByRole('heading', { name: 'Explore related services', exact: true }).locator('xpath=ancestor::section');
-      await expect(related).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+      await expect(related).toHaveCSS('background-color', 'rgb(243, 244, 246)');
     }
     await noOverflow(page);
   }

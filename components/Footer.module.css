@@ -1,0 +1,11 @@
+.footer:global(.jova-footer) {
+  background: #f3f4f6;
+  padding: 44px 5vw 18px;
+  gap: 24px;
+}
+@media (max-width: 600px) {
+  .footer:global(.jova-footer) {
+    padding: 36px 22px 18px;
+    gap: 26px 20px;
+  }
+}
