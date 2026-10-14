@@ -8,8 +8,8 @@
     "components/DaybreakHero.js": "364e7ce92d636d6240f47ba0ef458cf6bd5e5b0d5c802d976209882bb6cd505a",
     "components/DaybreakHero.module.css": "1c92c4c49e8c8afebaa06d01cdbbfe097792696a2f9c1d24a9b4c984a96da32e",
     "components/StudioHome.module.css": "d5685ce83d2b51c5ca23070df1b32fa7c4fb82cf2a81e2a2331546129493587a",
-    "app/studio.css": "ff75abeef965b4a18741dbd32ff933050ec5ef0a1618b57d203e7440dee0ec3f",
-    "components/Header.js": "588a1b14237de7bd6bb0729185adb1af1ee710655c14b8f6d2893f52e782fa3d",
+    "app/studio.css": "c8ac711870e2efcb475d8903b7865ade93d564011cb1bd466abaf7b4134df3ac",
+    "components/Header.js": "e2d1bb5af22446ad2f8bf0edce33b0474d5f5fd9183ec9f2edd21158c98504e5",
     "scripts/capture-social-preview.cjs": "449e14c257ca9b7910b563b307192952572732455587817d7d970c51d24f2308",
     "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55"
   }

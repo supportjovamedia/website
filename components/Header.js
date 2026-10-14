@@ -36,9 +36,12 @@ function Navigation({ pathname }) {
   const header = useRef(null);
   const slot = useRef(null);
   const measureNavigation = useRef(null);
+  const previousServiceMenu = useRef(false);
 
   useEffect(() => {
-    if (!open) return;
+    const returning = previousServiceMenu.current;
+    previousServiceMenu.current = serviceMenu;
+    if (!open || (!serviceMenu && !returning)) return;
     menu.current?.querySelector(serviceMenu ? '.mobile-menu-back' : '.mobile-services-toggle')?.focus();
   }, [open, serviceMenu]);
 

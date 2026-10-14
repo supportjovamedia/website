@@ -411,6 +411,18 @@ test('phone navigation slides from the left and services use a separate panel',a
   await page.getByRole('button',{name:'Open menu',exact:true}).click();
   await expect(menu).toHaveCSS('transition-duration','0s');
   await page.getByRole('button',{name:'Close menu',exact:true}).click();
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.locator('footer').scrollIntoViewIfNeeded();
+  await expect(page.locator('header.header')).toHaveAttribute('data-stuck','true');
+  await page.getByRole('button',{name:'Open menu',exact:true}).click();
+  await expect(menu).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(menu.getByRole('link',{name:'About',exact:true})).toHaveCSS('color','rgb(23, 42, 65)');
+  await expect(menu.getByRole('link',{name:'Get a Quote',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
+  await expect(page.locator('.header .logo-light-surface')).toBeVisible();
+  await expect(page.locator('.header .logo-dark-surface')).toBeHidden();
+  await menu.getByRole('link',{name:'About',exact:true}).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.locator('#main-content')).toHaveJSProperty('inert',false);
   await noOverflow(page);
 });
 
