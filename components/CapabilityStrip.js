@@ -47,7 +47,7 @@ export default function CapabilityStrip({ paused = false }) {
   return (
     <section className={s.strip} ref={section} aria-label="One connected approach: digital thinking, web design and development">
       <div className={s.inner}>
-        <div className={s.eyebrow}><span>One connected approach</span><span>From the first idea to what comes next.</span></div>
+
         <div className={s.words}>
           {disciplines.map((discipline, index) => (
             <div className={s.word} key={discipline.word} style={{ "--focus": `var(--focus-${index})` }}>

@@ -108,3 +108,18 @@
 @media(max-width:800px){.root :global(.showcase){margin-top:28px}.root :global(.message h1){font-size:clamp(28px,7.1vw,54px)}.root :global(.description){font-size:16px}.root :global(.actions){font-size:14px}.root :global(.actions a){min-height:48px;padding:15px 22px}.root :global(.facts span){font-size:12px}}
 .root :global(.whatsappAction){display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;border:1px solid #c4d3df;border-radius:99px;background:transparent;color:#fff}.root :global(.whatsappAction svg){flex-shrink:0;color:#9ce6be}.root :global(.whatsappAction:hover){background:#ffffff12}@media(max-width:480px){.root :global(.actions){gap:10px}.root :global(.actions a){font-size:13px;padding-inline:18px}}
 .root :global(.actions .whatsappAction){height:48px;padding-block:12px}
+
+/* Keep the offer distinct from the service description and location. */
+.root :global(.message){text-align:center;padding-right:0}
+.root :global(.description){max-width:38ch;margin:0 auto 12px}
+.root :global(.coverage){font-size:clamp(12px,.9vw,14px);line-height:1.6;color:#aebfcd;max-width:43ch;margin:18px auto 0;text-wrap:pretty}
+.root :global(.previewPromise){font-size:clamp(15px,1.15vw,20px);line-height:1.6;font-weight:500;color:#fff;max-width:34ch;margin:0 auto 25px;text-wrap:pretty}
+.root :global(.previewPromise strong){font-weight:750}
+.root :global(.actions){justify-content:center;flex-wrap:wrap}
+@media(max-width:800px){.root :global(.coverage){font-size:12px;margin:17px auto 0}.root :global(.previewPromise){font-size:15px;max-width:31ch;margin-bottom:24px}}
+
+.root :global(.showcase){--launch-height:0px}
+.root :global(.previewWrap){position:relative;width:100%;min-width:0;max-width:1100px;justify-self:end}
+.root :global(.browser){top:14px}
+.root :global(.previewControl){position:absolute;left:2%;bottom:2%;z-index:4;min-height:44px;padding:10px 15px;border:1px solid #6d8496;border-radius:99px;background:#071b29;color:#d4dfe7;font-size:12px;line-height:1.4;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.root :global(.previewControl){display:none}}

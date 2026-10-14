@@ -28,9 +28,7 @@ export default function EditorialPrototype() {
         </nav>
         <section className="publication-hero">
           <div>
-            <p className="kicker">
-              Creative practice / Sample editorial content
-            </p>
+
             <h1>
               A new
               <br />
@@ -85,7 +83,7 @@ export default function EditorialPrototype() {
                   height={1402}
                   sizes="(max-width:700px) 100vw, 30vw"
                 />
-                <p className="kicker">{story.topic}</p>
+
                 <h3>{story.title}</h3>
                 <p>{story.teaser}</p>
                 <span>Read the sample story</span>

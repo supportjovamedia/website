@@ -104,7 +104,7 @@ test('core pages render, headings stay unclipped, images load, and links resolve
     if (path === '/about') {
       await expect(page.locator('main')).not.toContainText('Abdul');
       await expect(page.locator('main')).toContainText('Since 2016');
-      await expect(page.getByText('OUR VALUES', { exact: true })).toHaveCSS('color', 'rgb(255, 255, 255)');
+
     }
   }
   for (const path of links) {
@@ -185,7 +185,7 @@ test('homepage FAQ cards are shared by contact and service pages, with readable 
     await expect(faq).toHaveCount(1);
     await faq.scrollIntoViewIfNeeded();
     await expect(faq.getByRole('heading', { level: 2 })).toHaveText('Good questions.Clear answers.');
-    const cards = faq.locator('article');
+    const cards = faq.locator('details');
     expect(await cards.count()).toBeGreaterThanOrEqual(3);
     const style = await cards.first().evaluate(el => {
       const css = getComputedStyle(el);
@@ -196,8 +196,13 @@ test('homepage FAQ cards are shared by contact and service pages, with readable 
     for (const card of await cards.all()) {
       await card.scrollIntoViewIfNeeded();
       await expect(card).toBeVisible();
+      await expect(card).not.toHaveAttribute('open');
+      await card.locator('summary').click();
+      await expect(card).toHaveAttribute('open', '');
       await expect(card.locator('p')).toBeVisible();
       expect(await card.locator('p').innerText()).not.toBe('');
+      await card.locator('summary').press('Enter');
+      await expect(card).not.toHaveAttribute('open');
     }
     await noOverflow(page);
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -288,18 +293,13 @@ test('navigation works after scrolling and mobile menu releases its scroll lock'
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
 });
 
-test('service chapters pin on short laptops and keep every chapter usable', async ({ page }, testInfo) => {
+test('service chapters pin on phones and laptops while every active panel fits', async ({ page }, testInfo) => {
   await page.goto('/');
   const story = page.getByRole('region', { name: 'A little more than a website.', exact: true });
-  if (testInfo.project.name === 'phone') {
-    await expect(story).toHaveAttribute('data-pinned', 'false');
-    for (const card of await story.locator('article').all()) {
-      await expect(card).not.toHaveAttribute('inert', '');
-      await expect(card).toHaveCSS('position', 'relative');
-    }
-    return;
-  }
-  for (const [width, height] of [[901, 540], [1024, 600], [1366, 650], [1440, 800], [1920, 1080], [2560, 650]]) {
+  const sizes = testInfo.project.name === 'phone'
+    ? [[320, 740], [360, 800], [390, 844], [430, 932], [768, 900]]
+    : [[901, 540], [1024, 600], [1366, 650], [1440, 800], [1920, 1080], [2560, 650]];
+  for (const [width, height] of sizes) {
     await page.setViewportSize({ width, height });
     await expect(story).toHaveAttribute('data-pinned', 'true');
     await expect(story.locator(':scope > div')).toHaveCSS('position', 'sticky');
@@ -313,7 +313,8 @@ test('service chapters pin on short laptops and keep every chapter usable', asyn
         const parts = [...card.children];
         return parts.every(part => {
           const rect = part.getBoundingClientRect();
-          return rect.top >= 86 - 1 && rect.bottom <= innerHeight + 1 && rect.left >= 0 && rect.right <= innerWidth;
+          const top = parseFloat(getComputedStyle(card.closest('[data-service-story]')).getPropertyValue('--story-top'));
+          return rect.top >= top - 1 && rect.bottom <= innerHeight + 1 && rect.left >= 0 && rect.right <= innerWidth;
         });
       });
       expect(bounds, `${width}x${height}, chapter ${chapter}: full image and copy fit below navigation`).toBe(true);
@@ -328,6 +329,40 @@ test('service chapters pin on short laptops and keep every chapter usable', asyn
   await expect(story).toHaveAttribute('data-pinned', 'false');
   await expect(story.locator('article[inert]')).toHaveCount(0);
   await expect(story.locator(':scope > div')).toHaveCSS('position', 'static');
+  if (testInfo.project.name === 'phone') {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.setViewportSize({ width: 360, height: 640 });
+    await expect(story).toHaveAttribute('data-pinned', 'false');
+    await expect(story.locator('article[inert]')).toHaveCount(0);
+    await expect(story.locator(':scope > div')).toHaveCSS('position', 'static');
+  }
+});
+
+test('FAQ progress advances on every screen and stays aligned after expansion', async ({ page }) => {
+  await page.goto('/contact#faq');
+  const faq = page.locator('[data-site-faq]');
+  const markers = faq.locator('[data-story-marker]');
+  await markers.first().scrollIntoViewIfNeeded();
+  const first = await faq.evaluate(el => Number(el.style.getPropertyValue('--line')));
+  await page.mouse.wheel(0, 500);
+  await expect.poll(() => faq.evaluate(el => Number(el.style.getPropertyValue('--line')))).toBeGreaterThan(first);
+  const card = faq.locator('details').first();
+  await card.locator('summary').click();
+  await expect.poll(() => faq.evaluate(el => {
+    const track = el.querySelector('[data-story-track]');
+    const markers = [...el.querySelectorAll('[data-story-marker]')];
+    const centre = marker => { const box = marker.getBoundingClientRect(); return box.top + box.height / 2; };
+    return Math.abs(parseFloat(getComputedStyle(track, '::before').height) - (centre(markers.at(-1)) - centre(markers[0])));
+  })).toBeLessThan(1);
+});
+
+test('the looping homepage preview can be paused and resumed', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Pause preview', exact: true }).click();
+  await expect(page.locator('.scrollTrack').first()).toHaveCSS('animation-play-state', 'paused');
+  await expect(page.getByRole('button', { name: 'Play preview', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Play preview', exact: true }).click();
+  await expect(page.locator('.scrollTrack').first()).toHaveCSS('animation-play-state', 'running');
 });
 
 test('layout stays within phone, tablet, short desktop and ultrawide viewports', async ({ page }, testInfo) => {

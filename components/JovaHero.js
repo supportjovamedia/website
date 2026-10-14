@@ -9,7 +9,7 @@ export default function JovaHero() {
       <HomepageMotion />
       <div className={styles.inner}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>Independent digital agency</p>
+
           <h1 id="jova-hero-title" className={styles.title}>
             Brands grow<br />with <span>purpose<span className={styles.dot}>.</span></span>
           </h1>

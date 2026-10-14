@@ -1,10 +1,12 @@
-# Green Daybreak revision
+# Daybreak preview assets
 
-Latest local preview: http://127.0.0.1:4878/?v=daybreak-green
+The current homepage uses these assets in the Daybreak website concept. The original photographs and earlier source exports are retained for recovery. Current presentation and motion are maintained in `components/DaybreakHero.js` and its stylesheet.
 
-This revision follows the supplied green coffee reference. Daybreak replaces the reference brand, with an overhead cup, real leaf and bean photography, cream navigation, deep-green hero, curved coffee ticker and product menu. The outer agency hero uses a pale JovaMedia blue canvas, yellow frame and calls to action, navy type and the reference's red headline treatment. The original logo is retained. The 8 services and 4 stages describe the agency's offer rather than invented client results. The enquiry card illustrates the purpose of a business website and is not a claimed client notification.
+Daybreak is a fictional coffee website concept. It is not a delivered client project or evidence of sales results. The current JovaMedia canvas is navy, with a red headline treatment, yellow primary action and the supplied studio logo. Decorative counters and the launch-status card are not part of the current hero.
 
-Both device screens retain the downward 20-second loop. A repeated identical page gives a matching reset. The cup, leaves, beans and background lettering move at independent speeds during the scroll. Pause/resume and reduced motion are supported.
+Both device screens use the downward 20-second loop. A repeated page gives a matching reset. The cup, leaves, beans and background lettering move at independent speeds. Motion pauses outside the viewport, in hidden tabs and for reduced-motion preferences.
+
+The October 2026 WebP export reduces the five selected hero files from 3,204,710 to 282,346 bytes. `scripts/optimize-hero-images.mjs` preserves recovery copies outside the checkout and inspects the final metadata. This describes asset size, not a page-speed score.
 
 Images are photographs with hand-traced clipping and simple background masking. No image generation was used. Originals are kept in source. Final image assets have no EXIF, XMP, IPTC, C2PA or AI tool text metadata. The motion export retains standard codec, container and colour-profile data.
 

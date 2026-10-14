@@ -29,7 +29,7 @@ export default function ProductPackages({ homepage = false }) {
         <header className={s.categoryHeading}><h2 id={category.id + "-heading"}>{categoryId === "websites" ? "Made for what you need." : category.name}</h2><p>{categoryId === "websites" ? "A focused page, a business website or a complete booking system." : category.description}</p></header>
         {categoryId === "websites" ? <WebsiteProducts homepage={homepage} /> : <MotionRegion className={`${s.grid} ${s.careGrid}`}>{products.filter(product => product.category === category.id).map((product, index) => {
           return <article key={product.id} className={s.card} data-motion-card style={{ "--card-delay": `${index * 100}ms` }}>
-            <div className={s.cardTop}><p className={s.eyebrow}>{product.eyebrow}</p></div>
+
             <h3>{product.name}</h3>
             <p className={s.description}>{product.description}</p>
             <p className={s.price}>{!product.interval && <small className={s.fromPrice}>From </small>}{formatPrice(product.amount)}{product.interval && <small> / month</small>}<span>{product.interval ? "Monthly website care" : "One-off project"}</span></p>

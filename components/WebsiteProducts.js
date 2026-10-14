@@ -34,7 +34,7 @@ function Features({ items, label }) {
 }
 
 function QuoteLink({ product, homepage }) {
-  return <Link href={`/get-a-quote?product=${product.id}`} className={s.quote} aria-label={`Get a Quote for ${product.name}`} onClick={() => trackEvent("quote_click", { product_id: product.id, placement: homepage ? "home_packages" : "pricing" })}>{quoteLabels[product.id]}<span aria-hidden="true">↗</span></Link>;
+  return <Link href={`/get-a-quote?product=${product.id}`} className={s.quote} aria-label={`Get a Quote for ${product.name}`} onClick={() => trackEvent("quote_click", { product_id: product.id, placement: homepage ? "home_packages" : "pricing" })}>{quoteLabels[product.id]}</Link>;
 }
 
 function Price({ product }) {
@@ -45,7 +45,7 @@ export default function WebsiteProducts({ homepage = false }) {
   const websites = products.filter(product => product.category === "websites");
   return <div className={s.products}>
     <MotionRegion className={s.websiteGrid}>{websites.map((product, index) => <article className={`${s.websiteCard} ${product.id === "business-website" ? s.businessCard : ""}`} key={product.id} data-motion-card style={{ "--card-delay": `${index * 80}ms` }}>
-      <div className={s.summary}><header className={s.productHeader}><p className={s.eyebrow}>{product.eyebrow}</p><h3>{product.name}</h3><Price product={product} /></header>
+      <div className={s.summary}><header className={s.productHeader}><h3>{product.name}</h3><Price product={product} /></header>
       <p className={s.introduction}>{introductions[product.id]}</p>
       <QuoteLink product={product} homepage={homepage} /></div>
       <div className={s.details}>

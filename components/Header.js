@@ -5,10 +5,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 const links = [
-  ["Home", "/"],
-  ["About", "/about"],
   ["Services", "/services"],
+  ["Our Work", "/work"],
   ["Pricing", "/pricing"],
+  ["About", "/about"],
   ["Contact Us", "/contact"],
 ];
 export default function Header() {

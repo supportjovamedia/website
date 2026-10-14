@@ -1,4 +1,4 @@
-# JovaMedia — refined original design
+# JovaMedia website
 
 ## Run locally
 
@@ -14,44 +14,47 @@ Production check:
     npm run build
     npm start
 
-## Final design
+## Search and content work
 
-The original JovaMedia design, supplied logos and page content have been restored. The alternate redesign is not used in this project.
+The homepage presents website design for small businesses across the UK, with London as the studio base. The existing website-design service targets London; the salon website service serves the UK. No Harrow-only page is included.
 
-- Numbered homepage sections alternate blue / light / red / light / blue / light.
-- Removed decorative arrows, arrows on buttons, abstract geometry, yellow discs, circular service badges and geometric image masks.
-- Kept the original headline, rectangular buttons, typography, service list and compact black footer.
-- Removed the independent-agency/London eyebrow.
-- Replaced the old building crop with an original generated architectural image. No stock photographs or third-party website images are used.
-- Preserved LinkedIn, Instagram, X and TikTok. They link to their platform homepages as requested; edit lib/site.js when agency profiles are ready.
-- Improved spacing, touch targets, focus states and mobile menu keyboard behaviour.
+Six researched guides support the commercial pages. Qaiser Watches is a delivered project, with owner-supplied client feedback presented as a paraphrase. Portfolio concepts retain their concept status. Prices come from the maintained product catalogue, and articles use truthful dates and named sources.
+
+See [the organic search audit](docs/organic-search-audit.md) for the live baseline, keyword strategy, release checks, indexing follow-up and account-access limitations. [The editorial brief](docs/editorial-brief.md) records the writing and source-verification approach.
 
 ## Functionality and limits
 
-The previous contact endpoint logged personal details and returned a misleading success message without delivering email. It now returns an honest unavailable response. The contact form instead prepares a brief for the visitor to review and send in their email app, with a copy option. Nothing is sent automatically. Configure a real delivery provider later if you want direct website submissions.
+Contact, quote, newsletter, checkout and booking delivery depend on their configured providers. Unconfigured handlers must report unavailable instead of pretending to deliver. Do not send fake enquiries, chat messages, newsletters, payments or bookings while testing production.
 
-The contact email remains support.jovamedia@gmail.com. Analytics is off unless NEXT_PUBLIC_ENABLE_ANALYTICS=true is configured. Canonical links now point to the appropriate pages, and the duplicate terms URL uses the same maintained content. Existing legal copy remains subject to owner review.
+Marketing measurement is consent-aware and restricted to the production apex/www hostname. Local and deployment-preview visits do not initialise production marketing tags. The business contact details are maintained in `lib/business-contact.mjs`.
 
-The Work page retains the original status: client case studies are not yet published. The homepage concept card is an illustration of the design direction, not a client result.
+The phone service showcase uses ordinary scrolling, with a static fallback on short screens and for reduced-motion preferences. Below-fold imagery is lazy-loaded. Image source records live beside the relevant public assets; preparation scripts retain recovery originals outside the checkout.
 
 ## Verification
 
-- Production build passed, including 37 generated pages.
-- Homepage checked in-browser at 320px, 390px, 768px and 1440px with no horizontal overflow.
-- Contact form and service directory checked at 320px.
-- Mobile menu open, Escape-to-close and enquiry draft preparation verified.
-- Main routes and all 20 service detail routes checked. Missing pages return 404. The unconfigured contact endpoint returns 503 instead of false success.
+Run the checks appropriate to the change:
+
+    npm test
+    npm run lint
+    npm run build
+    npm run regression
+
+Some booking-demo integration tests require a configured Supabase environment. The read-only regression suite uses injected delivery transports and never sends real customer submissions. See [release checks](docs/RELEASE-CHECKS.md). The PR workflow runs the browser regression on desktop and phone viewports.
+
+The local public-page audit can run against a development server:
+
+    node scripts/audit-public-site.mjs
+
+Set `TEST_URL` to a local origin when using a port other than 4326. The audit checks sitemap routes, image attributes, internal destinations and visible content. It is not a substitute for production field performance, Search Console indexing or visual browser review.
 
 ## Main files
 
-app/page.js — homepage content and section order
-app/home.module.css — homepage layout and responsive rules
-app/globals.css — shared styles and final refinement rules
-components/Header.js — original logo and accessible mobile navigation
-components/Footer.js — original footer with social platform links
-components/ContactForm.js — local enquiry review and email draft
-lib/site.js — social URLs and email setting
-public/original/jova-architecture.png — original generated hero image
+- `components/StudioHome.js` and `components/DaybreakHero.js`: homepage content and motion.
+- `lib/insights.mjs`: article content, sources and article schema helpers.
+- `app/insights`: guide index, article routes and share images.
+- `lib/service-catalogue.js` and `lib/products.mjs`: service and package information.
+- `lib/marketing-analytics.mjs`: consent, safe event fields and public-route boundaries.
+- `app/sitemap.js` and `lib/seo.js`: discovery and metadata.
 
 ## Image provenance
 

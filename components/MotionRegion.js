@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 // Content is visible before hydration and when motion is disabled.
-export default function MotionRegion({ children, className, style }) {
+export default function MotionRegion({ children, className, style, enterOnly = false }) {
   const root = useRef(null);
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
@@ -22,7 +22,7 @@ export default function MotionRegion({ children, className, style }) {
         card.style.setProperty("--motion-progress", progress);
       });
     };
-    const request = () => { if (!frame && !media.matches && desktop.matches) frame = requestAnimationFrame(paint); };
+    const request = () => { if (!frame && !enterOnly && !media.matches && desktop.matches) frame = requestAnimationFrame(paint); };
     const setup = () => {
       observer?.disconnect();
       cancelAnimationFrame(frame); frame = 0;
@@ -43,7 +43,7 @@ export default function MotionRegion({ children, className, style }) {
           target.dataset.inView = String(isIntersecting);
           if (isIntersecting) {
             target.dataset.revealed = "true";
-            if (desktop.matches) visible.add(target);
+            if (desktop.matches && !enterOnly) visible.add(target);
             else observer.unobserve(target);
           }
           else visible.delete(target);
@@ -51,7 +51,7 @@ export default function MotionRegion({ children, className, style }) {
         request();
       }, { threshold: .12, rootMargin: "0px 0px -8% 0px" });
       cards.forEach(card => observer.observe(card));
-      if (desktop.matches) addEventListener("scroll", request, { passive: true });
+      if (desktop.matches && !enterOnly) addEventListener("scroll", request, { passive: true });
     };
     setup();
     media.addEventListener("change", setup);
@@ -62,6 +62,6 @@ export default function MotionRegion({ children, className, style }) {
       desktop.removeEventListener("change", setup);
       removeEventListener("scroll", request); removeEventListener("resize", request);
     };
-  }, []);
+  }, [enterOnly]);
   return <div className={className} style={style} ref={root}>{children}</div>;
 }

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 export const metadata = {
-  title: "Make some noise — Fictional campaign prototype",
+  title: "Make some noise , Fictional campaign prototype",
   robots: { index: false, follow: false },
   alternates: { canonical: "/work/brand-direction/landing" },
 };
@@ -43,7 +43,7 @@ export default function Campaign() {
           />
         </section>
         <section id="discover" className="drink-discover">
-          <p className="kicker">The idea behind the image</p>
+
           <h2>
             A little louder.
             <br />A little more you.
