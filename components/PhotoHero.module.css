@@ -2,7 +2,10 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
+  color: #fff;
 }
+.hero[data-photo-hero] :global(h1){color:#fff}
+.hero.hero[data-photo-hero] :global(.breadcrumbs){color:#d8e2ec}
 .backdrop {
   position: absolute;
   inset: -180px 0;

@@ -1,7 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
-import commerce from "./Commerce.module.css";
 export default function SiteChrome({children, header, footer}) {
   const pathname = usePathname();
   const root = useRef(null);
@@ -30,5 +29,5 @@ export default function SiteChrome({children, header, footer}) {
   const navigation = <div className={`jova-pages jova-header-chrome${isHome ? ' jova-home-header' : ''}`}>{header}</div>;
   if (isHome) return <>{navigation}<div className="site-motion-home" ref={root}>{children}</div></>;
   if (pathname === "/get-a-quote") return <>{navigation}<div className="jova-pages" ref={root}>{children}</div></>;
-  return <>{navigation}<div className={`jova-pages${pathname === "/basket" ? ` ${commerce.basketChrome}` : ""}`} ref={root}>{children}{footer}</div></>;
+  return <>{navigation}<div className={`jova-pages${pathname === "/basket" ? " basket-chrome" : ""}`} ref={root}>{children}{footer}</div></>;
 }

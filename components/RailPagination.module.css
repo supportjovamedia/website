@@ -1,0 +1,6 @@
+.pagination{display:flex;justify-content:center;align-items:center;gap:0;width:fit-content;margin:14px auto 0}
+.pagination button{display:grid;place-items:center;flex:0 0 24px;width:24px;height:44px;min-height:44px;border:0;padding:0;background:transparent;cursor:pointer}
+.pagination button>span{display:block;width:10px;height:10px;border-radius:999px;background:#588d9f}
+.pagination button[aria-pressed=true]{flex-basis:54px;width:54px}
+.pagination button[aria-pressed=true]>span{width:40px;background:#001e2b}
+.pagination button:focus-visible{outline:3px solid #0071e3;outline-offset:2px;border-radius:8px}

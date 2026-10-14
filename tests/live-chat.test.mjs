@@ -5,7 +5,7 @@ import { loadLiveChat } from "../lib/live-chat.mjs";
 test("native chat loads once and remains visible without intercepting messages or minimize", () => {
   const scripts = [];
   const doc = { getElementById: id => scripts.find(s => s.id === id), createElement: () => ({}), body: { appendChild: s => scripts.push(s) } };
-  const win = {};
+  const win = { location: { hostname: "www.jovamedia.com" } };
   loadLiveChat(win, doc);
   loadLiveChat(win, doc);
   assert.equal(scripts.length, 1);
@@ -20,4 +20,13 @@ test("native chat loads once and remains visible without intercepting messages o
   loadLiveChat(win, doc);
   assert.equal(visible, true);
   assert.equal(scripts.length, 1);
+});
+
+test("local and preview visits never connect to the production chat property", () => {
+  for (const hostname of ["localhost", "127.0.0.1", "projectjovamedia.vercel.app", "jovamedia.com.example.com", undefined]) {
+    const win = { location: { hostname } };
+    loadLiveChat(win, { createElement: () => { throw new Error('Test visit tried to load live chat'); } });
+    assert.equal(win.Tawk_API, undefined);
+    assert.equal(win.Tawk_LoadStart, undefined);
+  }
 });

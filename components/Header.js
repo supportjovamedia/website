@@ -5,23 +5,45 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 const links = [
+  ["Home", "/"],
   ["Services", "/services"],
   ["Our Work", "/work"],
   ["Pricing", "/pricing"],
   ["About", "/about"],
   ["Contact Us", "/contact"],
 ];
+const serviceLinks = [
+  ["Website design", "/services/web-design"],
+  ["Social media management", "/services/social-management"],
+  ["Brand strategy and design", "/services/brand-strategy"],
+  ["Content creation", "/services/content"],
+  ["Email marketing", "/services/email-marketing"],
+  ["Search engine visibility", "/services/seo"],
+  ["Systems and automation", "/services/system-modernization"],
+];
+function MenuChevron({ back = false }) {
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={back ? "m14 6-6 6 6 6" : "m9 6 6 6-6 6"} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+}
 export default function Header() {
   const pathname = usePathname();
   return <Navigation key={pathname} pathname={pathname} />;
 }
 function Navigation({ pathname }) {
   const [open, setOpen] = useState(false);
+  const [serviceMenu, setServiceMenu] = useState(false);
   const toggle = useRef(null);
   const menu = useRef(null);
   const header = useRef(null);
   const slot = useRef(null);
   const measureNavigation = useRef(null);
+  const previousServiceMenu = useRef(false);
+
+  useEffect(() => {
+    const returning = previousServiceMenu.current;
+    previousServiceMenu.current = serviceMenu;
+    if (!open || (!serviceMenu && !returning)) return;
+    menu.current?.querySelector(serviceMenu ? '.mobile-menu-back' : '.mobile-services-toggle')?.focus();
+  }, [open, serviceMenu]);
 
   useEffect(() => {
     const main = document.querySelector('#main-content main');
@@ -39,7 +61,7 @@ function Navigation({ pathname }) {
     const setSticky = pastIntro => {
       // An open menu must keep its close button on screen while the viewport
       // changes. Recheck the intro as soon as the menu closes.
-      if (menu.current?.hidden && element.isConnected) element.dataset.stuck = String(pastIntro);
+      if (element.dataset.menuOpen !== 'true' && element.isConnected) element.dataset.stuck = String(pastIntro);
     };
     const measure = () => {
       const height = element.getBoundingClientRect().height;
@@ -88,7 +110,7 @@ function Navigation({ pathname }) {
         toggle.current?.focus();
       }
       if (e.key === "Tab") {
-        const nodes = [toggle.current, ...menu.current.querySelectorAll("a")];
+        const nodes = [toggle.current, ...menu.current.querySelectorAll("a, button")].filter(node => !node.closest('[inert]'));
         if (e.shiftKey && document.activeElement === nodes[0]) {
           e.preventDefault();
           nodes.at(-1).focus();
@@ -110,12 +132,19 @@ function Navigation({ pathname }) {
     href === "/"
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
+  const closeMenu = () => { setOpen(false); setServiceMenu(false); };
+  const showServices = () => {
+    setServiceMenu(true);
+  };
+  const showMain = () => {
+    setServiceMenu(false);
+  };
   return (
     <div className="navigation-slot" ref={slot}>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <header className="header" ref={header}>
+      <header className="header" ref={header} data-menu-open={open}>
         <div className="shell nav">
           <a href="/" className="brand-logo" aria-label="JovaMedia home">
             <Image
@@ -127,7 +156,7 @@ function Navigation({ pathname }) {
               priority
               sizes="120px"
             />
-            <Image className="logo-dark-surface" src="/brand/jova-logo-white.png" alt="" aria-hidden="true" width={361} height={128} sizes="132px" />
+            <Image className="logo-dark-surface" src="/brand/jova-logo-white.png" alt="" aria-hidden="true" width={361} height={128} sizes="132px" loading="eager" />
           </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
             {links.map(([name, href]) => (
@@ -151,7 +180,7 @@ function Navigation({ pathname }) {
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               aria-controls="mobile-menu"
-              onClick={() => setOpen(!open)}
+              onClick={() => open ? closeMenu() : setOpen(true)}
               type="button"
             >
               <span />
@@ -161,18 +190,22 @@ function Navigation({ pathname }) {
         </div>
         <nav
           ref={menu}
-          hidden={!open}
           inert={!open}
+          aria-hidden={!open}
+          data-open={open}
           id="mobile-menu"
           className="mobile-menu"
           aria-label="Mobile navigation"
         >
           <div className="mobile-menu-inner">
-            {links.map(([name, href]) => (
+            <div className="mobile-menu-page" data-active={!serviceMenu} inert={serviceMenu} aria-hidden={serviceMenu}>
+            {links.map(([name, href]) => name === "Services" ? (
+              <button key={href} type="button" className="mobile-services-toggle" onClick={showServices} aria-expanded={serviceMenu} aria-controls="mobile-services"><span>Services</span><MenuChevron /></button>
+            ) : (
               <a
                 key={href}
                 href={href}
-                onClick={() => setOpen(false)}
+                onClick={closeMenu}
                 aria-current={active(href) ? "page" : undefined}
               >
                 {name}
@@ -181,10 +214,16 @@ function Navigation({ pathname }) {
             <a
               href="/get-a-quote"
               className="btn mobile-project"
-              onClick={() => setOpen(false)}
+              onClick={closeMenu}
             >
               Get a Quote
             </a>
+            </div>
+            <div id="mobile-services" className="mobile-menu-page mobile-services" data-active={serviceMenu} inert={!serviceMenu} aria-hidden={!serviceMenu}>
+              <button type="button" className="mobile-menu-back" onClick={showMain}><MenuChevron back/><span>Back</span></button>
+              <a className="mobile-services-overview" href="/services" onClick={closeMenu}>Explore our services</a>
+              {serviceLinks.map(([name, href]) => <a key={href} href={href} onClick={closeMenu} aria-current={active(href) ? "page" : undefined}>{name}</a>)}
+            </div>
           </div>
         </nav>
       </header>
