@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-html-link-for-pages -- Editorial links remain usable without the client router. */
 import BookingCostCalculator from "./BookingCostCalculator";
 import { sources } from "@/lib/insights.mjs";
 import s from "./Editorial.module.css";

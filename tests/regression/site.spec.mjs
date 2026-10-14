@@ -344,7 +344,7 @@ test('FAQ progress advances on every screen and stays aligned after expansion', 
   const markers = faq.locator('[data-story-marker]');
   await markers.first().scrollIntoViewIfNeeded();
   const first = await faq.evaluate(el => Number(el.style.getPropertyValue('--line')));
-  await markers.last().scrollIntoViewIfNeeded();
+  await page.mouse.wheel(0, 500);
   await expect.poll(() => faq.evaluate(el => Number(el.style.getPropertyValue('--line')))).toBeGreaterThan(first);
   const card = faq.locator('details').first();
   await card.locator('summary').click();
@@ -354,6 +354,15 @@ test('FAQ progress advances on every screen and stays aligned after expansion', 
     const centre = marker => { const box = marker.getBoundingClientRect(); return box.top + box.height / 2; };
     return Math.abs(parseFloat(getComputedStyle(track, '::before').height) - (centre(markers.at(-1)) - centre(markers[0])));
   })).toBeLessThan(1);
+});
+
+test('the looping homepage preview can be paused and resumed', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Pause preview', exact: true }).click();
+  await expect(page.locator('.scrollTrack').first()).toHaveCSS('animation-play-state', 'paused');
+  await expect(page.getByRole('button', { name: 'Play preview', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Play preview', exact: true }).click();
+  await expect(page.locator('.scrollTrack').first()).toHaveCSS('animation-play-state', 'running');
 });
 
 test('layout stays within phone, tablet, short desktop and ultrawide viewports', async ({ page }, testInfo) => {

@@ -17,9 +17,9 @@ const pricingQuestions = [
 ];
 export default function PricingPage() {
   return <main><PhotoHero image="pricing" className={`${s.pageHero} ${s.pricingHero}`}><div className={s.container}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Website prices", path: "/pricing" }]}/><h1>Small business<br/>website prices.</h1><p>Choose a focused landing page, a business website or a website with booking. We agree the scope and separate running costs before work begins.</p></div></PhotoHero><ProductPackages />
-    <FaqStory items={pricingQuestions} contactHref="/get-a-quote" contactLabel="Get a Quote"/>
     <section className={e.editorial} aria-label="Website planning guides"><div className={e.shell}><div className={`${e.caseText} ${e.prose}`}>
       <p>For a closer look at budgets and quote comparisons, read <Link href="/insights/small-business-website-cost-uk">what a small business website costs and what should be included</Link>. The <Link href="/work/qaiser-watches">Qaiser Watches case study</Link> shows a live project.</p>
     </div></div></section>
+    <FaqStory items={pricingQuestions} contactHref="/get-a-quote" contactLabel="Get a Quote"/>
   </main>;
 }
