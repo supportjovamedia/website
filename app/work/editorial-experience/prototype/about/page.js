@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { editorialRoot } from "@/lib/editorial";
 export const metadata = {
-  title: "About Perspective — Editorial concept",
+  title: "About Perspective , Editorial concept",
   robots: { index: false, follow: false },
   alternates: { canonical: "/work/editorial-experience/prototype/about" },
 };
@@ -22,7 +22,7 @@ export default function About() {
           </div>
         </nav>
         <section className="concept-heading">
-          <p className="kicker">About the concept</p>
+
           <h1>A place for a different perspective.</h1>
           <p className="lead">
             Perspective is a fictional publication created to explore editorial

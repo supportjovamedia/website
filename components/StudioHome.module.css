@@ -54,8 +54,9 @@
 @media(max-width:700px){.benefits{padding-top:30px}.benefitGrid{margin-top:28px;gap:30px}.serviceCopy{padding-block:10px}.serviceCopy h3{text-wrap:balance}.finalCta{padding:42px 22px}}
 @media(prefers-reduced-motion:reduce){.benefitGrid article .benefitPhoto,.serviceVisual[data-motion-ready=true] img{transform:none;transition:none}}
 
-/* Laptop pinning adapts to viewport height; phones keep the natural flow. */
-.story{height:auto;background:#f4f6f8}
+/* Pin only when the complete service panel fits the viewport. */
+.story{--story-top:86px;height:auto;background:#f4f6f8}
+.shortServiceName{display:none}
 .sticky{position:static;height:auto;min-height:0;padding:44px 5vw 0}
 .stage{display:grid;gap:24px;min-height:0;flex:auto;margin-top:24px}
 .service{position:relative;inset:auto;opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:none;min-width:0;padding:28px;border-radius:20px;scroll-margin-top:110px;background:transparent}
@@ -63,7 +64,7 @@
 .serviceCopy h3{font-size:clamp(36px,4.4vw,70px);text-wrap:balance}
 .sticky .moreServices{padding:24px 0 40px}
 .chapters{flex-wrap:wrap;gap:8px;max-width:780px;margin-inline:auto}
-.chapters button{min-height:44px;padding:10px 16px;font-size:13px;max-width:none;border:1px solid #cad5df;border-radius:999px;background:#fff;color:#36536a;line-height:1.45;text-align:center;transition:background .25s,color .25s,border-color .25s}
+.chapters button{min-height:44px;padding:10px 16px;font-size:13px;max-width:none;border:1px solid #cad5df;border-radius:999px;background:#fff;color:#36536a;line-height:1.45;text-align:center;justify-content:center;transition:background .25s,color .25s,border-color .25s}
 .chapters button[aria-current]{background:#0c2948;border-color:#0c2948;color:#fff}
 .chapters button:focus-visible{outline:3px solid #0071e3;outline-offset:4px}
 
@@ -88,7 +89,7 @@
  .story[data-pinned=true] .serviceVisual img{max-height:53svh}
  .story[data-pinned=true] .moreServices{padding:8px 0 0}
 }
-@media(min-width:1800px){.story[data-pinned=true] .sticky{top:100px;height:calc(100svh - 100px)}}
+@media(min-width:1800px){.story{--story-top:100px}.story[data-pinned=true] .sticky{top:100px;height:calc(100svh - 100px)}}
 @media(min-width:901px) and (max-height:819px) and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
  .story[data-pinned=true] .sticky{padding-top:12px;padding-bottom:12px}
  .story[data-pinned=true] .storyHeading .kicker{font-size:9px;line-height:1.4;margin-bottom:4px}
@@ -117,3 +118,30 @@
 .story .service,.story .service:nth-child(1),.story .service:nth-child(2),.story .service:nth-child(3){background:transparent}
 .serviceVisual[data-motion-ready=true] img,.serviceVisual[data-in-view=true] img{transform:none;transition:none}
 .serviceVisual img{display:block;height:auto;object-fit:contain}
+.stats{grid-template-columns:1fr;max-width:420px;width:100%;margin-inline:auto;text-align:center}.stats p{max-width:32ch;margin-inline:auto}
+
+/* A compact phone showcase uses the same three panels and normal page scroll. */
+@media(max-width:900px) and (min-height:740px) and (prefers-reduced-motion:no-preference){
+ .story{--story-top:70px}
+ .story[data-pinned=true]{height:270svh}
+ .story[data-pinned=true] .sticky{position:sticky;top:var(--story-top);height:calc(100svh - var(--story-top));min-height:0;padding:18px 5vw 16px}
+ .story[data-pinned=true] .storyHeading h2{font-size:25px;line-height:1.2;max-width:none;margin:0 0 12px}
+ .story[data-pinned=true] .chapters{width:100%;flex-wrap:nowrap;gap:7px}
+ .story[data-pinned=true] .chapters button{flex:1 1 0;min-width:0;min-height:44px;padding:8px 7px;font-size:12px;white-space:nowrap}
+ .story[data-pinned=true] .fullServiceName{display:none}
+ .story[data-pinned=true] .shortServiceName{display:inline}
+ .story[data-pinned=true] .stage{display:block;position:relative;flex:1;min-height:0;margin-top:14px}
+ .story[data-pinned=true] .service{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:0;margin:0;border:0;border-radius:0;pointer-events:none;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .25s ease-out,transform .35s ease-out,visibility .25s}
+ .story[data-pinned=true] .service[data-active=true]{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+ .story[data-pinned=true] .serviceVisual{width:100%;margin:0;flex:none}
+ .story[data-pinned=true] .serviceVisual img{width:100%;height:clamp(130px,24svh,230px);max-height:none;object-fit:contain}
+ .story[data-pinned=true] .serviceCopy{padding:0;max-width:460px;text-align:center}
+ .story[data-pinned=true] .serviceCopy h3{font-size:clamp(25px,7vw,34px);line-height:1.1;margin:0 0 12px}
+ .story[data-pinned=true] .serviceCopy h4,.story[data-pinned=true] .serviceCopy ul{display:none}
+ .story[data-pinned=true] .serviceCopy>p{font-size:14px;line-height:1.6;margin:0 auto 18px;max-width:38ch}
+ .story[data-pinned=true] .serviceActions{justify-content:center;gap:16px;flex-wrap:nowrap}
+ .story[data-pinned=true] .serviceActions .primary{font-size:13px;min-height:44px;padding:11px 16px}
+ .story[data-pinned=true] .serviceActions .underlined{font-size:13px}
+ .story[data-pinned=true] .moreServices{padding:12px 0 0}
+ .story[data-pinned=true] .moreServices .secondary{min-height:44px;padding:10px 18px;font-size:13px}
+}

@@ -11,9 +11,9 @@ export default function BusinessContact({ placement = "contact" }) {
     <p className={s.title}>Prefer a quick conversation?</p>
     <p className={s.copy}>Tell us what you have in mind on WhatsApp, or give us a call.</p>
     <div className={s.actions}>
-      <a className={s.whatsapp} href={whatsappLink(placement)} target="_blank" rel="noopener noreferrer" data-contact-placement="content"><WhatsAppIcon />Chat on WhatsApp<span aria-hidden="true">↗</span></a>
+      <a className={s.whatsapp} href={whatsappLink(placement)} target="_blank" rel="noopener noreferrer" data-contact-placement="content"><WhatsAppIcon />Chat on WhatsApp</a>
       <a className={s.call} href={businessPhone.tel} data-contact-placement="content"><Phone size={17} aria-hidden="true" />Call {businessPhone.display}</a>
     </div>
-    <p className={s.note}>No form needed. If we’re away, leave a message and we’ll get back to you.</p>
+    <p className={s.note}>Prefer website chat? Use the chat button to leave a message or speak with us when available. If we’re away, we’ll get back to you.</p>
   </section>;
 }

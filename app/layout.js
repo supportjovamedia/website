@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import SiteChrome from "@/components/SiteChrome";
 import { socialProfiles } from "@/lib/site";
 import { socialPreview } from "@/lib/social-preview.mjs";
+import { businessPhone } from "@/lib/business-contact.mjs";
 const jakarta = localFont({
   src: "./fonts/plus-jakarta-sans.woff2",
   display: "swap",
@@ -22,7 +23,7 @@ const jakarta = localFont({
 export const metadata = {
   metadataBase: new URL("https://www.jovamedia.com"),
   title: {
-    default: "JovaMedia | Digital Marketing Agency London",
+    default: "Small Business Website Design UK | JovaMedia",
     template: "%s | JovaMedia",
   },
   description:
@@ -55,6 +56,8 @@ const organisation = {
   url: "https://www.jovamedia.com",
   logo: "https://www.jovamedia.com/brand/jova-logo.png",
   email: "support.jovamedia@gmail.com",
+  telephone: businessPhone.tel.slice(4),
+  areaServed: { "@type": "Country", name: "United Kingdom" },
   address: {
     "@type": "PostalAddress",
     addressLocality: "London",

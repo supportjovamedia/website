@@ -2,7 +2,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <main className="not-found">
-      <p className="kicker">Page not found</p>
+
       <h1>
         Let’s get you
         <br />

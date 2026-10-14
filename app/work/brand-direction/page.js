@@ -2,10 +2,9 @@ import { pageMetadata } from "@/lib/seo";
 import Image from "next/image";
 import Link from "next/link";
 import WorkStudy from "@/components/WorkStudy";
-import Arrow from "@/components/Arrow";
 export const metadata = pageMetadata(
   "/work/brand-direction",
-  "A bolder brand direction — Concept study",
+  "A bolder brand direction , Concept study",
   "A self-initiated fictional drinks campaign: creative brief, art direction, poster and social adaptations, layout exploration and a responsive landing concept.",
 );
 export default function BrandStudy() {
@@ -17,7 +16,7 @@ export default function BrandStudy() {
       </div>
       <div className="shell">
         <header className="concept-heading">
-          <p className="kicker">Brand & creative / Concept study</p>
+
           <h1>A bolder brand direction.</h1>
           <p className="lead">
             How do you make an unfamiliar product feel immediately recognisable?
@@ -26,7 +25,7 @@ export default function BrandStudy() {
           </p>
           <div className="actions">
             <Link href="/work/brand-direction/landing" className="btn">
-              Explore the landing concept <Arrow />
+              Explore the landing concept
             </Link>
             <a href="#creative-brief" className="text-link">
               Read the brief
@@ -37,7 +36,7 @@ export default function BrandStudy() {
           <WorkStudy kind="brand" />
         </div>
         <section className="concept-section" id="creative-brief">
-          <p className="kicker">The creative brief</p>
+
           <h2>Starting with one idea.</h2>
           <p>
             Make a fictional sparkling drink easy to notice and easy to
@@ -70,7 +69,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">Art direction</p>
+
           <h2>Building a visual language.</h2>
           <div className="concept-columns">
             <div>
@@ -104,7 +103,7 @@ export default function BrandStudy() {
                 composition its weight on the right.
               </p>
               <p>
-                The imagery is AI-generated for this fictional creative
+                The imagery belongs to this fictional creative
                 exercise. The layouts, adaptations and responsive prototype are
                 implemented as part of this study.
               </p>
@@ -112,7 +111,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">Format adaptations</p>
+
           <h2>One idea. Different spaces.</h2>
           <div className="asset-grid">
             <figure>
@@ -173,7 +172,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">The layout exploration</p>
+
           <h2>Two routes, one decision.</h2>
           <div className="layout-options">
             <figure>
@@ -185,7 +184,7 @@ export default function BrandStudy() {
                 NOISE.<span>TYPE FIRST / OPTION A</span>
               </div>
               <figcaption>
-                <b>Option A — Type first.</b> The gold field and oversized sans
+                <b>Option A , Type first.</b> The gold field and oversized sans
                 serif make the message immediate, but leave the product outside
                 the main story.
               </figcaption>
@@ -193,7 +192,7 @@ export default function BrandStudy() {
             <figure>
               <WorkStudy kind="brand" />
               <figcaption>
-                <b>Option B — Product and message.</b> The selected route puts
+                <b>Option B , Product and message.</b> The selected route puts
                 the can and campaign phrase together. It carries more product
                 context into small formats.
               </figcaption>
@@ -201,7 +200,7 @@ export default function BrandStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">Responsive expression</p>
+
           <h2>From the poster to the screen.</h2>
           <p>
             The landing concept brings the same art direction into a responsive
@@ -209,7 +208,7 @@ export default function BrandStudy() {
             not offer a checkout for a nonexistent product.
           </p>
           <Link href="/work/brand-direction/landing" className="btn">
-            Open the working concept <Arrow />
+            Open the working concept
           </Link>
         </section>
       </div>

@@ -10,7 +10,7 @@ const industries = [
   ["Property & interiors", "Spaces that deserve to be seen.", "M2 11 12 2l10 9 M5 9v13h14V9 M9 22v-8h6v8"]
 ];
 export default function Industries(){return <section id="industries" className={s.section} aria-labelledby="industries-title"><div className={s.inner}>
-<header className={s.heading}><div><p className={s.kicker}>BUILT AROUND YOUR BUSINESS</p><h2 id="industries-title">Industries we build<br/>websites <em>for.</em></h2></div><p>Different industries. The same attention to detail.<br/>A website shaped around your business and the people you want to reach.</p></header>
+<header className={s.heading}><div><h2 id="industries-title">Industries we build<br/>websites <em>for.</em></h2></div><p>Different industries. The same attention to detail.<br/>A website shaped around your business and the people you want to reach.</p></header>
 <div className={s.grid}>{industries.map(([name,copy,path])=><article key={name} className={s.card}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path}/></svg><h3>{name}</h3><p>{copy}</p></article>)}</div>
 <div className={s.bottom}><p>Don’t see your industry? We would love to hear what you do.</p><a href="/contact">Contact Us</a></div>
 </div></section>}

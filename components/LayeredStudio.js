@@ -36,7 +36,7 @@ export default function LayeredStudio({ paused = false }) {
   }, [paused]);
 
   return <section className={s.studio} id="studio" ref={section} aria-labelledby="studio-title">
-    <div className={s.eyebrow}><span>THE STUDIO</span><span>THINK. MAKE. MOVE.</span></div>
+
     <div className={s.layout}>
       <div className={s.copy}>
         <h2 id="studio-title">Small details.<br /><em>Big difference.</em></h2>

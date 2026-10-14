@@ -18,7 +18,7 @@ const sourceSha = (bytes, file) => sha(file.endsWith('.png') ? bytes : bytes.toS
   const recovery = path.resolve('..', 'output', 'jova-white-redesign', 'originals');
   await fs.mkdir(recovery, { recursive: true });
   await fs.copyFile(input, path.join(recovery, 'social-preview-source.png'));
-  await sharp(input).resize({ width: 1200 }).extract({ left: 0, top: 0, width: 1200, height: 630 }).png().toFile(imagePath);
+  await sharp(input).resize({ width: 1200, height: 630, fit: 'cover', position: 'top' }).png().toFile(imagePath);
   await fs.copyFile(imagePath, 'public/share/jovamedia-homepage-2026-09.png');
   const sources = {};
   for (const file of sourcePaths) sources[file] = sourceSha(await fs.readFile(file), file);

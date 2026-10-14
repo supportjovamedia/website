@@ -9,7 +9,7 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const story = stories.find((s) => s.slug === slug);
   return {
-    title: story ? `${story.title} — Sample story` : "Story not found",
+    title: story ? `${story.title} , Sample story` : "Story not found",
     description: story?.teaser,
     robots: { index: false, follow: false },
     alternates: { canonical: `${editorialRoot}/${slug}` },
@@ -39,7 +39,7 @@ export default async function Article({ params }) {
         </nav>
         <article className="publication-article">
           <header>
-            <p className="kicker">{story.topic} / Sample editorial content</p>
+
             <h1>{story.title}</h1>
             <p className="lead">{story.teaser}</p>
           </header>

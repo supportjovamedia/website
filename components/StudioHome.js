@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import DaybreakHero from "./DaybreakHero";
 import GrowthSignup from "./GrowthSignup";
 import WhyJovaPreview from "./WhyJovaPreview";
+import ProjectAndGuides from "./ProjectAndGuides";
 import { ProcessStory, FaqStory } from "./ScrollStories";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 import s from "./StudioHome.module.css";
@@ -31,39 +32,44 @@ export default function StudioHome() {
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
     const desktop = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
+    const phone = matchMedia("(max-width: 900px) and (min-height: 740px)");
     let frame = 0;
     let lastChapter = -1;
     const paint = () => {
       frame = 0;
-      setPinned(desktop.matches && !media.matches);
-      if (media.matches || !desktop.matches) {
+      if (media.matches || (!desktop.matches && !phone.matches)) {
         gallery.current.style.setProperty("--gallery-pan", "0px");
         return;
       }
-      const rect = gallery.current.getBoundingClientRect();
-      gallery.current.style.setProperty("--gallery-pan", `${Math.max(-220, Math.min(220, -rect.top * .12))}px`);
       const stage = story.current.getBoundingClientRect();
-      const progress = Math.max(0, Math.min(1, -stage.top / Math.max(1, stage.height - innerHeight)));
+      const offset = parseFloat(getComputedStyle(story.current).getPropertyValue("--story-top")) || 86;
+      const progress = Math.max(0, Math.min(1, (offset - stage.top) / Math.max(1, stage.height - (innerHeight - offset))));
       const next = Math.min(2, Math.floor(progress * 3));
       if (next !== lastChapter) { lastChapter = next; setChapter(next); }
+      if (desktop.matches) {
+        const rect = gallery.current.getBoundingClientRect();
+        gallery.current.style.setProperty("--gallery-pan", `${Math.max(-220, Math.min(220, -rect.top * .12))}px`);
+      } else gallery.current.style.setProperty("--gallery-pan", "0px");
     };
     const request = () => { if (!frame) frame = requestAnimationFrame(paint); };
     const setup = () => {
       removeEventListener("scroll", request);
-      if (desktop.matches && !media.matches) addEventListener("scroll", request, { passive: true });
+      setPinned(!media.matches && (desktop.matches || phone.matches));
+      if ((desktop.matches || phone.matches) && !media.matches) addEventListener("scroll", request, { passive: true });
       request();
     };
     addEventListener("resize", request);
     media.addEventListener("change", setup);
     desktop.addEventListener("change", setup);
+    phone.addEventListener("change", setup);
     setup();
-    return () => { cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); media.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
+    return () => { cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); media.removeEventListener("change", setup); desktop.removeEventListener("change", setup); phone.removeEventListener("change", setup); };
   }, []);
   function jump(index) {
-    const media = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
-    if (media.matches) {
+    if (pinned) {
       const top = story.current.getBoundingClientRect().top + scrollY;
-      scrollTo({ top: top + (story.current.offsetHeight - innerHeight) * (index + .15) / 3, behavior: "instant" });
+      const offset = parseFloat(getComputedStyle(story.current).getPropertyValue("--story-top")) || 86;
+      scrollTo({ top: top - offset + (story.current.offsetHeight - (innerHeight - offset)) * (index + .15) / 3, behavior: "instant" });
     } else { setChapter(index); panels.current[index]?.scrollIntoView({ behavior: "instant", block: "start" }); }
     trackEvent("select_content", { destination: services[index].href });
   }
@@ -79,17 +85,17 @@ export default function StudioHome() {
         </div>)}
       </section>
       <section className={s.benefits} aria-labelledby="benefits-title">
-        <div className={s.sectionIntro} data-site-reveal><p className={s.kicker}>LESS COMPLICATED. MORE CONSIDERED.</p><h2 id="benefits-title">Good design.<br />Built for your business.</h2><p>You bring the ambition. We help turn it into a website, a brand and a clear way forward.</p></div>
+        <div className={s.sectionIntro} data-site-reveal><h2 id="benefits-title">Small business websites.<br />Built around you.</h2><p>Make your services easy to understand, show your work and give customers a clear way to enquire or book. We design and build websites for small businesses across the UK.</p></div>
         <MotionRegion className={s.benefitGrid}>
-          <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/sketch.webp" alt="Design sketches and ideas" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Made around you.</h3><p>Your goals, your customers and your personality shape the work. We start with your business.</p></article>
-          <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/desk.webp" alt="A workspace for planning and collaboration" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Clear at every stage.</h3><p>Review the design, ask questions and share feedback. You know what is happening and what comes next.</p></article>
-          <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/objects.webp" alt="Carefully considered studio materials" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Built with purpose.</h3><p>A good-looking website should help people understand your offer and feel ready to get in touch.</p></article>
+          <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/sketch.webp" alt="Design sketches and ideas" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Custom website design.</h3><p>Your services, customers and brand shape the layout and copy. Get a new business website or redesign an existing one around what you need.</p></article>
+          <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/desk.webp" alt="A workspace for planning and collaboration" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Clear scope and pricing.</h3><p>Business websites start from £550, with custom booking websites from £2,000. Review the design and agree the pages, features and running costs before the build.</p><Link className={s.underlined} href="/pricing">Compare website packages</Link></article>
+          <article data-motion-card><Image className={s.benefitPhoto} src="/home-agency/objects.webp" alt="Carefully considered studio materials" width={800} height={600} sizes="(max-width:600px) 100vw, 30vw" /><h3>Ready for customers.</h3><p>Responsive pages, clear contact options and search foundations help people find their way. Add your existing booking app or agree a custom booking system.</p><Link className={s.underlined} href="/services/salon-website-design">Explore salon and booking websites</Link></article>
         </MotionRegion>
       </section>
-      <section className={s.story} data-chapter={chapter} data-pinned={pinned} ref={story} aria-labelledby="services-title">
+      <section className={s.story} data-chapter={chapter} data-pinned={pinned} data-service-story ref={story} aria-labelledby="services-title">
         <div className={s.sticky}>
-          <div className={s.storyHeading}><p className={s.kicker}>THE RIGHT TOOLS FOR YOUR NEXT CHAPTER</p><h2 id="services-title">A little more than a website.</h2></div>
-          <nav className={s.chapters} aria-label="Explore services">{services.map((service, index) => <button key={service.name} type="button" aria-current={chapter === index ? "step" : undefined} onClick={() => jump(index)}>{service.name}</button>)}</nav>
+          <div className={s.storyHeading}><h2 id="services-title">A little more than a website.</h2></div>
+          <nav className={s.chapters} aria-label="Explore services">{services.map((service, index) => <button key={service.name} type="button" aria-label={service.name} aria-current={chapter === index ? "step" : undefined} onClick={() => jump(index)}><span className={s.fullServiceName}>{service.name}</span><span className={s.shortServiceName}>{["Websites", "Social media", "Branding"][index]}</span></button>)}</nav>
           <MotionRegion className={s.stage}>{services.map((service, index) => <article key={service.name} ref={element => { panels.current[index] = element; }} className={s.service} data-active={chapter === index} inert={pinned && chapter !== index ? true : undefined}>
             <figure className={s.serviceVisual} data-motion-card><Image src={`/studio-2026/${service.image}.webp`} alt={service.alt} width={1448} height={1086} sizes="(max-width: 900px) 100vw, 58vw" /></figure>
             <div className={s.serviceCopy}><h3>{service.name}.</h3><h4>{service.intro}</h4><p>{service.copy}</p><ul>{service.points.map(point => <li key={point}><Check size={17} aria-hidden="true" />{point}</li>)}</ul><div className={s.serviceActions}><ConsultationLink className={s.primary} placement="home_intro">Free consultation</ConsultationLink><Link href={service.href} className={s.underlined}>Learn more</Link></div></div>
@@ -99,9 +105,10 @@ export default function StudioHome() {
       </section>
       <ProcessStory />
       <WhyJovaPreview />
-      <section className={s.experience} aria-labelledby="experience-title"><div data-site-reveal><p className={s.kicker}>EXPERIENCE YOU CAN BUILD ON</p><h2 id="experience-title">Big ideas.<br />A personal approach.</h2><Link href="/about" className={s.underlined}>Get to know JovaMedia</Link></div><div className={s.stats}><article><strong>2016</strong><h3>Where it began.</h3><p>Designing websites and helping businesses bring their ideas to life.</p></article></div></section>
+      <ProjectAndGuides />
+      <section className={s.experience} aria-labelledby="experience-title"><div data-site-reveal><h2 id="experience-title">Big ideas.<br />A personal approach.</h2><Link href="/about" className={s.underlined}>Get to know JovaMedia</Link></div><div className={s.stats}><article><strong>2016</strong><h3>Where it began.</h3><p>Designing websites and helping businesses bring their ideas to life.</p></article></div></section>
       <FaqStory />
-      <section className={s.finalCta} data-site-reveal aria-labelledby="final-cta-title"><p>YOUR NEXT CHAPTER STARTS WITH A CONVERSATION.</p><h2 id="final-cta-title">Let’s make your<br />first impression count.</h2><div className={s.actions}><ConsultationLink className={s.lightButton} placement="other">Get my free consultation</ConsultationLink><Link href="/pricing" className={s.darkOutline}>View pricing</Link></div></section>
+      <section className={s.finalCta} data-site-reveal aria-labelledby="final-cta-title"><h2 id="final-cta-title">Let’s make your<br />first impression count.</h2><div className={s.actions}><ConsultationLink className={s.lightButton} placement="other">Get my free consultation</ConsultationLink><Link href="/pricing" className={s.darkOutline}>View pricing</Link></div></section>
     </main>
     <div className="jova-pages"><GrowthSignup newsletter /><Footer /></div>
   </div>;

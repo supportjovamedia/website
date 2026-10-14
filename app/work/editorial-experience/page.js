@@ -1,7 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import WorkStudy from "@/components/WorkStudy";
-import Arrow from "@/components/Arrow";
 function Wireframe({ type, mobile }) {
   return (
     <figure>
@@ -39,7 +38,7 @@ function Wireframe({ type, mobile }) {
 }
 export const metadata = pageMetadata(
   "/work/editorial-experience",
-  "A more considered experience — Concept study",
+  "A more considered experience , Concept study",
   "Explore a self-initiated editorial website with wireframes, topic filters, three sample articles and a working responsive prototype.",
 );
 export default function EditorialStudy() {
@@ -51,7 +50,7 @@ export default function EditorialStudy() {
       </div>
       <div className="shell">
         <header className="concept-heading">
-          <p className="kicker">Web & digital / Concept study</p>
+
           <h1>A more considered experience.</h1>
           <p className="lead">
             A digital experience should give people a clear way in. Perspective
@@ -60,7 +59,7 @@ export default function EditorialStudy() {
           </p>
           <div className="actions">
             <Link href="/work/editorial-experience/prototype" className="btn">
-              Explore the working prototype <Arrow />
+              Explore the working prototype
             </Link>
             <a href="#wireframes" className="text-link">
               See the design process
@@ -71,7 +70,7 @@ export default function EditorialStudy() {
           <WorkStudy kind="digital" />
         </div>
         <section className="concept-section">
-          <p className="kicker">Purpose and structure</p>
+
           <h2>Give the experience a clear purpose.</h2>
           <p>
             The design starts with three straightforward actions: discover a
@@ -104,7 +103,7 @@ export default function EditorialStudy() {
           </div>
         </section>
         <section className="concept-section" id="wireframes">
-          <p className="kicker">Wireframes</p>
+
           <h2>A rhythm before a visual style.</h2>
           <p>
             These low-fidelity layouts separate the feature, navigation and
@@ -120,7 +119,7 @@ export default function EditorialStudy() {
           </div>
         </section>
         <section className="concept-section">
-          <p className="kicker">Art direction</p>
+
           <div className="concept-columns">
             <div>
               <h2>Character and clarity.</h2>
@@ -140,11 +139,11 @@ export default function EditorialStudy() {
             </div>
           </div>
           <Link href="/work/editorial-experience/prototype" className="btn">
-            Try the reading flow <Arrow />
+            Try the reading flow
           </Link>
         </section>
         <section className="concept-section">
-          <p className="kicker">Implementation review</p>
+
           <h2>Check the work itself.</h2>
           <div className="review-log">
             <ul>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { serviceArt } from "@/lib/service-art";
+import { serviceArt, serviceArtAlt } from "@/lib/service-art";
 import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 import { primaryServices } from "@/lib/service-catalogue";
@@ -8,13 +8,13 @@ import MotionRegion from "@/components/MotionRegion";
 import PhotoHero from "@/components/PhotoHero";
 import { FaqStory } from "@/components/ScrollStories";
 
-export const metadata = pageMetadata("/services", "Website, Software & Creative Services", "Explore JovaMedia’s seven services: websites, system modernization, social media, brand design, copywriting, email automation and SEO.");
+export const metadata = pageMetadata("/services", "Website Design & Digital Services for UK Small Businesses", "Explore JovaMedia’s seven services: websites, system modernization, social media, brand design, copywriting, email automation and SEO.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
     <PhotoHero image="services" className={`page-hero ${styles.hero}`}>
       <div className="shell">
-        <p className="kicker">What we offer</p>
+
         <h1>Everything you need<br /><em>to grow.</em></h1>
         <p className="lead">A new website, a clearer message or a more consistent presence. Start with one service, or bring a few together around your business.</p>
         <div className="actions"><Link className="btn" href="/contact">Contact Us</Link></div>
@@ -24,9 +24,9 @@ export default function Page() {
       <div className="shell">
         <MotionRegion className={styles.directoryGrid}>
           {primaryServices.map((service, index) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard} data-motion-card style={{ "--card-delay": `${index % 3 * 40}ms` }}>
-            <div className={styles.directoryImage} style={{ aspectRatio: service.slug === "system-modernization" ? "1" : "4 / 3" }}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt="" fill sizes="(max-width:700px) 100vw, 60vw" /></div>
+            <div className={styles.directoryImage} style={{ aspectRatio: service.slug === "system-modernization" ? "1" : "4 / 3" }}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt={serviceArtAlt[service.slug]} fill sizes="(max-width:700px) 100vw, 60vw" /></div>
             <div className={styles.directoryBody}>
-              <p className="kicker">{service.eyebrow}</p>
+
               <h2>{service.name}</h2><p>{service.summary}</p>
               <div className={styles.cardFoot}><span>Explore service</span></div>
             </div>
@@ -36,6 +36,6 @@ export default function Page() {
       </div>
     </section>
     <FaqStory />
-    <section className={`section ${styles.custom}`}><div className="shell"><p className="kicker">Made around your brief</p><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><Link href="/get-a-quote" className="btn">Get a Quote</Link></div></section>
+    <section className={`section ${styles.custom}`}><div className="shell"><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><Link href="/get-a-quote" className="btn">Get a Quote</Link></div></section>
   </main>;
 }

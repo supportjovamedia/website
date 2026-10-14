@@ -1,6 +1,6 @@
 import EditorialPrototype from "@/components/EditorialPrototype";
 export const metadata = {
-  title: "Perspective — Editorial concept",
+  title: "Perspective , Editorial concept",
   description:
     "A fictional publication prototype with topic filters and three sample articles.",
   robots: { index: false, follow: false },

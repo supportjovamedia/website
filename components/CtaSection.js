@@ -3,7 +3,7 @@ import Reveal from "@/components/Reveal";
 
 export default function CtaSection({
   title = "Ready to grow with a partner, not just a provider?",
-  description = "Tell us where you're at and where you want to be — we'll come back with a straightforward view on how to get there.",
+  description = "Tell us where you're at and where you want to be , we'll come back with a straightforward view on how to get there.",
   buttonLabel = "Start a Project",
   buttonHref = "/contact",
 }) {

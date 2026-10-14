@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
+import {articles, editorialDate} from "../lib/insights.mjs";
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname))
   throw Error("Local tests only");
@@ -57,13 +58,23 @@ test("service structured data and visible breadcrumbs agree with the canonical p
     assert.match(html, /Explore related services/);
   }
 });
-test("unfinished insights stay accessible but outside search index and sitemap", async () => {
+test("completed insights and articles are indexable, discoverable and contain their visible article schema", async () => {
   const response = await fetch(base + "/insights");
   assert.equal(response.status, 200);
-  assert.match(meta(await response.text(), "robots"), /noindex/);
-  assert.ok(
-    !(await (await fetch(base + "/sitemap.xml")).text()).includes("/insights"),
-  );
+  assert.doesNotMatch(meta(await response.text(), "robots") || "", /noindex/);
+  const sitemap=await (await fetch(base + "/sitemap.xml")).text();
+  assert.ok(sitemap.includes("https://www.jovamedia.com/insights</loc>"));
+  for(const article of articles){
+    const path=`/insights/${article.slug}`;
+    assert.ok(sitemap.includes(`https://www.jovamedia.com${path}</loc>`));
+    const page=await fetch(base+path);assert.equal(page.status,200);
+    const html=await page.text();
+    assert.equal([...html.matchAll(/<h1[\s>]/g)].length,1,path);
+    const schema=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(m=>JSON.parse(m[1])).find(x=>x['@type']==='BlogPosting');
+    assert.equal(schema.datePublished,editorialDate);
+    assert.equal(schema.headline,article.title);
+    assert.doesNotMatch(meta(html,'robots')||'',/noindex/);
+  }
 });
 
 test("social previews use the current homepage capture and return a valid PNG", async () => {
@@ -74,11 +85,12 @@ test("social previews use the current homepage capture and return a valid PNG", 
     const response = await fetch(base + new URL(url).pathname, {headers:{"User-Agent":"Twitterbot/1.0"}});
     assert.equal(response.status, 200, url);
     const html = await response.text();
-    assert.equal(meta(html, "og:image"), expected, url);
-    assert.equal(meta(html, "twitter:image"), expected, url);
+    const image = articles.some(a=>url.endsWith(`/insights/${a.slug}`)) ? `${url}/opengraph-image` : expected;
+    assert.equal(meta(html, "og:image"), image, url);
+    assert.equal(meta(html, "twitter:image"), image, url);
     assert.equal(meta(html, "og:image:width"), "1200", url);
     assert.equal(meta(html, "og:image:height"), "630", url);
-    assert.ok(meta(html, "og:image:alt")?.includes("Good ideas"), url);
+    assert.ok(meta(html, "og:image:alt"), url);
     assert.ok(!html.includes("jovamedia-homepage-2026-09.png"), url);
     assert.equal(html.match(/rel="canonical" href="([^"]+)"/)?.[1], url);
   }
