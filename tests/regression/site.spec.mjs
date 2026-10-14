@@ -356,13 +356,10 @@ test('FAQ progress advances on every screen and stays aligned after expansion', 
   })).toBeLessThan(1);
 });
 
-test('the looping homepage preview can be paused and resumed', async ({ page }) => {
+test('the homepage preview has no playback buttons', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Pause preview', exact: true }).click();
-  await expect(page.locator('.scrollTrack').first()).toHaveCSS('animation-play-state', 'paused');
-  await expect(page.getByRole('button', { name: 'Play preview', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Play preview', exact: true }).click();
-  await expect(page.locator('.scrollTrack').first()).toHaveCSS('animation-play-state', 'running');
+  await expect(page.getByRole('button', { name: /^(Pause|Play) preview$/ })).toHaveCount(0);
+  await expect(page.getByRole('img', { name: 'Daybreak coffee website design concept shown on desktop and phone screens' })).toBeVisible();
 });
 
 test('layout stays within phone, tablet, short desktop and ultrawide viewports', async ({ page }, testInfo) => {
