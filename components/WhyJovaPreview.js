@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import s from "./WhyJovaPreview.module.css";
 import MotionRegion from "./MotionRegion";
+import useCardRail from "./useCardRail";
+import RailPagination from "./RailPagination";
 
 const values = [
   { photo: "compass", image: "/why-jova/approved/strategy-planning.webp", alt: "Creative planning with reference books, photographs, pencils and material swatches", title: ["A plan", "for your website."], copy: "Agree the pages, message and enquiry route that fit your small business." },
@@ -11,6 +15,7 @@ const values = [
 ];
 
 export default function WhyJovaPreview() {
+  const { rail, registerCard, active, select } = useCardRail();
   return <section className={s.section} id="why-jova" aria-labelledby="why-jova-heading">
     <div className={s.inner}>
       <MotionRegion className={s.intro} enterOnly><div data-motion-card>
@@ -18,14 +23,14 @@ export default function WhyJovaPreview() {
         <p className={s.introCopy}>Website design, branding, social content and ongoing care in one place. Choose the support your business needs.</p>
         <Link className={s.cta} data-enquiry-cta href="/get-a-quote">Get a Quote</Link>
       </div></MotionRegion>
-      <MotionRegion className={s.values}>
-        {values.map(({ photo, image, alt, title, copy }, index) => <article className={s.value} data-motion-card style={{ "--card-delay": `${index * 40}ms`, "--phone-delay": `${index % 2 * 40}ms` }} key={photo}>
-          {image && <div className={s.art}><Image src={image} alt={alt} width={1448} height={1086} sizes="(max-width: 359px) 90vw, (max-width: 700px) 43vw, (max-width: 1100px) 22vw, 16vw" /></div>}
-          <span className={s.rule} aria-hidden="true" />
-          <h3>{title.map(line => <span key={line}>{line}</span>)}</h3>
+      <div className={s.values} ref={rail} tabIndex={0} role="region" aria-label="How JovaMedia supports your business">
+        {values.map(({ photo, image, alt, title, copy }, index) => <article className={s.value} id={`partner-${photo}`} ref={node => registerCard(index, node)} key={photo}>
+          <div className={s.art}><Image src={image} alt={alt} fill sizes="(max-width: 900px) 85vw, (max-width: 1100px) 45vw, 24vw" /></div>
+          <h3>{title.join(" ")}</h3>
           <p>{copy}</p>
         </article>)}
-      </MotionRegion>
+      </div>
+      <RailPagination className={s.pagination} label="Choose a business support preview" items={values.map(({ photo, title }) => ({ id: `partner-${photo}`, name: title.join(" ") }))} active={active} onSelect={select}/>
     </div>
   </section>;
 }

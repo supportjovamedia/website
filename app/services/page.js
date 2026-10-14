@@ -22,9 +22,9 @@ export default function Page() {
     </PhotoHero>
     <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
       <div className="shell">
-        <MotionRegion className={styles.directoryGrid}>
+        <MotionRegion className={styles.directoryGrid} enterOnly>
           {primaryServices.map((service, index) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard} data-motion-card style={{ "--card-delay": `${index % 3 * 40}ms` }}>
-            <div className={styles.directoryImage} style={{ aspectRatio: service.slug === "system-modernization" ? "1" : "4 / 3" }}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt={serviceArtAlt[service.slug]} fill sizes="(max-width:700px) 100vw, 60vw" /></div>
+            <div className={styles.directoryImage} style={{ aspectRatio: service.slug === "system-modernization" ? "1" : "4 / 3" }}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt={serviceArtAlt[service.slug]} fill sizes="(max-width:700px) 90vw, (max-width:900px) 50vw, (max-width:1100px) 30vw, 24vw" /></div>
             <div className={styles.directoryBody}>
 
               <h2>{service.name}</h2><p>{service.summary}</p>

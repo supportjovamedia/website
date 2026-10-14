@@ -293,49 +293,75 @@ test('navigation works after scrolling and mobile menu releases its scroll lock'
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
 });
 
-test('service chapters pin on phones and laptops while every active panel fits', async ({ page }, testInfo) => {
+test('phone service cards keep native swiping and image-edge arrows', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'phone', 'Mobile interaction has its own layout.');
   await page.goto('/');
-  const story = page.getByRole('region', { name: 'A little more than a website.', exact: true });
-  const sizes = testInfo.project.name === 'phone'
-    ? [[320, 740], [360, 800], [390, 844], [430, 932], [768, 900]]
-    : [[901, 540], [1024, 600], [1366, 650], [1440, 800], [1920, 1080], [2560, 650]];
-  for (const [width, height] of sizes) {
-    await page.setViewportSize({ width, height });
-    await expect(story).toHaveAttribute('data-pinned', 'true');
-    await expect(story.locator(':scope > div')).toHaveCSS('position', 'sticky');
-    for (let chapter = 0; chapter < 3; chapter++) {
-      await story.getByRole('navigation', { name: 'Explore services' }).getByRole('button').nth(chapter).click();
-      await expect(story).toHaveAttribute('data-chapter', String(chapter));
-      const active = story.locator('article[data-active=true]');
-      await expect(active).not.toHaveAttribute('inert', '');
-      await expect(active.getByRole('link', { name: 'Learn more', exact: true })).toBeVisible();
-      const bounds = await active.evaluate(card => {
-        const parts = [...card.children];
-        return parts.every(part => {
-          const rect = part.getBoundingClientRect();
-          const top = parseFloat(getComputedStyle(card.closest('[data-service-story]')).getPropertyValue('--story-top'));
-          return rect.top >= top - 1 && rect.bottom <= innerHeight + 1 && rect.left >= 0 && rect.right <= innerWidth;
+  const story=page.locator('[data-service-story]');
+  for(const [width,height] of [[320,740],[390,844],[443,764],[768,900]]){
+    await page.setViewportSize({width,height});
+    await expect(story).toHaveAttribute('data-pinned','false');
+    await expect(story.locator(':scope > div')).toHaveCSS('position','static');
+    for(let chapter=0;chapter<3;chapter++){
+      await story.getByRole('navigation',{name:'Explore services'}).getByRole('button').nth(chapter).click();
+      await expect(story).toHaveAttribute('data-chapter',String(chapter));
+      await expect(story).toHaveCSS('background-color','rgb(220, 236, 245)');
+      const active=story.locator('article[data-active=true]');
+      expect(await active.evaluate(card=>{
+        const image=card.querySelector('figure').getBoundingClientRect();
+        const heading=card.querySelector('h3').getBoundingClientRect();
+        return image.bottom<=heading.top+1 && [...card.querySelectorAll('figure button')].every(button=>{
+          const box=button.getBoundingClientRect();
+          return Math.abs(box.top+box.height/2-image.top-image.height/2)<1;
         });
-      });
-      expect(bounds, `${width}x${height}, chapter ${chapter}: full image and copy fit below navigation`).toBe(true);
-      await expect(story.locator('article[inert]')).toHaveCount(2);
+      })).toBe(true);
+      await expect(active.getByRole('button',{name:'Previous service',exact:true})).toHaveCount(chapter>0?1:0);
+      await expect(active.getByRole('button',{name:'Next service',exact:true})).toHaveCount(chapter<2?1:0);
     }
-    // Actual page scrolling, as well as chapter buttons, must advance the story.
-    await story.evaluate(el => window.scrollTo({ top: scrollY + el.getBoundingClientRect().top + (el.offsetHeight - innerHeight) * .45, behavior: 'instant' }));
-    await expect(story).toHaveAttribute('data-chapter', '1');
+    await expect(story.locator('article[inert]')).toHaveCount(0);
     await noOverflow(page);
   }
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(story).toHaveAttribute('data-pinned', 'false');
-  await expect(story.locator('article[inert]')).toHaveCount(0);
-  await expect(story.locator(':scope > div')).toHaveCSS('position', 'static');
-  if (testInfo.project.name === 'phone') {
-    await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await page.setViewportSize({ width: 360, height: 640 });
-    await expect(story).toHaveAttribute('data-pinned', 'false');
-    await expect(story.locator('article[inert]')).toHaveCount(0);
-    await expect(story.locator(':scope > div')).toHaveCSS('position', 'static');
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await story.getByRole('navigation',{name:'Explore services'}).getByRole('button').first().click();
+  await expect(story).toHaveAttribute('data-chapter','0');
+});
+
+test('desktop services retain scroll chapters and partner cards have no carousel controls',async({page},testInfo)=>{
+  test.skip(testInfo.project.name !== 'desktop','Desktop presentation is verified separately.');
+  await page.goto('/');
+  const story=page.locator('[data-service-story]');
+  for(const [width,height] of [[1024,768],[1440,900],[2560,1080]]){
+    await page.setViewportSize({width,height});
+    await expect(story).toHaveAttribute('data-pinned','true');
+    await expect(story.locator(':scope > div')).toHaveCSS('position','sticky');
+    for(let chapter=0;chapter<3;chapter++){
+      await story.getByRole('navigation',{name:'Explore services'}).getByRole('button').nth(chapter).click();
+      await expect(story).toHaveAttribute('data-chapter',String(chapter));
+      const active=story.locator('article[data-active=true]');
+      await expect(active).toBeVisible();
+      await expect(active).not.toHaveAttribute('inert','');
+      expect(await active.evaluate(card=>{
+        const image=card.querySelector('figure').getBoundingClientRect();
+        const copy=card.querySelector('h3').getBoundingClientRect();
+        const actions=card.querySelector('a').getBoundingClientRect();
+        return image.right<=copy.left+1 && copy.top>=0 && actions.bottom<=innerHeight+1;
+      })).toBe(true);
+      await expect(active.getByRole('button',{name:/service$/})).toHaveCount(0);
+    }
+    await expect(story.locator('article[inert]')).toHaveCount(2);
+    await expect(page.getByRole('group',{name:'Choose a business support preview'})).toBeHidden();
+    await expect(page.getByRole('group',{name:'Choose a website benefit'})).toBeHidden();
+    expect(await page.locator('#why-jova [aria-label="How JovaMedia supports your business"]').evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
+    await noOverflow(page);
   }
+  await page.setViewportSize({width:1024,height:600});
+  await expect(story).toHaveAttribute('data-pinned','false');
+  await expect(story.locator(':scope > div')).toHaveCSS('position','static');
+  await expect(story.locator('article[inert]')).toHaveCount(0);
+  await page.setViewportSize({width:1440,height:900});
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await expect(story).toHaveAttribute('data-pinned','false');
+  await expect(story.locator('article[inert]')).toHaveCount(0);
+  await expect(story.locator('article')).toHaveCount(3);
 });
 
 test('FAQ progress advances on every screen and stays aligned after expansion', async ({ page }) => {
@@ -360,6 +386,42 @@ test('the homepage preview has no playback buttons', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('button', { name: /^(Pause|Play) preview$/ })).toHaveCount(0);
   await expect(page.getByRole('img', { name: 'Daybreak coffee website design concept shown on desktop and phone screens' })).toBeVisible();
+});
+
+test('phone navigation slides from the left and services use a separate panel',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='phone','Phone navigation is separate from desktop.');
+  await page.goto('/');
+  const menu=page.getByRole('navigation',{name:'Mobile navigation',includeHidden:true});
+  await expect(menu).toBeHidden();
+  await page.getByRole('button',{name:'Open menu',exact:true}).click();
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(menu).toHaveCSS('transition-duration','0.4s, 0s');
+  await menu.getByRole('button',{name:'Services',exact:true}).click();
+  await expect(menu.getByRole('link',{name:'Website design',exact:true})).toBeVisible();
+  await expect(menu.getByRole('link',{name:'Home',exact:true})).toBeHidden();
+  await expect(menu.getByRole('button',{name:'Back',exact:true})).toBeFocused();
+  await menu.getByRole('button',{name:'Back',exact:true}).click();
+  await expect(menu.getByRole('button',{name:'Services',exact:true})).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(page.getByRole('button',{name:'Open menu',exact:true})).toBeFocused();
+  await expect(page.locator('#main-content')).toHaveJSProperty('inert',false);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.getByRole('button',{name:'Open menu',exact:true}).click();
+  await expect(menu).toHaveCSS('transition-duration','0s');
+  await page.getByRole('button',{name:'Close menu',exact:true}).click();
+  await noOverflow(page);
+});
+
+test('image-backed heroes retain readable headings and breadcrumbs',async({page})=>{
+  for(const path of ['/work','/about','/pricing','/contact','/insights','/work/qaiser-watches','/services/salon-website-design','/insights/salon-booking-platform-fees-vs-own-website']){
+    await page.goto(path);
+    const hero=page.locator('[data-photo-hero]');
+    await expect(hero.locator('h1')).toHaveCSS('color','rgb(255, 255, 255)');
+    await expect(hero.getByRole('navigation',{name:'Breadcrumb'})).toHaveCSS('color','rgb(216, 226, 236)');
+    await noOverflow(page);
+  }
 });
 
 test('layout stays within phone, tablet, short desktop and ultrawide viewports', async ({ page }, testInfo) => {

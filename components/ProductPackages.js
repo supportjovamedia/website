@@ -20,11 +20,11 @@ export default function ProductPackages({ homepage = false }) {
     observer.observe(root.current);
     return () => observer.disconnect();
   }, [homepage, categoryId]);
-  return <section className={s.packages} ref={root} aria-labelledby="packages-heading">
+  return <section className={s.packages} id="website-packages" ref={root} aria-labelledby="packages-heading">
     <div className={s.container}>
       <h2 id="packages-heading" className={s.screenReader}>Browse products</h2>
       <div className={s.catalogueLayout}>
-      <nav className={s.categoryNav} aria-label="Product categories"><p>Categories</p>{productCategories.map(item => <button type="button" key={item.id} aria-pressed={item.id === categoryId} onClick={() => setCategoryId(item.id)}><span>{item.name}</span><span className={s.categoryCount}>{products.filter(product => product.category === item.id).length}</span></button>)}</nav>
+      <nav className={s.categoryNav} aria-label="Product categories"><p>Categories</p>{productCategories.map(item => <button type="button" key={item.id} aria-pressed={item.id === categoryId} onClick={() => setCategoryId(item.id)}><span>{item.name}</span></button>)}</nav>
       <section className={s.categorySection} key={category.id} id={category.id} aria-labelledby={category.id + "-heading"}>
         <header className={s.categoryHeading}><h2 id={category.id + "-heading"}>{categoryId === "websites" ? "Made for what you need." : category.name}</h2><p>{categoryId === "websites" ? "A focused page, a business website or a complete booking system." : category.description}</p></header>
         {categoryId === "websites" ? <WebsiteProducts homepage={homepage} /> : <MotionRegion className={`${s.grid} ${s.careGrid}`}>{products.filter(product => product.category === category.id).map((product, index) => {

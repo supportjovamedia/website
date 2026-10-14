@@ -7,7 +7,11 @@ export default function PhotoHeroMotion() {
   useEffect(() => {
     let disposed = false;
     let media;
+    let loading = false;
+    const eligible = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
     async function setup() {
+      if (!eligible.matches || loading || media) return;
+      loading = true;
       const [{ gsap }, { ScrollTrigger }] = await Promise.all([
         import("gsap"), import("gsap/ScrollTrigger"),
       ]);
@@ -31,7 +35,8 @@ export default function PhotoHeroMotion() {
       });
     }
     setup();
-    return () => { disposed = true; media?.revert(); };
+    eligible.addEventListener("change", setup);
+    return () => { disposed = true; eligible.removeEventListener("change", setup); media?.revert(); };
   }, []);
   return <span ref={marker} hidden aria-hidden="true" />;
 }

@@ -66,3 +66,5 @@
 @media(min-width:701px) and (max-width:1000px){.grid{grid-template-columns:1fr;max-width:540px;gap:24px}.card{padding:28px}.card h3{min-height:0}.card .description{min-height:0}.cardTop{height:auto;min-height:18px}.careGrid{max-width:540px}}
 @media(max-width:700px){.packages{padding:26px 0 40px}.container{width:calc(100% - 40px)}.catalogueLayout{gap:24px}.categoryNav{width:100%}.categoryNav button{flex:1;padding-inline:14px}.categoryHeading{margin-bottom:22px}.grid,.careGrid{grid-template-columns:1fr;gap:22px;max-width:460px}.card{padding:24px;gap:16px}.cardTop{height:auto;min-height:18px}.card h3{font-size:28px;max-width:20ch;min-height:0}.card .description{min-height:0;font-size:14px}.card .price{font-size:46px}.productFeatures li{font-size:14px}.packageFootnote{margin-top:20px;padding:0;font-size:12px}}
 @media(prefers-reduced-motion:reduce){.card,.button,.categoryNav button{transition:none}.button:active,.categoryNav button:active{transform:none}}
+
+.packages{scroll-margin-top:100px}

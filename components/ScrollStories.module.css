@@ -67,3 +67,15 @@
 
 .bubble summary{display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;list-style:none;min-height:44px}.bubble summary::-webkit-details-marker{display:none}.faq .bubble summary h3{margin:0;line-height:1.45;font-size:19px;text-align:left}.bubble summary::after{content:"+";flex:none;font-size:26px;font-weight:400;line-height:1;color:#102f4d;width:24px;text-align:center}.bubble[open] summary::after{content:"−"}.bubble summary:focus-visible{outline:3px solid #147dd2;outline-offset:8px;border-radius:3px}.answerContent{padding-top:19px;text-align:left}.bubble[open]{border-color:#b5c2cb}.faq .bubble{padding:18px 24px}.faq .marker{top:22px}.faq .bubble:before{top:34px}.faq .bubble:after{top:41px}.faq .bubble p{font-size:15px;line-height:1.75}@media(max-width:700px){.faq .bubble{padding:15px 18px}.faq .bubble summary h3{font-size:17px}.faq .marker{top:22px}.answerContent{padding-top:15px}.faq .bubble p{font-size:15px;line-height:1.75}}
 @media(max-width:359px){.step{display:flex;flex-direction:column;gap:0;align-items:center;text-align:center}.stepIcon{margin:0 auto}.stepBody{margin-top:20px;text-align:center}.stepBody:before{top:-7px;left:calc(50% - 7px)}}
+
+.processProgress{width:180px;height:3px;margin:28px auto 36px;overflow:hidden;border-radius:99px;background:#cbd5dc}
+.processProgress>span{display:block;width:100%;height:100%;background:#bd0018;transform:scaleX(var(--process-progress,0));transform-origin:left}
+.process .steps{align-items:stretch;margin-top:0;gap:24px}
+.process .step:nth-child(n){margin-top:0;transform:translateY(calc((1 - var(--reveal))*20px));will-change:auto}
+.process .stepIcon{transform:none;position:relative;z-index:1}
+.process .stepBody{flex:1;padding:28px 22px;box-shadow:none;border:1px solid #dbe3e8}
+.process .stepIcon path{stroke-dasharray:100;stroke-dashoffset:calc((1 - var(--reveal))*100)}
+.process .step[data-mobile-visible=true] .stepIcon path{animation:processDraw .75s ease-out both}
+@keyframes processDraw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@media(max-width:700px){.process .steps{gap:26px 16px}.process .stepBody{padding:24px 15px}.processProgress{margin:24px auto 30px}}
+@media(prefers-reduced-motion:reduce){.processProgress>span{transform:scaleX(1)}.process .step:nth-child(n){transform:none}.process .stepIcon path,.process .step[data-mobile-visible=true] .stepIcon path{animation:none;stroke-dashoffset:0}}

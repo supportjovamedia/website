@@ -36,6 +36,7 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
       root.dataset.static = String(staticMode);
       const rect = root.getBoundingClientRect();
       const progress = Math.max(0, Math.min(1, (innerHeight - rect.top) / (innerHeight + rect.height)));
+      if (root.id === "process") root.style.setProperty("--process-progress", reduced.matches ? 1 : Math.max(0, Math.min(1, (innerHeight * .8 - rect.top) / Math.max(1, rect.height * .8))));
       root.style.setProperty("--travel", staticMode ? 0 : (0.5 - progress) * 300);
       root.style.setProperty("--ink", `${staticMode ? 100 : Math.max(0, Math.min(100, (innerHeight * .9 - rect.top) / (innerHeight * .5) * 100))}%`);
       const cards = [...root.querySelectorAll("[data-story-card]")];
@@ -111,6 +112,7 @@ export function ProcessStory({ paused }) {
       <p className={s.introCopy}>A practical website design process, with clear review points from the first brief to launch.</p>
       <a href="#process-steps" className={s.explore}>Explore the process</a>
     </div></MotionRegion>
+    <div className={s.processProgress} aria-hidden="true"><span/></div>
     <ol className={s.steps} id="process-steps">
       {steps.map(([name, copy, detail, path], i) => <li className={s.step} data-story-card key={name} style={{ "--speed": [0.75, 1.3, .95, 1.6][i] }}>
         <div className={s.stepIcon} aria-hidden="true"><svg viewBox="0 0 24 24"><path d={path} /></svg></div>

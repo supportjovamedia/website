@@ -1,3 +1,4 @@
+import PhotoHero from "@/components/PhotoHero";
 import Link from "next/link";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -20,9 +21,9 @@ const salonQuestions = [
 export default function SalonWebsitePage() {
   return <main className={s.editorial}>
     <StructuredData data={{ ...serviceSchema(service), areaServed: [{ "@type": "Country", name: "United Kingdom" }, { "@type": "City", name: "London" }] }}/>
+    <PhotoHero src={"/insights/salon-interior.webp"} className={`page-hero ${s.photoHero}`}><div className={s.shell}><header className={s.articleHeader}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: "Salon website design", path: "/services/salon-website-design" }]}/><h1>Salon website design<br/>for beauty businesses.</h1><p className={s.articleDeck}>Show your treatments, prices and work in one considered place. We are a London-based studio designing websites for independent salons and lash technicians across the UK, with a booking route that fits the way you work.</p><div className="actions"><Link className="btn" href="/get-a-quote?product=business-website">Get a free homepage preview</Link><Link className="text-link" href="/pricing">See website prices</Link></div></header></div></PhotoHero>
     <div className={s.shell}>
-      <header className={s.articleHeader}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: "Salon website design", path: "/services/salon-website-design" }]}/><h1>Salon website design<br/>for beauty businesses.</h1><p className={s.articleDeck}>Show your treatments, prices and work in one considered place. We are a London-based studio designing websites for independent salons and lash technicians across the UK, with a booking route that fits the way you work.</p><div className="actions"><Link className="btn" href="/get-a-quote?product=business-website">Get a free homepage preview</Link><Link className="text-link" href="/pricing">See website prices</Link></div></header>
-      <div className={s.feature}><InsightCover kind="salon" preload/></div>
+      <div className={s.feature}><InsightCover kind="salon"/></div>
       <div className={s.caseText}><div className={s.prose}>
         <h2>Help a new client choose with confidence.</h2><p>Your regular clients know what to book. A new visitor may need to compare treatments, see your work and ask a question first. We organise that information around the choices your customers actually make.</p>
         <ul><li>Treatment menus with clear prices, service details and appointment lengths.</li><li>A gallery of your own work, using photographs you have permission to publish.</li><li>Team, location and access information that helps a first-time visitor plan their visit.</li><li>Your booking and cancellation policies, with a simple route to ask a question.</li><li>Mobile layouts, clear contact options and a useful path from Instagram to your website.</li></ul>

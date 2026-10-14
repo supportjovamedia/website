@@ -1,3 +1,4 @@
+import PhotoHero from "@/components/PhotoHero";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { pageMetadata } from "@/lib/seo";
@@ -8,6 +9,8 @@ import ArticleBody from "@/components/ArticleBody";
 import InsightCover from "@/components/InsightCover";
 import ContactChoices from "@/components/ContactChoices";
 import s from "@/components/Editorial.module.css";
+
+const articleHeroImages = { booking: "/service-editorial/email.jpg", cost: "/hero-backgrounds/pricing.webp", lashes: "/insights/lash-treatment.webp", salon: "/insights/salon-interior.webp", business: "/insights/qaiser-website.webp", launch: "/service-editorial/copywriting.jpg" };
 
 export const dynamicParams = false;
 export function generateStaticParams() { return articles.map(({ slug }) => ({ slug })); }
@@ -25,9 +28,9 @@ export default async function ArticlePage({ params }) {
   const related = article.related.map(articleBySlug);
   return <main className={s.editorial}>
     <StructuredData data={articleSchema(article, `https://www.jovamedia.com/insights/${slug}/opengraph-image`)}/>
+    <PhotoHero src={articleHeroImages[article.cover]} className={`page-hero ${s.photoHero}`}><div className={s.shell}><header className={s.articleHeader}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Insights", path: "/insights" }, { name: article.category, path: `/insights/${slug}` }]}/><h1>{article.title}</h1><p className={s.articleDeck}>{article.summary}</p><div className={s.byline}><Link href="/about">By JovaMedia</Link><time dateTime={editorialDate}>Published 14 October 2026</time><span>{articleReadMinutes(article)} min read</span></div></header></div></PhotoHero>
     <div className={s.shell}>
-      <header className={s.articleHeader}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Insights", path: "/insights" }, { name: article.category, path: `/insights/${slug}` }]}/><h1>{article.title}</h1><p className={s.articleDeck}>{article.summary}</p><div className={s.byline}><Link href="/about">By JovaMedia</Link><time dateTime={editorialDate}>Published 14 October 2026</time><span>{articleReadMinutes(article)} min read</span></div></header>
-      <div className={s.feature}><InsightCover kind={article.cover} preload/></div>
+      <div className={s.feature}><InsightCover kind={article.cover}/></div>
       <div className={s.articleLayout}>
         <nav className={s.toc} aria-label="In this article"><p className={s.tocTitle}>Contents</p><ul>{article.blocks.filter(block => block.type === "heading").map(block => <li key={block.id}><a href={`#${block.id}`}>{block.title}</a></li>)}</ul><Link href="/insights">All articles</Link></nav>
         <article className={s.articleMain} aria-label={article.title}>

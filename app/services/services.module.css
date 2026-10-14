@@ -169,3 +169,29 @@
 .heroArt img{object-fit:contain;object-position:center}
 @media(hover:hover){.directoryCard:hover,.directoryCard:nth-child(even):hover{background:#edf0f3}}
 @media(max-width:700px){.directoryImage{height:auto;aspect-ratio:4/3}.heroArt{height:auto}}
+
+/* Compact desktop directory, while retaining the image-first phone layout. */
+@media(min-width:901px){
+ .directoryGrid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:1320px;margin-inline:auto;gap:24px}
+ .directoryCard,.directoryCard:nth-child(even){grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);min-height:280px;border-radius:22px}
+ .directoryCard:nth-child(even) .directoryImage{order:0}
+ .directoryCard .directoryImage{width:100%;height:100%;max-height:320px;align-self:stretch}
+ .directoryBody{padding:26px 22px}
+ .directoryCard h2{font-size:clamp(24px,2.1vw,30px);line-height:1.15;margin-bottom:16px}
+ .directoryBody>p:not(:global(.kicker)){font-size:14px;line-height:1.7;margin-bottom:20px}
+ .directoryCard::after{display:none}
+ .directoryCard:last-child:nth-child(odd){grid-column:1/-1;width:calc(50% - 12px);justify-self:center}
+ .cardFoot{font-size:13px}
+}
+@media(min-width:901px) and (max-width:1100px){
+ .directoryGrid{grid-template-columns:1fr;max-width:850px;gap:22px}
+ .directoryCard,.directoryCard:nth-child(even){grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);min-height:260px}
+ .directoryCard .directoryImage{max-height:290px}
+ .directoryBody{padding:28px 34px}
+ .directoryCard h2{font-size:30px}
+ .directoryCard:last-child:nth-child(odd){grid-column:auto;width:100%}
+}
+
+/* One entrance per card avoids delayed, nested text reveals. */
+.directoryCard .directoryBody>*{transition:none}
+.directoryCard[data-motion-ready=true]:not([data-revealed=true]) .directoryBody>*{opacity:1;transform:none}
