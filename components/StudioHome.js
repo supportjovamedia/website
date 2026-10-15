@@ -110,7 +110,7 @@ export default function StudioHome() {
         {rows.map((row, index) => <div key={index} className={s.galleryWindow} data-direction={index % 2 ? "right" : "left"}>
           <div className={s.pan}><div className={s.track}>{[...row, ...row].map(([image, name], item) => <figure key={`${image}-${item}`} className={s.preview} aria-hidden={item >= row.length ? "true" : undefined}>
             <div className={s.browserBar}><span aria-hidden="true">● ● ●</span><span>{name}</span></div>
-            <Image src={`/studio-2026/${image}.webp`} alt={item >= row.length ? "" : `${name} website preview`} width={1672} height={941} sizes="(max-width: 600px) 70vw, 30vw" draggable={false} />
+            <Image src={`/studio-2026/${image}.webp`} alt={item >= row.length ? "" : `${name} website preview`} width={1672} height={941} sizes="(max-width: 600px) 70vw, 30vw" draggable={false} fetchPriority="low" />
           </figure>)}</div></div>
         </div>)}
       </section>

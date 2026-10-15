@@ -16,6 +16,8 @@ function CoffeeSite(){return (<article className="siteCopy coffeeSite">
 export default function DaybreakHero(){
  const root=useRef(null);
  useEffect(()=>{
+  let cancelled=false,idle=0,cleanup;
+  const start=()=>{
   const el=root.current,showcase=el.querySelector('.showcase'),tracks=[...el.querySelectorAll('.scrollTrack')],media=matchMedia('(prefers-reduced-motion: reduce)');
   let disposed=false,visible=false,frame=0,geometry=[];
   // Geometry changes only after layout, asset loading or resize, never per frame.
@@ -33,6 +35,16 @@ export default function DaybreakHero(){
   document.addEventListener('visibilitychange',sync);media.addEventListener('change',sync);
   Promise.all([document.fonts.ready,...[...el.querySelectorAll('.deviceFrame, .coffeeHero img')].map(img=>img.decode().catch(()=>{}))]).then(()=>{if(disposed)return;measure();showcase.classList.add('ready');sync();});
   return()=>{disposed=true;cancelAnimationFrame(frame);resize.disconnect();intersection.disconnect();document.removeEventListener('visibilitychange',sync);media.removeEventListener('change',sync);};
+  };
+  // The server-rendered preview is visible immediately. Start its optional
+  // animation work after the initial load instead of competing with first paint.
+  const schedule=()=>{
+    if('requestIdleCallback' in window) idle=requestIdleCallback(()=>{if(!cancelled)cleanup=start();},{timeout:2000});
+    else idle=setTimeout(()=>{if(!cancelled)cleanup=start();},0);
+  };
+  if(document.readyState==='complete')schedule();
+  else window.addEventListener('load',schedule,{once:true});
+  return()=>{cancelled=true;window.removeEventListener('load',schedule);if('cancelIdleCallback' in window)cancelIdleCallback(idle);else clearTimeout(idle);cleanup?.();};
  },[]);
  return <section ref={root} className={styles.root} aria-labelledby="home-title"><div className="shell"><div className="hero"><div className="message"><h1 id="home-title">Website design<br/><span>for small businesses.</span></h1><p className="description">Beautiful, custom-built websites designed around your business.</p><p className="previewPromise">Your personalised homepage preview <strong>in 48 hours.</strong> No commitment.</p><div className="actions"><ConsultationLink className="primary" placement="hero">free website preview</ConsultationLink><a className="secondary whatsappAction" href={whatsappLink("hero")} target="_blank" rel="noopener noreferrer" data-contact-placement="hero"><WhatsAppIcon />Chat on WhatsApp</a></div><p className="coverage">London-based. Working across the UK.</p></div><div className="previewWrap"><div className="showcase" role="img" aria-label="Daybreak coffee website design concept shown on desktop and phone screens"><div className="backdrop" aria-hidden="true"></div><div className="browser device" aria-hidden="true"><Image className="deviceFrame" src="/device-frames/macbook-pro.webp" alt="" width={1208} height={700} sizes="(max-width:800px) 90vw, 58vw" loading="eager" fetchPriority="high"/><div className="deviceScreen"><div className="browserBar"><span className="dots"><i></i><i></i><i></i></span><span className="address"><svg viewBox="0 0 16 16" fill="none"><rect x="4.5" y="7" width="7" height="6" rx="1.3" stroke="currentColor"/><path d="M6 7V5a2 2 0 0 1 4 0v2" stroke="currentColor"/></svg>daybreak.coffee</span><span className="browserPlus">+</span></div><div className="screen"><div className="scrollTrack" data-screen="desktop">{[0,1].map(copy => <CoffeeSite key={copy}/>)}</div></div></div></div><div className="phone device" aria-hidden="true"><Image className="deviceFrame" src="/device-frames/iphone-x.webp" alt="" width={726} height={1444} sizes="(max-width:800px) 22vw, 14vw" loading="eager"/><div className="screen"><div className="scrollTrack" data-screen="phone">{[0,1].map(copy => <CoffeeSite key={copy}/>)}</div></div></div></div></div></div></div></section>;
 }
