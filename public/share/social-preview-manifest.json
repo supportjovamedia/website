@@ -2,10 +2,10 @@
   "image": "/share/jovamedia-hero-2026-10.png",
   "width": 1200,
   "height": 630,
-  "sha256": "72f144e7d5f91b4e1c7ac1bb08863c05d87f198153a2e08d8018a8302a8c25e8",
+  "sha256": "7ebb7d0c38412869732884edc926c5ef29b67ebec2db8a70efe8b5583f04c60f",
   "sources": {
     "components/StudioHome.js": "805653fa5c0a911f8eccb8955cc9c6e76c59dd4e81f2097b06728d36a3e7b49d",
-    "components/DaybreakHero.js": "364e7ce92d636d6240f47ba0ef458cf6bd5e5b0d5c802d976209882bb6cd505a",
+    "components/DaybreakHero.js": "cb7af48d7e3c785ced7a2b07d14f6aed12449cd4624e46508a724dfd76322a0e",
     "components/DaybreakHero.module.css": "1c92c4c49e8c8afebaa06d01cdbbfe097792696a2f9c1d24a9b4c984a96da32e",
     "components/StudioHome.module.css": "d5685ce83d2b51c5ca23070df1b32fa7c4fb82cf2a81e2a2331546129493587a",
     "app/studio.css": "c8ac711870e2efcb475d8903b7865ade93d564011cb1bd466abaf7b4134df3ac",
