@@ -17,5 +17,7 @@ export default function Page(){return <main>
       </Link>
     </div>
   </div></PhotoHero>
-  <SelectedConcepts/><section className="band band-gold"><div className="shell"><h2>Your business.<br/><em>A fresh perspective.</em></h2><Link className="btn" href="/contact">Contact Us</Link></div></section>
+  <SelectedConcepts/>
+  <section className="section"><div className="shell"><h2>Inside the design process.</h2><p>Our self-initiated concept studies show how a brief becomes a working design. Explore a <Link className="text-link" href="/work/brand-direction">fictional drinks campaign and brand direction</Link>, or follow the wireframes and prototype for an <Link className="text-link" href="/work/editorial-experience">editorial website concept</Link>.</p></div></section>
+  <section className="band band-gold"><div className="shell"><h2>Your business.<br/><em>A fresh perspective.</em></h2><Link className="btn" href="/contact">Contact Us</Link></div></section>
 </main>}

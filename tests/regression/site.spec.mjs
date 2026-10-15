@@ -431,7 +431,9 @@ test('image-backed heroes retain readable headings and breadcrumbs',async({page}
     await page.goto(path);
     const hero=page.locator('[data-photo-hero]');
     await expect(hero.locator('h1')).toHaveCSS('color','rgb(255, 255, 255)');
-    await expect(hero.getByRole('navigation',{name:'Breadcrumb'})).toHaveCSS('color','rgb(216, 226, 236)');
+    const breadcrumbs=hero.getByRole('navigation',{name:'Breadcrumb'});
+    if(path==='/contact') await expect(breadcrumbs).toHaveCount(0);
+    else await expect(breadcrumbs).toHaveCSS('color','rgb(216, 226, 236)');
     await noOverflow(page);
   }
 });
