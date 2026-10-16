@@ -37,7 +37,7 @@ test("only native Crisp loads once after page load and idle, with sound muted", 
   assert.ok(f.scripts.every(s => s.async));
   assert.equal(f.win.CRISP_WEBSITE_ID, crispWebsiteId);
   assert.equal(f.win.$crisp.filter(([type, event]) => type === "on" && event === "message:received").length, 1);
-  assert.ok(f.win.$crisp.some(([type, option, value]) => type === "config" && option === "position:reverse" && value[0] === true));
+  assert.ok(f.win.$crisp.some(([type, option, value]) => type === "config" && option === "position:reverse" && value[0] === false));
   assert.equal(opens(f.win), 0);
   assert.ok(f.win.$crisp.some(([type, option, value]) => type === "config" && option === "sound:mute" && value[0] === true));
   assert.equal(f.win.Tawk_API, undefined);
