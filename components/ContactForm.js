@@ -6,7 +6,7 @@ import RecaptchaCheckbox from "./RecaptchaCheckbox";
 import { validateEnquiry } from "@/lib/enquiry-fields.mjs";
 
 import { contactEmail } from "@/lib/site";
-import { trackEvent } from "@/lib/marketing-analytics.mjs";
+import { trackEvent, enquiryAttribution } from "@/lib/marketing-analytics.mjs";
 
 export default function ContactForm() {
 
@@ -53,10 +53,11 @@ export default function ContactForm() {
       return;
     }
     const serialized = JSON.stringify(values);
+    const attribution = enquiryAttribution();
 
     if (!attempt.current || attempt.current.body !== serialized)
 
-      attempt.current = { body: serialized, id: crypto.randomUUID() };
+      attempt.current = { body: serialized, id: crypto.randomUUID(), attribution };
 
     pending.current = true;
 
@@ -73,7 +74,7 @@ export default function ContactForm() {
 
         headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.id },
 
-        body: JSON.stringify({ ...values, recaptchaToken }),
+        body: JSON.stringify({ ...values, recaptchaToken, campaignAttribution: attribution ? attempt.current.attribution : undefined }),
 
         signal: AbortSignal.timeout(25000),
 

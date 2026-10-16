@@ -5,7 +5,7 @@ import { productById, formatPrice } from "@/lib/products.mjs";
 import RecaptchaCheckbox from "./RecaptchaCheckbox";
 import { quoteOptions, validateQuote } from "@/lib/quote-fields.mjs";
 import { contactEmail } from "@/lib/site";
-import { trackEvent } from "@/lib/marketing-analytics.mjs";
+import { trackEvent, enquiryAttribution } from "@/lib/marketing-analytics.mjs";
 
 export default function QuoteForm({ product = "" }) {
   const selectedProduct = productById(product);
@@ -39,13 +39,14 @@ export default function QuoteForm({ product = "" }) {
       return;
     }
     const body = JSON.stringify(data);
-    if (attempt.current?.body !== body) attempt.current = { body, id: crypto.randomUUID() };
+    const attribution = enquiryAttribution();
+    if (attempt.current?.body !== body) attempt.current = { body, id: crypto.randomUUID(), attribution };
     pending.current = true;
     setStatus("sending");
     setError("");
     trackEvent("form_submit", { form_id: "quote_callback" });
     try {
-      const response = await fetch("/api/quote", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.id }, body: JSON.stringify({ ...data, recaptchaToken: token }), signal: AbortSignal.timeout(25000) });
+      const response = await fetch("/api/quote", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.id }, body: JSON.stringify({ ...data, recaptchaToken: token, campaignAttribution: attribution ? attempt.current.attribution : undefined }), signal: AbortSignal.timeout(25000) });
       const receipt = await response.json();
       if (!response.ok || receipt.ok !== true) {
         if (receipt.fields) setFields(receipt.fields);
