@@ -40,6 +40,26 @@ Use one unique `utm_content` for each actual post, profile link or gig. Use lowe
 
 After consent, safe campaign labels persist in session storage during internal navigation and accompany later form events. A newly tagged landing link replaces the stored campaign. Withdrawal clears that storage.
 
+## Received enquiry source labels
+
+Contact, free consultation and quote callback forms optionally include the same campaign labels in the business notification email. This makes a tagged social visit that becomes a received enquiry visible in the inbox, separately from analytics events. For example, an accepted TikTok campaign visit followed by internal navigation to Contact Us can append:
+
+```text
+Marketing source (optional, visitor-reported):
+source: tiktok
+medium: social
+campaign: design-showcase
+content: three-industries-01-trending-sound
+```
+
+The browser checks current optional measurement consent at submission time and omits attribution for missing, expired or declined consent. The server independently filters the optional object to source, medium, campaign, content and term. Each label is at most 100 ASCII letters, numbers, dots, underscores or hyphens. URLs, email addresses, newlines and extra fields are discarded. Missing or invalid attribution never prevents delivery, and no source is invented for an unattributed enquiry.
+
+The source labels are visitor-reported, not independently verified acquisition data. Record the actual received conversation in the lead register and qualify it separately. Do not treat a provider receipt or `generate_lead` as a qualified sales lead, call, proposal or paid project. Direct emails, DMs, blockers, consent refusal and cross-device journeys can remain unattributed.
+
+Retries retain the initially captured source labels while consent remains accepted, alongside the existing enquiry retry identity. A new campaign must not produce a second email merely because a visitor retries the same form. Withdrawal suppresses optional source data even during a retry.
+
+Source tests cover consent, internal navigation, malformed labels and contact, consultation and quote notification payloads using local fake provider receipts. They send no actual emails. After merge and deployment, verify the full tagged visit, consent choice, internal navigation, CAPTCHA, business inbox receipt and analytics event. The pending PR and its preview are not evidence of production delivery or complete attribution.
+
 ## Dashboard setup and verification
 
 GA4 property: measurement ID `G-YGPGYJ9L9B`. GTM container: `GTM-MDZ4RQQQ`. Clarity project: `yvnjaisape`.

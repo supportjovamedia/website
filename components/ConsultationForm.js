@@ -2,7 +2,7 @@
 import { useRef, useState } from "react";
 import RecaptchaCheckbox from "./RecaptchaCheckbox";
 import { countryOptions, validateEnquiry } from "@/lib/enquiry-fields.mjs";
-import { trackEvent } from "@/lib/marketing-analytics.mjs";
+import { trackEvent, enquiryAttribution } from "@/lib/marketing-analytics.mjs";
 import s from "./Commerce.module.css";
 
 export default function ConsultationForm() {
@@ -38,11 +38,12 @@ export default function ConsultationForm() {
       requestAnimationFrame(() => feedback.current?.focus()); return;
     }
     const serialized = JSON.stringify(values);
-    if (!attempt.current || attempt.current.body !== serialized) attempt.current = { body: serialized, id: crypto.randomUUID() };
+    const attribution = enquiryAttribution();
+    if (!attempt.current || attempt.current.body !== serialized) attempt.current = { body: serialized, id: crypto.randomUUID(), attribution };
     pending.current = true; setStatus("sending"); setError("");
     trackEvent("form_submit", { form_id: "website_consultation" });
     try {
-      const response = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.id }, body: JSON.stringify({ ...values, recaptchaToken: token }), signal: AbortSignal.timeout(25000) });
+      const response = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.id }, body: JSON.stringify({ ...values, recaptchaToken: token, campaignAttribution: attribution ? attempt.current.attribution : undefined }), signal: AbortSignal.timeout(25000) });
       const data = await response.json();
       if (!response.ok || !data.ok) { if (data.fields) setFields(data.fields); throw new Error(data.error || "We could not confirm receipt. Please try again."); }
       trackEvent("generate_lead", { form_id: "website_consultation" });
