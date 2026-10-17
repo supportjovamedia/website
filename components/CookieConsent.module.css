@@ -1,9 +1,9 @@
-.panel { position: fixed; inset: 0; margin: auto; width: min(580px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; border: 1px solid #ddd; border-radius: 20px; padding: 28px; background: #f8f8f8; color: #181818; text-align: left; font-family: inherit; box-shadow: 0 24px 90px #0002; }
+.panel { position: fixed; inset: 0; margin: auto; width: min(580px, calc(100% - 32px)); max-width: none; max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); overflow-y: auto; box-sizing: border-box; border: 1px solid #ddd; border-radius: 20px; padding: 28px; background: #f8f8f8; color: #181818; text-align: left; font-family: inherit; box-shadow: 0 24px 90px #0002; }
 .panel::backdrop { background: #0007; }
 .panel h2 { font-size: 21px; font-weight: 700; letter-spacing: -.045em; line-height: 1.25; margin: 0 0 16px; color: #181818; }
 .panel p { font-size: 14px; line-height: 1.65; margin: 0 0 14px; max-width: none; color: #181818; }
 .panel a, .secondary button { color: #181818; text-decoration: underline; text-decoration-color: #aaa; text-underline-offset: 4px; font-weight: 650; }
-.panel a { display: inline; font-size: inherit; }
+.panel a { display: inline; font-size: inherit; white-space: nowrap; }
 .actions { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 24px; }
 .panel button { cursor: pointer; font-family: inherit; }
 .accept { min-width: 132px; min-height: 44px; border: 0; border-radius: 11px; padding: 12px 20px; background: #222; color: #fff; font-size: 14px; }
@@ -19,13 +19,13 @@
 .toggle[aria-checked="true"] span { transform: translateX(28px); }
 .panel button:focus-visible, .panel a:focus-visible { outline: 3px solid #235789; outline-offset: 5px; }
 @media (max-width: 600px) {
-  .panel { width: calc(100% - 24px); max-height: calc(100dvh - 24px); padding: 22px; border-radius: 16px; }
+  .panel { padding: 20px; border-radius: 16px; }
   .panel h2 { font-size: 20px; margin-bottom: 14px; }
   .panel p { font-size: 14px; line-height: 1.6; }
   .actions { flex-direction: column; align-items: stretch; gap: 8px; margin-top: 20px; }
   .accept { min-height: 44px; width: 100%; font-size: 16px; }
   .secondary { justify-content: space-between; gap: 14px; }
-  .secondary button { font-size: 14px; }
+  .secondary button { flex: 1; min-width: 0; font-size: 14px; text-align: center; }
   .row { font-size: 14px; gap: 12px; }
   .toggle { width: 66px; height: 38px; }
   .toggle span { width: 32px; height: 32px; }
