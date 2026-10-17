@@ -42,8 +42,8 @@ test("consultation and ecommerce events contain only curated fields, never sessi
 });
 
 test("nothing is queued before consent; accepted events reach all configured destinations", () => {
-  const sent=[]; let choice="rejected";
-  globalThis.window={location:{href:"https://www.jovamedia.com/contact"},localStorage:{getItem:key=>key===CONSENT_KEY?JSON.stringify({choice,time:Date.now()}):null},__jovaAnalytics:{ga:true,clarity:true},dataLayer:[],gtag:(...args)=>sent.push(args),clarity:(...args)=>sent.push(args)};
+  const sent=[], consentTime=Date.now(); let choice="rejected";
+  globalThis.window={location:{href:"https://www.jovamedia.com/contact"},localStorage:{getItem:key=>key===CONSENT_KEY?JSON.stringify({choice,time:consentTime}):null},__jovaAnalytics:{ga:true,clarity:true},dataLayer:[],gtag:(...args)=>sent.push(args),clarity:(...args)=>sent.push(args)};
   try {
     trackEvent("generate_lead",{form_id:"contact_enquiry"}); assert.equal(sent.length,0); assert.equal(window.dataLayer.length,0);
     choice="accepted"; trackEvent("generate_lead",{form_id:"contact_enquiry",email:"secret"});

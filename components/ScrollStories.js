@@ -29,22 +29,31 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
     const root = ref.current;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const desktop = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
-    let frame = 0, observer;
+    let frame = 0, observer, nearby = false;
     const paint = () => {
       frame = 0;
+      if (!nearby) return;
       const staticMode = paused || reduced.matches || !desktop.matches;
-      root.dataset.static = String(staticMode);
       const rect = root.getBoundingClientRect();
       const progress = Math.max(0, Math.min(1, (innerHeight - rect.top) / (innerHeight + rect.height)));
+      const cards = [...root.querySelectorAll("[data-story-card]")];
+      // Read all geometry before changing styles, rather than forcing layout
+      // again for each card and marker.
+      const positions = cards.map(card => ({
+        box: card.getBoundingClientRect(),
+        markerBox: card.querySelector("[data-story-marker]")?.getBoundingClientRect(),
+      }));
+      const track = hasProgressTrack && root.querySelector("[data-story-track]");
+      const markers = hasProgressTrack ? [...root.querySelectorAll("[data-story-marker]")] : [];
+      const trackBox = track && markers.length > 1 ? track.getBoundingClientRect() : null;
+      const first = trackBox && markers[0].getBoundingClientRect();
+      const last = trackBox && markers[markers.length - 1].getBoundingClientRect();
       if (root.id === "process") root.style.setProperty("--process-progress", reduced.matches ? 1 : Math.max(0, Math.min(1, (innerHeight * .8 - rect.top) / Math.max(1, rect.height * .8))));
       root.style.setProperty("--travel", staticMode ? 0 : (0.5 - progress) * 300);
       root.style.setProperty("--ink", `${staticMode ? 100 : Math.max(0, Math.min(100, (innerHeight * .9 - rect.top) / (innerHeight * .5) * 100))}%`);
-      const cards = [...root.querySelectorAll("[data-story-card]")];
       let nearest = 0, distance = Infinity;
       cards.forEach((card, i) => {
-        const box = card.getBoundingClientRect();
-        const marker = card.querySelector("[data-story-marker]");
-        const markerBox = marker?.getBoundingClientRect();
+        const { box, markerBox } = positions[i];
         const centre = markerBox ? markerBox.top + markerBox.height / 2 : box.top + box.height / 2;
         const d = Math.abs(centre - innerHeight * .48);
         if (d < distance) { distance = d; nearest = i; }
@@ -52,27 +61,21 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
         card.style.setProperty("--reveal", staticMode ? 1 : reveal);
       });
       cards.forEach((card, i) => { card.dataset.current = String(i === nearest); });
-      if (hasProgressTrack) {
-        const track = root.querySelector("[data-story-track]");
-        const markers = [...root.querySelectorAll("[data-story-marker]")];
-        if (track && markers.length > 1) {
-          const trackBox = track.getBoundingClientRect();
-          const first = markers[0].getBoundingClientRect();
-          const last = markers[markers.length - 1].getBoundingClientRect();
-          const start = first.top + first.height / 2;
-          const length = last.top + last.height / 2 - start;
-          root.style.setProperty("--line-start", `${start - trackBox.top}px`);
-          root.style.setProperty("--line-length", `${Math.max(0, length)}px`);
-          root.style.setProperty("--line", paused ? 1 : Math.max(0, Math.min(1, (innerHeight * .48 - start) / Math.max(1, length))));
-        }
+      if (trackBox) {
+        const start = first.top + first.height / 2;
+        const length = last.top + last.height / 2 - start;
+        root.style.setProperty("--line-start", `${start - trackBox.top}px`);
+        root.style.setProperty("--line-length", `${Math.max(0, length)}px`);
+        root.style.setProperty("--line", paused ? 1 : Math.max(0, Math.min(1, (innerHeight * .48 - start) / Math.max(1, length))));
       }
     };
-    const request = () => { if (!frame && !paused) frame = requestAnimationFrame(paint); };
+    const request = () => { if (nearby && !frame && !paused) frame = requestAnimationFrame(paint); };
     const setup = () => {
       observer?.disconnect(); cancelAnimationFrame(frame); frame = 0;
       removeEventListener("scroll", request);
       const cards = [...root.querySelectorAll("[data-story-card]")];
       cards.forEach(card => { delete card.dataset.mobileMotion; delete card.dataset.mobileVisible; });
+      root.dataset.static = String(paused || reduced.matches || !desktop.matches);
       paint();
       if (!paused) addEventListener("scroll", request, { passive: true });
       if (!desktop.matches || reduced.matches || paused) {
@@ -93,13 +96,19 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
       }
     };
     setup();
+    // Sections below the fold do not need animation geometry during hydration.
+    const proximity = new IntersectionObserver(([entry]) => {
+      nearby = entry.isIntersecting;
+      if (nearby) { cancelAnimationFrame(frame); paint(); }
+    }, { rootMargin: "250px 0px" });
+    proximity.observe(root);
     // Opening an answer changes the positions below it, even without scrolling.
     const sizeObserver = new ResizeObserver(request);
     sizeObserver.observe(root);
     addEventListener("resize", request);
     reduced.addEventListener("change", setup);
     desktop.addEventListener("change", setup);
-    return () => { observer?.disconnect(); sizeObserver.disconnect(); cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); reduced.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
+    return () => { observer?.disconnect(); proximity.disconnect(); sizeObserver.disconnect(); cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); reduced.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
   }, [ref, paused, hasProgressTrack]);
 }
 

@@ -62,18 +62,43 @@ async function noOverflow(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
 
-test('cookie choices dismiss the dialog and remain editable', async ({ page }) => {
+test('cookie choices allow browsing before a decision and remain editable', async ({ page }) => {
   await page.addInitScript(() => localStorage.clear());
   await page.goto('/');
   const dialog = page.getByRole('dialog');
-  await expect(dialog).toBeVisible();
+  const notice = page.getByRole('region', { name: 'Cookie choices' });
+  await expect(notice).toBeVisible();
+  await expect(dialog).toBeHidden();
+  await page.getByRole('link', { name: 'Get Free Website Preview', exact: true }).click();
+  await expect(page).toHaveURL(/\/get-a-quote$/);
+  expect(await page.evaluate(key => localStorage.getItem(key), CONSENT_KEY)).toBeNull();
+  await page.goto('/');
+  await expect(notice).toBeVisible();
   await page.getByRole('button', { name: 'Reject all', exact: true }).click();
+  await expect(notice).toBeHidden();
   await expect(dialog).toBeHidden();
   expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).choice, CONSENT_KEY)).toBe('rejected');
   await page.getByRole('button', { name: 'Cookie settings', exact: true }).click();
   await expect(page.getByRole('switch', { name: 'Analytics and session replays' })).toHaveAttribute('aria-checked', 'false');
   await page.getByRole('button', { name: 'Save Settings', exact: true }).click();
   await expect(dialog).toBeHidden();
+});
+
+test('accepted analytics can be withdrawn through cookie settings', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(key => { localStorage.removeItem(key); dispatchEvent(new Event('jova-consent')); }, CONSENT_KEY);
+  const notice = page.getByRole('region', { name: 'Cookie choices' });
+  await expect(notice).toBeVisible();
+  await notice.getByRole('button', { name: 'Accept all', exact: true }).click();
+  await expect(notice).toBeHidden();
+  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).choice, CONSENT_KEY)).toBe('accepted');
+  await page.getByRole('button', { name: 'Cookie settings', exact: true }).click();
+  const toggle = page.getByRole('switch', { name: 'Analytics and session replays' });
+  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await toggle.click();
+  await page.getByRole('button', { name: 'Save Settings', exact: true }).click();
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key)).choice, CONSENT_KEY)).toBe('rejected');
+  await expect(page.getByRole('dialog')).toBeHidden();
 });
 
 test('core pages render, headings stay unclipped, images load, and links resolve', async ({ page, request, baseURL }) => {
@@ -386,6 +411,35 @@ test('the homepage preview has no playback buttons', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('button', { name: /^(Pause|Play) preview$/ })).toHaveCount(0);
   await expect(page.getByRole('img', { name: 'Daybreak coffee website design concept shown on desktop and phone screens' })).toBeVisible();
+  const preview = page.locator('.showcase');
+  await expect(preview.locator('.livePreview')).toBeVisible({ timeout: 15000 });
+  await expect(preview.locator('.device')).toHaveCount(2);
+  await expect.poll(() => preview.locator('.scrollTrack').first().evaluate(el => Number(el.getAnimations()[0]?.currentTime || 0))).toBeGreaterThan(0);
+});
+
+test('the homepage design and enquiry links remain visible without JavaScript', async ({ browser, baseURL }, testInfo) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: testInfo.project.use.viewport });
+  try {
+    const page = await context.newPage();
+    await page.goto(baseURL + '/');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Website design');
+    const preview = page.getByRole('img', { name: 'Daybreak coffee website design concept shown on desktop and phone screens' });
+    await expect(preview).toBeVisible();
+    await expect.poll(() => preview.locator('picture img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+    await expect(page.getByRole('link', { name: 'Get Free Website Preview', exact: true })).toBeVisible();
+    await noOverflow(page);
+  } finally { await context.close(); }
+});
+
+test('reduced motion retains the static coffee preview', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const preview = page.getByRole('img', { name: 'Daybreak coffee website design concept shown on desktop and phone screens' });
+  await expect(preview.locator('picture img')).toBeVisible();
+  await expect.poll(() => preview.locator('picture img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(preview.locator('.livePreview')).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect(preview.locator('.livePreview')).toBeVisible({ timeout: 15000 });
 });
 
 test('phone navigation slides from the left and services use a separate panel',async({page},testInfo)=>{

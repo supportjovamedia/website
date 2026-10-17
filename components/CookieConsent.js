@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import styles from "./CookieConsent.module.css";
 import { CONSENT_KEY, readConsent, revokeTracking } from "@/lib/marketing-analytics.mjs";
 const Analytics = dynamic(() => import("@vercel/analytics/react").then(m => m.Analytics), { ssr: false });
@@ -32,7 +33,8 @@ export default function CookieConsent() {
   const dialog = useRef(null);
   const [storageError, setStorageError] = useState(false);
   const enabled = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true";
-  const visible = consent !== undefined && (consent === null || editing);
+  const pendingChoice = consent !== undefined && consent === null && !editing;
+  const visible = consent !== undefined && editing;
   useEffect(() => {
     if (visible && !dialog.current.open) dialog.current.showModal();
     else if (!visible && dialog.current.open) dialog.current.close();
@@ -55,6 +57,15 @@ export default function CookieConsent() {
   return <>
     {enabled && consent === "accepted" && <Analytics beforeSend={beforeSend} />}
     <button type="button" className="cookie-settings" onClick={() => { configure(); setEditing(true); }}>Cookie settings</button>
+    {pendingChoice && createPortal(<section className={styles.notice} role="region" aria-label="Cookie choices" data-nosnippet>
+      <p><strong>Optional analytics.</strong> Google Analytics measures visits; Microsoft Clarity records activity for heatmaps and session replays. <Link href="/privacy-policy">Privacy Policy</Link>.</p>
+      <div className={styles.noticeActions}>
+        <button type="button" onClick={() => save("accepted")}>Accept all</button>
+        <button type="button" onClick={() => save("rejected")}>Reject all</button>
+        <button type="button" aria-label="Manage Settings" onClick={() => { configure(); setEditing(true); }}>Settings</button>
+      </div>
+      {storageError && <p role="status">Your browser could not save this choice. Optional tracking is still off.</p>}
+    </section>, document.body)}
     <dialog ref={dialog} className={styles.panel} aria-labelledby="cookie-title" aria-describedby="cookie-description" data-nosnippet onCancel={event => { event.preventDefault(); setEditing(false); dialog.current.close(); }}>
       <h2 id="cookie-title">{configuring ? "Cookies configuration" : "Cookies Policy"}</h2>
       <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits and clicks, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept.</p>
