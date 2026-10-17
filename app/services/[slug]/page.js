@@ -13,7 +13,7 @@ import styles from "../services.module.css";
 
 export function generateStaticParams() { return services.map(({ slug }) => ({ slug })); }
 const searchTitles = {
-  "web-design":"Small Business Website Design London | JovaMedia",
+  "web-design":"Website Design in Harrow & London | JovaMedia",
   "system-modernization":"Legacy Software Modernisation UK | JovaMedia",
   "social-management":"Social Media Management for Small Businesses UK",
   "brand-strategy":"Brand Strategy & Design for Small Businesses UK",
@@ -45,7 +45,7 @@ export default async function Page({ params }) {
     <section className={`page-hero ${styles.hero}`}><div className="shell">
       <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: service.name, path: `/services/${slug}` }]} />
       <div className={styles.heroGrid}><div>
-        <h1>{slug === "web-design" ? "Small business website design in London." : service.name}</h1><p className="lead">{service.desc}</p>
+        <h1>{slug === "web-design" ? "Website design in Harrow and London." : service.name}</h1><p className="lead">{service.desc}</p>
         <div className="actions"><Link href="/get-a-quote" className="btn">Get a Quote</Link><Link href="/contact" className="text-link">Contact Us</Link></div>
       </div><div className={styles.heroArt} style={{ aspectRatio: slug === "system-modernization" ? "1" : "4 / 3" }}><Image src={`/service-crafted/${serviceArt[slug]}.webp`} alt={serviceArtAlt[slug]} fill sizes="(max-width:700px) 85vw, 40vw" preload /></div></div>
     </div></section>
