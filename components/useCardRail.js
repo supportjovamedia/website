@@ -11,26 +11,32 @@ export default function useCardRail() {
     const node = rail.current;
     let frame = 0;
     let stops = [];
+    let disposed = false;
     const update = () => {
       frame = 0;
-      if (!stops.length) return;
+      if (disposed || !node.isConnected || !stops.length) return;
       const distances = stops.map(stop => Math.abs(stop - node.scrollLeft));
       setActive(distances.indexOf(Math.min(...distances)));
     };
-    const request = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const request = () => { if (!disposed && !frame) frame = requestAnimationFrame(update); };
     node.addEventListener("scroll", request, { passive: true });
     const resize = new ResizeObserver(() => {
-      const first = cards.current[0].offsetLeft;
-      stops = cards.current.map(card => card.offsetLeft - first);
+      if (disposed || !node.isConnected) return;
+      const current = cards.current.filter(card => card?.isConnected);
+      if (!current.length) return;
+      const first = current[0].offsetLeft;
+      stops = current.map(card => card.offsetLeft - first);
       request();
     });
     resize.observe(node);
-    return () => { cancelAnimationFrame(frame); node.removeEventListener("scroll", request); resize.disconnect(); };
+    return () => { disposed = true; cancelAnimationFrame(frame); node.removeEventListener("scroll", request); resize.disconnect(); };
   }, []);
 
   function select(index) {
-    rail.current.scrollTo({
-      left: cards.current[index].offsetLeft - cards.current[0].offsetLeft,
+    const node = rail.current, card = cards.current[index], first = cards.current[0];
+    if (!node || !card || !first) return;
+    node.scrollTo({
+      left: card.offsetLeft - first.offsetLeft,
       behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
     });
   }
