@@ -1,10 +1,10 @@
 import PhotoHero from "@/components/PhotoHero";
 import Link from "next/link";
+import Image from "next/image";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import ContactChoices from "@/components/ContactChoices";
-import InsightCover from "@/components/InsightCover";
 import s from "@/components/Editorial.module.css";
 import { FaqStory } from "@/components/ScrollStories";
 
@@ -23,7 +23,15 @@ export default function SalonWebsitePage() {
     <StructuredData data={{ ...serviceSchema(service), areaServed: [{ "@type": "Country", name: "United Kingdom" }, { "@type": "City", name: "London" }] }}/>
     <PhotoHero src={"/insights/salon-interior.webp"} className={`page-hero ${s.photoHero}`}><div className={s.shell}><header className={s.articleHeader}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: "Salon website design", path: "/services/salon-website-design" }]}/><h1>Salon website design<br/>for beauty businesses.</h1><p className={s.articleDeck}>Show your treatments, prices and work in one considered place. We are a London-based studio designing websites for independent salons and lash technicians across the UK, with a booking route that fits the way you work.</p><div className="actions"><Link className="btn" href="/get-a-quote?product=business-website">Get a free homepage preview</Link><Link className="text-link" href="/pricing">See website prices</Link></div></header></div></PhotoHero>
     <div className={s.shell}>
-      <div className={s.feature}><InsightCover kind="salon"/></div>
+      <figure className={`${s.casePreview} ${s.salonPreview}`}>
+        <div className={s.caseBrowser}>
+          <div className={s.caseBrowserBar} aria-hidden="true"><span>Website design preview</span><span>Sumera&apos;s Hair &amp; Beauty</span></div>
+          <div className={s.caseScreen} tabIndex={0} role="region" aria-label="Sumera's salon website design preview" aria-describedby="salon-preview-caption">
+            <Image src="/home-selected/sumera-current.png" alt="Sumera's hair and beauty website design, with treatment navigation, salon photographs and a booking route" width={1440} height={5440} sizes="(max-width:700px) 85vw, 960px" />
+          </div>
+        </div>
+        <figcaption id="salon-preview-caption">Design preview: treatment navigation, salon photographs and a prominent booking route. Scroll inside the image to explore the layout. <Link href="/work">See more website design examples</Link>.</figcaption>
+      </figure>
       <div className={s.caseText}><div className={s.prose}>
         <h2>Help a new client choose with confidence.</h2><p>Your regular clients know what to book. A new visitor may need to compare treatments, see your work and ask a question first. We organise that information around the choices your customers actually make.</p>
         <ul><li>Treatment menus with clear prices, service details and appointment lengths.</li><li>A gallery of your own work, using photographs you have permission to publish.</li><li>Team, location and access information that helps a first-time visitor plan their visit.</li><li>Your booking and cancellation policies, with a simple route to ask a question.</li><li>Mobile layouts, clear contact options and a useful path from Instagram to your website.</li></ul>
