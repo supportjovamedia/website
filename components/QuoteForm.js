@@ -7,8 +7,9 @@ import { quoteOptions, validateQuote } from "@/lib/quote-fields.mjs";
 import { contactEmail } from "@/lib/site";
 import { trackEvent, enquiryAttribution } from "@/lib/marketing-analytics.mjs";
 
-export default function QuoteForm({ product = "" }) {
+export default function QuoteForm({ product = "", website = "" }) {
   const selectedProduct = productById(product);
+  const visibleOptions = quoteOptions.filter(option => !option.value.startsWith("website-") || option.value === website);
   const [status, setStatus] = useState("idle");
   const [fields, setFields] = useState({});
   const [error, setError] = useState("");
@@ -77,9 +78,9 @@ export default function QuoteForm({ product = "" }) {
       <label><span>Name <Required /></span><input name="name" autoComplete="name" required maxLength={100} {...props("name")} />{feedback("name")}</label>
       <label><span>Email address <Required /></span><input name="email" type="email" autoComplete="email" required maxLength={200} {...props("email")} />{feedback("email")}</label>
       <label><span>Phone number <span className="quote-optional">(optional)</span></span><input name="phone" type="tel" autoComplete="tel" maxLength={40} {...props("phone")} />{feedback("phone")}</label>
-      <label><span>Service <Required /></span><span className="quote-select"><select name="service" required defaultValue={product ? "service-0" : ""} {...props("service")}>
+      <label><span>Service <Required /></span><span className="quote-select"><select name="service" required defaultValue={website || (product ? "service-0" : "")} {...props("service")}>
         <option value="">Select a service</option>
-        {quoteOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+        {visibleOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
       </select></span>{feedback("service")}</label>
     </fieldset>
     <div className="contact-trap" aria-hidden="true"><label>Leave this field empty<input name="website" tabIndex={-1} autoComplete="off" /></label></div>

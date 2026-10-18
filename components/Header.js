@@ -4,8 +4,10 @@ import Image from "next/image";
 /* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { websiteNavigation } from "@/lib/website-navigation.mjs";
 const links = [
   ["Home", "/"],
+  ["Websites", "/websites"],
   ["Services", "/services"],
   ["Our Work", "/work"],
   ["Pricing", "/pricing"],
@@ -13,7 +15,6 @@ const links = [
   ["Contact Us", "/contact"],
 ];
 const serviceLinks = [
-  ["Website design", "/services/web-design"],
   ["Social media management", "/services/social-management"],
   ["Brand strategy and design", "/services/brand-strategy"],
   ["Content creation", "/services/content"],
@@ -31,6 +32,8 @@ export default function Header() {
 function Navigation({ pathname }) {
   const [open, setOpen] = useState(false);
   const [serviceMenu, setServiceMenu] = useState(false);
+  const [websiteMenu, setWebsiteMenu] = useState(false);
+  const submenu = websiteMenu ? "websites" : serviceMenu ? "services" : "";
   const toggle = useRef(null);
   const menu = useRef(null);
   const header = useRef(null);
@@ -40,10 +43,10 @@ function Navigation({ pathname }) {
 
   useEffect(() => {
     const returning = previousServiceMenu.current;
-    previousServiceMenu.current = serviceMenu;
-    if (!open || (!serviceMenu && !returning)) return;
-    menu.current?.querySelector(serviceMenu ? '.mobile-menu-back' : '.mobile-services-toggle')?.focus();
-  }, [open, serviceMenu]);
+    previousServiceMenu.current = submenu;
+    if (!open || (!submenu && !returning)) return;
+    menu.current?.querySelector(submenu ? `#mobile-${submenu} .mobile-menu-back` : returning === "websites" ? '.mobile-websites-toggle' : '.mobile-services-toggle:not(.mobile-websites-toggle)')?.focus();
+  }, [open, submenu]);
 
   useEffect(() => {
     const main = document.querySelector('#main-content main');
@@ -51,7 +54,7 @@ function Navigation({ pathname }) {
     // Full hero/intro sections take priority. Legal pages use their title intro,
     // rather than waiting until the entire document has passed the viewport.
     const title = main.querySelector('h1');
-    const intro = main.querySelector('section[aria-labelledby="home-title"], .page-hero, .concept-heading, .drink-hero')
+    const intro = main.querySelector('section[aria-labelledby="home-title"], [data-website-intro], .page-hero, .concept-heading, .drink-hero')
       || title?.nextElementSibling || title || main.firstElementChild;
     if (!intro) return;
     const element = header.current;
@@ -89,9 +92,9 @@ function Navigation({ pathname }) {
   }, []);
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width:901px)");
+    const mq = window.matchMedia("(min-width:1101px)");
     const close = () => {
-      if (mq.matches) setOpen(false);
+      if (mq.matches) { setOpen(false); setServiceMenu(false); setWebsiteMenu(false); }
     };
     mq.addEventListener("change", close);
     return () => mq.removeEventListener("change", close);
@@ -107,6 +110,8 @@ function Navigation({ pathname }) {
     const key = (e) => {
       if (e.key === "Escape") {
         setOpen(false);
+        setServiceMenu(false);
+        setWebsiteMenu(false);
         toggle.current?.focus();
       }
       if (e.key === "Tab") {
@@ -132,12 +137,13 @@ function Navigation({ pathname }) {
     href === "/"
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
-  const closeMenu = () => { setOpen(false); setServiceMenu(false); };
+  const closeMenu = () => { setOpen(false); setServiceMenu(false); setWebsiteMenu(false); };
   const showServices = () => {
     setServiceMenu(true);
   };
   const showMain = () => {
     setServiceMenu(false);
+    setWebsiteMenu(false);
   };
   return (
     <div className="navigation-slot" ref={slot}>
@@ -198,8 +204,10 @@ function Navigation({ pathname }) {
           aria-label="Mobile navigation"
         >
           <div className="mobile-menu-inner">
-            <div className="mobile-menu-page" data-active={!serviceMenu} inert={serviceMenu} aria-hidden={serviceMenu}>
-            {links.map(([name, href]) => name === "Services" ? (
+            <div className="mobile-menu-page" data-active={!submenu} inert={!!submenu} aria-hidden={!!submenu}>
+            {links.map(([name, href]) => name === "Websites" ? (
+              <button key={href} type="button" className="mobile-services-toggle mobile-websites-toggle" onClick={() => setWebsiteMenu(true)} aria-expanded={websiteMenu} aria-controls="mobile-websites"><span>Websites</span><MenuChevron /></button>
+            ) : name === "Services" ? (
               <button key={href} type="button" className="mobile-services-toggle" onClick={showServices} aria-expanded={serviceMenu} aria-controls="mobile-services"><span>Services</span><MenuChevron /></button>
             ) : (
               <a
@@ -218,6 +226,11 @@ function Navigation({ pathname }) {
             >
               Get a Quote
             </a>
+            </div>
+            <div id="mobile-websites" className="mobile-menu-page mobile-services" data-active={websiteMenu} inert={!websiteMenu} aria-hidden={!websiteMenu}>
+              <button type="button" className="mobile-menu-back" onClick={showMain}><MenuChevron back/><span>Back</span></button>
+              <a className="mobile-services-overview" href="/websites" onClick={closeMenu}>Explore websites</a>
+              {websiteNavigation.map(([name, slug]) => <a key={slug} href={`/websites/${slug}`} onClick={closeMenu} aria-current={active(`/websites/${slug}`) ? "page" : undefined}>{name}</a>)}
             </div>
             <div id="mobile-services" className="mobile-menu-page mobile-services" data-active={serviceMenu} inert={!serviceMenu} aria-hidden={!serviceMenu}>
               <button type="button" className="mobile-menu-back" onClick={showMain}><MenuChevron back/><span>Back</span></button>

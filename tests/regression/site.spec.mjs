@@ -398,7 +398,8 @@ test('phone navigation slides from the left and services use a separate panel',a
   await expect(menu).toHaveCSS('background-color','rgb(255, 255, 255)');
   await expect(menu).toHaveCSS('transition-duration','0.4s, 0s');
   await menu.getByRole('button',{name:'Services',exact:true}).click();
-  await expect(menu.getByRole('link',{name:'Website design',exact:true})).toBeVisible();
+  await expect(menu.getByRole('link',{name:'Social media management',exact:true})).toBeVisible();
+  await expect(menu.getByRole('link',{name:'Website design',exact:true})).toHaveCount(0);
   await expect(menu.getByRole('link',{name:'Home',exact:true})).toBeHidden();
   await expect(menu.getByRole('button',{name:'Back',exact:true})).toBeFocused();
   await menu.getByRole('button',{name:'Back',exact:true}).click();

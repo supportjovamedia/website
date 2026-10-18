@@ -8,7 +8,7 @@ import MotionRegion from "@/components/MotionRegion";
 import PhotoHero from "@/components/PhotoHero";
 import { FaqStory } from "@/components/ScrollStories";
 
-export const metadata = pageMetadata("/services", "Website Design & Digital Services for UK Small Businesses", "Explore JovaMedia’s seven services: websites, system modernization, social media, brand design, copywriting, email automation and SEO.");
+export const metadata = pageMetadata("/services", "Digital Services for UK Small Businesses | JovaMedia", "Explore JovaMedia's branding, social media, copywriting, email marketing, search visibility and systems services. Website design has its own dedicated section.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
@@ -16,11 +16,11 @@ export default function Page() {
       <div className="shell">
 
         <h1>Everything you need<br /><em>to grow.</em></h1>
-        <p className="lead">A new website, a clearer message or a more consistent presence. Start with one service, or bring a few together around your business.</p>
-        <div className="actions"><Link className="btn" href="/contact">Contact Us</Link></div>
+        <p className="lead">A clearer message, a stronger identity or more connected tools. Choose the support your business needs.</p>
+        <div className="actions"><Link className="btn" href="/contact">Contact Us</Link><Link className="text-link" href="/websites">Looking for a website?</Link></div>
       </div>
     </PhotoHero>
-    <section className={`section ${styles.directory}`} id="services" aria-label="Our seven services">
+    <section className={`section ${styles.directory}`} id="services" aria-label="Our digital services">
       <div className="shell">
         <MotionRegion className={styles.directoryGrid} enterOnly>
           {primaryServices.map((service, index) => <Link key={service.slug} href={`/services/${service.slug}`} className={styles.directoryCard} data-motion-card style={{ "--card-delay": `${index % 3 * 40}ms` }}>
