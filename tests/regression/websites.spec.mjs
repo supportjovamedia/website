@@ -27,6 +27,15 @@ test('website pages reflow, show the right metadata, load photography and preser
     const h1 = await page.locator('main h1').boundingBox();
     expect(h1.x).toBeGreaterThanOrEqual(0);
     expect(h1.x + h1.width).toBeLessThanOrEqual(page.viewportSize().width);
+    if (page.viewportSize().width <= 760) {
+      const overlap = await page.locator('main [data-website-intro]').evaluate(el => {
+        const figure = el.querySelector('figure');
+        const picture = figure.querySelector('[aria-hidden="true"]');
+        const previous = figure.previousElementSibling;
+        return picture.getBoundingClientRect().top < previous.getBoundingClientRect().bottom - 1;
+      });
+      expect(overlap, path + ' artwork must not cover the introduction').toBe(false);
+    }
     await expect.poll(() => page.locator('main img[fetchpriority="high"]').evaluateAll(images => images.every(img => img.complete && img.naturalWidth > 0))).toBe(true);
     if (path === '/websites' || path === '/websites/crm-systems') {
       await page.screenshot({ path: `test-results/websites-${path === '/websites' ? 'overview' : 'crm'}-${testInfo.project.name}.png` });
