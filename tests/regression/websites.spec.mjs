@@ -61,7 +61,7 @@ test('Websites and Services have separate mobile groups with keyboard return and
   await expect(page.locator('#mobile-services')).not.toContainText('Website design');
   await page.keyboard.press('Escape');
   await expect(open).toBeFocused();
-  await expect(page.getByRole('navigation', { name: 'Mobile navigation', exact: true })).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#mobile-menu')).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('navigation stays usable at the desktop breakpoint and at 320px', async ({ page }) => {
