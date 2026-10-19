@@ -30,6 +30,7 @@ test('website pages reflow, show the right metadata, load photography and preser
     expect((await page.goto(path)).status(), path).toBe(200);
     await expect(page.locator('main h1')).toBeVisible();
     await expect(page.locator('main h1')).toHaveCount(1);
+    await expect(page.locator('main h1')).toHaveCSS('color', 'rgb(255, 255, 255)');
     if (path !== '/websites') {
       const questions = page.locator('main #questions details');
       expect(await questions.count()).toBeGreaterThanOrEqual(5);

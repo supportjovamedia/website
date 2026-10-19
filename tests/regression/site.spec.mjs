@@ -463,7 +463,7 @@ test('phone navigation slides from the left and services use a separate panel',a
 });
 
 test('image-backed heroes retain readable headings and breadcrumbs',async({page})=>{
-  for(const path of ['/work','/about','/pricing','/contact','/insights','/work/qaiser-watches','/services/salon-website-design','/insights/salon-booking-platform-fees-vs-own-website']){
+  for(const path of ['/work','/about','/pricing','/contact','/insights','/work/qaiser-watches','/insights/salon-booking-platform-fees-vs-own-website']){
     await page.goto(path);
     const hero=page.locator('[data-photo-hero]');
     await expect(hero.locator('h1')).toHaveCSS('color','rgb(255, 255, 255)');
