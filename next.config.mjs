@@ -2,10 +2,6 @@ import { serviceRedirects } from "./lib/service-redirects.mjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    // Keep unrelated page styles out of the first render on smaller routes.
-    cssChunking: { type: "graph", requestCost: 10000 },
-  },
   images: {
     // Include the missing phone-sized step so small hero photos do not jump
     // straight from 384px to 640px on high-density mobile screens.
