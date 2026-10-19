@@ -157,10 +157,11 @@ function Navigation({ pathname }) {
               alt="JovaMedia"
               width={361}
               height={128}
-              priority
+              loading="eager"
+              fetchPriority="low"
               sizes="120px"
             />
-            <Image className="logo-dark-surface" src="/brand/jova-logo-white.png" alt="" aria-hidden="true" width={361} height={128} sizes="132px" loading="eager" />
+            <Image className="logo-dark-surface" src="/brand/jova-logo-white.png" alt="" aria-hidden="true" width={361} height={128} sizes="132px" loading="eager" fetchPriority="low" />
           </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
             {links.map(([name, href]) => (

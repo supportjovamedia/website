@@ -423,6 +423,22 @@ test('the homepage preview has no playback buttons', async ({ page }) => {
   await expect(page.getByRole('img', { name: 'Daybreak coffee website design concept shown on desktop and phone screens' })).toBeVisible();
 });
 
+test('homepage preview motion runs natively, pauses offscreen and respects reduced motion', async ({ page }) => {
+  await page.goto('/');
+  const live = page.locator('.livePreview');
+  await expect(live).toHaveClass(/ready/, { timeout: 15_000 });
+  const product = live.locator('.productLayer').first();
+  await expect.poll(() => product.evaluate(el => el.getAnimations().length)).toBeGreaterThan(0);
+  const time = await product.evaluate(el => Number(el.getAnimations()[0].currentTime));
+  await expect.poll(() => product.evaluate(el => Number(el.getAnimations()[0].currentTime))).toBeGreaterThan(time + 100);
+  await page.locator('#process').scrollIntoViewIfNeeded();
+  await expect.poll(() => live.evaluate(el => el.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused'))).toBe(true);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(live).toHaveCount(0);
+  await expect(page.locator('.previewStill img')).toBeVisible();
+  await noOverflow(page);
+});
+
 test('phone navigation slides from the left and services use a separate panel',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='phone','Phone navigation is separate from desktop.');
   await page.goto('/');
