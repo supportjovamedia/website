@@ -13,6 +13,10 @@ The other five screens in each family show different workflows: availability, re
 
 ## Editable source and export
 
+Run `node design/system-studies-v2/gallery.mjs` to review the actual compressed exports at `http://127.0.0.1:4414/`. The gallery reserves each image's 8:5 aspect ratio, uses automatic height and constrains its grid columns. Supporting screens expand without stretching or horizontal overflow. It is a local review tool, not part of the public website.
+
+With the gallery running, use `node design/system-studies-v2/check-gallery.mjs OPTIONAL_OUTPUT_DIRECTORY` to expand every group and check all 28 images at eight widths from 320 to 1920 pixels. On Windows set `REGRESSION_BROWSER_CHANNEL=chrome` to use installed Chrome. Optional output saves the geometry audit and phone/desktop proof screenshots. The public website browser checks separately require interface images to use `object-fit: contain` with their original dimensions.
+
 1. Run `node design/system-studies-v2/create.mjs` after changing the source templates. This preserves the existing sample-workflow helpers from `design/system-studies/studies.js` and generates `studies.js`.
 2. Run `node design/system-studies-v2/serve.mjs` and open `http://127.0.0.1:4413/?type=booking&view=card`.
 3. Capture all four types (`booking`, `crm`, `portal`, `membership`) and seven views (`card`, `hero`, `scope-one`, `scope-two`, `scope-three`, `editorial-one`, `editorial-two`) at 1600 by 1000. These fixed-size prototypes are export sources, not responsive embedded apps.

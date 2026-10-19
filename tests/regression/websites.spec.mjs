@@ -85,6 +85,11 @@ test('website pages reflow, show the right metadata, load photography and preser
       expect(bounds.art, path + ' photography must sit after the introduction').toBeGreaterThanOrEqual(bounds.copy - 1);
     }
     await expect.poll(() => page.locator('main [data-website-intro] img').evaluateAll(images => images.every(img => img.complete && img.naturalWidth > 0))).toBe(true);
+    for (const image of await page.locator('main [data-photo-kind="interface"] img').all()) {
+      await expect(image, path + ' interface screenshots must preserve their proportions').toHaveCSS('object-fit', 'contain');
+      await expect(image).toHaveAttribute('width', '1600');
+      await expect(image).toHaveAttribute('height', '1000');
+    }
     if (path === '/websites' || path === '/websites/crm-systems') {
       await page.screenshot({ path: `test-results/websites-${path === '/websites' ? 'overview' : 'crm'}-${testInfo.project.name}.png` });
     }
