@@ -16,8 +16,9 @@ test.beforeEach(async ({ context, page, baseURL }) => {
 
 test.afterEach(async ({ page }) => expect(page.__errors).toEqual([]));
 
-test('the Websites introduction keeps the approved wording and the footer exposes the official social accounts', async ({ page }) => {
+test('the Websites introduction keeps the approved wording and the footer exposes the official social accounts', async ({ page }, testInfo) => {
   await page.goto('/websites');
+  if (testInfo.project.name === 'desktop') await expect(page.getByRole('navigation', { name: 'Primary navigation', exact: true }).locator('a')).toHaveText(['Home', 'About', 'Website', 'Services', 'Pricing']);
   const hero = page.locator('main [data-website-intro]');
   await expect(hero.locator('h1')).toHaveText('Affordable website design in London.');
   await expect(page).toHaveTitle('Affordable Website Design in London | JovaMedia');
@@ -84,6 +85,11 @@ test('website pages reflow, show the right metadata, load photography and preser
       expect(bounds.art, path + ' photography must sit after the introduction').toBeGreaterThanOrEqual(bounds.copy - 1);
     }
     await expect.poll(() => page.locator('main [data-website-intro] img').evaluateAll(images => images.every(img => img.complete && img.naturalWidth > 0))).toBe(true);
+    for (const image of await page.locator('main [data-photo-kind="interface"] img').all()) {
+      await expect(image, path + ' interface screenshots must preserve their proportions').toHaveCSS('object-fit', 'contain');
+      await expect(image).toHaveAttribute('width', '1600');
+      await expect(image).toHaveAttribute('height', '1000');
+    }
     if (path === '/websites' || path === '/websites/crm-systems') {
       await page.screenshot({ path: `test-results/websites-${path === '/websites' ? 'overview' : 'crm'}-${testInfo.project.name}.png` });
     }
@@ -103,7 +109,8 @@ test('Websites and Services have separate mobile groups with keyboard return and
   await page.goto('/websites');
   const open = page.getByRole('button', { name: 'Open menu', exact: true });
   await open.click();
-  await page.getByRole('button', { name: 'Websites', exact: true }).click();
+  await expect(page.locator('#mobile-menu .mobile-menu-page[data-active="true"]').locator(':scope > a, :scope > button')).toHaveText(['Home', 'About', 'Website', 'Services', 'Pricing', 'Get a Quote']);
+  await page.getByRole('button', { name: 'Website', exact: true }).click();
   const websiteMenu = page.locator('#mobile-websites');
   await expect(websiteMenu.getByRole('button', { name: 'Back', exact: true })).toBeFocused();
   for (const item of websiteTypes) {
@@ -112,7 +119,7 @@ test('Websites and Services have separate mobile groups with keyboard return and
     await expect(link).toBeVisible();
   }
   await websiteMenu.getByRole('button', { name: 'Back', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Websites', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Website', exact: true })).toBeFocused();
   await page.getByRole('button', { name: 'Services', exact: true }).click();
   await expect(page.locator('#mobile-services')).not.toContainText('Website design');
   await page.keyboard.press('Escape');
@@ -128,7 +135,7 @@ test('navigation stays usable at the desktop breakpoint and at 320px', async ({ 
     if (width <= 1100) await expect(page.getByRole('button', { name: 'Open menu', exact: true })).toBeVisible();
     else {
       const nav = page.getByRole('navigation', { name: 'Primary navigation', exact: true });
-      await expect(nav.getByRole('link', { name: 'Websites', exact: true })).toBeVisible();
+      await expect(nav.getByRole('link', { name: 'Website', exact: true })).toBeVisible();
       const navBox = await nav.boundingBox();
       const actionBox = await page.locator('.desktop-cta').boundingBox();
       expect(navBox.x + navBox.width).toBeLessThan(actionBox.x);

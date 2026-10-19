@@ -7,10 +7,10 @@ import { useEffect, useRef, useState } from "react";
 import { websiteNavigation } from "@/lib/website-navigation.mjs";
 const links = [
   ["Home", "/"],
-  ["Websites", "/websites"],
+  ["About", "/about"],
+  ["Website", "/websites"],
   ["Services", "/services"],
   ["Pricing", "/pricing"],
-  ["About", "/about"],
 ];
 const serviceLinks = [
   ["Social media management", "/services/social-management"],
@@ -204,8 +204,8 @@ function Navigation({ pathname }) {
         >
           <div className="mobile-menu-inner">
             <div className="mobile-menu-page" data-active={!submenu} inert={!!submenu} aria-hidden={!!submenu}>
-            {links.map(([name, href]) => name === "Websites" ? (
-              <button key={href} type="button" className="mobile-services-toggle mobile-websites-toggle" onClick={() => setWebsiteMenu(true)} aria-expanded={websiteMenu} aria-controls="mobile-websites"><span>Websites</span><MenuChevron /></button>
+            {links.map(([name, href]) => href === "/websites" ? (
+              <button key={href} type="button" className="mobile-services-toggle mobile-websites-toggle" onClick={() => setWebsiteMenu(true)} aria-expanded={websiteMenu} aria-controls="mobile-websites"><span>{name}</span><MenuChevron /></button>
             ) : name === "Services" ? (
               <button key={href} type="button" className="mobile-services-toggle" onClick={showServices} aria-expanded={serviceMenu} aria-controls="mobile-services"><span>Services</span><MenuChevron /></button>
             ) : (
