@@ -40,8 +40,14 @@ Native Keyword Planner produced 1,621 suggestions, but this is a checked ten-see
 - Crawlable links between the overview, detail pages, work, packages and cost guide. No meta-keyword stuffing or cloned synonym pages.
 - Website-type quote links select a validated option; the existing email handler includes that label. Product IDs are checked against the current catalogue. No live test lead is sent by automated checks.
 - Consent-aware analytics recognises only the overview and the ten known marketing routes. Replay permits their fixed section anchors and validated quote selections; arbitrary subpaths, account URLs and private query values remain excluded.
-- Photo files are local WebP derivatives. No image generation was used. HTML/CSS interface studies use illustrative data and are captioned as examples, not delivered client systems. See `websites-media-sources.json` for sources and processing.
+- Photo files are local WebP derivatives. No image generation was used. The revision removes the fictional miniature websites and browser chrome. Booking, CRM, portal and membership interface illustrations have accessible descriptions and contain no client data. Genuine Qaiser Watches work is identified separately. See `websites-media-sources.json` for sources and processing.
 - No new promises of ranking, conversion improvements, price, availability or project outcomes. Existing published starting prices retain their scope caveats.
+
+## Revision after visual and content review
+
+Each main heading now names its actual service. All ten pages contain distinct buyer guidance, a service-specific scope, planning and cost information, five or six practical questions, and related services. `lib/website-editorial.mjs` records the primary phrase, supporting cluster and content for each page. The homepage retains the broad small-business introduction; the Websites hub introduces the Harrow/London service and routes buyers to the appropriate detail. The brochure page focuses on multi-page service-business requirements rather than creating another location clone.
+
+The shared presentation uses the homepage's desktop scroll-chapter and native mobile swipe-card model. Reduced motion keeps the full static reading order. Photos and authored interface illustrations support the content, without invented client names or results. Shared components own the layouts and interactions rather than a stylesheet per service.
 
 ## Validation and release
 

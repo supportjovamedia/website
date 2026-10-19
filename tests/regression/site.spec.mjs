@@ -258,7 +258,8 @@ test('white newsletters separate preceding sections from compact gray footers', 
         while (el && ['rgba(0, 0, 0, 0)', 'transparent'].includes(getComputedStyle(el).backgroundColor)) el = el.parentElement;
         return el ? getComputedStyle(el).backgroundColor : 'rgb(255, 255, 255)';
       };
-      const sections = [...document.querySelectorAll('main > section')];
+      // Motion wrappers do not change which section visually precedes the newsletter.
+      const sections = [...document.querySelectorAll('main section')];
       const newsletter = document.querySelector('[data-analytics-form="newsletter"]').closest('section');
       return [background(sections.at(-1)), background(newsletter)];
     });

@@ -55,6 +55,28 @@ test("the retired website service and its aliases redirect once to the new hub",
   assert.equal((await fetch(base + "/websites/not-a-real-type")).status, 404);
 });
 
+test("each service has a descriptive main heading, meaningful media and distinct buying guidance", async () => {
+  const fit = text => text.toLowerCase().replace(/&amp;/g, "&").replace(/&#x27;|&#39;|&apos;/g, "'").replace(/<[^>]*>/g, " ");
+  const descriptions = new Set();
+  for (const item of websiteTypes) {
+    const html = await (await fetch(base + websitePath(item.slug))).text();
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
+    const h1 = fit(main.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)[1]);
+    assert.ok(h1.includes(item.primaryKeyword.toLowerCase()), `${item.slug}: service intent must be explicit in the main heading`);
+    for (const section of item.detailSections) {
+      assert.ok(fit(main).includes(fit(section.title)), `${item.slug}: missing service-specific heading`);
+      descriptions.add(section.paragraphs.join(" "));
+    }
+    const images = [...main.matchAll(/<img\b[^>]*>/g)].map(match => match[0]);
+    assert.ok(images.length >= 5, `${item.slug}: service guidance should have supporting visual sections`);
+    assert.ok(images.every(image => /alt="[^"]{12,}"/.test(image)), `${item.slug}: meaningful imagery needs useful alternative text`);
+    assert.doesNotMatch(main, /The garden house|Atelier \/ selected work|Workspace \/ interface study|data-website-eyebrow/);
+    assert.ok(main.includes('id="planning"') && main.includes('id="questions"'));
+    assert.ok(main.includes('href="/pricing"') && main.includes('href="/insights/small-business-website-cost-uk"'));
+  }
+  assert.equal(descriptions.size, 20, "the ten services must not repeat the same buyer guidance");
+});
+
 test("website selection reaches the enquiry email using an injected transport only", async () => {
   const env = { RESEND_API_KEY: "test", CONTACT_FROM_EMAIL: "Website <hello@example.com>", CONTACT_TO_EMAIL: "inbox@example.com", RECAPTCHA_SECRET_KEY: "private-test-key" };
   for (const item of websiteTypes) {
