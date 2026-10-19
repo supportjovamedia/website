@@ -12,6 +12,6 @@ export function WebsitePhoto({ name, eager = false, className = "", sizes = "(ma
 
 export function WebsitePhotoComposition({ photos }) {
   return <div className={s.composition} aria-label="Website design and service photography">
-    {photos.map((name, index) => <figure key={name} className={s.compositionPhoto} data-motion-card><WebsitePhoto name={name} eager={index === 0} sizes={index === 0 ? "(max-width: 900px) 62vw, 34vw" : "(max-width: 900px) 29vw, 17vw"} /></figure>)}
+    {photos.map((name, index) => <figure key={name} className={s.compositionPhoto} data-motion-card><WebsitePhoto name={name} eager={index === 0} sizes={index === 0 ? "(max-width: 900px) calc(63vw - 32px), (max-width: 1699px) min(30vw, 420px), min(30vw, 480px)" : "(max-width: 900px) calc(38vw - 20px), 18vw"} /></figure>)}
   </div>;
 }

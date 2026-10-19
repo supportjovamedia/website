@@ -7,7 +7,7 @@ const path = require('node:path');
 const { createHash } = require('node:crypto');
 const sharp = require('sharp');
 const imagePath = 'public/share/jovamedia-hero-2026-10.png';
-const sourcePaths = ['components/StudioHome.js', 'components/DaybreakHero.js', 'components/DaybreakPreview.js', 'components/DaybreakHero.module.css', 'components/StudioHome.module.css', 'app/studio.css', 'components/Header.js', 'scripts/capture-social-preview.cjs', 'public/brand/jova-logo.png', 'public/hero-daybreak/preview-desktop.webp', 'public/hero-daybreak/preview-phone.webp'];
+const sourcePaths = ['components/StudioHome.js', 'components/DaybreakHero.js', 'components/DaybreakPreview.js', 'components/DaybreakHero.module.css', 'components/DaybreakPreview.module.css', 'components/StudioHome.module.css', 'app/studio.css', 'components/Header.js', 'scripts/capture-social-preview.cjs', 'public/brand/jova-logo.png', 'public/hero-daybreak/preview-desktop.webp', 'public/hero-daybreak/preview-phone.webp'];
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const sourceSha = (bytes, file) => sha(/\.(png|webp)$/.test(file) ? bytes : bytes.toString('utf8').replace(/\r\n/g, '\n'));
 (async () => {

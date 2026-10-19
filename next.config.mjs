@@ -2,6 +2,15 @@ import { serviceRedirects } from "./lib/service-redirects.mjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Keep unrelated page styles out of the first render on smaller routes.
+    cssChunking: { type: "graph", requestCost: 10000 },
+  },
+  images: {
+    // Include the missing phone-sized step so small hero photos do not jump
+    // straight from 384px to 640px on high-density mobile screens.
+    deviceSizes: [480, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+  },
   // An isolated output folder avoids locked OneDrive build artefacts during local QA.
   distDir: process.env.JOVA_BUILD_DIR || ".next",
   async redirects() {
