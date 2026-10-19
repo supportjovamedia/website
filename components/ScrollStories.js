@@ -33,18 +33,29 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
     const paint = () => {
       frame = 0;
       const staticMode = paused || reduced.matches || !desktop.matches;
-      root.dataset.static = String(staticMode);
       const rect = root.getBoundingClientRect();
+      // One section measurement is enough to skip distant content. Keep scroll
+      // updates independent of observer timing when opening an anchor directly.
+      if (rect.bottom < -250 || rect.top > innerHeight + 250) return;
       const progress = Math.max(0, Math.min(1, (innerHeight - rect.top) / (innerHeight + rect.height)));
+      const cards = [...root.querySelectorAll("[data-story-card]")];
+      // Read all geometry before changing styles, rather than forcing layout
+      // again for each card and marker.
+      const positions = cards.map(card => ({
+        box: card.getBoundingClientRect(),
+        markerBox: card.querySelector("[data-story-marker]")?.getBoundingClientRect(),
+      }));
+      const track = hasProgressTrack && root.querySelector("[data-story-track]");
+      const markers = hasProgressTrack ? [...root.querySelectorAll("[data-story-marker]")] : [];
+      const trackBox = track && markers.length > 1 ? track.getBoundingClientRect() : null;
+      const first = trackBox && markers[0].getBoundingClientRect();
+      const last = trackBox && markers[markers.length - 1].getBoundingClientRect();
       if (root.id === "process") root.style.setProperty("--process-progress", reduced.matches ? 1 : Math.max(0, Math.min(1, (innerHeight * .8 - rect.top) / Math.max(1, rect.height * .8))));
       root.style.setProperty("--travel", staticMode ? 0 : (0.5 - progress) * 300);
       root.style.setProperty("--ink", `${staticMode ? 100 : Math.max(0, Math.min(100, (innerHeight * .9 - rect.top) / (innerHeight * .5) * 100))}%`);
-      const cards = [...root.querySelectorAll("[data-story-card]")];
       let nearest = 0, distance = Infinity;
       cards.forEach((card, i) => {
-        const box = card.getBoundingClientRect();
-        const marker = card.querySelector("[data-story-marker]");
-        const markerBox = marker?.getBoundingClientRect();
+        const { box, markerBox } = positions[i];
         const centre = markerBox ? markerBox.top + markerBox.height / 2 : box.top + box.height / 2;
         const d = Math.abs(centre - innerHeight * .48);
         if (d < distance) { distance = d; nearest = i; }
@@ -52,19 +63,12 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
         card.style.setProperty("--reveal", staticMode ? 1 : reveal);
       });
       cards.forEach((card, i) => { card.dataset.current = String(i === nearest); });
-      if (hasProgressTrack) {
-        const track = root.querySelector("[data-story-track]");
-        const markers = [...root.querySelectorAll("[data-story-marker]")];
-        if (track && markers.length > 1) {
-          const trackBox = track.getBoundingClientRect();
-          const first = markers[0].getBoundingClientRect();
-          const last = markers[markers.length - 1].getBoundingClientRect();
-          const start = first.top + first.height / 2;
-          const length = last.top + last.height / 2 - start;
-          root.style.setProperty("--line-start", `${start - trackBox.top}px`);
-          root.style.setProperty("--line-length", `${Math.max(0, length)}px`);
-          root.style.setProperty("--line", paused ? 1 : Math.max(0, Math.min(1, (innerHeight * .48 - start) / Math.max(1, length))));
-        }
+      if (trackBox) {
+        const start = first.top + first.height / 2;
+        const length = last.top + last.height / 2 - start;
+        root.style.setProperty("--line-start", `${start - trackBox.top}px`);
+        root.style.setProperty("--line-length", `${Math.max(0, length)}px`);
+        root.style.setProperty("--line", paused ? 1 : Math.max(0, Math.min(1, (innerHeight * .48 - start) / Math.max(1, length))));
       }
     };
     const request = () => { if (!frame && !paused) frame = requestAnimationFrame(paint); };
@@ -73,6 +77,7 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
       removeEventListener("scroll", request);
       const cards = [...root.querySelectorAll("[data-story-card]")];
       cards.forEach(card => { delete card.dataset.mobileMotion; delete card.dataset.mobileVisible; });
+      root.dataset.static = String(paused || reduced.matches || !desktop.matches);
       paint();
       if (!paused) addEventListener("scroll", request, { passive: true });
       if (!desktop.matches || reduced.matches || paused) {

@@ -163,7 +163,7 @@
 
 /* A light, sliding menu on phones. Desktop keeps its visible navigation. */
 .jova-pages .mobile-menu{display:none}
-@media(max-width:900px){
+@media(max-width:1100px){
  .jova-pages .menu-toggle{border:0;border-radius:50%;background:#f3f5f8}
  .jova-pages .menu-toggle span{width:22px;height:1.5px}
  .jova-pages .header[data-menu-open=true]{position:fixed;inset:0 0 auto;z-index:50;background:#fff;color:#172a41;border-bottom-color:#e2e7ec}

@@ -5,7 +5,7 @@ import {createHash} from "node:crypto";
 import {socialPreview} from "../lib/social-preview.mjs";
 
 const sha=bytes=>createHash("sha256").update(bytes).digest("hex");
-const sourceSha=(bytes,file)=>sha(file.endsWith(".png")?bytes:bytes.toString("utf8").replace(/\r\n/g,"\n"));
+const sourceSha=(bytes,file)=>sha(/\.(png|webp)$/.test(file)?bytes:bytes.toString("utf8").replace(/\r\n/g,"\n"));
 test("share image is refreshed whenever its hero, logo or capture layout changes",async()=>{
  const manifest=JSON.parse(await readFile(new URL("../public/share/social-preview-manifest.json",import.meta.url)));
  assert.equal(socialPreview.url,manifest.image);

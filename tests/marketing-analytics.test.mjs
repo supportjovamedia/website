@@ -30,6 +30,20 @@ test("event allowlist discards arbitrary names, enquiry fields and contact targe
   assert.deepEqual(eventPayload("generate_lead",{form_id:"contact_enquiry",name:"Private",email:"private@example.com",message:"secret",destination:"mailto:private@example.com"},href),{page_path:"/contact",page_location:"https://www.jovamedia.com/contact",form_id:"contact_enquiry"});
 });
 
+test("website marketing pages and bounded enquiry selections remain measurable without admitting account paths or private values", () => {
+  for (const path of ["/websites", "/websites/crm-systems", "/websites/customer-portals", "/websites/booking-systems"]) {
+    assert.equal(publicPage(path), true);
+    assert.equal(eventPayload("page_view", {}, `https://www.jovamedia.com${path}`).page_path, path);
+  }
+  for (const path of ["/websites/unknown", "/websites/customer-portals/account", "/websites/crm-systems/private"]) assert.equal(publicPage(path), false);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/websites#business-systems"), true);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/websites/crm-systems#scope"), true);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/get-a-quote?website=booking-systems&product=booking-system"), true);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/get-a-quote?website=private%40example.com"), false);
+  assert.equal(replaySafeUrl("https://www.jovamedia.com/websites?website=crm-systems"), false);
+  assert.equal(measurementUrl("https://www.jovamedia.com/get-a-quote?website=crm-systems&email=private%40example.com#private"), "https://www.jovamedia.com/get-a-quote");
+});
+
 test("consultation and ecommerce events contain only curated fields, never session or customer details", () => {
   const payload=eventPayload("begin_checkout",{product_ids:["landing-page"],value:550,email:"private@example.com",session_id:"cs_private",card:"1234"},"https://www.jovamedia.com/basket?checkout=cancelled");
   assert.equal(payload.currency,"GBP");assert.equal(payload.items[0].item_id,"landing-page");

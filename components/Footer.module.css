@@ -3,6 +3,7 @@
   padding: 44px 5vw 18px;
   gap: 24px;
 }
+.footer:global(.jova-footer) > p { color: #606b75; }
 @media (max-width: 600px) {
   .footer:global(.jova-footer) {
     padding: 36px 22px 18px;

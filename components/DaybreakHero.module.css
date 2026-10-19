@@ -144,3 +144,8 @@
 @media(min-width:801px){.root :global(.hero){padding-block:54px;grid-template-columns:42% 58%;gap:0}.root :global(.message h1){font-size:clamp(30px,3.65vw,82px)}.root :global(.previewWrap){padding-left:16px}}
 @media(max-width:800px){.root :global(.hero){padding-bottom:28px}.root :global(.previewWrap){max-width:700px;margin-top:28px}.root :global(.showcase){aspect-ratio:1.58;margin-top:0}}
 @media(max-width:480px){.root :global(.previewWrap){margin-top:24px}.root :global(.hero){padding-bottom:22px}}
+.root :global(.previewStill){position:absolute;left:0;top:0;width:101%;height:101.3%;display:block}
+.root :global(.previewStill img){object-fit:fill}
+.root :global(.livePreview){position:absolute;inset:0;visibility:hidden}
+.root :global(.livePreview.ready){visibility:visible}
+.root :global(.showcase[data-live-preview="ready"] .previewStill){visibility:hidden}

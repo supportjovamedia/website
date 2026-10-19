@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
+import {createHash} from "node:crypto";
 import {articles, editorialDate} from "../lib/insights.mjs";
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname))
@@ -16,6 +17,9 @@ test("every indexable page has unique metadata, matching social URLs and valid o
     descriptions = new Set();
   for (const url of urls) {
     const html = await (await fetch(base + new URL(url).pathname)).text();
+    for (const image of html.matchAll(/<img\b[^>]*>/g)) {
+      assert.match(image[0], /\balt="[^"]*"/, url + " image missing alternative text");
+    }
     const title = html.match(/<title>(.*?)<\/title>/)?.[1];
     const description = meta(html, "description");
     assert.ok(title);
@@ -102,7 +106,7 @@ test("social previews use the current homepage capture and return a valid PNG", 
     assert.equal(data.subarray(1,4).toString(), "PNG");
     assert.equal(data.readUInt32BE(16), 1200);
     assert.equal(data.readUInt32BE(20), 630);
-    assert.deepEqual(data, approved, path + " must serve the current image, not just any PNG");
+    assert.equal(createHash("sha256").update(data).digest("hex"), createHash("sha256").update(approved).digest("hex"), path + " must serve the current image, not just any PNG");
   }
   for(const agent of ["facebookexternalhit/1.1","Twitterbot/1.0","LinkedInBot/1.0","WhatsApp/2.0"]){
     const response=await fetch(base+"/?hero=navy",{headers:{"User-Agent":agent}});

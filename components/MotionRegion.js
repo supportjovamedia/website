@@ -34,9 +34,10 @@ export default function MotionRegion({ children, className, style, enterOnly = f
         card.style.removeProperty("--motion-drift"); card.style.removeProperty("--motion-progress");
       });
       if (media.matches) return;
-      cards.forEach(card => {
+      const initialPositions = [...cards].map(card => card.getBoundingClientRect().top);
+      cards.forEach((card, index) => {
         card.dataset.motionReady = "true";
-        if (card.getBoundingClientRect().top < innerHeight * .85) card.dataset.revealed = "true";
+        if (initialPositions[index] < innerHeight * .85) card.dataset.revealed = "true";
       });
       observer = new IntersectionObserver(entries => {
         entries.forEach(({ target, isIntersecting }) => {

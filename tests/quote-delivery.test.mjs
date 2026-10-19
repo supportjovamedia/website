@@ -8,8 +8,8 @@ const data = { name: "Test Visitor", email: "test@example.com", phone: "+44 7700
 const request = (body = data, headers = {}) => new Request("https://www.jovamedia.com/api/quote", { method: "POST", headers: { Origin: "https://www.jovamedia.com", "Content-Type": "application/json", "Idempotency-Key": "12345678-1234-1234-1234-123456789abc", ...headers }, body: JSON.stringify(body) });
 const options = { env, verifyFetch: async () => Response.json({ success: true, hostname: "www.jovamedia.com" }) };
 
-test("seven services and the unsure option can request contact without a phone, message or budget", async () => {
-  assert.equal(quoteOptions.length, 8);
+test("service and website options can request contact without a phone, message or budget", async () => {
+  assert.equal(quoteOptions.length, 18);
   for (const option of quoteOptions) assert.deepEqual(validateQuote({ ...data, service: option.value }).errors, {});
   assert.deepEqual(validateQuote({ ...data, phone: "" }).errors, {});
   assert.deepEqual(validateQuote({ name: data.name, email: data.email, service: "not-sure" }).errors, {});

@@ -22,7 +22,7 @@ test.beforeEach(async ({ context, page, baseURL }) => {
     return route.continue();
   });
   await context.addInitScript(({ key }) => {
-    localStorage.setItem(key, JSON.stringify({ choice: 'rejected', time: Date.now() }));
+    if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ choice: 'rejected', time: Date.now() }));
   }, { key: CONSENT_KEY });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -62,18 +62,52 @@ async function noOverflow(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
 
-test('cookie choices dismiss the dialog and remain editable', async ({ page }) => {
+test('optional cookie choices leave the page usable and remain editable', async ({ page }) => {
   await page.addInitScript(() => localStorage.clear());
   await page.goto('/');
   const dialog = page.getByRole('dialog');
-  await expect(dialog).toBeVisible();
-  await page.getByRole('button', { name: 'Reject all', exact: true }).click();
+  const notice = page.getByRole('region', { name: 'Cookie choices', exact: true });
+  await expect(notice).toBeVisible();
+  await expect(dialog).toBeHidden();
+  await expect(page.locator('main h1')).toBeVisible();
+  await notice.getByRole('button', { name: 'Reject all', exact: true }).click();
+  await expect(notice).toBeHidden();
   await expect(dialog).toBeHidden();
   expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).choice, CONSENT_KEY)).toBe('rejected');
   await page.getByRole('button', { name: 'Cookie settings', exact: true }).click();
   await expect(page.getByRole('switch', { name: 'Analytics and session replays' })).toHaveAttribute('aria-checked', 'false');
   await page.getByRole('button', { name: 'Save Settings', exact: true }).click();
   await expect(dialog).toBeHidden();
+});
+
+test('primary navigation keeps five pages and the quote action, with work and contact in the footer', async ({ page }, testInfo) => {
+  await page.goto('/websites');
+  const nav = page.getByRole('navigation', { name: testInfo.project.name === 'phone' ? 'Mobile navigation' : 'Primary navigation', exact: true });
+  if (testInfo.project.name === 'phone') await page.getByRole('button', { name: 'Open menu', exact: true }).click();
+  await expect(nav.getByRole('link', { name: 'Our Work', exact: true })).toHaveCount(0);
+  await expect(nav.getByRole('link', { name: 'Contact Us', exact: true })).toHaveCount(0);
+  if (testInfo.project.name === 'phone') await page.getByRole('button', { name: 'Close menu', exact: true }).click();
+  for (const path of ['/work', '/contact']) await expect(page.locator(`footer a[href="${path}"]`)).toHaveCount(1);
+  await expect(page.locator('header a[href="/get-a-quote"]').first()).toHaveAttribute('href', '/get-a-quote');
+});
+
+test('optional analytics can be accepted and withdrawn through the actual consent controls', async ({ page }) => {
+  await page.addInitScript(({ key }) => {
+    if (!sessionStorage.getItem('consent-test-started')) {
+      localStorage.removeItem(key);
+      sessionStorage.setItem('consent-test-started', 'true');
+    }
+  }, { key: CONSENT_KEY });
+  await page.goto('/websites');
+  const notice = page.getByRole('region', { name: 'Cookie choices', exact: true });
+  await notice.getByRole('button', { name: 'Accept all', exact: true }).click();
+  await expect(notice).toBeHidden();
+  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).choice, CONSENT_KEY)).toBe('accepted');
+  await page.getByRole('button', { name: 'Cookie settings', exact: true }).click();
+  await expect(page.getByRole('switch', { name: 'Analytics and session replays' })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('dialog').getByRole('button', { name: 'Reject all', exact: true }).click();
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key)).choice, CONSENT_KEY)).toBe('rejected');
+  await expect(notice).toBeHidden();
 });
 
 test('core pages render, headings stay unclipped, images load, and links resolve', async ({ page, request, baseURL }) => {
@@ -179,7 +213,7 @@ test('each product quote button selects the correct product and keeps phone opti
 
 test('homepage FAQ cards are shared by contact and service pages, with readable answers on every screen', async ({ page }) => {
   let homeStyle;
-  for (const path of ['/', '/contact', '/services', '/services/web-design']) {
+  for (const path of ['/', '/contact', '/services']) {
     await page.goto(path);
     const faq = page.locator('[data-site-faq]');
     await expect(faq).toHaveCount(1);
@@ -248,7 +282,7 @@ test('technology hero photos cover their banners with readable navy overlays and
 });
 
 test('white newsletters separate preceding sections from compact gray footers', async ({ page }) => {
-  for (const path of ['/', '/about', '/services', '/pricing', '/contact', '/privacy-policy', '/terms', '/services/web-design', '/services/email-marketing']) {
+  for (const path of ['/', '/about', '/services', '/pricing', '/contact', '/privacy-policy', '/terms', '/websites', '/services/email-marketing']) {
     await page.goto(path);
     const newsletter = page.getByRole('region', { name: 'A little perspective for your inbox.', exact: true });
     await newsletter.scrollIntoViewIfNeeded();
@@ -258,7 +292,8 @@ test('white newsletters separate preceding sections from compact gray footers', 
         while (el && ['rgba(0, 0, 0, 0)', 'transparent'].includes(getComputedStyle(el).backgroundColor)) el = el.parentElement;
         return el ? getComputedStyle(el).backgroundColor : 'rgb(255, 255, 255)';
       };
-      const sections = [...document.querySelectorAll('main > section')];
+      // Motion wrappers do not change which section visually precedes the newsletter.
+      const sections = [...document.querySelectorAll('main section')];
       const newsletter = document.querySelector('[data-analytics-form="newsletter"]').closest('section');
       return [background(sections.at(-1)), background(newsletter)];
     });
@@ -398,7 +433,8 @@ test('phone navigation slides from the left and services use a separate panel',a
   await expect(menu).toHaveCSS('background-color','rgb(255, 255, 255)');
   await expect(menu).toHaveCSS('transition-duration','0.4s, 0s');
   await menu.getByRole('button',{name:'Services',exact:true}).click();
-  await expect(menu.getByRole('link',{name:'Website design',exact:true})).toBeVisible();
+  await expect(menu.getByRole('link',{name:'Social media management',exact:true})).toBeVisible();
+  await expect(menu.getByRole('link',{name:'Website design',exact:true})).toHaveCount(0);
   await expect(menu.getByRole('link',{name:'Home',exact:true})).toBeHidden();
   await expect(menu.getByRole('button',{name:'Back',exact:true})).toBeFocused();
   await menu.getByRole('button',{name:'Back',exact:true}).click();

@@ -1,0 +1,134 @@
+{
+  "photos": [
+    {
+      "file": "/websites/architecture.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=86&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1067
+      ],
+      "sha256": "a3bd13c5dbb7649501772a6d5a0f1ade290ca95ecd15af2d00aa559ebdea81bc",
+      "processing": "Resize and WebP encode only; no image generation. EXIF, XMP and ICC omitted from delivery copy."
+    },
+    {
+      "file": "/websites/interior.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1600&q=86&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1067
+      ],
+      "sha256": "2e8ee05447ab32ada1147ae7fcfb7eafffe32af7733e9b0639c1eb8820c88726",
+      "processing": "Resize and WebP encode only; no image generation. EXIF, XMP and ICC omitted from delivery copy."
+    },
+    {
+      "file": "/websites/portfolio.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=86&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1088
+      ],
+      "sha256": "2bcdecc3ef28f6b17e15da2694a06b04a3de5e960dc43d7456833e79ddf96adc",
+      "processing": "Resize and WebP encode only; no image generation. EXIF, XMP and ICC omitted from delivery copy."
+    },
+    {
+      "file": "/websites/furniture.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1600&q=86&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1067
+      ],
+      "sha256": "1d0a1e061dafe3e56b7c2e8860acc466afd77435949f5b7d1d2ffe5cfb00284e",
+      "processing": "Resize and WebP encode only; no image generation. EXIF, XMP and ICC omitted from delivery copy."
+    },
+    {
+      "file": "/websites/plants.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?w=1600&q=86&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1201,
+        1800
+      ],
+      "sha256": "b68e8ce6bc7ae8267d05ec0f67e612eca300f00b0e5d279ce6b37259c489c2cd",
+      "processing": "Resize and WebP encode only; no image generation. EXIF, XMP and ICC omitted from delivery copy."
+    },
+    {
+      "file": "/websites/workspace.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1800&q=88&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1067
+      ],
+      "processing": "Resize and WebP encode only. EXIF, XMP and ICC omitted. No image generation."
+    },
+    {
+      "file": "/websites/planning.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=1800&q=88&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1069
+      ],
+      "processing": "Resize and WebP encode only. EXIF, XMP and ICC omitted. No image generation."
+    },
+    {
+      "file": "/websites/desktop.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1800&q=88&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1067
+      ],
+      "processing": "Resize and WebP encode only. EXIF, XMP and ICC omitted. No image generation."
+    },
+    {
+      "file": "/websites/studio.webp",
+      "type": "photograph",
+      "source": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=1800&q=88&fit=crop",
+      "license": "https://unsplash.com/license",
+      "reviewed": "2026-10-19",
+      "dimensions": [
+        1600,
+        1067
+      ],
+      "processing": "Resize and WebP encode only. EXIF, XMP and ICC omitted. No image generation."
+    }
+  ],
+  "interface_examples": "Authored HTML interface illustrations for booking, CRM, portals and memberships. No client account data, fictional client names, browser frames or generated raster imagery.",
+  "originals_retained": "Local campaign working files, outside the public website.",
+  "reused_photography": {
+    "manifest": "/home-agency/sources.json",
+    "files": [
+      "camera.webp",
+      "objects.webp",
+      "book.webp"
+    ],
+    "review": "All three visually reviewed, no humans. Existing credited Pexels photographs."
+  },
+  "client_capture": {
+    "file": "/websites/qaiser-hero.webp",
+    "original": "/home-selected/qaiser-watches.png",
+    "processing": "Clean 1440 by 998 hero crop from the original delivered-site capture, WebP quality 84. Following white section excluded. Metadata omitted.",
+    "purpose": "Genuine delivered retail catalogue project, only on relevant pages. Actual scope linked."
+  }
+}
