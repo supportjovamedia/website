@@ -1,0 +1,310 @@
+[
+  {
+    "file": "/websites/systems/booking-card.webp",
+    "bytes": 58550,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "5b412d355037ef2610053d71dc8d283ed9c20bc4a364075980900e8e82195a76",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/booking-hero.webp",
+    "bytes": 46740,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "7a702d5da164face7daeb437931646469f85d5e8201404ec8c9922897bcc289e",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/booking-scope-one.webp",
+    "bytes": 36540,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "0149774a12b0b040ffc5c079c2d2b6eff315aa0d5dfd36c0621ea717f5fc3740",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/booking-scope-two.webp",
+    "bytes": 41328,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "96d56347a8ba7c79e440c1b529d1b2df1b379d6a40baba32b2c71aaddbc56b33",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/booking-scope-three.webp",
+    "bytes": 40586,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "0b935f90ed98d9dfbe5645fd31124e6443c12e51278964edbc7baaf2b266e4fd",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/booking-editorial-one.webp",
+    "bytes": 39280,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "d1265f4c1fac8ffe0c8c5445224dd43cbaa703236c40e697dc48c1f38062f99b",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/booking-editorial-two.webp",
+    "bytes": 52758,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "b35cf0f4eebd6b4eb08b798acd732000fea6a21dd2adeab5162c79869bce2c47",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/crm-card.webp",
+    "bytes": 53402,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "be1bea55fda681e82111a486805849920b8371cf032377421b7a8b88aef373f9",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/crm-hero.webp",
+    "bytes": 42674,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "f4b412dff9ace4939fd1fb0ebefda565036414405d4caae37516c80013dc81db",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/crm-scope-one.webp",
+    "bytes": 43934,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "4d9aef63a39df26cb476e318a8d61d98d9ff46ca4825b7ed65f2d22007ffb2af",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/crm-scope-two.webp",
+    "bytes": 40036,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "04880e1e0cf3ead2575ef9233fa96481d44c8e91d034f837c8ff116be1601aad",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/crm-scope-three.webp",
+    "bytes": 37908,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "bfede64e6d36143437b71194702f40107467b3d7cc1cb2810b0ae0df1bbd93d1",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/crm-editorial-one.webp",
+    "bytes": 38154,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "e83a9ea3b67466bd10e4eff8ab40fc851822419cbebd1b9880bd7669d34d3fc3",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/crm-editorial-two.webp",
+    "bytes": 54128,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "cde9b12678c8b068cdf56afc6303788f48f462e242510ff8ff6c68984aeca253",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/portal-card.webp",
+    "bytes": 61762,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "96f5a4c5bb19089cfa772176a6658aa8790eda2ce1933a202dbcd5ec98b57532",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/portal-hero.webp",
+    "bytes": 48520,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "cf7ad28d8b0222a449914eec777721e70d572594475dd35ebfbce9a59c045350",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/portal-scope-one.webp",
+    "bytes": 41524,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "1cfdec861dc6a1fcca333b9040e3fb6155a333c7023d8537447f2b56d76b7a34",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/portal-scope-two.webp",
+    "bytes": 42516,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "7114119cdfc9bc2739316ad9afc69612f8eeba21874644e34996544b70135465",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/portal-scope-three.webp",
+    "bytes": 44434,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "a60a99c3a07058344e393dc156e498b85bf8f7f0f7321e6c0a033567d4f4c3cf",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/portal-editorial-one.webp",
+    "bytes": 40962,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "cc40431aad88d6d54ed2c48ddfe6beedbc6d1944cff6ff74f42f59af211e9d5f",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/portal-editorial-two.webp",
+    "bytes": 55994,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "9827b6c907aaf7277eef5fa0b1393b8b26aeecd94bef73f787dea834e11f69d8",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/membership-card.webp",
+    "bytes": 57612,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "aa3ffffe7e108cdc13f6ad01bbcf2784146c3f75cd979e9c2602281d2c235249",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/membership-hero.webp",
+    "bytes": 45112,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "688736212d8c4931756e3ab698818e23135dda4fb5a564c1cca18606793b19b6",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/membership-scope-one.webp",
+    "bytes": 38740,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "6f9c751b8c16b7d7253cb96531dcff366eaf7dc55ff7ed59b2cfaacae736a2da",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/membership-scope-two.webp",
+    "bytes": 39088,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "c66ca3afff0eeeb3eda2d8e499aa97a0ea310e5873110fd888f00c130668a9fc",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/membership-scope-three.webp",
+    "bytes": 38546,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "15d6871e47836ca1e47bee5062a58d8810233bdda99de4d883e534c5c1e18442",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/membership-editorial-one.webp",
+    "bytes": 43194,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "cb154c98cd965c9c1f45a18360f2c905b9ed91716b557dae50dc42949a906798",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  },
+  {
+    "file": "/websites/systems/membership-editorial-two.webp",
+    "bytes": 53064,
+    "width": 1600,
+    "height": 1000,
+    "sha256": "a75ac8382986d50df06173f55be3b4b52fdeabd85f8ecbc98532be3aef7efa61",
+    "chunks": [
+      "VP8 "
+    ],
+    "embeddedMetadata": false
+  }
+]
