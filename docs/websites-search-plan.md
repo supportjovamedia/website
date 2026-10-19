@@ -4,7 +4,7 @@ Prepared 19 October 2026. This is an implementation note, not a ranking or sales
 
 ## Structure
 
-Primary navigation: Home, Websites, Services, Our Work, Pricing, About, Contact Us. Get a Quote remains the action.
+Primary navigation: Home, Websites, Services, Pricing, About. Get a Quote remains the action. Our Work and Contact Us are linked in the footer.
 
 `/websites` is the overview. Ten pages address different buyer needs. Website design is removed from the Services directory and mobile Services group. The former `/services/web-design` URL and its two legacy aliases redirect directly to the overview. Existing salon content retains its URL and is linked from Websites and business/booking content.
 
@@ -55,7 +55,7 @@ The final list-page section invites requirements that are not in the catalogue a
 
 Run the relevant handler tests, website route/metadata/redirect/quote tests, lint and production build. Browser checks cover phone/desktop layouts, mobile submenu focus/return/Escape, narrow-screen reflow, images, enquiry selection and navigation spacing.
 
-Review the preview and merge only with explicit approval. Keep this PR separate from the unmerged first-visit and cookie work in PR #75. That PR changes the retired web-design route and must be reconciled against this new hierarchy if later merged; it should not recreate the old public website-design page or reintroduce its Services card.
+Review the preview and merge only with explicit approval. The release includes a compact first-visit consent notice, a captured first frame before the existing homepage animation, and batched motion measurements. Consent choices remain equally prominent and optional tracking remains off until acceptance. PR #75 overlaps this shared first-visit work and changes the retired web-design route; reconcile it before any later merge so it does not recreate the old public page or reintroduce the Services card.
 
 After production deployment, verify redirect destinations, sitemap and live forms. Then inspect Search Console indexing and compare query/page impressions, clicks, CTR and average position to a dated baseline. Track received enquiries and paid projects separately. A next-day ranking gain is not guaranteed.
 

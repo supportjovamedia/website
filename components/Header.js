@@ -9,10 +9,8 @@ const links = [
   ["Home", "/"],
   ["Websites", "/websites"],
   ["Services", "/services"],
-  ["Our Work", "/work"],
   ["Pricing", "/pricing"],
   ["About", "/about"],
-  ["Contact Us", "/contact"],
 ];
 const serviceLinks = [
   ["Social media management", "/services/social-management"],

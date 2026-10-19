@@ -5,7 +5,7 @@ module.exports = {
       startServerCommand: 'node scripts/serve-regression.mjs',
       startServerReadyPattern: 'Ready',
       startServerReadyTimeout: 30000,
-      url: ['/', '/about', '/services', '/work', '/pricing', '/contact'].map(path => `http://127.0.0.1:4391${path}`),
+      url: ['/', '/about', '/services', '/work', '/pricing', '/contact', '/websites', '/websites/crm-systems'].map(path => `http://127.0.0.1:4391${path}`),
       numberOfRuns: 3,
       settings: {
         onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],

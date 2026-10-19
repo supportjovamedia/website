@@ -15,17 +15,20 @@ export default function SiteChrome({children, header, footer}) {
       observer = new IntersectionObserver(entries => entries.forEach(entry => {
         if (entry.isIntersecting) { entry.target.classList.remove('route-pending'); observer.unobserve(entry.target); }
       }), {threshold: .06});
-      root.current.querySelectorAll('main section > .shell > header, main section > .shell > h2, [data-site-reveal], [data-route-reveal]').forEach((el, index) => {
-        if (el.closest('[data-motion-card]') || el.closest('[data-story-card]')) return;
+      // Measure the unchanged layout first. Interleaving each class write with
+      // the next measurement forces a full style/layout pass per heading.
+      const targets = [...root.current.querySelectorAll('main section > .shell > header, main section > .shell > h2, [data-site-reveal], [data-route-reveal]')]
+        .filter(el => !el.closest('[data-motion-card]') && !el.closest('[data-story-card]'));
+      const positions = targets.map(el => el.getBoundingClientRect().top);
+      targets.forEach((el, index) => {
         el.classList.add('route-reveal');
         el.style.setProperty('--reveal-delay', `${index % 3 * 40}ms`);
-        if (el.getBoundingClientRect().top > innerHeight * .95) { el.classList.add('route-pending'); observer.observe(el); }
+        if (positions[index] > innerHeight * .95) { el.classList.add('route-pending'); observer.observe(el); }
       });
     };
     setup(); media.addEventListener('change',setup);
     return () => { cleanup(); media.removeEventListener('change',setup); };
   }, [pathname,isHome]);
-  if (pathname.startsWith("/preview/booking")) return <>{children}</>;
   const navigation = <div className={`jova-pages jova-header-chrome${isHome ? ' jova-home-header' : ''}`}>{header}</div>;
   if (isHome) return <>{navigation}<div className="site-motion-home" ref={root}>{children}</div></>;
   if (pathname === "/get-a-quote") return <>{navigation}<div className="jova-pages" ref={root}>{children}</div></>;

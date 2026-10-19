@@ -16,6 +16,14 @@ test.beforeEach(async ({ context, page, baseURL }) => {
 
 test.afterEach(async ({ page }) => expect(page.__errors).toEqual([]));
 
+test('retired previews return 404 while Aleiman and the booking service remain available', async ({ request }) => {
+  for (const path of ['/preview/booking', '/preview/booking/admin', '/preview/booking/account', '/preview/booking/api/public/catalog', '/previews/sumera', '/previews/sumera/index.html']) {
+    expect((await request.get(path, { maxRedirects: 0 })).status(), path).toBe(404);
+  }
+  expect((await request.get('/previews/aleiman/index.html')).status()).toBe(200);
+  expect((await request.get('/websites/booking-systems')).status()).toBe(200);
+});
+
 test('website pages reflow, show the right metadata, load photography and preserve the enquiry choice', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   for (const path of ['/websites', ...websiteTypes.map(item => websitePath(item.slug))]) {

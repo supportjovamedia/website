@@ -1,5 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { websiteTypes, websitePath } from "../lib/website-catalogue.mjs";
+import { articles } from "../lib/insights.mjs";
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname))
   throw new Error("Tests must target a local preview.");
@@ -9,7 +11,11 @@ test("every sitemap page responds with its canonical URL and one main heading", 
   const routes = [...(await sitemap.text()).matchAll(/<loc>(.*?)<\/loc>/g)].map(
     (match) => new URL(match[1]).pathname,
   );
-  assert.equal(routes.length, 27);
+  assert.equal(new Set(routes).size, routes.length, "Sitemap URLs must be unique");
+  assert.ok(routes.length >= 20 + websiteTypes.length + articles.length, "Core pages, services, articles and website types must remain discoverable");
+  for (const item of websiteTypes) assert.ok(routes.includes(websitePath(item.slug)), item.slug);
+  assert.ok(routes.includes("/websites"));
+  assert.ok(!routes.includes("/services/web-design"));
   for (const route of routes) {
     const response = await fetch(base + route);
     assert.equal(response.status, 200, route);

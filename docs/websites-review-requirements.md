@@ -15,5 +15,8 @@
 - Run focused checks, production build, relevant regression suite and performance checks. Record failures honestly and resolve relevant regressions.
 - Keep original images outside the repository, scan final new media metadata, and record source/licence information.
 - Update the existing PR and local preview. Do not merge or change production without Abdul's explicit merge approval. No spending.
+- Final navigation: Home, Websites, Services, Pricing, About and Get a Quote. Our Work and Contact Us remain accessible in the footer.
+- Retire the booking preview, including its admin, account and API routes, and the Sumera static preview. Keep Aleiman and the commercial booking-system page. Existing booking libraries and database data are outside this page-removal scope.
+- Audit image alternative text across all sitemap pages, and inspect actual responsive image delivery on desktop and phone. Preserve equally prominent consent choices while improving first-visit performance.
 
 Completion evidence is recorded in the private review output after implementation. Search rankings and future enquiries are measured outcomes, not acceptance claims for an unpublished preview.

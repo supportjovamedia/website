@@ -14,6 +14,6 @@ for (const formFactor of ['mobile', 'desktop']) {
   if (result.error) throw result.error;
   failed ||= result.status !== 0;
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-    `\n${formFactor}: ${result.status === 0 ? 'Performance budgets passed' : 'Performance budget failed; inspect the Lighthouse artifact'}. Three fresh visits to Home, About, Services, Our work, Pricing and Contact. These local production-build audits include the consent notice. Production chat and consented analytics are verified separately on the live domain.\n`);
+    `\n${formFactor}: ${result.status === 0 ? 'Performance budgets passed' : 'Performance budget failed; inspect the Lighthouse artifact'}. Three fresh visits to Home, About, Services, Our work, Pricing, Contact, Websites and CRM. These production-build audits include the consent notice. Production chat and consented analytics are verified separately on the live domain.\n`);
 }
 process.exitCode = failed ? 1 : 0;
