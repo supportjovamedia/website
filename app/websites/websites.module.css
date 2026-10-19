@@ -31,11 +31,11 @@
 .photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 .photo[data-photo-kind=capture] img{object-position:top}
 .photo[data-photo-kind=interface] img{object-fit:contain;object-position:center}
-.photo[data-photo-theme=booking]{background:#e4eee9}
-.photo[data-photo-theme=crm]{background:#e5e8ee}
-.photo[data-photo-theme=portal]{background:#eee9e0}
-.photo[data-photo-theme=membership]{background:#e8e4ee}
-.systemHero{width:100%;aspect-ratio:1.25;border-radius:24px;overflow:hidden;min-width:0}
+.photo[data-photo-theme=booking]{background:#d5e1d9}
+.photo[data-photo-theme=crm]{background:#17212c}
+.photo[data-photo-theme=portal]{background:#eee6d9}
+.photo[data-photo-theme=membership]{background:#d9dfe7}
+.systemHero{width:100%;aspect-ratio:1.6;border-radius:24px;overflow:hidden;min-width:0}
 .jump{border-bottom:1px solid var(--line);background:#fff}
 .jump .shell{display:flex;align-items:center;gap:32px;min-height:65px;overflow-x:auto;scrollbar-width:none}
 .jump .shell::-webkit-scrollbar{display:none}
@@ -60,7 +60,7 @@
 .cardAction svg{width:17px;height:17px;transition:transform .2s ease-out}
 .railDots{display:none!important}
 .systemBand{background:#eef4f7}
-.systemBand .cardPhoto{aspect-ratio:1.8}
+.systemBand .cardPhoto{aspect-ratio:1.6}
 .fitGrid{display:grid;grid-template-columns:.85fr 1fr;gap:8vw;align-items:start}
 .fitGrid h2{max-width:20ch}
 .fitCopy>p{margin:0 0 26px;max-width:60ch}
