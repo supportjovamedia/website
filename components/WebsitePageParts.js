@@ -25,6 +25,6 @@ export function WebsiteClientWork() {
   </div></section>;
 }
 
-export function WebsiteFinalCta({ title = "Let's plan the website your business needs.", quote = "/get-a-quote", description = "Tell us what you do, what you need and what you already have. We can then define a useful starting point." }) {
-  return <section className={s.finalCta}><div className={s.shell}><div><h2>{title}</h2><p>{description}</p></div><div className={s.actions}><Link className={s.primary} href={quote}>Discuss your project</Link><a className={s.secondary} href={whatsappLink("other")} target="_blank" rel="noopener noreferrer" data-contact-placement="other">Chat on WhatsApp</a></div></div></section>;
+export function WebsiteFinalCta({ id, title = "Let's plan the website your business needs.", quote = "/get-a-quote", description = "Tell us what you do, what you need and what you already have. We can then define a useful starting point.", actionLabel = "Discuss your project" }) {
+  return <section id={id} className={s.finalCta}><div className={s.shell}><div><h2>{title}</h2><p>{description}</p></div><div className={s.actions}><Link className={s.primary} href={quote}>{actionLabel}</Link><a className={s.secondary} href={whatsappLink("other")} target="_blank" rel="noopener noreferrer" data-contact-placement="other">Chat on WhatsApp</a></div></div></section>;
 }

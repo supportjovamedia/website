@@ -126,7 +126,9 @@
     "review": "All three visually reviewed, no humans. Existing credited Pexels photographs."
   },
   "client_capture": {
-    "file": "/home-selected/qaiser-watches.png",
+    "file": "/websites/qaiser-hero.webp",
+    "original": "/home-selected/qaiser-watches.png",
+    "processing": "Clean 1440 by 998 hero crop from the original delivered-site capture, WebP quality 84. Following white section excluded. Metadata omitted.",
     "purpose": "Genuine delivered retail catalogue project, only on relevant pages. Actual scope linked."
   }
 }

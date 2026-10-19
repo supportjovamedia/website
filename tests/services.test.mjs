@@ -5,14 +5,13 @@ const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname)) throw Error("Local tests only");
 const mainServices = ["system-modernization", "social-management", "brand-strategy", "content", "email-marketing", "seo"];
 
-test("website design explains current public prices while other service pages avoid internal tiers", async () => {
+test("homepage and service pages avoid internal tiers and pricing tables", async () => {
   for (const path of ["/", "/services", ...[...mainServices, "seo"].map((s) => `/services/${s}`)]) {
     const response = await fetch(base + path);
     assert.equal(response.status, 200, path);
     const html = await response.text();
     assert.doesNotMatch(html, /Starter|Care Plus|\bTEAM [123]\b/, path);
-    if (path === "/services/web-design") { for(const price of ["£350","£550","£2,000"]) assert.ok(html.includes(price),price); }
-    else assert.doesNotMatch(html, /<table[\s>]/, path);
+    assert.doesNotMatch(html, /<table[\s>]/, path);
     if (path.startsWith("/services/")) {
       assert.match(html, /The right support/, path);
       assert.match(html, /Get a Quote/, path);
