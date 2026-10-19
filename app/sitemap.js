@@ -11,7 +11,6 @@ export default function sitemap() {
     "/work/brand-direction",
     "/work/editorial-experience",
     "/work/qaiser-watches",
-    "/services/salon-website-design",
     "/insights",
     "/about",
     "/contact",
@@ -21,9 +20,9 @@ export default function sitemap() {
     "/terms",
   ];
   return [
-    ...pages.map((path) => ({ url: base + path })),
+    ...pages.map((path) => ({ url: base + path, ...(path === "/websites" ? { lastModified: "2026-10-19" } : {}) })),
     ...services.filter(service => service.slug !== "web-design").map((service) => ({ url: `${base}/services/${service.slug}` })),
-    ...websiteTypes.map(item => ({ url: base + websitePath(item.slug) })),
+    ...websiteTypes.map(item => ({ url: base + websitePath(item.slug), lastModified: "2026-10-19" })),
     ...articles.map(article => ({ url: `${base}/insights/${article.slug}`, lastModified: editorialDate })),
   ];
 }

@@ -5,12 +5,14 @@ import { websiteNavigation } from "../lib/website-navigation.mjs";
 import { productById } from "../lib/products.mjs";
 import { validateQuote } from "../lib/quote-fields.mjs";
 import { createQuoteHandler } from "../lib/quote-delivery.mjs";
+import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname)) throw Error("Local tests only");
 const schemas = html => [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(m => JSON.parse(m[1]));
 
-test("the hub and all ten detail pages have canonical search metadata and a usable enquiry route", async () => {
+test("the hub and all website detail pages have canonical search metadata and a usable enquiry route", async () => {
   const sitemap = await (await fetch(base + "/sitemap.xml")).text();
   const hub = await (await fetch(base + "/websites")).text();
   const titles = new Set();
@@ -40,7 +42,7 @@ test("the hub and all ten detail pages have canonical search metadata and a usab
     assert.match(form, new RegExp(`<option[^>]*value="website-${item.slug}"[^>]*selected`), path);
     assert.doesNotMatch(html, /\u2014/);
   }
-  assert.equal(websiteTypes.length, 10);
+  assert.equal(websiteTypes.length, 11);
   assert.deepEqual(websiteNavigation.map(([, slug]) => slug), websiteTypes.map(item => item.slug));
   assert.ok(sitemap.includes("https://www.jovamedia.com/websites</loc>"));
   assert.ok(!sitemap.includes("https://www.jovamedia.com/services/web-design</loc>"));
@@ -53,6 +55,43 @@ test("the retired website service and its aliases redirect once to the new hub",
     assert.equal(new URL(response.headers.get("location"), base).pathname, "/websites", path);
   }
   assert.equal((await fetch(base + "/websites/not-a-real-type")).status, 404);
+});
+
+test("salon website content moves once to Websites and the sitemap lists only its new canonical", async () => {
+  const old = await fetch(base + "/services/salon-website-design", { redirect: "manual" });
+  assert.equal(old.status, 308);
+  assert.equal(new URL(old.headers.get("location"), base).pathname, "/websites/salon-website-design");
+  const xml = await (await fetch(base + "/sitemap.xml")).text();
+  assert.ok(xml.includes("https://www.jovamedia.com/websites/salon-website-design</loc>"));
+  assert.ok(!xml.includes("/services/salon-website-design"));
+  assert.ok(!xml.includes("/services/web-design"));
+  const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(x => x[1]);
+  assert.equal(new Set(urls).size, urls.length);
+  for (const path of ["/", "/websites", "/websites/business-websites", "/websites/booking-systems", "/pricing", ...websiteTypes.map(item => websitePath(item.slug))]) {
+    const html = (await (await fetch(base + path)).text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
+    assert.ok(!html.includes('href="/services/salon-website-design'), path + " retains a retired internal link");
+  }
+});
+
+test("photography is not repeated within or between the Websites pages", async () => {
+  const placements = new Map(), hashes = new Map();
+  for (const page of ["/websites", ...websiteTypes.map(item => websitePath(item.slug))]) {
+    const html = await (await fetch(base + page)).text();
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
+    for (const tag of main.matchAll(/<img\b[^>]*>/g)) {
+      const src = tag[0].match(/\bsrc="([^"]*)"/)[1].replaceAll("&amp;", "&");
+      const image = new URL(src, base);
+      const asset = image.pathname === "/_next/image" ? new URL(image.searchParams.get("url"), base).pathname : image.pathname;
+      assert.ok(!placements.has(asset), `${asset} is repeated on ${placements.get(asset)} and ${page}`);
+      placements.set(asset, page);
+      const bytes = await readFile(new URL("../public" + asset, import.meta.url));
+      const hash = createHash("sha256").update(bytes).digest("hex");
+      assert.ok(!hashes.has(hash), `${asset} duplicates the pixels in ${hashes.get(hash)}`);
+      hashes.set(hash, asset);
+      assert.match(tag[0], /alt="[^"]{15,}"/, page);
+    }
+  }
+  assert.ok(placements.size >= 80, "The pages need distinct supporting photography, not an empty layout");
 });
 
 test("each service has a descriptive main heading, meaningful media and distinct buying guidance", async () => {
@@ -74,7 +113,7 @@ test("each service has a descriptive main heading, meaningful media and distinct
     assert.ok(main.includes('id="planning"') && main.includes('id="questions"'));
     assert.ok(main.includes('href="/pricing"') && main.includes('href="/insights/small-business-website-cost-uk"'));
   }
-  assert.equal(descriptions.size, 20, "the ten services must not repeat the same buyer guidance");
+  assert.equal(descriptions.size, 22, "the website services must not repeat the same buyer guidance");
 });
 
 test("website selection reaches the enquiry email using an injected transport only", async () => {

@@ -9,7 +9,8 @@ const request = (body = data, headers = {}) => new Request("https://www.jovamedi
 const options = { env, verifyFetch: async () => Response.json({ success: true, hostname: "www.jovamedia.com" }) };
 
 test("service and website options can request contact without a phone, message or budget", async () => {
-  assert.equal(quoteOptions.length, 18);
+  assert.equal(quoteOptions.length, 19);
+  assert.ok(quoteOptions.some(option => option.value === "website-salon-website-design"));
   for (const option of quoteOptions) assert.deepEqual(validateQuote({ ...data, service: option.value }).errors, {});
   assert.deepEqual(validateQuote({ ...data, phone: "" }).errors, {});
   assert.deepEqual(validateQuote({ name: data.name, email: data.email, service: "not-sure" }).errors, {});
