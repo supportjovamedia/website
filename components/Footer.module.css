@@ -4,9 +4,18 @@
   gap: 24px;
 }
 .footer:global(.jova-footer) > p { color: #606b75; }
+.footer .bottom{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:24px;border-top:1px solid #dce1e5;padding-top:22px;margin-top:12px}
+.footer .bottom p{border:0;padding:0;margin:0;color:#606b75;font-size:11px;line-height:1.8}
+.footer .socials{display:flex;align-items:center;gap:10px}
+.footer .socials a{display:grid;place-items:center;width:44px;height:44px;flex:none;border:1px solid #d4dce2;border-radius:50%;color:#213b50;background:#fff;transition:background .18s ease-out,color .18s ease-out,border-color .18s ease-out}
+.footer .socials svg{width:21px;height:21px}
+.footer .socials a:focus-visible{outline:2px solid #0071e3;outline-offset:4px}
+@media(hover:hover){.footer .socials a:hover{background:#17394f;color:#fff;border-color:#17394f}}
+@media(prefers-reduced-motion:reduce){.footer .socials a{transition:none}}
 @media (max-width: 600px) {
   .footer:global(.jova-footer) {
     padding: 36px 22px 18px;
     gap: 26px 20px;
   }
+  .footer .bottom{flex-direction:column-reverse;gap:19px;text-align:center;padding-top:24px}
 }

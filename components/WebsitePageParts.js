@@ -3,12 +3,11 @@ import { websiteBySlug, websitePath } from "@/lib/website-catalogue.mjs";
 import { whatsappLink } from "@/lib/business-contact.mjs";
 import { WebsitePhoto } from "./WebsitePhotography";
 import WebsiteRail from "./WebsiteRail";
-import WebsiteSystemArtwork from "./WebsiteSystemArtwork";
 import s from "@/app/websites/websites.module.css";
 
 export function WebsiteTypeCard({ item, showImage = true }) {
   return <Link href={websitePath(item.slug)} className={`${s.typeCard} ${showImage ? "" : s.textCard}`}>
-    {showImage && <div className={s.cardPhoto}>{item.group === "systems" ? <WebsiteSystemArtwork type={item.visual} compact /> : <WebsitePhoto name={item.cardPhoto || item.heroPhotos[0]} sizes="(max-width:900px) 82vw, 44vw" />}</div>}
+    {showImage && <div className={s.cardPhoto}><WebsitePhoto name={item.cardPhoto || item.heroPhotos[0]} sizes="(max-width:900px) 82vw, 44vw" /></div>}
     <div className={s.cardCopy}><h3>{item.name}</h3><p>{item.summary}</p><span className={s.cardAction}>Explore {item.shortName.toLowerCase()}<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.6" /></svg></span></div>
   </Link>;
 }

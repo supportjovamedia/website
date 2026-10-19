@@ -16,6 +16,36 @@ test.beforeEach(async ({ context, page, baseURL }) => {
 
 test.afterEach(async ({ page }) => expect(page.__errors).toEqual([]));
 
+test('the Websites introduction keeps the approved wording and the footer exposes the official social accounts', async ({ page }) => {
+  await page.goto('/websites');
+  const hero = page.locator('main [data-website-intro]');
+  await expect(hero.locator('h1')).toHaveText('Affordable website design in London.');
+  await expect(page).toHaveTitle('Affordable Website Design in London | JovaMedia');
+  await expect(hero).toContainText('An ecommerce shop.');
+  await expect(hero).not.toContainText('Harrow');
+  await expect(hero.locator('a[href="/get-a-quote"], a[href="#website-types"]')).toHaveCount(0);
+  await expect(page.locator('#find-your-website a[href="/get-a-quote"]')).toBeVisible();
+  await expect(page.locator('main a[href="/websites/business-websites"]').first()).toBeVisible();
+  const social = page.getByRole('navigation', { name: 'JovaMedia social profiles', exact: true });
+  await social.scrollIntoViewIfNeeded();
+  await expect(social.locator('a')).toHaveCount(4);
+  for (const [label, href] of [
+    ['JovaMedia on Instagram','https://www.instagram.com/jovamediaofficial/'],
+    ['JovaMedia on Facebook','https://www.facebook.com/jovamediaofficial/'],
+    ['JovaMedia on TikTok','https://www.tiktok.com/@jovamediaofficial'],
+  ]) {
+    const link = social.getByRole('link', { name: label, exact: true });
+    await expect(link).toHaveAttribute('href',href);
+    await expect(link).toHaveAttribute('rel',/\bme\b/);
+    const bounds = await link.boundingBox();
+    expect(bounds.width).toBeGreaterThanOrEqual(44);
+    expect(bounds.height).toBeGreaterThanOrEqual(44);
+  }
+  await expect(social.getByRole('link', { name: 'Chat with JovaMedia on WhatsApp', exact: true })).toHaveAttribute('href',/^https:\/\/wa\.me\/447356266655\?/);
+  const organisations = await page.locator('script[type="application/ld+json"]').allTextContents();
+  expect(organisations.some(text => JSON.parse(text)['@graph']?.some(item => item['@type'] === 'Organization' && item.sameAs?.includes('https://www.facebook.com/jovamediaofficial/')))).toBe(true);
+});
+
 test('retired previews return 404 while Aleiman and the booking service remain available', async ({ request }) => {
   for (const path of ['/preview/booking', '/preview/booking/admin', '/preview/booking/account', '/preview/booking/api/public/catalog', '/previews/sumera', '/previews/sumera/index.html']) {
     expect((await request.get(path, { maxRedirects: 0 })).status(), path).toBe(404);

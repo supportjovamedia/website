@@ -5,7 +5,7 @@ import s from "@/app/websites/websites.module.css";
 export function WebsitePhoto({ name, eager = false, className = "", sizes = "(max-width: 900px) 90vw, 50vw" }) {
   const photo = websitePhotos[name];
   if (!photo) throw new Error(`Unknown website photograph: ${name}`);
-  return <div className={`${s.photo} ${className}`} data-photo-kind={photo.kind || "photograph"}>
+  return <div className={`${s.photo} ${className}`} data-photo-kind={photo.kind || "photograph"} data-photo-theme={photo.theme}>
     <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes={sizes} loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : undefined} />
   </div>;
 }
