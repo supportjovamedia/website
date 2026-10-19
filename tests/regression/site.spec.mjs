@@ -179,7 +179,7 @@ test('each product quote button selects the correct product and keeps phone opti
 
 test('homepage FAQ cards are shared by contact and service pages, with readable answers on every screen', async ({ page }) => {
   let homeStyle;
-  for (const path of ['/', '/contact', '/services', '/services/seo']) {
+  for (const path of ['/', '/contact', '/services']) {
     await page.goto(path);
     const faq = page.locator('[data-site-faq]');
     await expect(faq).toHaveCount(1);

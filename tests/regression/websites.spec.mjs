@@ -22,6 +22,10 @@ test('website pages reflow, show the right metadata, load photography and preser
     expect((await page.goto(path)).status(), path).toBe(200);
     await expect(page.locator('main h1')).toBeVisible();
     await expect(page.locator('main h1')).toHaveCount(1);
+    if (path !== '/websites') {
+      await expect(page.locator('main #questions dt')).toHaveCount(3);
+      for (const answer of await page.locator('main #questions dd').all()) expect((await answer.innerText()).trim().length).toBeGreaterThan(20);
+    }
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://www.jovamedia.com${path}`);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), path).toBe(true);
     const h1 = await page.locator('main h1').boundingBox();
