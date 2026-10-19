@@ -17,5 +17,6 @@ run(['--test',
 ]);
 if (!process.env.REGRESSION_URL) {
   run(['node_modules/next/dist/bin/next', 'build'], { JOVA_BUILD_DIR: '.next-regression' });
+  run(['scripts/audit-function-traces.mjs', '.next-regression']);
 }
 run(['node_modules/@playwright/test/cli.js', 'test']);

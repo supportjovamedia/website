@@ -7,11 +7,15 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const runtime = "nodejs";
 async function photograph(kind) {
-  const files = { lashes: "lash-treatment-share.jpg", salon: "salon-interior-share.jpg", business: "qaiser-website-share.jpg" };
-  if (!files[kind] && kind !== "launch") return null;
-  const bytes = kind === "launch"
-    ? await readFile(join(process.cwd(), "public", "service-editorial", "copywriting.jpg"))
-    : await readFile(join(process.cwd(), "public", "insights", files[kind]));
+  // Literal paths keep the trace limited to the photographs this endpoint uses.
+  const photographs = {
+    lashes: () => readFile(join(process.cwd(), "public/insights/lash-treatment-share.jpg")),
+    salon: () => readFile(join(process.cwd(), "public/insights/salon-interior-share.jpg")),
+    business: () => readFile(join(process.cwd(), "public/insights/qaiser-website-share.jpg")),
+    launch: () => readFile(join(process.cwd(), "public/service-editorial/copywriting.jpg")),
+  };
+  if (!Object.hasOwn(photographs, kind)) return null;
+  const bytes = await photographs[kind]();
   return `data:image/jpeg;base64,${bytes.toString("base64")}`;
 }
 export default async function Image({ params }) {

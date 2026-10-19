@@ -8,6 +8,8 @@ export const contentType = "image/png";
 
 // Keep older image endpoints useful while new shares use the versioned static URL.
 export default async function Image() {
-  const image = await readFile(path.join(process.cwd(), "public", socialPreview.url.slice(1)));
+  // Keep the filesystem path literal. A computed public path makes the server
+  // file tracer copy unrelated website images into the function bundle.
+  const image = await readFile(path.join(process.cwd(), "public/share/jovamedia-hero-2026-10.png"));
   return new Response(image, { headers: { "Content-Type": contentType } });
 }
