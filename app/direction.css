@@ -14,12 +14,6 @@ select,
 textarea {
   scroll-margin-top: 110px;
 }
-.kicker {
-  color: var(--red);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
 .btn {
   border-radius: 100px;
   font-size: 14px;
@@ -41,14 +35,6 @@ textarea {
 .btn.small {
   font-size: 13px;
   min-height: 46px;
-}
-.btn.red-button {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--paper);
-}
-.btn.red-button:hover {
-  background: #a92126;
 }
 .text-link {
   color: var(--ink);
@@ -115,30 +101,6 @@ textarea {
   font-weight: 700;
   letter-spacing: -0.04em;
 }
-.directory-card {
-  border-radius: 20px;
-  border: 1px solid var(--line);
-  background: var(--paper);
-  min-height: 300px;
-}
-.service-group-grid {
-  border: 0;
-  gap: 20px;
-}
-.directory-card:nth-child(3n + 2) {
-  background: #f2f6f9;
-}
-.directory-card:hover {
-  border-color: var(--blue);
-}
-.directory-card h3 {
-  font-size: 23px;
-}
-.directory-card small {
-  color: var(--red);
-  font-size: 11px;
-  font-weight: 600;
-}
 .form {
   border-radius: 24px;
 }
@@ -149,38 +111,6 @@ textarea {
 .form select,
 .form textarea {
   border-radius: 10px;
-}
-.form-status {
-  border-radius: 12px;
-}
-.reference-footer {
-  background: var(--ink);
-}
-.reference-footer-logo {
-  width: 128px;
-}
-.reference-footer-brand p {
-  color: #e1e5df;
-}
-.reference-footer-links a,
-.reference-footer-links .cookie-settings {
-  font-size: 13px;
-}
-.reference-footer-inner {
-  padding-block: 50px 25px;
-}
-.reference-socials a {
-  font-size: 12px;
-}
-.reference-footer-bottom {
-  color: #ccd1ca;
-}
-.band-navy p,
-.band-navy .kicker {
-  color: var(--paper);
-}
-.band-navy .kicker {
-  color: var(--gold);
 }
 .study-art {
   container-type: inline-size;
@@ -279,19 +209,6 @@ textarea {
   object-fit: cover;
   border-radius: 12px;
   transition: transform 0.25s;
-}
-.work-detail .study-art {
-  border-radius: 24px;
-  aspect-ratio: 1;
-}
-.work-detail dl > div {
-  font-size: 13px;
-}
-.work-detail .actions {
-  margin-top: 25px;
-}
-.work-detail .kicker {
-  color: var(--red);
 }
 .concept-banner {
   background: var(--soft);
@@ -571,9 +488,6 @@ textarea {
   .text-link {
     font-size: 15px;
   }
-  .kicker {
-    font-size: 11px;
-  }
   .brand-logo {
     width: 115px;
   }
@@ -582,22 +496,6 @@ textarea {
   }
   .page-hero h1 {
     font-size: 42px;
-  }
-  .service-group-grid {
-    gap: 16px;
-  }
-  .directory-card {
-    min-height: 260px;
-  }
-  .reference-footer-inner {
-    padding-block: 35px 25px;
-  }
-  .reference-footer-links a,
-.reference-footer-links .cookie-settings {
-    font-size: 13px;
-  }
-  .reference-socials {
-    gap: 8px 20px;
   }
   .study-art {
     aspect-ratio: 1.15;
@@ -731,19 +629,6 @@ textarea {
   }
   .wireframe-grid {
     grid-template-columns: repeat(4, 1fr);
-  }
-  .ctaPath {
-    display: none;
-  }
-  .reference-footer-inner {
-    padding: 20px;
-  }
-  .reference-footer-brand p {
-    font-size: 8pt;
-  }
-  .reference-footer-links a,
-.reference-footer-links .cookie-settings {
-    font-size: 8pt;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -941,10 +826,6 @@ textarea {
   object-fit: cover;
   border-radius: 18px;
   margin-bottom: 25px;
-}
-.story-card .kicker {
-  font-size: 10px;
-  margin-bottom: 13px;
 }
 .story-card h3 {
   font-size: 26px;
@@ -1241,35 +1122,10 @@ textarea {
   .work-detail .actions {
     justify-content: center;
   }
-  .work-detail dl {
-    text-align: left;
-  }
   .form,
   .legal,
   .article-body {
     text-align: left;
-  }
-  .reference-footer {
-    text-align: center;
-  }
-  .reference-footer-logo,
-  .reference-footer-brand p {
-    margin-inline: auto;
-  }
-  .reference-socials {
-    justify-content: center;
-  }
-  .reference-footer-links a,
-.reference-footer-links .cookie-settings {
-    justify-content: center;
-  }
-  .reference-footer-bottom {
-    justify-content: center;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .reference-footer-bottom > div:last-child {
-    max-width: none;
   }
 }
 
@@ -1294,24 +1150,6 @@ textarea {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.seo-related {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  margin: 28px 0;
-}
-.seo-related > a {
-  border: 1px solid var(--line);
-  padding: 26px;
-  border-radius: 18px;
-}
-.seo-related h3 {
-  font-size: 22px;
-}
-.seo-related p {
-  font-size: 15px;
-  line-height: 1.7;
-}
 @media (max-width: 700px) {
   .mobile-menu-inner {
     text-align: right;
@@ -1326,19 +1164,12 @@ textarea {
   .breadcrumbs ol {
     justify-content: center;
   }
-  .seo-related {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
 }
 
 .process h3 {
   font-size: 21px;
   font-weight: 650;
   margin: 0;
-}
-.seo-related ~ .actions {
-  margin-top: 28px;
 }
 @media (max-width: 900px) {
   .mobile-menu-inner {
@@ -1400,4 +1231,3 @@ textarea {
   .menu-toggle span { transition: none; }
   .mobile-menu:not([hidden]) .mobile-menu-inner > a { animation: none; }
 }
-@media screen and (max-width: 700px) { .about-approach { text-align: center; } }

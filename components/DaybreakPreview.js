@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import styles from "./DaybreakPreview.module.css";
 
 function CoffeeSite(){return (<article className="siteCopy coffeeSite">
 <div className="coffeeNav"><strong><i aria-hidden="true"></i>daybreak<span>coffee, daily.</span></strong><span>Our menu &nbsp;&nbsp; Rewards &nbsp;&nbsp; Our story &nbsp;&nbsp; <b>Find us</b></span><i className="coffeeMobileMenu">☰</i></div>
@@ -10,26 +11,102 @@ function CoffeeSite(){return (<article className="siteCopy coffeeSite">
 <div className="coffeeClub"><span>Your daily ritual, rewarded.</span><h3>Good coffee.<br/>Great company.</h3><p>A little thank you for making us part of your day.</p><span className="coffeeButton">Join the Daybreak Club</span><div className="clubCard"><strong>daybreak<span>club</span></strong><div className="clubStamps"><i></i><i></i><i></i><i></i><i></i><i></i></div><small>Your next good day is on us.</small></div></div><div className="coffeeFooter"><span>See you in the morning.</span><strong>daybreak</strong><span>Our menu &nbsp;&nbsp; Our story &nbsp;&nbsp; Find us</span></div></article>);}
 
 
-export default function DaybreakPreview({onReady}){
- const root=useRef(null);
- useEffect(()=>{
-  const el=root.current,showcase=el,tracks=[...el.querySelectorAll('.scrollTrack')],media=matchMedia('(prefers-reduced-motion: reduce)');
-  let disposed=false,visible=false,frame=0,geometry=[];
-  // Geometry changes only after layout, asset loading or resize, never per frame.
-  const measure=()=>{
-    const groups=tracks.map(track=>({track,copies:[...track.children]}));
-    groups.forEach(({copies})=>copies.forEach(copy=>{copy.style.height='auto';}));
-    const heights=groups.map(({copies})=>Math.ceil(copies[0].getBoundingClientRect().height));
-    groups.forEach(({track,copies},index)=>{copies.forEach(copy=>{copy.style.height=heights[index]+'px';});track.style.setProperty('--loop-end',-heights[index]+'px');});
-    geometry=groups.map(({track,copies},index)=>({track,distance:heights[index],copies:copies.map(copy=>{const hero=copy.querySelector('.coffeeHero');return {hero,height:hero.offsetHeight,top:copy.offsetTop+hero.offsetTop,product:hero.querySelector('.productLayer'),outline:hero.querySelector('.coffeeOutline'),leaves:hero.querySelector('.leafLayer'),beans:hero.querySelector('.beanLayer')};})}));
+export default function DaybreakPreview({ onReady }) {
+ const root = useRef(null);
+ useEffect(() => {
+  const element = root.current;
+  const tracks = [...element.querySelectorAll('.scrollTrack')];
+  const media = matchMedia('(prefers-reduced-motion: reduce)');
+  let disposed = false, visible = false, ready = false, measuredSize = '';
+  let layers = [];
+
+  const sync = () => {
+   const playing = ready && visible && !document.hidden && !media.matches;
+   element.classList.toggle('paused', !playing);
+   const times = new Map(tracks.map(track => [track, Number(track.getAnimations()[0]?.currentTime) || 0]));
+   layers.forEach(({ animation, track }) => {
+    animation.currentTime = times.get(track);
+    if (playing) animation.play();
+    else animation.pause();
+   });
   };
-  const paint=()=>{frame=0;for(const {track,distance,copies} of geometry){const animation=track.getAnimations()[0],time=animation&&Number(animation.currentTime)||0,phase=(time%20000)/20000,progress=Math.max(0,Math.min(1,(phase-.1)/.8));for(const copy of copies){const {height,top,product,outline,leaves,beans}=copy;const scroll=media.matches?0:Math.max(0,Math.min(height,distance*progress-top));if(copy.lastScroll===scroll)continue;copy.lastScroll=scroll;product.style.transform=`translateY(${scroll*.12}px) rotate(${-18+scroll*.012}deg)`;outline.style.transform=`translateY(${-scroll*.1}px)`;leaves.style.transform=`translateY(${-scroll*.08}px) rotate(-22deg)`;beans.style.transform=`translateY(${scroll*.06}px) rotate(-24deg)`;}}if(!disposed&&visible&&!document.hidden&&!media.matches)frame=requestAnimationFrame(paint);};
-  const sync=()=>{showcase.classList.toggle('paused',!visible||document.hidden||media.matches);cancelAnimationFrame(frame);paint();};
-  const resize=new ResizeObserver(measure);tracks.forEach(track=>resize.observe(track.parentElement));
-  const intersection=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();});intersection.observe(el);
-  document.addEventListener('visibilitychange',sync);media.addEventListener('change',sync);
-  Promise.all([document.fonts.ready,document.fonts.load("750 24px Outfit"),document.fonts.load("600 24px Geist"),...[...el.querySelectorAll('.deviceFrame, .coffeeHero img')].map(img=>img.decode().catch(()=>{}))]).then(()=>{if(disposed || [...el.querySelectorAll(".deviceFrame, .coffeeHero img")].some(img=>!img.naturalWidth))return;measure();showcase.classList.add('ready');sync();onReady();});
-  return()=>{disposed=true;cancelAnimationFrame(frame);resize.disconnect();intersection.disconnect();document.removeEventListener('visibilitychange',sync);media.removeEventListener('change',sync);};
- },[onReady]);
- return <div ref={root} className="livePreview" aria-hidden="true"><div className="backdrop" aria-hidden="true"></div><div className="browser device" aria-hidden="true"><Image className="deviceFrame" src="/device-frames/macbook-pro.webp" alt="" width={1208} height={700} sizes="(max-width:800px) 90vw, 58vw" loading="eager" fetchPriority="high"/><div className="deviceScreen"><div className="browserBar"><span className="dots"><i></i><i></i><i></i></span><span className="address"><svg viewBox="0 0 16 16" fill="none"><rect x="4.5" y="7" width="7" height="6" rx="1.3" stroke="currentColor"/><path d="M6 7V5a2 2 0 0 1 4 0v2" stroke="currentColor"/></svg>daybreak.coffee</span><span className="browserPlus">+</span></div><div className="screen"><div className="scrollTrack" data-screen="desktop">{[0,1].map(copy => <CoffeeSite key={copy}/>)}</div></div></div></div><div className="phone device" aria-hidden="true"><Image className="deviceFrame" src="/device-frames/iphone-x.webp" alt="" width={726} height={1444} sizes="(max-width:800px) 22vw, 14vw" loading="eager"/><div className="screen"><div className="scrollTrack" data-screen="phone">{[0,1].map(copy => <CoffeeSite key={copy}/>)}</div></div></div></div>;
+
+  const addLayer = (target, track, start, end, from, to) => {
+   // The duplicate copy only enters at the end of the loop. Its hero has not
+   // started scrolling yet, so its normal CSS transform is already correct.
+   if (start >= 1 || end <= start) return;
+   const animation = target.animate([
+    { offset: 0, transform: from },
+    { offset: start, transform: from },
+    { offset: end, transform: to },
+    { offset: 1, transform: to },
+   ], { duration: 20000, iterations: Infinity, easing: 'linear' });
+   animation.pause();
+   layers.push({ animation, track });
+  };
+
+  const measure = (force = false) => {
+   if (!ready || disposed) return;
+   const size = tracks.map(track => `${track.parentElement.clientWidth}:${track.parentElement.clientHeight}`).join('|');
+   if (!force && size === measuredSize) return;
+   measuredSize = size;
+   const groups = tracks.map(track => ({ track, copies: [...track.children] }));
+   groups.forEach(({ copies }) => copies.forEach(copy => { copy.style.height = 'auto'; }));
+   const distances = groups.map(({ copies }) => Math.ceil(copies[0].getBoundingClientRect().height));
+   groups.forEach(({ track, copies }, index) => {
+    copies.forEach(copy => { copy.style.height = `${distances[index]}px`; });
+    track.style.setProperty('--loop-end', `${-distances[index]}px`);
+   });
+   const geometry = groups.flatMap(({ track, copies }, index) => copies.map(copy => {
+    const hero = copy.querySelector('.coffeeHero');
+    return { track, hero, height: hero.offsetHeight, top: copy.offsetTop + hero.offsetTop, distance: distances[index] };
+   }));
+   layers.forEach(({ animation }) => animation.cancel());
+   layers = [];
+   geometry.forEach(({ track, hero, height, top, distance }) => {
+    const start = Math.min(1, .1 + .8 * top / distance);
+    const end = Math.min(1, .1 + .8 * (top + height) / distance);
+    addLayer(hero.querySelector('.productLayer'), track, start, end,
+     'translateY(0px) rotate(-18deg)', `translateY(${height * .12}px) rotate(${-18 + height * .012}deg)`);
+    addLayer(hero.querySelector('.coffeeOutline'), track, start, end,
+     'translateY(0px)', `translateY(${-height * .1}px)`);
+    addLayer(hero.querySelector('.leafLayer'), track, start, end,
+     'translateY(0px) rotate(-22deg)', `translateY(${-height * .08}px) rotate(-22deg)`);
+    addLayer(hero.querySelector('.beanLayer'), track, start, end,
+     'translateY(0px) rotate(-24deg)', `translateY(${height * .06}px) rotate(-24deg)`);
+   });
+   sync();
+  };
+
+  const resize = new ResizeObserver(() => measure());
+  tracks.forEach(track => resize.observe(track.parentElement));
+  const intersection = new IntersectionObserver(entries => {
+   visible = entries[0].isIntersecting;
+   sync();
+  });
+  intersection.observe(element);
+  document.addEventListener('visibilitychange', sync);
+  media.addEventListener('change', sync);
+  const images = [...element.querySelectorAll('.deviceFrame, .coffeeHero img')];
+  Promise.all([
+   document.fonts.ready, document.fonts.load('750 24px Outfit'), document.fonts.load('600 24px Geist'),
+   ...images.map(image => image.decode().catch(() => {})),
+  ]).then(() => {
+   if (disposed || images.some(image => !image.naturalWidth)) return;
+   ready = true;
+   measure(true);
+   element.classList.add('ready');
+   sync();
+   onReady();
+  });
+  return () => {
+   disposed = true;
+   resize.disconnect();
+   intersection.disconnect();
+   layers.forEach(({ animation }) => animation.cancel());
+   document.removeEventListener('visibilitychange', sync);
+   media.removeEventListener('change', sync);
+  };
+ }, [onReady]);
+ return <div ref={root} className={`${styles.preview} livePreview`} aria-hidden="true"><div className="backdrop" aria-hidden="true"></div><div className="browser device" aria-hidden="true"><Image className="deviceFrame" src="/device-frames/macbook-pro.webp" alt="" width={1208} height={700} sizes="(max-width:800px) 90vw, 58vw" loading="eager" fetchPriority="high"/><div className="deviceScreen"><div className="browserBar"><span className="dots"><i></i><i></i><i></i></span><span className="address"><svg viewBox="0 0 16 16" fill="none"><rect x="4.5" y="7" width="7" height="6" rx="1.3" stroke="currentColor"/><path d="M6 7V5a2 2 0 0 1 4 0v2" stroke="currentColor"/></svg>daybreak.coffee</span><span className="browserPlus">+</span></div><div className="screen"><div className="scrollTrack" data-screen="desktop">{[0,1].map(copy => <CoffeeSite key={copy}/>)}</div></div></div></div><div className="phone device" aria-hidden="true"><Image className="deviceFrame" src="/device-frames/iphone-x.webp" alt="" width={726} height={1444} sizes="(max-width:800px) 22vw, 14vw" loading="eager"/><div className="screen"><div className="scrollTrack" data-screen="phone">{[0,1].map(copy => <CoffeeSite key={copy}/>)}</div></div></div></div>;
 }
