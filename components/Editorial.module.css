@@ -43,6 +43,7 @@
 
 /* Use the same photographic navy treatment as the established service and contact heroes. */
 .longform .prose,.longform .toc{text-align:start}
+.salonInvestment>img{object-position:center 55%}
 .tableHint{display:none}
 @media(max-width:700px){.prose .tableHint{display:block;margin:0;padding:11px 18px;background:#f7f8f9;color:var(--ed-muted);font-size:.75rem;line-height:1.5;border-bottom:1px solid var(--ed-line)}}
 .editorial .photoHero[data-photo-hero]{padding:64px 0 60px;margin-bottom:44px;background:#071b29;color:#f4f0e8}

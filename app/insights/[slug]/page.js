@@ -10,7 +10,7 @@ import InsightCover from "@/components/InsightCover";
 import ContactChoices from "@/components/ContactChoices";
 import s from "@/components/Editorial.module.css";
 
-const articleHeroImages = { booking: "/service-editorial/email.jpg", cost: "/hero-backgrounds/pricing.webp", lashes: "/insights/lash-treatment.webp", salon: "/insights/salon-interior.webp", business: "/insights/qaiser-website.webp", launch: "/service-editorial/copywriting.jpg" };
+const articleHeroImages = { booking: "/service-editorial/email.jpg", cost: "/hero-backgrounds/pricing.webp", lashes: "/insights/lash-treatment.webp", salon: "/insights/salon-interior.webp", salonInvestment: "/insights/salon-booking-header.webp", business: "/insights/qaiser-website.webp", launch: "/service-editorial/copywriting.jpg" };
 
 export const dynamicParams = false;
 export function generateStaticParams() { return articles.map(({ slug }) => ({ slug })); }

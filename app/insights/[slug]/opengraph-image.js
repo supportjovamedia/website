@@ -9,6 +9,7 @@ export const runtime = "nodejs";
 async function photograph(kind) {
   // Literal paths keep the trace limited to the photographs this endpoint uses.
   const photographs = {
+    salonInvestment: () => readFile(join(process.cwd(), "public/insights/salon-booking-investment-share.jpg")),
     lashes: () => readFile(join(process.cwd(), "public/insights/lash-treatment-share.jpg")),
     salon: () => readFile(join(process.cwd(), "public/insights/salon-interior-share.jpg")),
     business: () => readFile(join(process.cwd(), "public/insights/qaiser-website-share.jpg")),
@@ -24,7 +25,7 @@ export default async function Image({ params }) {
   if (!article) return new Response("Not found", { status: 404 });
   const photo = await photograph(article.cover);
   const cost = article.cover === "cost";
-  const palette = { booking: ["#e9e4db", "#173326"], cost: ["#244b41", "#faf8ed"], lashes: ["#f3e8e8", "#512c39"], salon: ["#f4f0e8", "#413824"], business: ["#0b291c", "#faf8ed"], launch: ["#f4efe4", "#443c2c"] };
+  const palette = { booking: ["#e9e4db", "#173326"], cost: ["#244b41", "#faf8ed"], lashes: ["#f3e8e8", "#512c39"], salon: ["#f4f0e8", "#413824"], salonInvestment: ["#f4f0e8", "#0c2948"], business: ["#0b291c", "#faf8ed"], launch: ["#f4efe4", "#443c2c"] };
   const [background, color] = palette[article.cover];
   return new ImageResponse(<div style={{ display:"flex", width:"100%", height:"100%", background, color, fontFamily:"sans-serif" }}>
     <div style={{ display:"flex", flexDirection:"column", justifyContent:"space-between", padding:"54px 46px", width:photo ? "55%" : "62%" }}><div style={{ display:"flex", fontSize:article.title.length>85 ? 45 : 51, fontWeight:700, lineHeight:1.16, letterSpacing:"-1.4px" }}>{article.title}</div><div style={{ display:"flex", fontSize:21 }}>JovaMedia · jovamedia.com</div></div>

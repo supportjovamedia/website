@@ -11,6 +11,7 @@ const allowedImages = new Set([
   `public${socialPreview.url}`,
   "public/insights/lash-treatment-share.jpg",
   "public/insights/salon-interior-share.jpg",
+  "public/insights/salon-booking-investment-share.jpg",
   "public/insights/qaiser-website-share.jpg",
   "public/service-editorial/copywriting.jpg",
 ]);

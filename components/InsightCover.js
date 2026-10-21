@@ -2,6 +2,7 @@ import Image from "next/image";
 import s from "./Editorial.module.css";
 
 const photographs = {
+  salonInvestment: { src: "/insights/salon-booking-investment.webp", alt: "An empty hair salon with grey styling chairs, illuminated mirrors and a curved burgundy seat" },
   lashes: { src: "/insights/lash-treatment.webp", alt: "A lash technician working carefully with tweezers during an eyelash treatment" },
   salon: { src: "/insights/salon-interior.webp", alt: "A hair salon with styling chairs and illuminated mirrors" },
   business: { src: "/insights/qaiser-website.webp", alt: "The Qaiser Watches website, designed and built by JovaMedia" },
