@@ -30,7 +30,7 @@ export default async function ArticlePage({ params }) {
   const { publishedAt } = articleDates(article);
   const publicationDate = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${publishedAt}T00:00:00Z`));
   const headings = article.blocks.filter(block => block.type === "heading" && (!article.contents || article.contents.includes(block.id)));
-  return <main className={s.editorial}>
+  return <main className={`${s.editorial} ${article.layout === "longform" ? s.articleReading : ""}`}>
     <StructuredData data={articleSchema(article, `https://www.jovamedia.com/insights/${slug}/opengraph-image`)}/>
     <PhotoHero src={articleHeroImages[article.cover]} className={`page-hero ${s.photoHero}`}><div className={s.shell}><header className={s.articleHeader}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Insights", path: "/insights" }, { name: article.category, path: `/insights/${slug}` }]}/><h1>{article.title}</h1><p className={s.articleDeck}>{article.summary}</p><div className={s.byline}><Link href="/about">By JovaMedia</Link><time dateTime={publishedAt}>Published {publicationDate}</time><span>{articleReadMinutes(article)} min read</span></div></header></div></PhotoHero>
     <div className={s.shell}>
