@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { compareBookingCosts } from "../lib/booking-costs.mjs";
-import { articles, sources, articleSchema, editorialDate } from "../lib/insights.mjs";
+import { articles, sources, articleSchema, articleDates, editorialDate } from "../lib/insights.mjs";
 import { editorialAnchors, productionAnalyticsHost } from "../lib/editorial-routes.mjs";
 import { publicPage, replaySafeUrl } from "../lib/marketing-analytics.mjs";
 
@@ -31,14 +31,22 @@ test("local and preview hosts cannot initialize production analytics",()=>{
   for(const host of ['www.jovamedia.com','jovamedia.com']) assert.equal(productionAnalyticsHost(host),true,host);
 });
 test("published articles keep unique paths, accurate dates, valid sources and complete related links",()=>{
-  assert.equal(new Set(articles.map(a=>a.slug)).size,6);
+  assert.equal(new Set(articles.map(a=>a.slug)).size,7);
   for(const article of articles){
     const schema=articleSchema(article,`https://www.jovamedia.com/insights/${article.slug}/opengraph-image`);
-    assert.equal(schema.datePublished,editorialDate);
+    assert.equal(schema.datePublished,articleDates(article).publishedAt);
+    assert.equal(schema.dateModified,articleDates(article).updatedAt);
     assert.equal(schema.headline,article.title);
     assert.equal(schema.mainEntityOfPage,`https://www.jovamedia.com/insights/${article.slug}`);
     for(const slug of article.related) assert.ok(articles.some(a=>a.slug===slug),slug);
     for(const block of article.blocks) for(const id of block.sources||block.ids||[]) assert.ok(sources[id],id);
     assert.doesNotMatch(JSON.stringify(article),new RegExp(String.fromCharCode(8212)));
   }
+});
+test("new publication dates do not change the existing article history",()=>{
+  const original=articles.find(article=>article.slug==='salon-booking-platform-fees-vs-own-website');
+  const added=articles.find(article=>article.slug==='custom-salon-booking-system-investment');
+  assert.deepEqual(articleDates(original),{publishedAt:editorialDate,updatedAt:editorialDate});
+  assert.deepEqual(articleDates(added),{publishedAt:'2026-10-21',updatedAt:'2026-10-21'});
+  assert.deepEqual(articleDates({...added,updatedAt:'2026-10-22'}),{publishedAt:'2026-10-21',updatedAt:'2026-10-22'});
 });
