@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import {createHash} from "node:crypto";
-import {articles, editorialDate} from "../lib/insights.mjs";
+import {articles, articleDates} from "../lib/insights.mjs";
 const base = process.env.TEST_URL || "http://localhost:3100";
 if (!["localhost", "127.0.0.1"].includes(new URL(base).hostname))
   throw Error("Local tests only");
@@ -75,7 +75,8 @@ test("completed insights and articles are indexable, discoverable and contain th
     const html=await page.text();
     assert.equal([...html.matchAll(/<h1[\s>]/g)].length,1,path);
     const schema=[...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(m=>JSON.parse(m[1])).find(x=>x['@type']==='BlogPosting');
-    assert.equal(schema.datePublished,editorialDate);
+    assert.equal(schema.datePublished,articleDates(article).publishedAt);
+    assert.equal(schema.dateModified,articleDates(article).updatedAt);
     assert.equal(schema.headline,article.title);
     assert.doesNotMatch(meta(html,'robots')||'',/noindex/);
   }

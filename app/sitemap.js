@@ -1,5 +1,5 @@
 import { services } from "@/lib/data";
-import { articles, editorialDate } from "@/lib/insights.mjs";
+import { articles, articleDates } from "@/lib/insights.mjs";
 import { websiteTypes, websitePath } from "@/lib/website-catalogue.mjs";
 export default function sitemap() {
   const base = "https://www.jovamedia.com";
@@ -20,9 +20,9 @@ export default function sitemap() {
     "/terms",
   ];
   return [
-    ...pages.map((path) => ({ url: base + path, ...(path === "/websites" ? { lastModified: "2026-10-19" } : {}) })),
+    ...pages.map((path) => ({ url: base + path, ...(path === "/websites" ? { lastModified: "2026-10-19" } : path === "/insights" ? { lastModified: articles.map(article => articleDates(article).updatedAt).sort().at(-1) } : {}) })),
     ...services.filter(service => service.slug !== "web-design").map((service) => ({ url: `${base}/services/${service.slug}` })),
     ...websiteTypes.map(item => ({ url: base + websitePath(item.slug), lastModified: "2026-10-19" })),
-    ...articles.map(article => ({ url: `${base}/insights/${article.slug}`, lastModified: editorialDate })),
+    ...articles.map(article => ({ url: `${base}/insights/${article.slug}`, lastModified: articleDates(article).updatedAt })),
   ];
 }
