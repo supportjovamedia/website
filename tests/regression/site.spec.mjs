@@ -80,7 +80,7 @@ test('optional cookie choices leave the page usable and remain editable', async 
   await expect(dialog).toBeHidden();
 });
 
-test('primary navigation keeps five pages and the quote action, with work and contact in the footer', async ({ page }, testInfo) => {
+test('primary navigation keeps six pages and the quote action, with work and contact in the footer', async ({ page }, testInfo) => {
   await page.goto('/websites');
   const nav = page.getByRole('navigation', { name: testInfo.project.name === 'phone' ? 'Mobile navigation' : 'Primary navigation', exact: true });
   if (testInfo.project.name === 'phone') await page.getByRole('button', { name: 'Open menu', exact: true }).click();

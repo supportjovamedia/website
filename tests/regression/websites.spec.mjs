@@ -18,7 +18,7 @@ test.afterEach(async ({ page }) => expect(page.__errors).toEqual([]));
 
 test('the Websites introduction keeps the approved wording and the footer exposes the official social accounts', async ({ page }, testInfo) => {
   await page.goto('/websites');
-  if (testInfo.project.name === 'desktop') await expect(page.getByRole('navigation', { name: 'Primary navigation', exact: true }).locator('a')).toHaveText(['Home', 'About', 'Website', 'Services', 'Pricing']);
+  if (testInfo.project.name === 'desktop') await expect(page.getByRole('navigation', { name: 'Primary navigation', exact: true }).locator('a')).toHaveText(['Home', 'About', 'Website', 'Services', 'Pricing', 'Blog']);
   const hero = page.locator('main [data-website-intro]');
   await expect(hero.locator('h1')).toHaveText('Affordable website design in London.');
   await expect(page).toHaveTitle('Affordable Website Design in London | JovaMedia');

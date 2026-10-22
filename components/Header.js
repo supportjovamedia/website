@@ -11,6 +11,7 @@ const links = [
   ["Website", "/websites"],
   ["Services", "/services"],
   ["Pricing", "/pricing"],
+  ["Blog", "/blog"],
 ];
 const serviceLinks = [
   ["Social media management", "/services/social-management"],
