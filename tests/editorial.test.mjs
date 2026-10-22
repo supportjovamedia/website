@@ -31,7 +31,7 @@ test("local and preview hosts cannot initialize production analytics",()=>{
   for(const host of ['www.jovamedia.com','jovamedia.com']) assert.equal(productionAnalyticsHost(host),true,host);
 });
 test("published articles keep unique paths, accurate dates, valid sources and complete related links",()=>{
-  assert.equal(new Set(articles.map(a=>a.slug)).size,7);
+  assert.equal(new Set(articles.map(a=>a.slug)).size,articles.length);
   for(const article of articles){
     const schema=articleSchema(article,`https://www.jovamedia.com/insights/${article.slug}/opengraph-image`);
     assert.equal(schema.datePublished,articleDates(article).publishedAt);

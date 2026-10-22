@@ -2,6 +2,9 @@ import Image from "next/image";
 import s from "./Editorial.module.css";
 
 const photographs = {
+  phpSecurity: { src: "/websites/photography/crm-systems-hero-context.webp", alt: "Close-up of an illuminated black computer keyboard" },
+  aiSecurity: { src: "/websites/photography/bespoke-websites-hero-main.webp", alt: "A desktop monitor displaying website designs in a studio workspace" },
+  bookingSecurity: { src: "/websites/photography/booking-systems-editorial-one.webp", alt: "A laptop and appointment planner on a desk" },
   salonInvestment: { src: "/insights/salon-booking-investment.webp", alt: "An empty hair salon with grey styling chairs, illuminated mirrors and a curved burgundy seat" },
   lashes: { src: "/insights/lash-treatment.webp", alt: "A lash technician working carefully with tweezers during an eyelash treatment" },
   salon: { src: "/insights/salon-interior.webp", alt: "A hair salon with styling chairs and illuminated mirrors" },
