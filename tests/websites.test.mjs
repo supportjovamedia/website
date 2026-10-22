@@ -111,7 +111,7 @@ test("each service has a descriptive main heading, meaningful media and distinct
     assert.ok(images.every(image => /alt="[^"]{12,}"/.test(image)), `${item.slug}: meaningful imagery needs useful alternative text`);
     assert.doesNotMatch(main, /The garden house|Atelier \/ selected work|Workspace \/ interface study|data-website-eyebrow/);
     assert.ok(main.includes('id="planning"') && main.includes('id="questions"'));
-    assert.ok(main.includes('href="/pricing"') && main.includes('href="/insights/small-business-website-cost-uk"'));
+    assert.ok(main.includes('href="/pricing"') && main.includes('href="/blog/small-business-website-cost-uk"'));
   }
   assert.equal(descriptions.size, 22, "the website services must not repeat the same buyer guidance");
 });

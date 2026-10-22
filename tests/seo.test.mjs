@@ -63,13 +63,13 @@ test("service structured data and visible breadcrumbs agree with the canonical p
   }
 });
 test("completed insights and articles are indexable, discoverable and contain their visible article schema", async () => {
-  const response = await fetch(base + "/insights");
+  const response = await fetch(base + "/blog");
   assert.equal(response.status, 200);
   assert.doesNotMatch(meta(await response.text(), "robots") || "", /noindex/);
   const sitemap=await (await fetch(base + "/sitemap.xml")).text();
-  assert.ok(sitemap.includes("https://www.jovamedia.com/insights</loc>"));
+  assert.ok(sitemap.includes("https://www.jovamedia.com/blog</loc>"));
   for(const article of articles){
-    const path=`/insights/${article.slug}`;
+    const path=`/blog/${article.slug}`;
     assert.ok(sitemap.includes(`https://www.jovamedia.com${path}</loc>`));
     const page=await fetch(base+path);assert.equal(page.status,200);
     const html=await page.text();
@@ -90,7 +90,7 @@ test("social previews use the current homepage capture and return a valid PNG", 
     const response = await fetch(base + new URL(url).pathname, {headers:{"User-Agent":"Twitterbot/1.0"}});
     assert.equal(response.status, 200, url);
     const html = await response.text();
-    const image = articles.some(a=>url.endsWith(`/insights/${a.slug}`)) ? `${url}/opengraph-image` : expected;
+    const image = articles.some(a=>url.endsWith(`/blog/${a.slug}`)) ? `${url}/opengraph-image` : expected;
     assert.equal(meta(html, "og:image"), image, url);
     assert.equal(meta(html, "twitter:image"), image, url);
     assert.equal(meta(html, "og:image:width"), "1200", url);

@@ -7,7 +7,7 @@ if (!['localhost', '127.0.0.1'].includes(new URL(base).hostname)) throw Error('L
 test('public pages omit decorative section, card and FAQ indices', async () => {
   const xml = await (await fetch(base + '/sitemap.xml')).text();
   const paths = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => new URL(match[1]).pathname);
-  for (const path of [...paths, '/insights']) {
+  for (const path of [...paths, '/blog']) {
     const html = await (await fetch(base + path)).text();
     const markup = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '').replace(/<!--[\s\S]*?-->/g, '');
     assert.doesNotMatch(markup, />\s*\(?0[1-9]\)?(?:\s*\/[^<]*|\s*)</, path + ' has a decorative index');

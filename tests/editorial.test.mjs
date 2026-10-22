@@ -16,14 +16,14 @@ test("invalid calculator inputs cannot produce misleading cost outputs",()=>{
 });
 test("editorial routes permit known headings without exposing arbitrary fragments or private paths",()=>{
   for(const article of articles){
-    const path=`/insights/${article.slug}`;
+    const path=`/blog/${article.slug}`;
     assert.equal(publicPage(path),true);
     assert.deepEqual(editorialAnchors[path],article.blocks.filter(b=>b.type==="heading").map(b=>b.id));
     for(const id of editorialAnchors[path]) assert.equal(replaySafeUrl(`https://www.jovamedia.com${path}#${id}`),true);
     assert.equal(replaySafeUrl(`https://www.jovamedia.com${path}#customer-email`),false);
     assert.equal(replaySafeUrl(`https://www.jovamedia.com${path}?email=private`),false);
   }
-  assert.equal(publicPage('/insights/private-client-record'),false);
+  assert.equal(publicPage('/blog/private-client-record'),false);
   assert.equal(publicPage('/work/qaiser-watches'),true);
 });
 test("local and preview hosts cannot initialize production analytics",()=>{
@@ -33,11 +33,11 @@ test("local and preview hosts cannot initialize production analytics",()=>{
 test("published articles keep unique paths, accurate dates, valid sources and complete related links",()=>{
   assert.equal(new Set(articles.map(a=>a.slug)).size,articles.length);
   for(const article of articles){
-    const schema=articleSchema(article,`https://www.jovamedia.com/insights/${article.slug}/opengraph-image`);
+    const schema=articleSchema(article,`https://www.jovamedia.com/blog/${article.slug}/opengraph-image`);
     assert.equal(schema.datePublished,articleDates(article).publishedAt);
     assert.equal(schema.dateModified,articleDates(article).updatedAt);
     assert.equal(schema.headline,article.title);
-    assert.equal(schema.mainEntityOfPage,`https://www.jovamedia.com/insights/${article.slug}`);
+    assert.equal(schema.mainEntityOfPage,`https://www.jovamedia.com/blog/${article.slug}`);
     for(const slug of article.related) assert.ok(articles.some(a=>a.slug===slug),slug);
     for(const block of article.blocks) for(const id of block.sources||block.ids||[]) assert.ok(sources[id],id);
     assert.doesNotMatch(JSON.stringify(article),new RegExp(String.fromCharCode(8212)));

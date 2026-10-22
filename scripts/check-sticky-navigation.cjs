@@ -37,7 +37,7 @@ async function checkMenu(page, label) {
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
       await page.addInitScript(() => localStorage.setItem('jovamedia-consent-v1', JSON.stringify({ choice: 'rejected', time: Date.now() })));
-      const routes = [390, 1440].includes(width) ? [...allPaths, '/insights'] : ['/', '/about', '/services', '/contact'];
+      const routes = [390, 1440].includes(width) ? [...allPaths, '/blog'] : ['/', '/about', '/services', '/contact'];
       for (const route of routes) {
         await page.goto(new URL(route, base).href);
         await page.waitForFunction(() => document.querySelector('[data-navigation-intro]'));
