@@ -1,5 +1,9 @@
 # JovaMedia website
 
+## Essential booking prototype
+
+The standalone source for [book.jovamedia.com](https://book.jovamedia.com/) is in [booking-demo](booking-demo/README.md). Run it separately with `cd booking-demo` and `npm run dev`. It uses browser-local example data; login, payments, email and SMS are simulated. This folder is separate from the existing Next.js booking backend.
+
 ## Run locally
 
 Extract this project into a new folder, open it in VS Code, and use Node.js 20.9 or newer.

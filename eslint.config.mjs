@@ -10,6 +10,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone browser prototype; validate with its own npm run check.
+    "booking-demo/**",
   ]),
 ]);
 
