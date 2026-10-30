@@ -2,7 +2,7 @@
 import subprocess,time,json,re,base64
 from playwright.sync_api import sync_playwright
 srv=subprocess.Popen(['node','/home/claude/website/booking-demo/server.mjs'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1.5)
-B='http://localhost:4317';SB='https://emyjuccsfnxqrsztpzly.supabase.co'
+B='http://localhost:4317';SB='https://rffsulstatmwzvrdgvec.supabase.co'
 res=[];errs=[];log=[]
 def chk(n,ok,i=''):
     res.append(ok);print(('PASS ' if ok else 'FAIL ')+n+('' if ok else ' | '+str(i)[:200]))

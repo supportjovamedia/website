@@ -208,7 +208,7 @@
       const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
       try {
         const r = await fetch(cfg.url + path, { method, signal: ctl.signal, body: body === undefined ? undefined : JSON.stringify(body),
-          headers: Object.assign({ apikey: cfg.key, 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token || cfg.key) }, headers || {}) });
+          headers: Object.assign({ apikey: cfg.key, 'Content-Type': 'application/json' }, (token || /^eyJ/.test(cfg.key)) ? { Authorization: 'Bearer ' + (token || cfg.key) } : {}, headers || {}) });
         let data = null; try { data = await r.json(); } catch (e) {}
         return { ok: r.ok, status: r.status, data };
       } catch (e) { return { ok: false, status: 0, data: null, network: true }; }

@@ -28,7 +28,8 @@ Deno.serve(async (req) => {
   if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || password.length > 72)
     return fail('password', 'Your password needs 8 or more characters, a capital letter and a number.');
 
-  const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SB_SECRET_KEY') ?? '';
+  const db = createClient(Deno.env.get('SUPABASE_URL')!, key, { auth: { persistSession: false } });
 
   const { data: slugState } = await db.rpc('slug_status', { p_slug: slug });
   if (slugState === 'format') return fail('slug', 'Use 3 to 30 letters, numbers or hyphens.');
