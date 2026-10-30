@@ -16,7 +16,7 @@ The price is £20 per month, not US$20. The available screenshots and payment co
 
 ## Files
 
-`index.html`, `style.css`, `app.js` (the application), `enhance.js` (labels table cells for the phone layout), `vercel.json` (headers). `server.mjs` is only for local use. The app loads no external fonts, scripts or analytics.
+`index.html`, `style.css`, `app.js` (the application), `enhance.js` (labels table cells for the phone layout), `vercel.json` (headers). `fonts/` holds the two self-hosted typefaces (Young Serif and Hanken Grotesk, both SIL OFL; licences alongside). `server.mjs` is only for local use. The app loads no external fonts, scripts or analytics.
 
 ## Run
 
