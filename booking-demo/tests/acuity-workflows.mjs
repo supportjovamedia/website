@@ -16,7 +16,8 @@ const qaDir = path.resolve(process.env.BOOKING_QA_DIR || path.join(demoDir, 'tes
 const base = process.env.BASE_URL || 'http://127.0.0.1:4317';
 assert(['127.0.0.1', 'localhost', '[::1]'].includes(new URL(base).hostname), 'BASE_URL must be a local offline preview');
 const KEY = 'jovabook-essential-demo-v2';
-const report = {startedAt:new Date().toISOString(), scope:'Simplified owner workspace', baseURL:base, offline:true, tests:[], pageErrors:[], externalRequests:[], screenshots:[], limitations:[]};
+const remoteAdapter = process.env.BOOKING_QA_REMOTE_ADAPTER === '1';
+const report = {startedAt:new Date().toISOString(), scope:'Simplified owner workspace', baseURL:base, offline:true, remoteAdapter, tests:[], pageErrors:[], externalRequests:[], screenshots:[], limitations:[]};
 let server, browser, context, page, baseline;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const requirePlaywright = () => {
@@ -42,6 +43,7 @@ async function startServer() {
 async function go(route) {await page.goto(`${base}/#${route}`);await page.locator('#app h1').first().waitFor();}
 async function stored() {return page.evaluate(key=>JSON.parse(localStorage.getItem(key)),KEY);}
 async function activeSalon() {const state=await stored();return state.salons.find(s=>s.id===state.active);}
+async function replaceState(value, route) {await page.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:KEY,value});await page.reload();await go(route);}
 async function reset(route='calendar') {
   await page.setViewportSize({width:1440,height:1000});
   await page.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:KEY,value:baseline});
@@ -87,22 +89,48 @@ try {
   }
   if(!browser)throw launchError;
   context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true});
-  // Intercept before the first navigation. Never load config.js or a remote API.
+  // The optional remote adapter uses the served config, but never permits API traffic.
   await context.route('**/*',async route=>{
     const url=new URL(route.request().url());
-    if(url.pathname==='/config.js')return route.fulfill({status:200,contentType:'application/javascript',body:''});
+    if(!remoteAdapter&&url.pathname==='/config.js')return route.fulfill({status:200,contentType:'application/javascript',body:''});
     if(['http:','https:'].includes(url.protocol)&&url.origin!==new URL(base).origin) {report.externalRequests.push({url:url.origin+url.pathname,method:route.request().method()});return route.abort('blockedbyclient');}
     return route.continue();
   });
   page=await context.newPage();page.setDefaultTimeout(7000);
   page.on('pageerror',error=>report.pageErrors.push(String(error)));
   await go('login');
+  assert.equal(await page.evaluate(()=>!!window.JOVA_SUPABASE),remoteAdapter,'Requested account adapter must be active');
   await page.locator('[data-form="login"] [name="email"]').fill('demo@jovamedia.com');
   await page.locator('[data-form="login"] [name="password"]').fill('Salon2026');
   await page.locator('[data-form="login"] button[type="submit"], [data-form="login"] button.primary').click();
   await expect(page).toHaveURL(/#calendar$/);baseline=await stored();
   assert(baseline?.salons?.length,'Actual demo login must produce local demo data');
   report.authentication='Actual demo form login succeeded';
+
+  async function demoLogin(password='Salon2026') {
+    await page.locator('[data-form="login"] [name="email"]').fill('demo@jovamedia.com');
+    await page.locator('[data-form="login"] [name="password"]').fill(password);
+    await page.locator('[data-form="login"] .primary').click();
+  }
+  await scenario('Old saved demo credentials recover without deleting diary data',async()=>{
+    const fixture=structuredClone(baseline),salon=fixture.salons.find(s=>s.id==='drink');
+    salon.customMarker='keep-demo-diary';
+    const account=fixture.accounts.find(a=>a.salonId==='drink');account.hash='obsolete-demo-hash';
+    await page.evaluate(()=>sessionStorage.removeItem('jovabook-owner'));
+    await replaceState(fixture,'login');await demoLogin('Wrong2026');
+    await expect(page.locator('[data-form="login"] .error')).toContainText('do not match');
+    await demoLogin();await expect(page).toHaveURL(/#calendar$/);
+    const updated=await stored();assert.equal(updated.salons.find(s=>s.id==='drink').customMarker,'keep-demo-diary');
+    assert.equal(updated.accounts.find(a=>a.salonId==='drink').id,account.id);
+    assert.notEqual(updated.accounts.find(a=>a.salonId==='drink').hash,'obsolete-demo-hash');
+  });
+  await scenario('Demo sign-in restores only a missing fictional salon',async()=>{
+    const fixture=structuredClone(baseline);fixture.salons[0].id='legacy-local-salon';fixture.salons[0].customMarker='preserve-other-salon';fixture.active='legacy-local-salon';fixture.accounts=[];
+    await page.evaluate(()=>sessionStorage.removeItem('jovabook-owner'));
+    await replaceState(fixture,'login');await demoLogin();await expect(page).toHaveURL(/#calendar$/);
+    const updated=await stored();assert.equal(updated.active,'drink');assert.equal(updated.salons.find(s=>s.id==='legacy-local-salon').customMarker,'preserve-other-salon');
+    assert.equal(updated.salons.filter(s=>s.id==='drink').length,1);
+  });
 
   await scenario('Four owner links and collapsed settings',async()=>{
     const nav=page.getByRole('navigation',{name:'Workspace'});

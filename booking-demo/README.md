@@ -24,6 +24,8 @@ This change does not add reports, intake-form building, CSV client import, custo
 
 The fictional demo login is `demo@jovamedia.com` with password `Salon2026`. Demo records stay in this browser under `jovabook-essential-demo-v2`. Reset demo restores only these local records. Use fictional customer details when reviewing.
 
+The built-in demo account refreshes older saved demo credentials automatically. Signing into that demo can restore a missing fictional salon without removing other saved salon records. Registered account credentials are not changed by demo seeding.
+
 A real salon's public URL is `/?salon=its-slug#book/service`. A link without a salon parameter opens the local example. Service-specific links include `service=ID`.
 
 Payments, deposits, wallet checkout, subscription charging, payout records, email delivery, SMS delivery and AI remain previews or planned integrations. An email preview is a stored record, not evidence of delivery. This UI work is not a live payment, security or concurrency audit.
@@ -45,8 +47,11 @@ Entry points: `#login`, `#calendar`, `#appointments`, `#customers`, `#booking-se
 
 ```powershell
 npm run test:workflows
+npm run test:accounts
 ```
 
 The browser test requires an existing `@playwright/test` installation and Chrome or Edge. It uses a fresh browser context, intercepts account configuration and blocks external requests. `BASE_URL` must be a local preview. Optional `PLAYWRIGHT_MODULE` selects an existing external Playwright module. `BOOKING_QA_DIR` overrides the default `test-results/` evidence folder, and `PLAYWRIGHT_CHROMIUM_EXECUTABLE` selects a browser. The test never signs into a real account or writes live salon data.
 
 The test covers simplified navigation, setup links, calendar creation, business hours, booking-page preferences, normal customer booking and mobile layout. Reported offline results do not verify Supabase policy enforcement, provider delivery or real charges.
+
+Set `BOOKING_QA_REMOTE_ADAPTER=1` to run the same browser checks with the served account configuration enabled. External API requests remain blocked and fail the checks. This mode covers demo sign-in with fresh and older browser data without writing to live accounts.

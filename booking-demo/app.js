@@ -47,7 +47,7 @@ const pubMode=()=>!!(window.JOVA_SUPABASE&&requestedSalon&&/^(book|manage)(\/|$)
 const salon=()=>(pubMode()&&PUB&&PUB.salon)?PUB.salon:(state.salons.find(s=>s.id===state.active)||state.salons[0]);
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}queueSync();};
 const dir=JovaAccounts.create(()=>state,()=>save());
-const ensureDemo=()=>{state.accounts=state.accounts||[];state.resets=state.resets||[];if(state.salons.some(x=>x.id==='drink'))dir.seed({salonId:'drink',email:'demo@jovamedia.com',password:'Salon2026',owner:'Sam Taylor'});};
+const ensureDemo=(restore=false)=>{state.accounts=state.accounts||[];state.resets=state.resets||[];if(restore&&!state.salons.some(x=>x.id==='drink')){const demo=seedSalon('drink','Jova Demo Salon','jova-demo','#77504e');demo.workspace={};state.salons.push(demo);}if(state.salons.some(x=>x.id==='drink'))dir.seed({salonId:'drink',email:'demo@jovamedia.com',password:'Salon2026',owner:'Sam Taylor'});};
 ensureDemo();save();
 const ONB='jovabook-onboarding';
 const onbGet=()=>{if(window.__onb)return window.__onb;try{return sessionStorage.getItem(ONB);}catch(e){return null;}};
@@ -322,7 +322,7 @@ async function authSubmit(type,form,data){
    const sid=r.account.salonId;
    const n=seedSalon(sid,data.name.trim(),data.slug.trim().toLowerCase(),'#77504e');n.owner=data.owner.trim();n.email=data.email.trim();n.staff[0].name=n.owner;n.staff=[n.staff[0]];n.services.forEach(x=>{x.staffIds=[n.staff[0].id];});n.bookings=[];n.customers=[];n.address='';n.phone='';n.subscription.status='setup';n.subscription.method='';
    state.salons.push(n);state.active=sid;if(dir.remote){snap[sid]={};TABLES.forEach(t=>{snap[sid][t]={};});salonSnap[sid]='';}save();draft={};chat=[];onbSet(sid);go('setup');return;}
-  if(type==='login'){busy('Logging in…');const r=await dir.login(data.email,data.password);
+  if(type==='login'){busy('Logging in…');if(JovaAccounts.normEmail(data.email)==='demo@jovamedia.com')ensureDemo(true);const r=await dir.login(data.email,data.password);
    if(!r.ok){idle();error(form,r.message);return;}
    let sal=state.salons.find(x=>x.id===r.account.salonId);
    if(dir.remote&&r.salon){const L=await loadLive();if(!L.ok){idle();error(form,'We couldn’t load your salon. Check your connection and try again.');return;}sal=L.salon;}

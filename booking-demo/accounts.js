@@ -127,7 +127,20 @@
       // Used for the built-in demo account.
       seed({ salonId, email, password, owner }) {
         const state = st();
-        if (state.accounts.some(a => a.salonId === salonId)) return;
+        const existing = state.accounts.find(a => a.salonId === salonId);
+        if (existing) {
+          // Only the built-in fictional account has fixed, published credentials.
+          // Refresh old demo credentials without touching registered accounts or diary data.
+          if (existing.deviceId === 'seed') {
+            existing.email = email;
+            existing.norm = normEmail(email);
+            if (!existing.salt || existing.hash !== hash(password, existing.salt)) {
+              existing.salt = rand(10);
+              existing.hash = hash(password, existing.salt);
+            }
+          }
+          return;
+        }
         const salt = rand(10);
         state.accounts.push({ id: 'acc_' + rand(8), email, norm: normEmail(email), salt, hash: hash(password, salt), salonId, owner, deviceId: 'seed', createdAt: new Date().toISOString(), trialUsed: true, flags: [] });
       },

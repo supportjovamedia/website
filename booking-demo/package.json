@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node server.mjs",
     "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check enhance.js",
-    "test:workflows": "node tests/acuity-workflows.mjs"
+    "test:workflows": "node tests/acuity-workflows.mjs",
+    "test:accounts": "node --test tests/demo-login.mjs"
   }
 }
