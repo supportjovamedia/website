@@ -198,17 +198,17 @@
 
   // ---- Live version: same calls, answered by the "jovabook" Supabase project ----
   // Accounts, booking addresses and trial checks are real and shared between devices.
-  // The salon's diary (bookings, customers, services) still lives in this browser.
+  // The salon's diary lives in database tables, each row carrying its salon_id.
   function createRemote(getState, save, local) {
     const cfg = window.JOVA_SUPABASE, AUTH = 'jovabook-auth';
     const DEMO = normEmail('demo@jovamedia.com');
     const load = () => { try { return JSON.parse(localStorage.getItem(AUTH) || 'null'); } catch (e) { return null; } };
     const keep = s => { try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} };
-    async function call(path, { method = 'POST', body, token } = {}) {
+    async function call(path, { method = 'POST', body, token, headers } = {}) {
       const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
       try {
         const r = await fetch(cfg.url + path, { method, signal: ctl.signal, body: body === undefined ? undefined : JSON.stringify(body),
-          headers: { apikey: cfg.key, 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token || cfg.key) } });
+          headers: Object.assign({ apikey: cfg.key, 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token || cfg.key) }, headers || {}) });
         let data = null; try { data = await r.json(); } catch (e) {}
         return { ok: r.ok, status: r.status, data };
       } catch (e) { return { ok: false, status: 0, data: null, network: true }; }
@@ -299,6 +299,45 @@
         if (!r.ok || !r.data) return { ok: false, message: 'We couldn’t start your trial. Try again.' };
         return { ok: true, eligible: !!r.data.eligible, status: r.data.status, trial_ends_at: r.data.trial_ends_at };
       },
+
+      // ---- diary tables (every row belongs to one salon; the database only returns the signed-in owner's) ----
+      async loadDiary() {
+        const t = await token(); if (!t) return { ok: false, auth: true };
+        const get = q => call('/rest/v1/' + q + '&limit=5000', { method: 'GET', token: t });
+        const names = ['categories', 'staff', 'services', 'customers', 'bookings', 'email_log', 'payments'];
+        const orders = ['created_at,id', 'created_at,id', 'created_at,id', 'created_at,id', 'date,time', 'sent_at.desc', 'created_at.desc'];
+        const res = await Promise.all([get('salons?select=*')].concat(names.map((n, i) => get(n + '?select=*&order=' + orders[i]))));
+        if (res.some(r => !r.ok || !Array.isArray(r.data))) return { ok: false, network: res.some(r => r.network), auth: res.some(r => r.status === 401) };
+        const rows = {}; names.forEach((n, i) => { rows[n] = res[i + 1].data; });
+        return { ok: true, salon: res[0].data[0] || null, rows };
+      },
+      async upsertRows(table, rows) {
+        const t = await token(); if (!t) return { ok: false, auth: true };
+        const r = await call('/rest/v1/' + table + '?on_conflict=salon_id,id', { token: t, body: rows, headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
+        return { ok: r.ok, network: r.network, status: r.status, message: r.data && r.data.message };
+      },
+      async deleteRows(table, salonId, ids) {
+        const t = await token(); if (!t) return { ok: false, auth: true };
+        const list = ids.map(i => '"' + String(i).replace(/"/g, '') + '"').join(',');
+        const r = await call('/rest/v1/' + table + '?salon_id=eq.' + salonId + '&id=in.(' + encodeURIComponent(list) + ')', { method: 'DELETE', token: t, headers: { Prefer: 'return=minimal' } });
+        return { ok: r.ok, network: r.network, status: r.status };
+      },
+      async saveSalon(a) {
+        const t = await token(); if (!t) return { ok: false, auth: true };
+        const r = await rpc('save_salon', a, t);
+        return { ok: r.ok, network: r.network, status: r.status, message: r.data && r.data.message };
+      },
+      async setSubscription(kind) {
+        const t = await token(); if (!t) return { ok: false };
+        const r = await rpc(kind === 'cancel' ? 'cancel_subscription' : 'resubscribe', {}, t);
+        return { ok: r.ok };
+      },
+      async publicRpc(fn, args) {
+        const r = await rpc(fn, args);
+        if (r.network) return { ok: false, network: true, message: NET };
+        return { ok: r.ok, data: r.data, message: r.ok ? '' : 'Something went wrong. Please try again.' };
+      },
+      hasSession() { return !!load(); },
       async logout() { const t = load() && load().access_token; keep(null); if (t) call('/auth/v1/logout', { token: t }); },
       markTrialUsed() {}
     });

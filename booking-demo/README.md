@@ -16,7 +16,7 @@ The price is £20 per month, not US$20. The available screenshots and payment co
 
 ## Files
 
-`index.html`, `style.css`, `app.js` (the application), `enhance.js` (labels table cells for the phone layout), `vercel.json` (headers). `fonts/` holds the self-hosted Plus Jakarta Sans (SIL OFL, licence alongside) and `brand/` the JovaMedia logos, so the pages match jovamedia.com. `server.mjs` is only for local use. The app loads no external fonts, scripts or analytics.
+`index.html`, `style.css`, `app.js` (the application), `enhance.js` (labels table cells for the phone layout), `vercel.json` (headers). `fonts/` holds the self-hosted Plus Jakarta Sans (SIL OFL, licence alongside) and `brand/` the JovaMedia logos, so the pages match jovamedia.com. `server.mjs` is only for local use. The app talks to the JovaBook database (Supabase) for accounts, salon data and bookings.
 
 ## Run
 

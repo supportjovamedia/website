@@ -685,3 +685,8 @@ button,.btn{border-radius:999px}
 .price{color:var(--ink)}
 .demo-bar button,.demobar button{border-radius:999px}
 .land-hero .kicker{font-size:12px;color:var(--red);margin:0 0 14px}
+
+/* save indicator for live salons */
+.sync-status{position:fixed;left:16px;bottom:16px;z-index:60;padding:8px 14px;border-radius:999px;background:#020100;color:#fff;font:600 13px/1 'Plus Jakarta Sans',system-ui,sans-serif;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}
+.sync-status.saving,.sync-status.saved,.sync-status.error{opacity:.92;transform:none}
+.sync-status.error{background:#c1292e}
