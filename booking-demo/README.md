@@ -1,87 +1,52 @@
-# JovaBook Essential preview
+# JovaBook booking workspace
 
-A plain functional prototype of the Jova subscription booking product. The isolated Vercel project jovamedia-booking-preview serves it at https://book.jovamedia.com/. The main Jova marketing website stays in its existing project. The application remains a browser-data prototype, not a live booking or billing backend.
+JovaBook is the booking product on book.jovamedia.com. This standalone app lives in `booking-demo/` in `supportjovamedia/website`. The marketing website has its own Vercel project.
 
-## Hosted entry points
+## This change
 
-- Product and Essential offer: https://book.jovamedia.com/
-- Salon onboarding: https://book.jovamedia.com/#signup
-- Customer booking page: https://book.jovamedia.com/#book/service
-- Salon owner login preview: https://book.jovamedia.com/#login
-- Salon dashboard: https://book.jovamedia.com/#dashboard
-- Jova subscription preview: https://book.jovamedia.com/#billing
-- Booking email and day-before SMS previews: https://book.jovamedia.com/#notifications
+The Acuity walkthrough was used as a workflow reference. The goal is a smaller, clearer JovaBook, with the existing services, clients and booking data reused.
 
-The price is £20 per month, not US$20. The available screenshots and payment controls illustrate the intended flow and never create real charges.
+- Four main navigation items: Calendar, Appointments, Clients, Booking setup.
+- Booking setup brings together three checks: services, working hours, booking page and link.
+- The existing calendar gains a date picker, weekly time grid and click-to-add appointment slots.
+- Business hours are shown first. Booking buffers, same-day notice and different team hours sit in closed optional sections.
+- The booking page editor shows colour, title, welcome text and a preview. Its booking link is ready to copy. Other page options stay closed.
+- Service category management is optional. Existing appointment prices and client contact snapshots are preserved.
+- A four-choice workspace colour picker personalises the owner dashboard without changing the customer booking page.
+- Essential is email-only; SMS is reserved for future Standard and Premium plans. Delivery is still a preview.
+- Essential, Standard and Premium are the plan names. Only Essential has the existing subscription preview flow.
 
-## Files
+This change does not add reports, intake-form building, CSV client import, custom message templates, packages or invoice tools.
 
-`index.html`, `style.css`, `app.js` (the application), `enhance.js` (labels table cells for the phone layout), `vercel.json` (headers). `fonts/` holds the self-hosted Plus Jakarta Sans (SIL OFL, licence alongside) and `brand/` the JovaMedia logos, so the pages match jovamedia.com. `server.mjs` is only for local use. The app talks to the JovaBook database (Supabase) for accounts, salon data and bookings.
+## Account data and demo data
 
-## Run
+`config.js` selects the existing Supabase account service. `accounts.js` supports account authentication, owner salon loading/saving and public booking RPCs. Owner data is scoped by salon. Booking-page preferences use the existing `salons.settings.workspace` JSON structure. No database migration is introduced here.
 
-With Node.js available:
+The fictional demo login is `demo@jovamedia.com` with password `Salon2026`. Demo records stay in this browser under `jovabook-essential-demo-v2`. Reset demo restores only these local records. Use fictional customer details when reviewing.
+
+A real salon's public URL is `/?salon=its-slug#book/service`. A link without a salon parameter opens the local example. Service-specific links include `service=ID`.
+
+Payments, deposits, wallet checkout, subscription charging, payout records, email delivery, SMS delivery and AI remain previews or planned integrations. An email preview is a stored record, not evidence of delivery. This UI work is not a live payment, security or concurrency audit.
+
+## Local development
+
+With Node.js available, run from this folder:
 
 ```powershell
 npm run dev
+npm run check
 ```
 
-Open http://localhost:4317. The server binds only to 127.0.0.1. There are no dependencies to install.
+Open http://127.0.0.1:4317. Set `PORT` to use another local port. There are no runtime dependencies to install.
 
-If Node is not on PATH, the bundled runtime can be used:
+Entry points: `#login`, `#calendar`, `#appointments`, `#customers`, `#booking-setup`, `#availability`, `#scheduling`, `#book/service`.
+
+## Browser verification
 
 ```powershell
-& 'C:\Users\User\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' server.mjs
+npm run test:workflows
 ```
 
-## Explore
+The browser test requires an existing `@playwright/test` installation and Chrome or Edge. It uses a fresh browser context, intercepts account configuration and blocks external requests. `BASE_URL` must be a local preview. Optional `PLAYWRIGHT_MODULE` selects an existing external Playwright module. `BOOKING_QA_DIR` overrides the default `test-results/` evidence folder, and `PLAYWRIGHT_CHROMIUM_EXECUTABLE` selects a browser. The test never signs into a real account or writes live salon data.
 
-Use **All screens** in the top bar to jump between Essential screens. One fictional salon is included. Onboarding updates the one test salon in this browser. Standard and Pro are on hold.
-
-Suggested walkthrough:
-
-1. Pricing → salon signup → setup → simulated trial checkout → dashboard.
-2. Payments & deposits → simulated embedded onboarding → enable example deposits.
-3. Staff, Services and Customers → add, edit and delete records; Calendar → switch Day, Week and Month.
-4. View booking page → service → time → guest details → optional payment → confirmation.
-4. Owner calendar → appointment details → reschedule or cancel.
-5. Email outbox → inspect confirmation, change and cancellation email previews.
-6. Jova subscription → simulate a successful payment, failed renewal or cancellation.
-7. Inspect the immediate email confirmation and day-before SMS reminder queue. A sender must be connected before real delivery is possible.
-
-## Implemented local behaviour
-
-- Single demo salon setup and address validation.
-- Fictional sample records and owner dashboard preview.
-- Customers: add, edit, delete (blocked while they have upcoming appointments), search, history and notes.
-- Services and service categories: add, edit, delete; each service has a category and the staff who offer it. Categories group the public booking page.
-- Staff: add, edit, delete, with their own working hours and services. Availability is calculated per staff member and customers can pick a professional.
-- Appointments page: search and filter by date, status and staff; add, edit, reschedule, cancel, complete and delete.
-- Calendar: day, week and month views with a staff filter; day view shows a column per staff member with non-working hours shaded.
-- Customer booking pages take on each salon's brand colour.
-- Dashboard card and four-step simulated Stripe account setup (Business, Owner, Bank account, Review).
-- Responsive layout for phones: tab bar, tables as labelled cards, calendar agenda, bottom-sheet dialogs.
-- JSON export of the salon data.
-- Appointment availability using opening days, hours, duration, buffer and overlap checks.
-- Customer and manual appointment creation, rescheduling, cancellation and completion.
-- Booking snapshots, simulated deposit transactions and email previews.
-- Editable salon details and business branding.
-- Simulated subscription states and payment methods.
-- Browser persistence through localStorage and Reset demo controls.
-- Same-origin customer and salon views using browser-local data.
-
-## Simulation boundaries
-
-There is no production authentication, API, database, real subdomain routing, multi-user concurrency protection, webhook processing, Stripe integration, real wallet checkout, email delivery, SMS or language model connected. The payment onboarding UI is a mock-up, not Stripe's actual component. The scripted assistant explains the future flow and reads the local availability; it does not use AI credits.
-
-All data is stored under `jovabook-essential-demo-v2` in this browser. Separate browsers will have independent demo data. Use fictional details. Reset demo removes this app's example records only. This is not shared database storage or a security boundary.
-
-## Pending live integrations
-
-The existing Vercel preview project has Supabase configuration variable names. Inspection did not find Resend, SMS Works or Stripe configuration names on that project. No credentials were decrypted, copied from the production website or added to the browser. Real owner authentication, database persistence, email delivery, server-side reminder scheduling and Stripe billing must be implemented and verified before accepting real salon clients.
-
-Deposit payments remain recorded when an appointment is cancelled; no refund is simulated. Trial and subscription events require the supplied demo controls and do not run real billing jobs. Appointment-management references are public demo IDs, not production secure tokens. Cancellation notices are illustrative, not a complete policy enforcement system.
-
-## Verification
-
-JavaScript and server syntax checks passed, and the local server returned HTTP 200. Browser verification covered signup, service/hours setup, trial activation, three-step simulated payment onboarding, guest booking with a simulated wallet deposit, confirmation, rescheduling, cancellation, and the resulting email records. The newer management features (customers, categories, services, staff, appointments, calendar views) were checked with an automated browser run at desktop and 390px widths. Additional checks and any observed limitations are recorded with the delivery.
+The test covers simplified navigation, setup links, calendar creation, business hours, booking-page preferences, normal customer booking and mobile layout. Reported offline results do not verify Supabase policy enforcement, provider delivery or real charges.

@@ -3,5 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "node server.mjs", "check": "node --check app.js && node --check enhance.js" }
+  "scripts": {
+    "dev": "node server.mjs",
+    "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check enhance.js",
+    "test:workflows": "node tests/acuity-workflows.mjs"
+  }
 }
