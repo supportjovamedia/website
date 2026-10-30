@@ -5,7 +5,7 @@ B='http://localhost:4317/#';res=[];errs=[]
 def chk(n,ok,i=''):
     res.append(ok);print(('PASS ' if ok else 'FAIL ')+n+('' if ok else ' | '+str(i)[:200]))
 with sync_playwright() as p:
-    b=p.chromium.launch();ctx=b.new_context(viewport={'width':1200,'height':900})
+    b=p.chromium.launch();ctx=b.new_context(viewport={'width':1200,'height':900});ctx.route('**/config.js',lambda r:r.fulfill(status=200,content_type='application/javascript',body=''))  # LOCALMODE
     pg=ctx.new_page();pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto(B+'home');pg.evaluate("sessionStorage.setItem('jovabook-owner','1')")
     go=lambda r:(pg.goto(B+r),pg.wait_for_timeout(350))

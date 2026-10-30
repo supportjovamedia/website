@@ -7,7 +7,7 @@ res=[];errs=[]
 def chk(name,ok,info=''):
     res.append(ok);print(('PASS ' if ok else 'FAIL ')+name+(' | '+str(info) if (not ok and info) else ''))
 with sync_playwright() as p:
-    b=p.chromium.launch();ctx=b.new_context(viewport={'width':1200,'height':900});pg=ctx.new_page()
+    b=p.chromium.launch();ctx=b.new_context(viewport={'width':1200,'height':900});pg=ctx.new_page();ctx.route('**/config.js',lambda r:r.fulfill(status=200,content_type='application/javascript',body=''))  # LOCALMODE
     pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.on('console',lambda m:m.type=='error' and errs.append(m.text))
     pg.goto(B+'/');pg.wait_for_timeout(500)
@@ -85,6 +85,13 @@ with sync_playwright() as p:
     pg.fill('[name=address]','1 test road london');pg.fill('[name=phone]','02079460999');pg.click('button.primary:has-text("Save and continue")');pg.wait_for_url('**#checkout');pg.wait_for_selector('text=Due today')
     t=pg.inner_text('body')
     chk('repeat trial blocked',('already been used' in t) and ('£20.00' in t) and pg.locator('button:has-text("Subscribe for £20.00")').count()==1)
+    # sitemap owner pages ask for a log in first, then open the page
+    pg.evaluate("sessionStorage.clear()");pg.goto(B+'/#map');pg.wait_for_timeout(300)
+    pg.click('a.node[href="#staff"]');pg.wait_for_timeout(400)
+    chk('sitemap owner page asks to log in',pg.url.endswith('#login') and pg.locator('.workspace').count()==0)
+    pg.fill('[name=email]','demo@jovamedia.com');pg.fill('[name=password]','Salon2026');pg.click('button.primary:has-text("Log in")');pg.wait_for_url('**#staff',timeout=4000)
+    chk('after log in it opens the page you asked for',pg.locator('h1:has-text("Staff")').count()==1)
+    pg.click('button:has-text("Log out")')
     errs=[e for e in errs if 'favicon' not in e]
     chk('no console errors',not errs,errs[:3])
     b.close()
