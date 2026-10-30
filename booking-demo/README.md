@@ -14,6 +14,10 @@ A plain functional prototype of the Jova subscription booking product. The isola
 
 The price is £20 per month, not US$20. The available screenshots and payment controls illustrate the intended flow and never create real charges.
 
+## Files
+
+`index.html`, `style.css`, `app.js` (the application), `enhance.js` (labels table cells for the phone layout), `vercel.json` (headers). `server.mjs` is only for local use. The app loads no external fonts, scripts or analytics.
+
 ## Run
 
 With Node.js available:
@@ -38,7 +42,8 @@ Suggested walkthrough:
 
 1. Pricing → salon signup → setup → simulated trial checkout → dashboard.
 2. Payments & deposits → simulated embedded onboarding → enable example deposits.
-3. View booking page → service → time → guest details → optional payment → confirmation.
+3. Staff, Services and Customers → add, edit and delete records; Calendar → switch Day, Week and Month.
+4. View booking page → service → time → guest details → optional payment → confirmation.
 4. Owner calendar → appointment details → reschedule or cancel.
 5. Email outbox → inspect confirmation, change and cancellation email previews.
 6. Jova subscription → simulate a successful payment, failed renewal or cancellation.
@@ -48,7 +53,15 @@ Suggested walkthrough:
 
 - Single demo salon setup and address validation.
 - Fictional sample records and owner dashboard preview.
-- Services add/edit/remove, customer search/history and JSON export.
+- Customers: add, edit, delete (blocked while they have upcoming appointments), search, history and notes.
+- Services and service categories: add, edit, delete; each service has a category and the staff who offer it. Categories group the public booking page.
+- Staff: add, edit, delete, with their own working hours and services. Availability is calculated per staff member and customers can pick a professional.
+- Appointments page: search and filter by date, status and staff; add, edit, reschedule, cancel, complete and delete.
+- Calendar: day, week and month views with a staff filter; day view shows a column per staff member with non-working hours shaded.
+- Customer booking pages take on each salon's brand colour.
+- Dashboard card and four-step simulated Stripe account setup (Business, Owner, Bank account, Review).
+- Responsive layout for phones: tab bar, tables as labelled cards, calendar agenda, bottom-sheet dialogs.
+- JSON export of the salon data.
 - Appointment availability using opening days, hours, duration, buffer and overlap checks.
 - Customer and manual appointment creation, rescheduling, cancellation and completion.
 - Booking snapshots, simulated deposit transactions and email previews.
@@ -71,4 +84,4 @@ Deposit payments remain recorded when an appointment is cancelled; no refund is 
 
 ## Verification
 
-JavaScript and server syntax checks passed, and the local server returned HTTP 200. Browser verification covered signup, service/hours setup, trial activation, three-step simulated payment onboarding, guest booking with a simulated wallet deposit, confirmation, rescheduling, cancellation, and the resulting email records. Additional checks and any observed limitations are recorded with the delivery.
+JavaScript and server syntax checks passed, and the local server returned HTTP 200. Browser verification covered signup, service/hours setup, trial activation, three-step simulated payment onboarding, guest booking with a simulated wallet deposit, confirmation, rescheduling, cancellation, and the resulting email records. The newer management features (customers, categories, services, staff, appointments, calendar views) were checked with an automated browser run at desktop and 390px widths. Additional checks and any observed limitations are recorded with the delivery.

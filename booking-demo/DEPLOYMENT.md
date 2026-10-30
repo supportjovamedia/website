@@ -6,7 +6,7 @@ The single-salon Essential preview is hosted at https://book.jovamedia.com/ on t
 
 Latest deployment: dpl_4X6La96uhWjX1TqjPKVrkQXj3abV. The isolated demo project's target is production, so its assigned preview-domain aliases serve this version. This does not make the demonstrated payment or authentication flows production integrations.
 
-Source files deployed: index.html, app.js, style.css and vercel.json. It is a buildless static deployment. The response includes noindex, nofollow so the preview is not intended for search indexing.
+Source files deployed: index.html, app.js, enhance.js, style.css and vercel.json. It is a buildless static deployment. The response includes noindex, nofollow so the preview is not intended for search indexing.
 
 ## GitHub source
 
