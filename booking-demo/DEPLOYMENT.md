@@ -4,7 +4,7 @@ Source: `supportjovamedia/website`, root directory `booking-demo`.
 
 Vercel project: `jovamedia-booking-preview` (`prj_1fXIQetCNNmCNRxL3Tz6wYQibmLT`). Team: `supportjovamedia-3120`. The custom domain is https://book.jovamedia.com/.
 
-Inspection on 30 October 2026 confirmed a Git-backed production deployment from `main`, commit `0e82fb5a67c1512dce8496600063d55e69d16195`. Earlier direct-upload deployment notes no longer describe the current connection.
+Inspection on 30 October 2026 found production deployment metadata naming `main`, commit `0e82fb5a67c1512dce8496600063d55e69d16195`. Automatic deployment of the new feature branch was not observed, so Git integration should be verified before relying on push-triggered previews.
 
 This app is a buildless static site. Framework is Other, root is `booking-demo`, and output is the folder itself. `vercel.json` includes noindex/nofollow headers. Existing account configuration stays unchanged.
 
