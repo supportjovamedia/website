@@ -195,5 +195,119 @@
     };
   }
 
-  window.JovaAccounts = { create, normEmail, passwordIssues, PASSWORD_RULES, TRIAL_MS };
+
+  // ---- Live version: same calls, answered by the "jovabook" Supabase project ----
+  // Accounts, booking addresses and trial checks are real and shared between devices.
+  // The salon's diary (bookings, customers, services) still lives in this browser.
+  function createRemote(getState, save, local) {
+    const cfg = window.JOVA_SUPABASE, AUTH = 'jovabook-auth';
+    const DEMO = normEmail('demo@jovamedia.com');
+    const load = () => { try { return JSON.parse(localStorage.getItem(AUTH) || 'null'); } catch (e) { return null; } };
+    const keep = s => { try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} };
+    async function call(path, { method = 'POST', body, token } = {}) {
+      const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
+      try {
+        const r = await fetch(cfg.url + path, { method, signal: ctl.signal, body: body === undefined ? undefined : JSON.stringify(body),
+          headers: { apikey: cfg.key, 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token || cfg.key) } });
+        let data = null; try { data = await r.json(); } catch (e) {}
+        return { ok: r.ok, status: r.status, data };
+      } catch (e) { return { ok: false, status: 0, data: null, network: true }; }
+      finally { clearTimeout(timer); }
+    }
+    const rpc = (fn, args, token) => call('/rest/v1/rpc/' + fn, { body: args || {}, token });
+    const NET = 'We couldn’t reach the server. Check your connection and try again.';
+    async function token() {
+      const s = load(); if (!s) return null;
+      if (s.expires_at * 1000 > Date.now() + 30000) return s.access_token;
+      const r = await call('/auth/v1/token?grant_type=refresh_token', { body: { refresh_token: s.refresh_token } });
+      if (r.ok && r.data && r.data.access_token) { keep(r.data); return r.data.access_token; }
+      keep(null); return null;
+    }
+    async function signInPassword(email, password) {
+      const r = await call('/auth/v1/token?grant_type=password', { body: { email: String(email).trim(), password } });
+      if (r.ok && r.data && r.data.access_token) keep(r.data);
+      return r;
+    }
+    async function mySalon() {
+      const t = await token(); if (!t) return null;
+      const r = await call('/rest/v1/salons?select=*&limit=1', { method: 'GET', token: t });
+      return r.ok && Array.isArray(r.data) ? r.data[0] || null : null;
+    }
+    const isDemo = email => normEmail(email) === DEMO;
+
+    return Object.assign({}, local, {
+      remote: true,
+
+      async slugStatus(slug) {
+        const s = String(slug || '').trim().toLowerCase();
+        const r = await rpc('slug_status', { p_slug: s });
+        if (!r.ok) return { ok: false, reason: 'network' };
+        return r.data === 'ok' ? { ok: true } : { ok: false, reason: r.data };
+      },
+      async emailStatus(email) {
+        if (!EMAIL_RULE.test(String(email || '').trim())) return { ok: false, reason: 'format' };
+        const r = await rpc('email_available', { p_email: String(email).trim() });
+        if (!r.ok) return { ok: false, reason: 'network' };
+        return r.data === true ? { ok: true } : { ok: false, reason: 'taken' };
+      },
+      async register({ name, slug, owner, email, password }) {
+        const r = await call('/functions/v1/signup', { body: { name, slug, owner, email, password, device_id: deviceId() } });
+        if (r.network || !r.data) return { ok: false, field: '', message: NET };
+        if (!r.data.ok) return { ok: false, field: r.data.field || '', message: r.data.message || 'We couldn’t create your account.' };
+        const s = await signInPassword(email, password);
+        if (!s.ok) return { ok: false, field: '', message: 'Your account was created. Log in to continue.' };
+        return { ok: true, account: { salonId: r.data.salon_id } };
+      },
+      async login(email, password) {
+        if (isDemo(email)) return local.login(email, password);
+        const r = await signInPassword(email, password);
+        if (r.network) return { ok: false, message: NET };
+        if (r.status === 429) return { ok: false, locked: true, message: 'Too many attempts. Wait a minute, then try again.' };
+        if (!r.ok) return { ok: false, message: 'That email and password do not match.' };
+        const row = await mySalon();
+        if (!row) { keep(null); return { ok: false, message: 'That email and password do not match.' }; }
+        return { ok: true, account: { salonId: row.id }, salon: row };
+      },
+      async requestReset(email) {
+        if (isDemo(email)) return local.requestReset(email);
+        await call('/auth/v1/recover?redirect_to=' + encodeURIComponent(location.origin + '/'), { body: { email: String(email).trim() } });
+        return { ok: true, sent: true };   // same answer whether or not the account exists
+      },
+      async resetPassword(tok, password) {
+        if (passwordIssues(password).length) return { ok: false, message: 'Your password needs 8 or more characters, a capital letter and a number.' };
+        if ((getState().resets || []).some(x => x.token === tok)) return local.resetPassword(tok, password);
+        const r = await call('/auth/v1/user', { method: 'PUT', body: { password }, token: tok });
+        if (r.network) return { ok: false, message: NET };
+        if (!r.ok) return { ok: false, message: /same|different/i.test((r.data && (r.data.msg || r.data.message)) || '') ? 'Choose a password you haven’t used before.' : 'This link has expired. Request a new one.' };
+        keep(null);
+        return { ok: true };
+      },
+      async syncSetup(salon) {
+        const t = await token(); if (!t) return { ok: false };
+        const r = await rpc('save_setup', { p_address: salon.address, p_phone: salon.phone, p_settings: { hours: salon.hours, color: salon.color } }, t);
+        return { ok: r.ok };
+      },
+      async trialCheck() {
+        const t = await token(); if (!t) return { ok: false };
+        const r = await rpc('trial_check', {}, t);
+        return r.ok && r.data ? { ok: true, eligible: !!r.data.eligible, reasons: r.data.reasons || [] } : { ok: false };
+      },
+      async startTrial() {
+        const t = await token(); if (!t) return { ok: false, message: 'Your session has ended. Log in again.' };
+        const r = await rpc('start_trial', {}, t);
+        if (r.network) return { ok: false, message: NET };
+        if (!r.ok || !r.data) return { ok: false, message: 'We couldn’t start your trial. Try again.' };
+        return { ok: true, eligible: !!r.data.eligible, status: r.data.status, trial_ends_at: r.data.trial_ends_at };
+      },
+      async logout() { const t = load() && load().access_token; keep(null); if (t) call('/auth/v1/logout', { token: t }); },
+      markTrialUsed() {}
+    });
+  }
+
+  const makeDirectory = (getState, save) => {
+    const local = create(getState, save);
+    return window.JOVA_SUPABASE ? createRemote(getState, save, local) : local;
+  };
+
+  window.JovaAccounts = { create: makeDirectory, normEmail, passwordIssues, PASSWORD_RULES, TRIAL_MS };
 })();
