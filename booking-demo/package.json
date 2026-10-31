@@ -12,6 +12,7 @@
     "test:database": "node --test tests/owner-experience-sql.mjs tests/subscription-requests-sql.mjs",
     "test:owner:browser": "node tests/owner-experience-browser.mjs",
     "test:dashboard:browser": "node tests/dashboard-browser.mjs",
+    "test:desktop:browser": "node tests/desktop-polish-browser.mjs",
     "test:subscriptions:browser": "node tests/subscriptions-browser.mjs",
     "test:studio:browser": "node tests/dashboard-browser.mjs && node tests/staff-editor-browser.mjs && node tests/management-browser.mjs && node tests/demo-booking-browser.mjs"
   }

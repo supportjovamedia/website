@@ -14,8 +14,9 @@ body:has(.shell){background:var(--studio-paper)}
 .shell .workspace-main{padding:18px 34px 48px;max-width:1900px;margin:0 auto}
 .st-date-pill{display:table;background:#fff;color:#82766e;font-size:11px;line-height:1.5;border-radius:100px;padding:4px 13px;margin-bottom:10px}
 .shell .sidebar{position:sticky;top:17px;align-self:start;height:calc(100dvh - 64px);min-height:650px;margin:17px 0 17px 12px;width:77px;padding:23px 9px 18px;border:0;border-radius:43px;background:var(--studio-ink);display:flex;align-items:center;flex-direction:column;overflow:visible;z-index:40}
-.shell .sidebar .brand.jb-wordmark{width:53px;height:53px;flex:none;font-size:0;margin:0 0 23px;padding:0;background:var(--studio-blush);border-radius:50%;color:var(--studio-ink);display:grid;place-items:center}
-.shell .sidebar .brand.jb-wordmark:before{content:'j';font-size:37px;line-height:1;font-weight:450;margin-top:-6px}
+.shell .sidebar .brand.jb-wordmark{width:53px;height:53px;flex:none;font-size:0;margin:0 0 23px;padding:0;background:var(--studio-blush);border-radius:50%;color:var(--studio-ink);display:flex;align-items:center;justify-content:center;gap:0;line-height:0}
+.shell .sidebar .brand.jb-wordmark:before{content:none}
+.shell .sidebar .jb-brand-mark{display:block;width:16px;height:40px;flex:none}
 .shell .sidebar .jb-wordmark :is(span,small),.shell .sidebar .salon-switch,.shell .sidebar .bottom{display:none}
 .shell .side-nav{width:100%;display:flex;flex-direction:column;flex:1}
 .shell .sidebar .jb-nav-section{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0}
@@ -218,7 +219,7 @@ body:has(.shell){--panel-inset:24px;--control-height:44px;--control-inline:14px}
 .shell .sm-sidebar-note{margin:16px 12px 0}
 .shell .nf-panel{padding:0}
 .shell .nf-page .nf-item{padding:var(--row-block) var(--row-inset)}
-.shell .field :is(input:not([type=checkbox]):not([type=radio]):not([type=color]),select),body:has(.shell) #modal-root .field :is(input:not([type=checkbox]):not([type=radio]):not([type=color]),select){min-height:var(--control-height,44px);padding:11px var(--control-inline,14px)}
+.shell .field :is(input:not([type=checkbox]):not([type=radio]):not([type=color])),body:has(.shell) #modal-root .field :is(input:not([type=checkbox]):not([type=radio]):not([type=color])){min-height:var(--control-height,44px);padding:11px var(--control-inline,14px)}
 .shell .field textarea,body:has(.shell) #modal-root .field textarea{padding:12px var(--control-inline,14px)}
 .shell :is(.btn.primary,button.primary),body:has(.shell) #modal-root button.primary{min-height:var(--control-height,44px);display:inline-flex;align-items:center;justify-content:center;gap:8px}
 body:has(.shell) #modal-root .modal{padding:var(--panel-inset,24px)}
@@ -238,3 +239,36 @@ body:has(.shell) #modal-root .modal-head button{width:36px;height:36px;min-heigh
   .shell .field :is(input:not([type=checkbox]):not([type=radio]),select,textarea){font-size:16px}
   .nf-popover .nf-popover-header{padding:20px 18px}.nf-popover .nf-dialog .nf-toolbar{padding:12px 18px}.nf-popover .nf-dialog .nf-item{padding:16px 18px}
 }
+
+/* Keep native select behaviour, with a predictable inset for its indicator. */
+#app select:not([multiple]):not([size]),body:has(.shell) #modal-root .field select:not([multiple]):not([size]),body #modal-root select:not([multiple]):not([size]){appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5' stroke='%236d5b4f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:12px 12px;padding-inline:14px 44px;min-height:44px;text-overflow:ellipsis}
+#app select:disabled,#modal-root select:disabled{opacity:.6;cursor:not-allowed}
+@media(forced-colors:active){#app select:not([multiple]):not([size]),body:has(.shell) #modal-root .field select:not([multiple]):not([size]),body #modal-root select:not([multiple]):not([size]){appearance:auto;background-image:none;padding-inline-end:14px}}
+
+/* Public booking: one content grid, plain progress labels and a clear way back. */
+.book-header{padding-inline:32px}
+.book-header-inner{max-width:976px}
+.book-header-inner>.row{min-width:0;flex-wrap:nowrap}
+.book-header-inner>.row>span:last-child{min-width:0;overflow-wrap:anywhere}
+.booking-flow{max-width:1040px;padding-block:32px 64px}
+.booking-progress{margin-bottom:28px}
+.booking-progress ol{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
+.booking-progress li{border-bottom:2px solid var(--line);padding:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5;font-weight:500}
+.booking-progress li.active{border-color:var(--salon);color:var(--ink);font-weight:700}
+.booking-progress a{color:inherit;display:block;text-decoration:none}
+.booking-progress a:hover{text-decoration:underline;text-underline-offset:4px}
+.booking-back-row{margin-bottom:20px}
+.booking-back.btn{min-height:44px;padding:10px 18px;display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:12px}
+.booking-flow .booking-layout{gap:24px}
+.booking-flow .booking-layout>.card{padding:28px;min-width:0}
+.booking-flow .booking-layout aside{top:112px}
+.booking-flow .booking-layout h1{margin-bottom:12px;text-wrap:balance}
+.booking-flow .booking-layout .key-value>b{min-width:0;max-width:65%;text-align:right;overflow-wrap:anywhere}
+.booking-flow .field :is(input,textarea){min-height:44px;padding:11px 14px}
+.booking-flow .form-footer{flex-wrap:wrap;gap:12px;padding-top:20px;margin-top:24px;border-top:1px solid var(--line)}
+.booking-flow .form-footer>.primary{margin-left:auto;min-height:44px}
+.booking-flow .check{gap:12px}
+.booking-flow .check input{flex:none}
+.booking-flow .jb-public-date-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media(max-width:800px){.booking-flow .jb-public-date-layout{grid-template-columns:1fr}.booking-flow .booking-layout>.card{padding:24px}}
+@media(max-width:600px){.book-header{padding-inline:18px}.booking-flow{padding:24px 18px 48px}.booking-progress ol{gap:8px}.booking-progress li{font-size:11px;padding-bottom:10px}.booking-back-row{margin-bottom:16px}.booking-flow .booking-layout>.card{padding:20px}.booking-flow .form-footer>span:empty{display:none}}
