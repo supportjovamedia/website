@@ -320,6 +320,13 @@
         const r = await rpc(fn, args, t);
         return {ok:r.ok, data:r.data, network:r.network, message:r.data?.message || (r.network ? NET : 'We could not save that change. Please try again.')};
       },
+      async loadActivity(salonId, since) {
+        const t = await token();
+        if (!t) return {ok:false, auth:true};
+        const after = since && Number.isFinite(Date.parse(since)) ? '&sent_at=gte.' + encodeURIComponent(new Date(since).toISOString()) : '';
+        const r = await call('/rest/v1/email_log?select=*&salon_id=eq.' + encodeURIComponent(salonId) + after + '&order=sent_at.desc&limit=200', {method:'GET', token:t});
+        return {ok:r.ok && Array.isArray(r.data), rows:r.ok && Array.isArray(r.data) ? r.data : []};
+      },
       async ownerCapabilities() {
         const t = await token();
         if (!t) return null;

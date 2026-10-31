@@ -191,3 +191,5 @@ h1,h2,h3{letter-spacing:-.025em}
 @media(max-width:600px){.shell .staff-card .key-value{display:flex;flex-direction:column;align-items:flex-start;gap:7px}.shell .staff-card .key-value>b{max-width:100%;text-align:left}.shell .staff-card .jb-hours-summary{margin-top:10px}}
 
 .sidebar .bottom .pill{color:var(--workspace-accent);background:color-mix(in srgb,var(--workspace-accent) 10%,white);font-weight:700}
+
+@media(max-width:600px){.workspace-header [data-action="share-booking-link"]{display:none}}

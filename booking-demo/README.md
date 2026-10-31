@@ -10,6 +10,7 @@ The main menu is Calendar, Appointments, Clients, Services, Staff, Personalise a
 - The calendar can show any combination of staff across day, week and month. Existing appointment creation, rescheduling and cancellation are retained.
 - Multiple sessions is an owner-only workflow: check 2 to 12 dates, review availability, then confirm the complete series. Customers book one appointment at a time.
 - Insights calculates appointment counts, scheduled value, booked hours, top services and daily activity from actual saved appointments. Scheduled value is not collected revenue. Cancelled and no-show appointments do not contribute to its value totals.
+- The in-app bell shows actual new-booking, cancellation and reschedule activity. Read state is stored per owner and salon in the current browser. Connected owner sessions check for new activity every 30 seconds without interrupting an open form.
 - Personalise separates workspace appearance from the customer booking page. A workspace colour changes the header, sidebar, selected controls and accent surfaces. The booking page has its own colour, welcome text, preview and link.
 - Staff limits are Essential 1, Standard 5 and Premium 10. The migration derives these from a protected server plan field. Existing excess records are preserved; adding more is blocked.
 - Rejected database writes no longer become fake Saved records. The app restores authoritative salon data when possible and keeps a browser-only recovery copy of the unsaved draft under `jovabook-essential-demo-v2-unsaved`.
@@ -42,7 +43,7 @@ The local server binds to 127.0.0.1:4317. Set `PORT` for another port. There are
 
 Core tests use Node. SQL tests need the existing `@electric-sql/pglite` development dependency; `BOOKING_NODE_MODULES` can point to another existing node_modules folder. Browser tests need the existing `@playwright/test` package and Chrome/Edge; `PLAYWRIGHT_MODULE` can select an external installation. `BOOKING_QA_DIR` selects the evidence folder. `BASE_URL` must be local.
 
-The integrated suite loads real account configuration but intercepts every external request. It uses fictional demo records and explicit mock account responses, never live salon writes. It checks navigation, daily hours, weekend-only services, calendar filters, staff limits, Insights arithmetic, series atomicity, account recovery, sharing, ordinary booking, rejected saves and responsive layouts. `test:workflows` and the old Acuity test path are compatibility aliases for this suite.
+The integrated suite loads real account configuration but intercepts every external request. It uses fictional demo records and explicit mock account responses, never live salon writes. It checks navigation, daily hours, weekend-only services, calendar filters, staff limits, Insights arithmetic, series atomicity, account recovery, sharing, ordinary booking, rejected saves, notification polling/read state and responsive layouts. `test:workflows` and the old Acuity test path are compatibility aliases for this suite.
 
 ## Database update
 

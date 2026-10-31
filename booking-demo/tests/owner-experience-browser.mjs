@@ -38,7 +38,7 @@ async function newContext(mock){
   if(!['http:','https:'].includes(url.protocol)||url.origin===origin)return route.continue();
   const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'*','Access-Control-Allow-Methods':'GET,POST,DELETE,OPTIONS','Access-Control-Allow-Credentials':'true'};
   if(request.method()==='OPTIONS')return route.fulfill({status:204,headers});
-  if(mock){const response=await mock(request,url);if(response){report.mockRequests.push({test:currentTest,method:request.method(),path:url.pathname});return route.fulfill({headers,contentType:'application/json',status:response.status||200,body:JSON.stringify(response.body??null)});}}
+  if(mock){const response=await mock(request,url);if(response){report.mockRequests.push({test:currentTest,method:request.method(),path:url.pathname,query:url.search});return route.fulfill({headers,contentType:'application/json',status:response.status||200,body:JSON.stringify(response.body??null)});}}
   report.blockedRequests.push({test:currentTest,method:request.method(),url:url.origin+url.pathname});
   return route.fulfill({status:403,headers,contentType:'application/json',body:JSON.stringify({message:'External network disabled during local QA'})});
  });
@@ -104,7 +104,7 @@ function mockedBackend(s,{capabilities=true,rejectTables=[]}={}){
   if(url.pathname==='/rest/v1/salons')return {body:[row]};
   const table=url.pathname.replace('/rest/v1/','');
   if(Object.hasOwn(tables,table)){
-   if(req.method()==='GET')return {body:tables[table]};
+   if(req.method()==='GET'){const cursor=url.searchParams.get('sent_at');return {body:table==='email_log'&&cursor?.startsWith('gte.')?tables[table].filter(row=>Date.parse(row.sent_at)>=Date.parse(cursor.slice(4))):tables[table]};}
    if(req.method()==='POST'){const items=req.postDataJSON();if(rejectTables.includes(table)){rejections.push({table,items});return {status:400,body:{code:'23514',message:'QA server rejected '+table+' write'}};}for(const item of items){const at=tables[table].findIndex(x=>x.id===item.id);if(at<0)tables[table].push(item);else tables[table][at]=item;}return {status:201,body:null};}
   }
   return null;
@@ -113,7 +113,7 @@ function mockedBackend(s,{capabilities=true,rejectTables=[]}={}){
 }
 async function withMockBackend(settings,task){
  const previous=page,mock=mockedBackend(selected(baseline),settings),ctx=await newContext(mock.handler);page=await attach(ctx);
- try{await login('qa-owner@example.test','QAOnly2026');await page.waitForURL(/#calendar$/);await task(mock);}
+ try{if(settings?.clock)await page.clock.install({time:new Date()});await login('qa-owner@example.test','QAOnly2026');await page.waitForURL(/#calendar$/);await task(mock);}
  finally{await ctx.close();page=previous;}
 }
 
@@ -196,11 +196,35 @@ try{
   const colours=await page.evaluate(()=>({header:getComputedStyle(document.querySelector('.workspace-header')).backgroundColor,sidebar:getComputedStyle(document.querySelector('.sidebar')).backgroundColor,accent:getComputedStyle(document.querySelector('.shell')).getPropertyValue('--workspace-accent').trim()}));assert.equal(colours.accent,'#286b64');assert(colours.header!=='rgb(255, 255, 255)'||colours.sidebar!=='rgb(255, 255, 255)','Workspace colour affects a meaningful header/sidebar surface');await shot('workspace-colour-full-app');
   await go('book/service');assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--salon').trim()),before);
  });
+ await run('Appointment notifications show events and persist read status',async()=>{
+  await fixture(s=>{const booking=s.bookings[0];s.emails=['confirmed','cancelled','rescheduled'].map((kind,index)=>({id:'qa-notification-'+kind,kind,at:new Date(Date.now()-3000+index*1000).toISOString(),booking:clone(booking),subject:'QA appointment update',to:booking.email,status:'Preview saved'}));});
+  await expect(page.locator('[data-notif-open]')).toHaveAttribute('aria-label','Notifications, 3 unread');await page.setViewportSize({width:390,height:844});await noOverflow('390 unread notification header');await shot('390-header-notifications-unread');
+  await page.locator('[data-notif-open]').click();await expect(page.getByRole('dialog',{name:'Notifications',exact:true})).toBeVisible();await expect(page.locator('.nf-item-top b')).toHaveText(['Appointment rescheduled','Appointment cancelled','New appointment']);await shot('390-appointment-notifications');
+  await page.locator('[data-action="notif-item"][data-event="qa-notification-confirmed"]').click();await expect(page.getByRole('dialog',{name:'Appointment details',exact:true})).toBeVisible();await closeModal();await expect(page.locator('[data-notif-open]')).toHaveAttribute('aria-label','Notifications, 2 unread');
+  await page.reload();await expect(page.locator('[data-notif-open]')).toHaveAttribute('aria-label','Notifications, 2 unread');await page.locator('[data-notif-open]').click();await page.getByRole('button',{name:'Mark all read',exact:true}).click();await expect(page.locator('[data-notif-open]')).toHaveAttribute('aria-label','Notifications, no unread updates');await closeModal();
+  await go('activity');await expect(page.locator('.nf-list>li')).toHaveCount(3);await expect(page.locator('.nf-item.is-unread')).toHaveCount(0);await noOverflow('390 activity page');await shot('390-appointment-activity-read');await page.setViewportSize({width:1440,height:1000});
+ });
  await run('Mock connected hours persist and survive reload',async()=>withMockBackend({},async mock=>{
   await go('availability');const form=page.locator('[data-form="ws-business-hours"]');await setDay(form,1,false,'10:00','15:00');await setDay(form,0,true);await form.getByRole('button',{name:'Save hours',exact:true}).click();
   await expect.poll(()=>mock.writes.length).toBeGreaterThan(0);const settings=mock.writes.at(-1).p_settings;assert.equal(settings.hours.weekly['1'].start,'10:00');assert.equal(settings.hours.weekly['1'].end,'15:00');assert.equal(settings.hours.weekly['0'].closed,true);
-  await page.reload();await go('availability');await expect(page.locator('[name="day_1_start"]').first()).toHaveValue('10:00');await expect(page.locator('[name="day_1_end"]').first()).toHaveValue('15:00');await shot('mock-connected-persisted-hours');
+  const capabilitiesBefore=report.mockRequests.filter(r=>r.path==='/rest/v1/rpc/owner_capabilities').length;
+  await page.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));state.salons.find(s=>s.id===state.active).capabilities=null;localStorage.setItem(key,JSON.stringify(state));},KEY);
+  await page.reload();await expect.poll(async()=>(await salon()).capabilities?.version).toBe(1);assert(report.mockRequests.filter(r=>r.path==='/rest/v1/rpc/owner_capabilities').length>capabilitiesBefore,'Reload refreshes capabilities rather than relying on cache');await go('availability');await expect(page.locator('[data-form="ws-business-hours"] button.primary')).toBeEnabled();await expect(page.locator('[name="day_1_start"]').first()).toHaveValue('10:00');await expect(page.locator('[name="day_1_end"]').first()).toHaveValue('15:00');await shot('mock-connected-persisted-hours');
  }));
+ await run('Connected activity polling preserves form edits and performs no writes',async()=>withMockBackend({clock:true},async mock=>{
+  const known={id:'qa-known-notification',salon_id:mock.row.id,kind:'cancelled',subject:'Appointment cancelled',to_email:'known-client@example.test',sent_at:new Date(Date.now()-60000).toISOString(),status:'Preview saved',salon_name:mock.row.name,address:mock.row.address,booking:{id:'qa-known-booking',name:'Known Client',serviceName:'QA Treatment',date:future(2),time:'10:00'}};mock.tables.email_log.push(known);
+  await page.reload();await expect.poll(async()=>(await salon()).emails.length).toBe(1);await expect(page.locator('[data-notif-open]')).toHaveAttribute('aria-label','Notifications, 1 unread');
+  await page.locator('[data-action="new-booking"]').first().click();const form=page.locator('[data-form="manual-booking"]');await form.locator('[name="name"]').fill('Unsaved owner draft');
+  mock.tables.email_log.push({id:'qa-polled-notification',salon_id:mock.row.id,kind:'confirmed',subject:'New appointment',to_email:'qa-client@example.test',from_email:'bookings@example.test',reply_to:'qa-owner@example.test',sent_at:known.sent_at,status:'Preview saved',salon_name:mock.row.name,address:mock.row.address,booking:{id:'qa-new-remote-booking',name:'Remote Client',serviceName:'QA Treatment',date:future(2),time:'11:00'}});
+  const requestIndex=report.mockRequests.length;await page.clock.runFor(30050);await expect(page.locator('[data-notif-open]')).toHaveAttribute('aria-label','Notifications, 2 unread');await expect(form.locator('[name="name"]')).toHaveValue('Unsaved owner draft');await expect(page.getByRole('dialog',{name:'New appointment',exact:true})).toBeVisible();
+  const traffic=report.mockRequests.slice(requestIndex);assert.equal(traffic.length,1,'Activity poll only queries the email log while a form is open');assert.equal(traffic[0].path,'/rest/v1/email_log');assert.equal(traffic[0].method,'GET');assert.equal(new URLSearchParams(traffic[0].query).get('sent_at'),'gte.'+known.sent_at,'Poll uses an inclusive cursor so an equal-timestamp new event is not missed');assert.equal(mock.writes.length,0);assert((await salon()).emails.some(e=>e.id==='qa-polled-notification'));await shot('connected-notification-poll-preserved-draft');
+  await closeModal();await page.locator('[data-notif-open]').click();await expect(page.getByRole('dialog')).toContainText('Remote Client');await shot('connected-polled-notification');
+ }));
+ await run('Local demo does not poll the connected backend',async()=>{
+  const previous=page,ctx=await newContext();page=await attach(ctx);
+  try{await page.clock.install({time:new Date()});await login();await page.clock.runFor(1000);await expect(page).toHaveURL(/#calendar$/);const blocked=report.blockedRequests.length,mocked=report.mockRequests.length;await page.clock.runFor(60050);assert.equal(report.blockedRequests.length,blocked);assert.equal(report.mockRequests.length,mocked);}
+  finally{await ctx.close();page=previous;}
+ });
  await run('Missing owner capabilities show setup guards',async()=>withMockBackend({capabilities:false},async()=>{
   await go('availability');await expect(page.locator('[data-form="ws-business-hours"] button.primary')).toBeDisabled();await expect(page.locator('.ws-capability')).toContainText('booking system update');
   await go('calendar');await page.locator('[data-action="owner-series"]').first().click();await expect(page.getByRole('dialog')).toContainText('booking update');await expect(page.locator('[data-form="owner-series"]')).toHaveCount(0);
@@ -217,7 +241,7 @@ try{
   const backup=await page.evaluate(key=>JSON.parse(localStorage.getItem(key+'-unsaved')||'null'),KEY);assert(backup,'Rejected optimistic data has a local recovery copy');await shot('connected-rejected-write-restored');
  }));
  await run('Responsive 390 768 and 1440 page and button coverage',async()=>{
-  const routes=['calendar','appointments','customers','services','staff','scheduling','insights','availability','notifications'];
+  const routes=['calendar','appointments','customers','services','staff','scheduling','insights','availability','notifications','activity'];
   for(const width of [390,768,1440]){
    await page.setViewportSize({width,height:width===390?844:1000});
    for(const route of routes){await go(route);await expect(page.getByRole('dialog')).toHaveCount(0);await noOverflow(`${width} ${route}`);if(route==='insights'&&await page.locator('.ot-chart-fit').count()){const chart=await page.locator('.ot-chart-scroll').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));assert(chart.scroll<=chart.width+1,'A month of daily bars fits the chart viewport');}await shot(`${width}-${route}`);}

@@ -244,7 +244,7 @@ function ownerShell(content,active){
  const navActive=active==='booking-setup'?'scheduling':active;
  const title=[...primary,...more].find(n=>n[0]===active)?.[1]||'Your workspace';
  const navLink=([r,t])=>`<a href="#${r}" class="${navActive===r?'active':''}" ${navActive===r?'aria-current="page"':''}><i class="jb-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${icons[r]||icons.settings}"></path></svg></i>${t}</a>`;
- return `<div class="shell" style="--workspace-accent:${accent};--blue:${accent}"><aside class="sidebar"><a class="brand jb-wordmark" href="#calendar">jova<span>book</span><small>By Jova Media</small></a><div class="salon-switch"><label>YOUR BUSINESS</label><strong>${esc(s.name)}</strong></div><nav class="side-nav" aria-label="Workspace"><section class="jb-nav-section">${primary.map(navLink).join('')}</section><details class="jb-more-settings" ${more.some(([r])=>r===active)?'open':''}><summary>Settings</summary>${more.map(navLink).join('')}<button class="jb-personalise" data-action="workspace-appearance">Workspace colour</button></details></nav><div class="bottom"><span class="pill">${esc(planFor(s).name)} · ${planFor(s).staffLimit} staff ${planFor(s).staffLimit===1?'member':'members'}</span></div></aside><section class="workspace"><header class="workspace-header"><button class="jb-mobile-nav" data-action="workspace-menu" aria-label="Toggle workspace navigation" aria-expanded="false">☰</button><div><strong class="jb-header-title">${esc(title)}</strong><div class="tiny muted">${esc(s.name)}</div></div><div class="row"><button class="btn small" data-action="share-booking-link">Share booking link ↗</button><button class="small quiet" data-action="signout">Log out</button></div></header><main class="workspace-main" id="workspace-main">${content}</main></section></div>`;
+ return `<div class="shell" style="--workspace-accent:${accent};--blue:${accent}"><aside class="sidebar"><a class="brand jb-wordmark" href="#calendar">jova<span>book</span><small>By Jova Media</small></a><div class="salon-switch"><label>YOUR BUSINESS</label><strong>${esc(s.name)}</strong></div><nav class="side-nav" aria-label="Workspace"><section class="jb-nav-section">${primary.map(navLink).join('')}</section><details class="jb-more-settings" ${more.some(([r])=>r===active)?'open':''}><summary>Settings</summary>${more.map(navLink).join('')}<button class="jb-personalise" data-action="workspace-appearance">Workspace colour</button></details></nav><div class="bottom"><span class="pill">${esc(planFor(s).name)} · ${planFor(s).staffLimit} staff ${planFor(s).staffLimit===1?'member':'members'}</span></div></aside><section class="workspace"><header class="workspace-header"><button class="jb-mobile-nav" data-action="workspace-menu" aria-label="Toggle workspace navigation" aria-expanded="false">☰</button><div><strong class="jb-header-title">${esc(title)}</strong><div class="tiny muted">${esc(s.name)}</div></div><div class="row"><button class="btn small" data-action="share-booking-link">Share booking link ↗</button>${notifications.header()}<button class="small quiet" data-action="signout">Log out</button></div></header><main class="workspace-main" id="workspace-main">${content}</main></section></div>`;
 }
 function footer(){return `<footer class="footer"><span>Powered by Jova Media · Essential preview</span><div class="row"><button class="quiet small" data-action="policy">Privacy information</button><button class="quiet small" data-action="cookies">Cookie settings</button></div></footer>`;}
 function signupPage(){return `${pubHeader()}<main class="container narrow">${heading('Create your salon','Step 1 of 3. It takes about a minute.')}${onbSteps(1)}<form class="card" data-form="signup">${field('Salon name','name','','text','required maxlength="60" autocomplete="organization" placeholder="e.g. Drink Beauty"')}<label class="field">Your booking address<span class="addr"><input name="slug" required minlength="3" maxlength="30" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="drinkbeauty"><i>.jovamedia.com</i></span><small class="live-status" id="slug-status" aria-live="polite">Customers will book at yourname.jovamedia.com</small></label>${field('Your name','owner','','text','required maxlength="80" autocomplete="name"')}<label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"><small class="live-status" id="email-status" aria-live="polite"></small></label>${pwField('Password','password','new-password')}<ul class="pw-rules" id="pw-rules">${pwRules()}</ul><div class="error" role="alert"></div><button class="btn primary wide">Create salon</button><p class="demo-note center section-space">Already have an account? <a href="#login">Log in</a></p></form></main>`;}
@@ -351,11 +351,11 @@ async function createSeries(request){
  const bookings=selected.map(({date,member})=>({id:uid('bk'),serviceId:svc.id,serviceName:svc.name,duration:svc.duration,price:svc.price,date,time:request.time,staffId:member.id,notes:request.notes||'',customerId:customer.id,name:request.name.trim(),email:request.email.trim(),phone:request.phone||'',source:'Manual',status:'confirmed',deposit:0}));
  if(newCustomer)s.customers.push(customer);s.bookings.push(...bookings);bookings.forEach(b=>notify('confirmed',b));save();render();return {ok:true,bookings};
 }
-const hostApi={salon,save,render,esc,field,money,uid,today,addDays,humanDate,modal,closeModal,toast,error,isLive,bookingLink,available,schedulingSupported,seriesSupported,createSeries};
-const workspace=JovaWorkspace.create(hostApi),ownerTools=JovaOwnerTools.create(hostApi);
-const extensions=[workspace,ownerTools];
+const hostApi={salon,save,render,esc,field,money,uid,today,addDays,humanDate,modal,closeModal,toast,error,isLive,bookingLink,available,schedulingSupported,seriesSupported,createSeries,openBooking:bookingDetails,ownerIdentity:()=>dir.sessionIdentity?.()||'demo'};
+const workspace=JovaWorkspace.create(hostApi),ownerTools=JovaOwnerTools.create(hostApi),notifications=JovaNotifications.create(hostApi);
+const extensions=[workspace,ownerTools,notifications];
 const extraPages=Object.assign({},...extensions.map(x=>x.pages));
-const OWNER_ROUTES=['insights','booking-setup','availability','scheduling','dashboard','calendar','appointments','customers','services','staff','settings','billing','payments','onboarding','notifications'];
+const OWNER_ROUTES=['activity','insights','booking-setup','availability','scheduling','dashboard','calendar','appointments','customers','services','staff','settings','billing','payments','onboarding','notifications'];
 async function authSubmit(type,form,data){
  const btn=form.querySelector('button.primary'),label=btn?btn.textContent:'',busy=t=>{if(btn){btn.disabled=true;btn.textContent=t;}},idle=()=>{if(btn){btn.disabled=false;btn.textContent=label;}};
  const err=form.querySelector('.error');if(err)err.textContent='';
@@ -582,7 +582,7 @@ window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{state=JSON
     render();});
   }
  }
- save();render();
+ render();
 })();
 function admin_route(){return OWNER_ROUTES.includes(route().split('/')[0]);}
 // Pick up changes made elsewhere (customer bookings, another device) when the owner comes back to this tab.
@@ -593,4 +593,24 @@ document.addEventListener('visibilitychange',()=>{
  const a=document.activeElement;if($('#modal-root').innerHTML||(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)))return;
  lastRefresh=Date.now();loadLive().then(r=>{if(r.ok&&!syncPending()){state.active=r.salon.id;render();}});
 });
+let pollingActivity=false;
+setInterval(async()=>{
+ if(pollingActivity||document.hidden||!signedIn()||!isLive(salon())||!dir.hasSession()||pubMode()||syncPending())return;
+ pollingActivity=true;const sid=salon().id,identity=dir.sessionIdentity?.(),revision=saveRevision;
+ try{
+  const latest=salon().emails.map(e=>e.at).filter(value=>Number.isFinite(Date.parse(value))).sort((a,b)=>Date.parse(b)-Date.parse(a))[0];
+  const result=await dir.loadActivity(sid,latest);
+  if(!result.ok||!signedIn()||salon().id!==sid||dir.sessionIdentity?.()!==identity||saveRevision!==revision)return;
+  const current=salon(),known=new Set(current.emails.map(e=>e.id)),fresh=result.rows.some(row=>!known.has(row.id));
+  if(!fresh)return;
+  const editing=$('#modal-root').innerHTML||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
+  if(!editing){const loaded=await loadLive();if(loaded.ok&&salon().id===sid&&!syncPending())render();return;}
+  const incoming=result.rows.map(e=>({id:e.id,kind:e.kind,subject:e.subject,to:e.to_email,from:e.from_email,reply:e.reply_to,at:e.sent_at,booking:e.booking||{},salonName:e.salon_name,address:e.address,status:e.status}));
+  const merged=new Map(current.emails.map(e=>[e.id,e]));incoming.forEach(e=>merged.set(e.id,e));current.emails=[...merged.values()].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
+  if(snap[sid])rowsOf(current).email_log.forEach(row=>snap[sid].email_log[row.id]=JSON.stringify(row));
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch{}
+  const bell=$('[data-notif-open]');if(bell)bell.outerHTML=notifications.header();
+ }finally{pollingActivity=false;}
+},30000);
+
 })();

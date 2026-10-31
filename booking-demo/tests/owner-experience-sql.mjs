@@ -12,10 +12,11 @@ for(const base of [null,process.env.BOOKING_NODE_MODULES]) {
 }
 if(!PGlite) throw Error('Use an existing @electric-sql/pglite installation, or set BOOKING_NODE_MODULES.');
 const sql=await Promise.all(['schema.sql','migration_diary.sql','migration_diary_tables.sql','migration_owner_experience.sql'].map(f=>readFile(new URL('../supabase/'+f,import.meta.url),'utf8')));
+const combinedSetup=await readFile(new URL('../supabase/setup_new_project.sql',import.meta.url),'utf8');
 const owner='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002',sid='20000000-0000-4000-8000-000000000001';
 const hours={start:'09:00',end:'18:00',days:[0,1,2,3,4,5,6]};
 const weekly=Object.fromEntries(Array.from({length:7},(_,i)=>[i,{closed:false,start:'09:00',end:'18:00'}]));
-test('owner migration validates real tables, entitlements, daily hours, direct writes and atomic series',async()=>{
+for(const foundation of [{name:'legacy three-file setup',parts:sql.slice(0,3)},{name:'new project combined setup',parts:[combinedSetup]}]) test('owner migration validates tables, entitlements, daily hours and atomic series on '+foundation.name,async()=>{
  const db=new PGlite();
  const q=(s,a=[])=>db.query(s,a);
  const fails=async(s,a,pattern)=>assert.rejects(q(s,a),pattern);
@@ -25,7 +26,7 @@ test('owner migration validates real tables, entitlements, daily hours, direct w
    create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
    grant usage on schema public,auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;
    insert into auth.users values('${owner}'),('${other}');`);
-  for(const part of sql.slice(0,3)) await db.exec(part);
+  for(const part of foundation.parts) await db.exec(part);
   await q(`insert into salons(id,owner_id,name,slug,owner_name,email,email_norm,settings,status) values($1,$2,'Test Salon','test-salon','Owner','owner@example.test','owner@example.test',$3,'active')`,[sid,owner,JSON.stringify({hours,buffer:0,notice:0})]);
   await q(`insert into staff(salon_id,id,name) values($1,'one','Owner'),($1,'legacy-extra','Existing extra')`,[sid]);
   await q(`insert into services(salon_id,id,name,price,duration,staff_ids) values($1,'cut','Haircut',25,30,array['one','legacy-extra'])`,[sid]);
@@ -35,6 +36,10 @@ test('owner migration validates real tables, entitlements, daily hours, direct w
   await db.exec('grant select,insert,update,delete on all tables in schema public to authenticated;');
   await q("select set_config('request.jwt.claim.sub',$1,false)",[owner]);
   await db.exec('set role authenticated');
+  if(foundation.name==='new project combined setup') {
+    await fails(`select save_setup('24 High Street','','{}')`,[],/address and phone required/);
+    await fails(`select save_setup('24 High Street',null,'{}')`,[],/address and phone required/);
+  }
   let cap=(await q('select owner_capabilities() value')).rows[0].value;
   assert.equal(cap.staff_limit,1);assert.equal(cap.plan,'essential');assert.equal(cap.booking_series,true);
   assert.equal((await q('select count(*)::int n from staff')).rows[0].n,2,'Existing over-limit rows retained');
