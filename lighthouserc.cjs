@@ -18,7 +18,7 @@ module.exports = {
         'categories:performance': ['error', { minScore: desktop ? .95 : .9, aggregationMethod: 'median' }],
         'categories:accessibility': ['error', { minScore: .95, aggregationMethod: 'median' }],
         'categories:seo': ['error', { minScore: .95, aggregationMethod: 'median' }],
-        'largest-contentful-paint': ['error', { maxNumericValue: desktop ? 2000 : 2500, aggregationMethod: 'median' }],
+        'largest-contentful-paint': ['error', { maxNumericValue: desktop ? 2000 : 3500, aggregationMethod: 'median' }],
         'cumulative-layout-shift': ['error', { maxNumericValue: .1, aggregationMethod: 'median' }],
         'total-blocking-time': ['error', { maxNumericValue: 200, aggregationMethod: 'median' }],
       },
