@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",
-    "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check scheduling-core.js && node --check reschedule-core.js && node --check owner-tools.js && node --check notifications.js && node --check subscriptions.js && node --check management.js && node --check dashboard-core.js && node --check enhance.js",
+    "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check scheduling-core.js && node --check reschedule-core.js && node --check owner-tools.js && node --check notifications.js && node --check subscriptions.js && node --check management.js && node --check dashboard-core.js && node --check enhance.js && node --check demo-data.js && node --check booking-palette.js && node --check staff-editor.js && node --check service-management.js && node --check dirty-forms.js",
     "test:workflows": "node tests/owner-experience-browser.mjs",
     "test:accounts": "node --test tests/demo-login.mjs",
-    "test:owner": "node --test tests/demo-login.mjs tests/scheduling-core.mjs tests/reschedule-core.mjs tests/owner-tools.mjs tests/notifications.mjs tests/subscriptions.mjs tests/dashboard-core.mjs tests/management.mjs",
+    "test:owner": "node --test tests/demo-login.mjs tests/scheduling-core.mjs tests/reschedule-core.mjs tests/owner-tools.mjs tests/notifications.mjs tests/subscriptions.mjs tests/dashboard-core.mjs tests/management.mjs tests/demo-data.mjs tests/staff-editor.mjs tests/service-management.mjs tests/insights-chart.mjs",
     "test:database": "node --test tests/owner-experience-sql.mjs tests/subscription-requests-sql.mjs",
     "test:owner:browser": "node tests/owner-experience-browser.mjs",
     "test:dashboard:browser": "node tests/dashboard-browser.mjs",
-    "test:subscriptions:browser": "node tests/subscriptions-browser.mjs"
+    "test:subscriptions:browser": "node tests/subscriptions-browser.mjs",
+    "test:studio:browser": "node tests/dashboard-browser.mjs && node tests/staff-editor-browser.mjs && node tests/management-browser.mjs && node tests/demo-booking-browser.mjs"
   }
 }

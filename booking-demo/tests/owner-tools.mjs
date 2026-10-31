@@ -31,19 +31,19 @@ const settle=()=>new Promise(resolve=>setImmediate(resolve));
 test('insights use actual records and exclude cancelled/no-show value',()=>{
  const {tools}=harness(),html=tools.pages.insights();
  assert.deepEqual(Array.from(tools.routes),['insights']);
- assert.match(html,/Appointments<\/span><strong>4<\/strong>/);
+ assert.match(html,/Bookings<\/span><strong>4<\/strong>/);
  assert.match(html,/Scheduled value<\/span><strong>£100\.00<\/strong>/);
  assert.match(html,/Booked hours<\/span><strong>1\.5<\/strong>/);
  assert.match(html,/Clients booked<\/span><strong>3<\/strong>/);
  assert.match(html,/No-shows<\/span><strong>1<\/strong>/);
  assert.match(html,/Brow &lt;care&gt;/);assert(!html.includes('£900.00'));
- assert.match(html,/5 Oct 2026: 1 appointment/);assert.match(html,/not collected cash/);
+ assert.match(html,/5 Oct 2026: 1 booking/);assert.match(html,/not collected cash/);
 });
 test('custom date and staff filters change the actual insight totals',()=>{
  const {tools}=harness();const filters=form({period:'custom',start:'2026-10-06',end:'2026-10-08',staff:'owner'});
  assert.equal(tools.submit('owner-insights',filters),true);const html=tools.pages.insights();
- assert.match(html,/Appointments<\/span><strong>1<\/strong>/);assert.match(html,/Scheduled value<\/span><strong>£60\.00<\/strong>/);
- assert.match(html,/6 Oct 2026 to 8 Oct 2026/);assert.match(html,/6 Oct 2026: 1 appointment/);
+ assert.match(html,/Bookings<\/span><strong>1<\/strong>/);assert.match(html,/Scheduled value<\/span><strong>£60\.00<\/strong>/);
+ assert.match(html,/6 Oct 2026 to 8 Oct 2026/);assert.match(html,/6 Oct 2026: 1 booking/);
 });
 test('invalid, reversed and excessive date ranges retain the last valid filter',()=>{
  const {tools}=harness();
@@ -54,7 +54,7 @@ test('invalid, reversed and excessive date ranges retain the last valid filter',
 });
 test('an empty period shows an honest empty state',()=>{
  const {tools}=harness();tools.submit('owner-insights',form({period:'custom',start:'2026-01-01',end:'2026-01-02',staff:'all'}));
- const html=tools.pages.insights();assert.match(html,/No appointments in this period/);assert.match(html,/Scheduled value<\/span><strong>£0\.00<\/strong>/);
+ const html=tools.pages.insights();assert.match(html,/No bookings in this period/);assert.match(html,/Scheduled value<\/span><strong>£0\.00<\/strong>/);
 });
 test('unsupported live series has a clear setup message and no form',()=>{
  const {tools,seen}=harness({isLive:()=>true,seriesSupported:()=>false});assert.equal(tools.click('owner-series',{}),true);
@@ -68,7 +68,7 @@ test('series preview checks every date, and conflicts prevent any submission',as
 });
 test('valid series requires confirmation and submits one complete request',async()=>{
  const {tools,seen}=harness();tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);
- assert.equal(seen.requests.length,0);assert.match(f.preview.innerHTML,/Book 3 appointments/);
+ assert.equal(seen.requests.length,0);assert.match(f.preview.innerHTML,/Book 3 bookings/);
  assert.equal(tools.click('owner-series-confirm',element(f)),true);await settle();assert.equal(seen.requests.length,1);
  const request=seen.requests[0];assert.deepEqual(Array.from(request.dates),['2026-11-03','2026-11-17','2026-12-01']);
  assert.equal(request.staffId,'owner');assert.equal(request.customerId,'c1');assert.equal(request.notes,'Private note');assert.equal(seen.closed,1);assert.equal(f.attributes['aria-busy'],undefined);

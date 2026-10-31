@@ -14,12 +14,12 @@ function harness({storage=new Map(),owner='owner-one',state={id:'salon-one',emai
 }
 test('empty activity is honest and does not infer notifications from booking status',()=>{
  const {tools,state}=harness();state.bookings.push({id:'cancelled-without-event',status:'cancelled'});
- assert.deepEqual(Array.from(tools.routes),['activity']);assert.match(tools.header(),/no unread updates/);assert.match(tools.pages.activity(),/No appointment updates yet/);assert(!tools.pages.activity().includes('Appointment cancelled'));
+ assert.deepEqual(Array.from(tools.routes),['activity']);assert.match(tools.header(),/no unread updates/);assert.match(tools.pages.activity(),/No booking updates yet/);assert(!tools.pages.activity().includes('Booking cancelled'));
 });
 test('new, cancellation and reschedule events have plain labels and escaped details',()=>{
  const {tools,state}=harness();state.emails=[event('e1'),event('e2','cancelled'),event('e3','rescheduled'),event('e4','reminder')];
  const html=tools.pages.activity();assert.match(tools.header(),/Notifications, 3 unread/);
- for(const label of ['New appointment','Appointment cancelled','Appointment rescheduled'])assert(html.includes(label));
+ for(const label of ['New booking','Booking cancelled','Booking rescheduled'])assert(html.includes(label));
  assert(html.includes('Alex &lt;Client&gt;'));assert(html.includes('Brow &amp; tint'));assert(!html.includes('data-event="e4"'));assert(!html.includes('email sent'));
 });
 test('duplicate event IDs render once and opening an event marks it read',()=>{
@@ -50,7 +50,7 @@ test('deleted appointment remains an honest activity entry and cannot open fake 
 test('history and stored read IDs are bounded at 200 latest actual events',()=>{
  const {tools,state,storage}=harness();state.emails=Array.from({length:250},(_,i)=>event('e'+i,'confirmed',{at:new Date(Date.UTC(2026,9,31,0,i)).toISOString()}));
  assert.match(tools.header(),/Notifications, 200 unread/);assert.equal((tools.pages.activity().match(/data-action="notif-item"/g)||[]).length,200);
- tools.click('notif-read-all',{});assert.equal(JSON.parse([...storage.values()][0]).length,200);assert.match(tools.header(),/no unread updates/);assert.match(tools.pages.activity(),/latest 200 appointment updates/);
+ tools.click('notif-read-all',{});assert.equal(JSON.parse([...storage.values()][0]).length,200);assert.match(tools.header(),/no unread updates/);assert.match(tools.pages.activity(),/latest 200 booking updates/);
 });
 test('corrupt local read state recovers and unrelated hooks return false',()=>{
  const {tools,state,storage}=harness();state.emails=[event('e1')];storage.set('jovabook-notification-reads-v1:owner-one:salon-one','{invalid');
