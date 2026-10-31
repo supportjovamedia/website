@@ -76,7 +76,7 @@ $$;
 create function public.save_setup(p_address text, p_phone text, p_settings jsonb) returns void language plpgsql security definer set search_path = '' as $$
 begin
   if auth.uid() is null then raise exception 'not signed in'; end if;
-  if length(trim(coalesce(p_address,''))) < 3 or length(public.norm_phone(p_phone)) < 7 then raise exception 'address and phone required'; end if;
+  if length(trim(coalesce(p_address,''))) < 3 or length(coalesce(public.norm_phone(p_phone),'')) < 7 then raise exception 'address and phone required'; end if;
   update public.salons set address = trim(p_address), phone = trim(p_phone), settings = coalesce(p_settings,'{}'::jsonb)
    where owner_id = auth.uid() and status = 'setup';
 end $$;

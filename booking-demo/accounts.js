@@ -127,7 +127,20 @@
       // Used for the built-in demo account.
       seed({ salonId, email, password, owner }) {
         const state = st();
-        if (state.accounts.some(a => a.salonId === salonId)) return;
+        const existing = state.accounts.find(a => a.salonId === salonId);
+        if (existing) {
+          // Only the built-in fictional account has fixed, published credentials.
+          // Refresh old demo credentials without touching registered accounts or diary data.
+          if (existing.deviceId === 'seed') {
+            existing.email = email;
+            existing.norm = normEmail(email);
+            if (!existing.salt || existing.hash !== hash(password, existing.salt)) {
+              existing.salt = rand(10);
+              existing.hash = hash(password, existing.salt);
+            }
+          }
+          return;
+        }
         const salt = rand(10);
         state.accounts.push({ id: 'acc_' + rand(8), email, norm: normEmail(email), salt, hash: hash(password, salt), salonId, owner, deviceId: 'seed', createdAt: new Date().toISOString(), trialUsed: true, flags: [] });
       },
@@ -301,6 +314,25 @@
       },
 
       // ---- diary tables (every row belongs to one salon; the database only returns the signed-in owner's) ----
+      async ownerRpc(fn, args = {}) {
+        const t = await token();
+        if (!t) return {ok:false, auth:true, message:'Your session has ended. Log in again.'};
+        const r = await rpc(fn, args, t);
+        return {ok:r.ok, data:r.data, network:r.network, message:r.data?.message || (r.network ? NET : 'We could not save that change. Please try again.')};
+      },
+      async loadActivity(salonId, since) {
+        const t = await token();
+        if (!t) return {ok:false, auth:true};
+        const after = since && Number.isFinite(Date.parse(since)) ? '&sent_at=gte.' + encodeURIComponent(new Date(since).toISOString()) : '';
+        const r = await call('/rest/v1/email_log?select=*&salon_id=eq.' + encodeURIComponent(salonId) + after + '&order=sent_at.desc&limit=200', {method:'GET', token:t});
+        return {ok:r.ok && Array.isArray(r.data), rows:r.ok && Array.isArray(r.data) ? r.data : []};
+      },
+      async ownerCapabilities() {
+        const t = await token();
+        if (!t) return null;
+        const r = await rpc('owner_capabilities', {}, t);
+        return r.ok && r.data ? r.data : null;
+      },
       async loadDiary() {
         const t = await token(); if (!t) return { ok: false, auth: true };
         const get = q => call('/rest/v1/' + q + '&limit=5000', { method: 'GET', token: t });
@@ -337,6 +369,7 @@
         if (r.network) return { ok: false, network: true, message: NET };
         return { ok: r.ok, data: r.data, message: r.ok ? '' : 'Something went wrong. Please try again.' };
       },
+      sessionIdentity() { return load()?.user?.id || null; },
       hasSession() { return !!load(); },
       async logout() { const t = load() && load().access_token; keep(null); if (t) call('/auth/v1/logout', { token: t }); },
       markTrialUsed() {}

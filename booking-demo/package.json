@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",
-    "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check enhance.js",
-    "test:workflows": "node tests/acuity-workflows.mjs"
+    "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check scheduling-core.js && node --check reschedule-core.js && node --check owner-tools.js && node --check notifications.js && node --check enhance.js",
+    "test:workflows": "node tests/owner-experience-browser.mjs",
+    "test:accounts": "node --test tests/demo-login.mjs",
+    "test:owner": "node --test tests/demo-login.mjs tests/scheduling-core.mjs tests/reschedule-core.mjs tests/owner-tools.mjs tests/notifications.mjs",
+    "test:database": "node --test tests/owner-experience-sql.mjs",
+    "test:owner:browser": "node tests/owner-experience-browser.mjs"
   }
 }
