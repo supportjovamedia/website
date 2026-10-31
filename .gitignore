@@ -9,3 +9,4 @@ test-results/
 playwright-report/
 .lighthouseci/
 artifacts/lighthouse/
+booking-demo/supabase/.temp/
