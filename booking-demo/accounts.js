@@ -314,6 +314,18 @@
       },
 
       // ---- diary tables (every row belongs to one salon; the database only returns the signed-in owner's) ----
+      async ownerRpc(fn, args = {}) {
+        const t = await token();
+        if (!t) return {ok:false, auth:true, message:'Your session has ended. Log in again.'};
+        const r = await rpc(fn, args, t);
+        return {ok:r.ok, data:r.data, network:r.network, message:r.data?.message || (r.network ? NET : 'We could not save that change. Please try again.')};
+      },
+      async ownerCapabilities() {
+        const t = await token();
+        if (!t) return null;
+        const r = await rpc('owner_capabilities', {}, t);
+        return r.ok && r.data ? r.data : null;
+      },
       async loadDiary() {
         const t = await token(); if (!t) return { ok: false, auth: true };
         const get = q => call('/rest/v1/' + q + '&limit=5000', { method: 'GET', token: t });
@@ -350,6 +362,7 @@
         if (r.network) return { ok: false, network: true, message: NET };
         return { ok: r.ok, data: r.data, message: r.ok ? '' : 'Something went wrong. Please try again.' };
       },
+      sessionIdentity() { return load()?.user?.id || null; },
       hasSession() { return !!load(); },
       async logout() { const t = load() && load().access_token; keep(null); if (t) call('/auth/v1/logout', { token: t }); },
       markTrialUsed() {}

@@ -97,3 +97,97 @@ h1,h2,h3{letter-spacing:-.025em}
 .jb-personalise{margin:6px 12px;padding:7px 0;border:0;background:none;color:#63707b;font-size:11px;text-align:left}
 .jb-colour-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.jb-colour-options label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:13px;border-radius:7px;font-size:12px;cursor:pointer}.jb-colour-options input{width:15px;accent-color:var(--choice);margin:0}.jb-colour-options span{width:21px;height:21px;border-radius:50%;background:var(--choice);flex-shrink:0}
 @media(max-width:760px){.workspace-header{display:flex;flex-wrap:nowrap;justify-content:flex-start}.workspace-header>div:not(.row){flex:1;min-width:0}.workspace-header .row{width:auto;flex:0 0 auto;justify-content:flex-end}.workspace-header .tiny{max-width:150px}.side-nav{grid-template-columns:1fr}.jb-more-settings{margin-top:0;padding-top:6px}.workspace-header .jb-header-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.demo-bar{align-items:center}.demo-bar button{width:auto;flex:none}}
+
+/* A welcoming workspace, with the owner's chosen colour throughout the frame. */
+.shell{--accent-soft:color-mix(in srgb,var(--workspace-accent,#235789) 10%,white);--accent-line:color-mix(in srgb,var(--workspace-accent,#235789) 18%,white);--accent-ink:color-mix(in srgb,var(--workspace-accent,#235789) 65%,#182c38);--line:#dce5e9;grid-template-columns:232px minmax(0,1fr);background:color-mix(in srgb,var(--workspace-accent,#235789) 3%,#f7f9fa)}
+.shell h1,.shell h2,.shell h3{text-wrap:balance}.shell p{text-wrap:pretty}
+.shell .sidebar{background:var(--accent-soft);border-right:1px solid var(--accent-line);padding:30px 16px 22px;display:flex;flex-direction:column}
+.shell .sidebar .brand.jb-wordmark{font-size:29px;margin-bottom:31px;padding-left:12px;color:#173747}
+.shell .jb-wordmark span{color:var(--workspace-accent)}
+.shell .jb-wordmark small{color:#69818f;font-size:10px;letter-spacing:0}
+.shell .sidebar .salon-switch{background:color-mix(in srgb,var(--workspace-accent) 4%,white);border-color:var(--accent-line);border-radius:9px;padding:15px 13px;margin-bottom:26px}
+.shell .sidebar .salon-switch label{color:#65808f;font-size:9px;letter-spacing:.08em}
+.shell .sidebar .salon-switch strong{font-size:13px;color:var(--accent-ink);font-weight:700;margin-top:7px}
+.shell .side-nav a{padding:12px 13px;min-height:43px;gap:12px;font-size:13px;font-weight:550;color:#476575;margin:3px 0;border-radius:7px}
+.shell .side-nav a:hover{background:color-mix(in srgb,var(--workspace-accent) 12%,white);color:var(--accent-ink)}
+.shell .side-nav a.active{background:var(--workspace-accent);color:#fff;box-shadow:none;font-weight:700}
+.shell .jb-nav-icon,.shell .jb-nav-icon svg{width:18px;height:18px;flex-basis:18px}
+.shell .jb-more-settings{border-color:var(--accent-line);margin-top:23px;padding-top:17px}
+.shell .jb-more-settings summary{font-size:12px;color:#536f80;padding:10px 13px}
+.shell .jb-more-settings a{font-size:12px;padding-top:10px;padding-bottom:10px}
+.shell .jb-personalise{color:var(--accent-ink);font-size:12px}
+.shell .sidebar .bottom{margin-top:auto;padding:24px 12px 0;border:0;color:#6d8490}
+.shell .sidebar .bottom a{background:color-mix(in srgb,var(--workspace-accent) 12%,white);border:1px solid var(--accent-line);padding:12px;border-radius:7px;color:var(--accent-ink);font-size:11px;font-weight:600}
+.shell .workspace-header{height:82px;background:var(--workspace-accent);border:0;padding:0 34px;color:#fff;box-shadow:0 2px 8px #13344808;display:flex;flex-wrap:nowrap;justify-content:space-between}
+.shell .workspace-header strong{font-size:16px;font-weight:700;color:#fff}
+.shell .workspace-header .tiny{font-size:11px;color:color-mix(in srgb,var(--workspace-accent) 15%,white);margin-top:4px}
+.shell .workspace-header .row{gap:10px;flex:none;width:auto}
+.shell .workspace-header .btn,.shell .workspace-header button{background:color-mix(in srgb,var(--workspace-accent) 77%,white);border:1px solid color-mix(in srgb,var(--workspace-accent) 60%,white);color:#fff;font-size:12px;padding:10px 13px;min-height:38px}
+.shell .workspace-header .quiet{border-color:transparent;background:transparent}
+.shell .workspace-header .btn:hover,.shell .workspace-header button:hover{background:color-mix(in srgb,var(--workspace-accent) 65%,white)}
+.shell .workspace-main{padding:34px 34px 55px;max-width:1600px;width:100%;margin:0 auto}
+.shell .page-heading h1{font-size:32px;font-weight:750;line-height:1.25;margin:0 0 9px;letter-spacing:-.7px}
+.shell .page-heading p{font-size:14px;color:#6d818e;line-height:1.7;max-width:65ch}
+.shell .page-heading{margin-bottom:28px;gap:18px}
+.shell .page-heading .btn{font-size:13px;min-height:43px;padding:12px 17px}
+.shell button,.shell .btn{font-size:13px}.shell .primary{background:var(--workspace-accent);border-color:var(--workspace-accent);color:#fff}
+.shell .primary:hover{background:var(--workspace-accent);border-color:var(--workspace-accent);filter:brightness(.93)}
+.shell a{color:var(--workspace-accent)}
+.shell .card{border-color:#dce5e9;border-radius:11px;background:#fff}
+.shell .field{font-size:13px;color:#4c6676;gap:8px}
+.shell .field input,.shell .field select,.shell .field textarea{font-size:14px;min-height:45px;border-color:#cfdce3;padding:11px 12px;color:#294351;border-radius:7px;background:#fff;box-shadow:none}
+.shell input[type=checkbox],.shell input[type=radio]{accent-color:var(--workspace-accent)}
+.shell :is(button,a,input,select,textarea,summary):focus-visible{outline:2px solid var(--workspace-accent);outline-offset:3px}
+.shell .workspace-header :is(button,a):focus-visible{outline-color:#fff}
+.shell table{font-size:13px}.shell th{font-size:11px;background:color-mix(in srgb,var(--workspace-accent) 4%,white);color:#68818f;padding:14px 16px}
+.shell td{padding:18px 16px}.shell .secondary,.shell .tiny{font-size:11px;color:#7b8e99}
+.shell .toolbar{gap:12px}.shell .toolbar input,.shell .toolbar select{font-size:13px;min-height:42px;padding:10px 12px;background:#fff;border:1px solid #d6e1e7}
+.shell .pill.blue{background:var(--accent-soft);color:var(--accent-ink)}
+.shell .jb-calendar-layout{grid-template-columns:195px minmax(0,1fr);gap:24px}
+.shell .jb-mini{padding:15px 12px;border-radius:10px;border-color:#d8e3e8}
+.shell .jb-mini-title>b{font-size:12px;color:#3e5b6b}.shell .jb-mini-grid>span{font-size:10px;color:#8197a3}.shell .jb-mini-grid>button{font-size:11px;padding:8px 0;color:#4a6676}
+.shell .jb-mini-grid>button.is-out{color:#b3c1ca}.shell .jb-mini-grid>button.is-today{box-shadow:inset 0 0 0 1px var(--workspace-accent);color:var(--workspace-accent)}
+.shell .jb-mini-grid>button.is-selected{color:#fff;background:var(--workspace-accent);box-shadow:none}
+.shell .jb-side-label{font-size:11px;color:#66818f;margin-top:22px}.shell .jb-staff-filter{font-size:12px;padding:10px 2px;color:#547180}
+.shell .jb-staff-filter.is-active{color:var(--accent-ink)}.shell .jb-staff-filter.is-active::after{color:var(--workspace-accent)}
+.shell .jb-calendar-main{border-radius:11px;border-color:#d6e2e8}
+.shell .jb-calendar-tools{padding:17px 19px;background:color-mix(in srgb,var(--workspace-accent) 3%,white)}
+.shell .jb-calendar-tools b{font-size:13px;color:#355569}.shell .jb-calendar-tools .small{font-size:11px;padding:8px 11px;min-height:34px}
+.shell .jb-calendar-tools .seg button{font-size:11px;padding:9px 12px;min-height:34px}
+.shell .jb-calendar-tools .seg button.active{background:var(--workspace-accent);color:#fff}
+.shell .jb-week-heading{height:76px}.shell .jb-week-heading>button>span{font-size:10px;color:#8297a5}.shell .jb-week-heading>button>b{font-size:18px;color:#46687c;width:31px;line-height:31px}
+.shell .jb-week-heading>button.is-today>b{background:var(--workspace-accent);color:#fff}
+.shell .jb-time-ruler>span{font-size:10px;color:#8da1ae}.shell .jb-calendar-slot:hover:not(:disabled){background:color-mix(in srgb,var(--workspace-accent) 8%,white)}
+.shell .jb-calendar-slot span{color:var(--workspace-accent)}.shell .jb-week-day.is-today{background:color-mix(in srgb,var(--workspace-accent) 2%,white)}
+.shell .jb-grid-event strong{font-size:11px}.shell .jb-grid-event small{font-size:10px}.shell .jb-calendar-legend{font-size:10px;color:#78909e;padding:14px 18px}
+.shell .jb-calendar-info a{color:var(--workspace-accent);font-size:11px}.shell .jb-calendar-info p{font-size:11px;color:#8298a5}
+.shell .jb-date-jump{font-size:11px;color:#6f8795}.shell .jb-date-jump input{font-size:13px;min-height:42px;border-radius:7px}
+@media(min-width:1600px){.shell .workspace-main{padding:40px 46px 65px}}
+@media(max-width:1200px){.shell{grid-template-columns:210px minmax(0,1fr)}.shell .sidebar{padding-left:12px;padding-right:12px}.shell .workspace-main{padding:29px 25px 45px}.shell .workspace-header{padding:0 25px}.shell .jb-calendar-layout{grid-template-columns:170px minmax(0,1fr);gap:18px}}
+@media(max-width:900px){.shell{grid-template-columns:190px minmax(0,1fr)}.shell .side-nav a{padding:11px;font-size:12px}.shell .workspace-main{padding:25px 21px 40px}.shell .jb-calendar-layout{grid-template-columns:1fr}.shell .jb-calendar-side{position:static;display:grid;grid-template-columns:minmax(170px,.75fr) minmax(150px,1fr);gap:15px}.shell .jb-calendar-side>.jb-mini{grid-row:span 3;margin:0}.shell .jb-calendar-side .jb-side-label{margin-top:0}.shell .jb-calendar-info{margin:0;border:0;padding:0}.shell .jb-calendar-info p{display:none}.shell .jb-date-jump{margin-top:0}}
+@media(max-width:800px){.shell{display:block}.shell .sidebar{display:none;height:auto;position:static;padding:15px;border-bottom:1px solid var(--accent-line)}.shell.is-menu-open .sidebar{display:flex}.shell .sidebar .brand.jb-wordmark,.shell .sidebar .salon-switch,.shell .sidebar .bottom{display:none}.shell .sidebar .side-nav{display:block}.shell .jb-nav-section{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.shell .jb-more-settings{margin-top:14px}.shell .workspace-header{height:74px;padding:0 17px;position:sticky;top:0;z-index:30;gap:12px}.shell .workspace-header>div:not(.row){min-width:0;flex:1}.shell .workspace-header .jb-mobile-nav{width:35px;height:35px;min-height:35px;padding:0;border-color:color-mix(in srgb,var(--workspace-accent) 50%,white)}.shell .workspace-header strong{font-size:14px}.shell .workspace-header .tiny{font-size:10px;max-width:145px}.shell .workspace-header .row{margin:0;gap:3px}.shell .workspace-header .small{font-size:10px;padding:8px}.shell .workspace-main{padding:26px 17px 40px}.shell .page-heading{flex-wrap:wrap;align-items:flex-start}.shell .page-heading h1{font-size:28px}.shell .page-heading p{font-size:13px}.shell .field input,.shell .field textarea,.shell .field select{font-size:16px}.shell .jb-calendar-tools{padding:12px}.shell .jb-calendar-tools b{font-size:12px}.shell .jb-calendar-tools .small,.shell .jb-calendar-tools .seg button{font-size:10px;padding:7px 9px}.shell .jb-week-scroll{max-height:66dvh}.shell .jb-calendar-main .mday{min-height:85px}}
+@media(max-width:420px){.shell .workspace-header .row>a{display:none}.shell .workspace-main{padding:24px 14px 36px}.shell .jb-calendar-side{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px}.shell .jb-mini{padding:12px 8px}.shell .jb-mini-title>b{font-size:10px}.shell .jb-mini-grid>button{font-size:10px}.shell .jb-mini-grid{gap:2px}.shell .jb-staff-filter{font-size:11px}.shell .jb-calendar-info a{font-size:10px}.shell .workspace-header{padding:0 14px}.shell .toolbar{flex-wrap:wrap}.shell .toolbar>input{width:100%;flex-basis:100%}.shell .page-heading .btn{font-size:12px}}
+
+/* Staff selection and subscription context share the form hierarchy. */
+.shell .jb-calendar-staff{border:0;padding:0;margin:22px 0 18px;min-width:0}
+.shell .jb-calendar-staff legend{font-size:11px;font-weight:700;color:#607e8e;padding:0;margin-bottom:10px}
+.shell .jb-calendar-staff .jb-staff-filter{cursor:pointer;display:flex;align-items:center;gap:8px;min-height:37px;margin:0;padding:7px 0;font-weight:500;line-height:1.5}
+.shell .jb-staff-filter input[type=checkbox]{width:16px;height:16px;min-height:0;flex:0 0 16px;margin:0;padding:0;border-radius:3px;accent-color:var(--workspace-accent);cursor:pointer}
+.shell .jb-calendar-staff .jb-staff-filter.is-active{font-weight:650}
+.shell .jb-calendar-staff .jb-staff-filter.is-active:after{content:none}
+.shell .jb-calendar-staff .jb-staff-filter i{width:7px;height:7px;flex-basis:7px;border-radius:2px}
+.shell .jb-calendar-staff>p{font-size:10px;line-height:1.7;color:#7a919e;margin:8px 0 0}
+.shell .jb-plan-line{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:0 0 24px;padding:17px 20px;border:1px solid var(--accent-line);border-radius:9px;background:color-mix(in srgb,var(--workspace-accent) 5%,white);font-size:13px;line-height:1.6;color:#587585}
+.shell .jb-plan-line b{color:var(--accent-ink);font-size:13px;font-weight:750}
+.shell .jb-plan-line span{font-variant-numeric:tabular-nums}
+.shell .jb-plan-line a{margin-left:auto;font-size:12px;font-weight:600}
+.shell .staff-card .jb-hours-summary{font-size:12px;line-height:1.8;color:#6b8391;margin:9px 0 20px}
+.shell .staff-card .key-value{gap:18px;align-items:flex-start;font-size:13px}
+.shell .staff-card .key-value>b{max-width:62%;text-align:right;overflow-wrap:anywhere}
+@media(max-width:900px){.shell .jb-calendar-staff{margin:0}.shell .jb-calendar-side>.jb-mini{grid-row:span 4}.shell .jb-calendar-staff .jb-staff-filter{font-size:11px;min-height:32px;padding:5px 0}.shell .jb-calendar-staff legend{font-size:10px;margin-bottom:6px}}
+@media(max-width:480px){.shell .jb-plan-line{padding:15px;gap:6px 14px;font-size:12px}.shell .jb-plan-line a{margin-left:0;flex-basis:100%;margin-top:4px}.shell .staff-card .key-value{font-size:12px}.shell .jb-calendar-staff .jb-staff-filter{font-size:10px;gap:6px}.shell .jb-staff-filter input[type=checkbox]{width:15px;height:15px;flex-basis:15px}}
+
+.shell .sidebar .bottom .pill{display:inline-block;color:var(--accent-ink);background:color-mix(in srgb,var(--workspace-accent) 9%,white);border:1px solid var(--accent-line);font-size:10px;font-weight:600;padding:7px 10px;line-height:1.5;border-radius:6px}
+@media(max-width:600px){.shell .staff-card .key-value{display:flex;flex-direction:column;align-items:flex-start;gap:7px}.shell .staff-card .key-value>b{max-width:100%;text-align:left}.shell .staff-card .jb-hours-summary{margin-top:10px}}
+
+.sidebar .bottom .pill{color:var(--workspace-accent);background:color-mix(in srgb,var(--workspace-accent) 10%,white);font-weight:700}
