@@ -18,8 +18,8 @@ const row=(html,id)=>html.match(new RegExp('<tr data-mg-staff="'+id+'">([\\s\\S]
 test('staff table uses actual services, upcoming bookings, initials and host CRUD actions',()=>{
  const s=setup(),before=structuredClone(s.salon),html=s.module.pages.staff(),a=row(html,'a');
  assert(html.includes('Staff <span class="mg-count">3</span>'));assert(a.includes('ST</span>'));assert(a.includes('Haircut, Colour'));assert(a.includes('>2</span>'));
- for(const action of ['edit-staff','staff-calendar','delete-staff'])assert(a.includes(`data-action="${action}" data-id="a"`));
- assert(a.includes('href="#availability?staff=a"'));assert(!html.includes('<img'));assert(!html.includes('mailto:'));assert(!html.includes('tel:'));
+ for(const action of ['edit-staff','staff-hours','delete-staff'])assert(a.includes(`data-action="${action}" data-id="a"`));
+ assert(a.includes('popover="auto"'));assert(!a.includes('View calendar'));assert(!html.includes('<img'));assert(!html.includes('mailto:'));assert(!html.includes('tel:'));
  assert(html.includes('Not bookable'));assert.deepEqual(s.salon,before);assert.equal(s.guardCalls,1);
 });
 test('working-day chips reflect daily closure and the intersection of business and staff hours',()=>{

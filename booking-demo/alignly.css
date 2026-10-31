@@ -199,3 +199,37 @@ body:has(.shell) #modal-root .modal-head button{border:0;background:#eff4f0;colo
   .shell :is(.mg-heading h1,.page-heading h1,.ws h1){font-size:30px}.shell .ws-panel{padding:22px 18px}.shell .mg-toolbar{padding:15px 12px 20px}.shell .mg-footer{padding:15px 12px}.shell .mg-staff-scroll{overflow:auto}.shell .table-wrap:not(.mg-staff-scroll) tbody tr{border-color:var(--al-rule);border-radius:20px}
 }
 @media(prefers-reduced-motion:reduce){.shell :is(button,.btn){transition:none}.shell :is(button,.btn):active:not(:disabled){transform:none}}
+
+/* Stronger service colours, shared by day, week and month. */
+.shell .db-calendar-page .db-diary :is(.jb-grid-event,.dg-event,.mchip){background:var(--event-fill,#b7e7f1);color:var(--event-ink,#204b57);border:1px solid var(--event-edge,#76bfd0);opacity:1;box-shadow:none}
+.shell .db-calendar-page .db-diary :is(.jb-grid-event,.dg-event){border:0;border-radius:12px}
+.shell .db-calendar-page .db-diary :is(.jb-grid-event.completed,.dg-event.completed){background:var(--event-fill,#b7e7f1);opacity:1}
+.shell .db-calendar-page .db-diary :is(.jb-grid-event,.dg-event):hover{background:var(--event-fill,#b7e7f1);box-shadow:inset 0 0 0 2px var(--event-edge,#76bfd0);color:var(--event-ink,#204b57)}
+.shell .db-calendar-page .db-diary :is(.jb-grid-event,.dg-event) :is(strong,small){color:inherit}
+.shell .db-calendar-page .db-diary .mchip{border:0;border-radius:6px;padding:5px 6px}
+.shell .db-calendar-page .db-diary .jb-grid-event strong{font-weight:500}
+.shell .db-calendar-page .db-diary .jb-grid-event.no_show{text-decoration:line-through}
+
+/* Notification rows are rectangular list items, never pill buttons. */
+.shell .nf-page{max-width:1100px}
+.shell .nf-heading h1{font-size:36px;font-weight:400;letter-spacing:-1px;color:#27392d}
+.shell .nf-panel{border-radius:22px;border-color:#e1e9e3;box-shadow:none}
+.shell .nf-item,body:has(.shell) #modal-root .nf-dialog .nf-item{border-radius:0;text-align:left;padding:18px 20px;background:#fff;color:#34473b;transform:none;box-shadow:none;line-height:1.5;transition:background-color .12s}
+.shell .nf-item.is-unread,body:has(.shell) #modal-root .nf-dialog .nf-item.is-unread{background:#f2f8f3}
+.shell .nf-item:hover,body:has(.shell) #modal-root .nf-dialog .nf-item:hover{border-radius:0;background:#e8f2eb;color:#263d2c;transform:none;box-shadow:none}
+.shell .nf-item:focus-visible,body:has(.shell) #modal-root .nf-dialog .nf-item:focus-visible{outline:2px solid #4c8b5c;outline-offset:-3px;border-radius:0}
+.shell .nf-kind,body:has(.shell) #modal-root .nf-kind{width:34px;height:34px;background:#daf0df;color:#386b46;border-radius:10px;font-weight:400}
+.shell .nf-kind-cancelled,body:has(.shell) #modal-root .nf-kind-cancelled{background:#ffe2da;color:#984c38}
+.shell .nf-kind-rescheduled,body:has(.shell) #modal-root .nf-kind-rescheduled{background:#e2d9fb;color:#65508a}
+.shell .nf-item-top b,body:has(.shell) #modal-root .nf-item-top b{font-size:14px;font-weight:450}
+.shell .nf-client,body:has(.shell) #modal-root .nf-client{font-size:13px;color:#536d5b}
+.shell .nf-appointment-time,body:has(.shell) #modal-root .nf-appointment-time{color:#64746a;font-size:12px}
+.shell .nf-item time,body:has(.shell) #modal-root .nf-item time{color:#64746a;font-size:11px}
+.shell .nf-unread-dot,body:has(.shell) #modal-root .nf-unread-dot{background:#4b8e5b}
+.shell .workspace-header .nf-badge{background:#df705b;border:2px solid #fff;color:#fff;font-size:10px;font-weight:500;min-width:21px;height:21px}
+body:has(.shell) #modal-root .nf-dialog .nf-list{border:1px solid #e2ebe4;border-radius:14px;max-height:min(58dvh,540px);overflow:auto}
+body:has(.shell) #modal-root .nf-toolbar{padding-bottom:16px;align-items:center}
+body:has(.shell) #modal-root .nf-mark{background:#eff5f0;color:#446a4e;border:0;padding:10px 15px;font-weight:450}
+body:has(.shell) #modal-root .nf-view-all{color:#376b45;font-weight:450;padding:18px 2px 0}
+.nf-chevron{display:none}
+@media(max-width:800px){.shell .nf-heading h1{font-size:30px}.shell .nf-item,body:has(.shell) #modal-root .nf-dialog .nf-item{padding:16px 13px;gap:10px}.shell .nf-item-top b,body:has(.shell) #modal-root .nf-item-top b{font-size:13px}}

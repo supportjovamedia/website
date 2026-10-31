@@ -1,0 +1,11 @@
+/* Same red-dot/save alignment across settings and modal editors. */
+.df-save-bar,.se-save-bar{display:flex;align-items:center;justify-content:flex-end;gap:16px;min-height:43px;padding-top:20px;margin-top:23px;border-top:1px solid #e3dcd5;clear:both}
+.df-save-bar>.df-save-status,.se-save-bar>.se-save-status{margin-right:auto;margin-left:0;flex:0 1 auto;min-width:0;min-height:42px}
+.df-save-status{display:inline-flex;align-items:center;gap:8px;font-size:12px;line-height:1.5;color:#91594f;visibility:hidden}
+.df-save-status.is-dirty{visibility:visible}
+.df-save-status .se-save-dot{background:#c45c4e;width:7px;height:7px;flex:none;border-radius:50%}
+.df-save-bar>button,.df-save-bar>.btn{flex:none;margin:0;min-height:42px}
+.se-save-bar .se-save-status{color:#807167}
+.se-save-bar .se-save-status.is-dirty{color:#91594f}
+.se-save-bar .se-save-status.is-dirty .se-save-dot{background:#c45c4e}
+@media(max-width:600px){.df-save-bar,.se-save-bar{gap:10px;padding-top:17px}.df-save-status{font-size:11px;gap:6px}.df-save-bar>button,.df-save-bar>.btn{max-width:65%;font-size:12px;padding-left:15px;padding-right:15px}.df-save-bar>.df-save-status{font-size:10px}}

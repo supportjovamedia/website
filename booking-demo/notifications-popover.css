@@ -1,0 +1,46 @@
+/* Anchored customer activity. Native popover has no modal scrim. */
+.nf-popover,.nf-popover *{box-sizing:border-box}
+.nf-popover{position:fixed;inset:auto;margin:0;padding:0;width:432px;max-width:calc(100vw - 24px);border:1px solid #e2d8cf;border-radius:18px;background:#fff;color:#3e3027;box-shadow:0 14px 45px #36271d24;font-family:Outfit,system-ui,sans-serif;overflow:hidden}
+.nf-popover:not(:popover-open){display:none}
+.nf-popover:popover-open{display:flex;flex-direction:column}
+.nf-popover::backdrop{background:transparent;pointer-events:none}
+.nf-popover-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:21px 22px 19px;background:#f3ece5;border-bottom:1px solid #e9dfd6;flex:none}
+.nf-popover-header h2{margin:0 0 5px;color:#3d2d23;font-size:23px;line-height:1.2;font-weight:450;letter-spacing:-.5px}
+.nf-popover-header p{margin:0;font-size:12px;line-height:1.5;color:#8a7462}
+.nf-popover .nf-popover-close{display:grid;place-items:center;width:28px;height:28px;min-height:28px;padding:0;border:0;border-radius:50%;background:#e9dfd5;color:#705746;font-family:inherit;font-size:19px;font-weight:400;line-height:1;box-shadow:none}
+.nf-popover .nf-popover-close:hover{background:#dfcfc0;color:#4b3525}
+.nf-popover .nf-dialog{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.nf-popover .nf-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;padding:13px 20px 11px;border-bottom:1px solid #eee5dc;flex:none}
+.nf-popover .nf-toolbar p{margin:0;color:#8c7664;font-size:11px}
+.nf-popover .nf-mark{border:0;border-radius:8px;background:transparent;padding:5px 0;min-height:25px;color:#735744;font:inherit;font-size:11px;font-weight:400}
+.nf-popover .nf-mark:hover{color:#332319;background:transparent;text-decoration:underline;text-underline-offset:3px}
+.nf-popover .nf-mark:disabled{opacity:.45;cursor:default;text-decoration:none}
+.nf-popover-scroll{overflow-y:auto;min-height:0;max-height:min(450px,calc(100dvh - 250px));overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d5c6b8 transparent}
+.nf-popover .nf-list{border:0;border-radius:0;list-style:none;padding:0;margin:0;overflow:visible}
+.nf-popover .nf-list>li{border-bottom:1px solid #efe7df;margin:0}
+.nf-popover .nf-list>li:last-child{border-bottom:0}
+.nf-popover .nf-item{display:flex;align-items:flex-start;gap:11px;width:100%;max-width:100%;padding:18px 20px;border:0;border-radius:0;background:#fff;text-align:left;white-space:normal;font:inherit;font-weight:400;color:#4f3a2c;box-shadow:none;transform:none;transition:background-color .12s}
+.nf-popover .nf-item.is-unread{background:#fffdfb}
+.nf-popover .nf-item:hover{background:#f7f0e9;color:#4f3a2c;border-radius:0;box-shadow:none;transform:none}
+.nf-popover .nf-item:active{background:#f0e5da;transform:none}
+.nf-popover .nf-item:focus-visible{outline:2px solid #a58366;outline-offset:-3px;background:#f7f0e9;border-radius:0}
+.nf-popover .nf-kind{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:#e7f0e9;color:#6f947a;font-size:20px;line-height:1}
+.nf-popover .nf-kind-cancelled{background:#f4e8e4;color:#af7166}
+.nf-popover .nf-kind-rescheduled{background:#f2eade;color:#b59562}
+.nf-popover .nf-item-content{display:block;flex:1;min-width:0}
+.nf-popover .nf-item-top{display:flex;align-items:center;gap:7px;margin:0 0 5px}
+.nf-popover .nf-item-top>b{font-size:11px;font-weight:450;line-height:1.4;color:#876b56}
+.nf-popover .nf-unread-dot{width:5px;height:5px;flex:none;border-radius:50%;background:#ac8568}
+.nf-popover .nf-client{display:block;font-size:12px;line-height:1.65;color:#6c5544;overflow-wrap:anywhere}
+.nf-popover .nf-client strong{font-weight:500;color:#4d3526}
+.nf-popover .nf-appointment-time{display:block;font-size:10px;line-height:1.6;margin-top:5px;color:#8d7763;overflow-wrap:anywhere}
+.nf-popover .nf-event-age{flex:none;display:block;margin:2px 0 0;font-size:9px;line-height:1.4;color:#aa9381;text-align:right;max-width:60px;white-space:normal}
+.nf-popover .nf-view-all{display:block;flex:none;margin:0;padding:15px 20px;border-top:1px solid #e8ded4;background:#fff;text-align:center;color:#806047;font-size:11px;font-weight:450;text-decoration:none}
+.nf-popover .nf-view-all:hover{background:#f8f3ee;color:#4e3726}
+.nf-popover .nf-history-note{padding:8px 15px;margin:0;border-top:1px solid #eee5dc;font-size:10px!important;color:#967f6a;flex:none}
+.nf-popover .nf-empty{padding:34px 22px}
+.nf-popover .nf-empty h2{font-size:17px;font-weight:400;color:#715745}
+.nf-popover .nf-empty p{font-size:12px!important;color:#8b7665}
+.nf-popover :is(button,a):focus-visible{outline:2px solid #a58366;outline-offset:-3px}
+@media(max-width:600px){.nf-popover{border-radius:16px}.nf-popover-header{padding:19px 18px 17px}.nf-popover-header h2{font-size:22px}.nf-popover .nf-toolbar{padding:11px 17px}.nf-popover .nf-item{padding:16px 16px;gap:9px}.nf-popover .nf-client{font-size:12px}.nf-popover .nf-event-age{font-size:9px;max-width:50px}.nf-popover-scroll{max-height:calc(100dvh - 240px)}}
+@media(prefers-reduced-motion:reduce){.nf-popover .nf-item{transition:none}}

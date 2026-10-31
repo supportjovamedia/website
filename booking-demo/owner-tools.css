@@ -18,3 +18,67 @@
 .ot-chart.ot-chart-fit{width:100%;min-width:0;grid-template-columns:repeat(var(--ot-days),minmax(0,1fr));gap:4px}.ot-chart-fit .ot-chart-day{min-width:0}.ot-chart-fit .ot-bar-date{white-space:nowrap}
 @media(max-width:600px){.ot-chart.ot-chart-fit{gap:3px}.ot-chart-fit .ot-bar-date:not(.ot-label-key),.ot-chart-fit .ot-bar-value{visibility:hidden}}
 @media(max-width:600px){.ot-heading h1{font-size:26px}.ot-filters{padding:16px;gap:12px}.ot-filters .field{min-width:0;flex-basis:100%}.ot-filters button{width:100%}.ot-custom-dates{flex-basis:100%;min-width:0}.ot-custom-dates .field{flex-basis:50%;min-width:0}.ot-metrics{gap:10px}.ot-metric{padding:16px 13px}.ot-metric strong{font-size:25px}.ot-metric>span{font-size:11px}.ot-metric small{font-size:9px}.ot-statuses{gap:13px 20px}.ot-statuses>div{font-size:11px}.ot-panel{padding:18px}.ot-form-grid{grid-template-columns:1fr}.ot-date-list li{font-size:11px;gap:8px}}
+
+/* Warm Insights direction. Every plotted point and rank comes from the selected diary records. */
+.shell .ot-insights{max-width:1440px;color:#2b221e}
+.shell .ot-insights .ot-heading h1{font-size:40px;font-weight:400;color:#2b221e;letter-spacing:-1.2px;margin:0 0 9px}
+.shell .ot-insights .ot-heading>div>p{color:#786c65;font-size:13px;line-height:1.7}
+.shell .ot-insights .ot-filters{padding:20px 22px;gap:18px;border:0;border-radius:22px;background:#fff;align-items:flex-end}
+.shell .ot-insights .ot-filters .field{font-weight:400;color:#76655b;font-size:12px}
+.shell .ot-insights .ot-filters :is(input,select){border:1px solid #e9e1da;border-radius:12px;background:#f8f5f1;padding:11px 13px;min-height:41px;font:inherit;font-size:13px;color:#49362c}
+.shell .ot-insights .ot-filters .primary{border-radius:100px;background:#934b34;color:#fff;border-color:transparent;font-weight:450;min-height:42px;padding:11px 22px}
+.shell .ot-insights .ot-range{color:#796c64;font-size:11px;margin:18px 2px}
+.shell .ot-insights .ot-metrics{gap:15px}
+.shell .ot-insights .ot-metric{background:#fff;border:0;border-radius:23px;padding:24px 25px;box-shadow:none;min-height:154px}
+.shell .ot-insights .ot-metric>span{font-size:13px;font-weight:400;color:#806f65}
+.shell .ot-insights .ot-metric strong{font-size:42px;font-weight:400;line-height:1.15;color:#33251f;letter-spacing:-1.2px;margin:15px 0 10px;font-variant-numeric:tabular-nums}
+.shell .ot-insights .ot-metric small{font-size:10px;font-weight:400;color:#7f7168;line-height:1.6}
+.shell .ot-insights .ot-metric:nth-child(2){background:#934b34}
+.shell .ot-insights .ot-metric:nth-child(2) :is(span,strong){color:#fff}
+.shell .ot-insights .ot-metric:nth-child(2) small{color:#f2e6df}
+.shell .ot-insights .ot-metric:nth-child(3){background:#ead5d0}
+.shell .ot-insights .ot-accounting{font-size:11px;color:#77665c;line-height:1.7;margin:17px 2px 22px;max-width:920px}
+.shell .ot-insights .ot-statuses{background:transparent;border:0;padding:0 2px;margin:0 0 25px;gap:20px 28px;flex-wrap:wrap}
+.shell .ot-insights .ot-statuses>div{font-size:12px;color:#7b685d;gap:8px}
+.shell .ot-insights .ot-statuses strong{color:#49362c;font-weight:500}
+.shell .ot-insights .ot-status-dot{width:7px;height:7px}
+.shell .ot-insights .ot-status-confirmed{background:#b78568}
+.shell .ot-insights .ot-status-completed{background:#7c8d72}
+.shell .ot-insights .ot-status-cancelled{background:#b65d55}
+.shell .ot-insights .ot-status-no-show{background:#a7968c}
+.shell .ot-insights .ot-columns{grid-template-columns:minmax(0,1.6fr) minmax(290px,1fr);gap:21px;align-items:stretch}
+.shell .ot-insights .ot-panel{background:#fff;border:0;border-radius:25px;padding:27px 25px 22px;box-shadow:none;min-width:0}
+.shell .ot-insights .ot-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:24px}
+.shell .ot-insights .ot-panel h2{font-size:22px;letter-spacing:-.6px;font-weight:400;color:#38271f;margin:0 0 7px}
+.shell .ot-insights .ot-panel-heading p{font-size:11px!important;color:#89786c;line-height:1.6;margin:0}
+.ot-chart-key{display:inline-flex;align-items:center;gap:7px;flex:none;color:#846b5b;font-size:10px}
+.ot-chart-key i{width:15px;height:3px;background:#934b34;border-radius:3px}
+.ot-volume-figure{margin:0;min-width:0}
+.ot-line-chart{display:block;width:100%;min-width:var(--ot-chart-min);height:auto;overflow:visible;font-family:inherit}
+.ot-chart-grid line{stroke:#eee7e0;stroke-width:1}
+.ot-chart-grid text,.ot-chart-x-label{fill:#9b8778;font-family:inherit;font-size:13px;font-weight:400}
+.ot-chart-area{fill:#ead5d0;opacity:.55}
+.ot-chart-line{fill:none;stroke:#934b34;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.ot-chart-point{fill:#fff;stroke:#934b34;stroke-width:1.8;vector-effect:non-scaling-stroke}
+.ot-chart-point:focus{outline:none;fill:#934b34;stroke:#5b2b1c;stroke-width:3}
+.ot-volume-figure figcaption{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-top:1px solid #f0e8e1;padding-top:17px;margin-top:14px;color:#8b7768;font-size:11px;line-height:1.6}
+.ot-volume-figure figcaption b{font-weight:450;color:#60412f;margin-left:5px;font-variant-numeric:tabular-nums}
+.shell .ot-insights .ot-service-ranking{display:grid;gap:19px;margin:0;padding:0}
+.shell .ot-insights .ot-service-ranking li{display:block;padding:0;border:0}
+.ot-service-heading{display:flex;align-items:center;gap:11px;min-width:0}
+.ot-service-number{flex:none;display:grid;place-items:center;width:29px;height:29px;border-radius:10px;background:#f4ede7;color:#ae8b72;font-size:11px;font-weight:450}
+.ot-service-heading>div{flex:1;min-width:0}
+.shell .ot-insights .ot-service-heading b{display:block;font-size:13px;font-weight:450;line-height:1.4;color:#573e2e;overflow-wrap:anywhere}
+.shell .ot-insights .ot-service-heading small{font-size:10px;color:#9d8472;line-height:1.5;margin-top:4px}
+.shell .ot-insights .ot-service-heading strong{font-size:13px;font-weight:450;color:#6d4934;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ot-service-track{display:block;height:5px;border-radius:4px;background:#f5eee8;margin:11px 0 0 40px;overflow:hidden}
+.ot-service-track i{display:block;height:100%;background:#c39780;border-radius:4px}
+.ot-service-ranking li:nth-child(2) .ot-service-track i{background:#d5afa0}
+.ot-service-ranking li:nth-child(3) .ot-service-track i{background:#b39178}
+.ot-service-ranking li:nth-child(4) .ot-service-track i{background:#d8bdb0}
+.ot-service-ranking li:nth-child(5) .ot-service-track i{background:#ad8c7a}
+.shell .ot-insights .ot-empty{color:#8c7869;min-height:215px}
+.shell .ot-insights .ot-empty h3{font-size:18px;font-weight:400;color:#624632}
+.shell .ot-insights .ot-empty p{font-size:12px;color:#8c7869}
+@media(max-width:1150px){.shell .ot-insights .ot-columns{grid-template-columns:minmax(0,1fr)}.shell .ot-insights .ot-service-ranking{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;row-gap:22px}.shell .ot-insights .ot-metric strong{font-size:37px}}
+@media(max-width:600px){.shell .ot-insights .ot-heading h1{font-size:32px}.shell .ot-insights .ot-filters{padding:18px;gap:13px}.shell .ot-insights .ot-filters button{width:100%}.shell .ot-insights .ot-metrics{gap:11px}.shell .ot-insights .ot-metric{padding:20px 17px;border-radius:21px;min-height:149px}.shell .ot-insights .ot-metric strong{font-size:31px;letter-spacing:-.9px;margin-top:14px}.shell .ot-insights .ot-metric>span{font-size:12px}.shell .ot-insights .ot-metric small{font-size:10px}.shell .ot-insights .ot-panel{padding:23px 18px 20px;border-radius:22px}.shell .ot-insights .ot-panel h2{font-size:21px}.shell .ot-insights .ot-panel-heading{align-items:flex-start}.ot-chart-key{margin-top:7px;font-size:9px}.shell .ot-insights .ot-service-ranking{grid-template-columns:1fr}.ot-volume-figure figcaption{display:grid;gap:8px}.shell .ot-insights .ot-statuses{gap:13px 20px}.shell .ot-insights .ot-statuses>div{font-size:11px}}
