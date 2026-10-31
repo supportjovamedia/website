@@ -36,7 +36,8 @@
     return raw === 'standard' ? {name: 'Standard', staffLimit: 5} : raw === 'premium' ?
       {name: 'Premium', staffLimit: 10} : {name: 'Essential', staffLimit: 1};
   }
-  const api = {day, normalize, hoursFor, plan};
+  const insightsAllowed = salon => ['Standard','Premium'].includes(plan(salon).name);
+  const api = {day, normalize, hoursFor, plan, insightsAllowed};
   if (typeof window !== 'undefined') window.JovaSchedule = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();

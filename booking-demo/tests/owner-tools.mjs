@@ -4,9 +4,10 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const source=await readFile(new URL('../owner-tools.js',import.meta.url),'utf8');
+const schedulingSource=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plus=(key,days)=>{const d=new Date(key+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);};
-const seed=()=>({id:'salon-1',staff:[{id:'owner',name:'Sam',active:true},{id:'other',name:'Jordan',active:true}],services:[{id:'brows',name:'Brow <care>',price:40,duration:30,staffIds:['owner']}],customers:[{id:'c1',name:'QA Client',email:'qa@example.com'}],bookings:[
+const seed=()=>({id:'salon-1',entitlements:{plan:'standard'},staff:[{id:'owner',name:'Sam',active:true},{id:'other',name:'Jordan',active:true}],services:[{id:'brows',name:'Brow <care>',price:40,duration:30,staffIds:['owner']}],customers:[{id:'c1',name:'QA Client',email:'qa@example.com'}],bookings:[
  {id:'b1',date:'2026-10-05',time:'10:00',staffId:'owner',customerId:'c1',serviceId:'brows',serviceName:'Brow <care>',price:40,duration:30,status:'confirmed'},
  {id:'b2',date:'2026-10-06',time:'10:00',staffId:'owner',customerId:'c1',serviceId:'brows',serviceName:'Brow <care>',price:60,duration:60,status:'completed'},
  {id:'b3',date:'2026-10-07',time:'10:00',staffId:'other',customerId:'c2',serviceId:'brows',serviceName:'Brow <care>',price:900,duration:120,status:'cancelled'},
@@ -21,7 +22,7 @@ function form(values={}) {
 function harness(overrides={}) {
  const state=seed(),seen={modals:[],toasts:[],errors:[],requests:[],renders:0,closed:0};
  const api={salon:()=>state,render:()=>seen.renders++,esc:escape,money:value=>'£'+Number(value).toFixed(2),today:()=>'2026-10-30',addDays:plus,modal:(title,html)=>seen.modals.push({title,html}),closeModal:()=>seen.closed++,toast:text=>seen.toasts.push(text),error:(form,text)=>{form.lastError=text;seen.errors.push(text);},available:()=>['09:00','10:00'],isLive:()=>false,seriesSupported:()=>true,createSeries:async request=>{seen.requests.push(request);return {ok:true,bookings:request.dates.map(date=>({date}))};},...overrides};
- const context=vm.createContext({window:{},FormData:FakeFormData,Intl,Date,console});vm.runInContext(source,context);
+ const context=vm.createContext({window:{},FormData:FakeFormData,Intl,Date,console});vm.runInContext(schedulingSource,context);vm.runInContext(source,context);
  const tools=context.window.JovaOwnerTools.create(api);return {tools,state,seen,api};
 }
 function seriesForm(values={}) {return form({serviceId:'brows',staffId:'owner',startDate:'2026-11-03',time:'10:00',count:'3',intervalWeeks:'2',name:'QA Client',email:'qa@example.com',phone:'',notes:'Private note',customerId:'c1',...values});}

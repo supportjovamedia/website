@@ -22,6 +22,9 @@
   const eligible=service=>activeStaff().filter(member=>(service?.staffIds||[]).includes(member.id));
   const services=()=>salon().services.filter(service=>eligible(service).length);
   const supported=()=>typeof api.createSeries==='function'&&(!api.isLive?.(salon())||(typeof api.seriesSupported==='function'&&api.seriesSupported()===true));
+  const insightsAllowed=()=>window.JovaSchedule?.insightsAllowed?.(salon())===true;
+  let insightsSalonId='';
+  function resetInsights(){filter={preset:'month',...currentMonth(),staff:'all'};insightsSalonId=salon().id;}
   function insightData() {
    const s=salon(),rows=s.bookings.filter(b=>b.date>=filter.start&&b.date<=filter.end&&(filter.staff==='all'||b.staffId===filter.staff));
    const counts={confirmed:0,completed:0,cancelled:0,'no-show':0},top=new Map(),daily=new Map(),clients=new Set();
@@ -49,6 +52,8 @@
    return `<ol class="ot-service-list ot-service-ranking">${data.services.map((service,index)=>`<li data-service-count="${service.count}"><div class="ot-service-heading"><span class="ot-service-number">${index+1}</span><div><b>${esc(service.name)}</b><small>${service.count} booking${service.count===1?'':'s'}</small></div><strong>${money(service.value)}</strong></div><span class="ot-service-track" aria-hidden="true"><i style="width:${(service.count/highest*100).toFixed(2)}%"></i></span></li>`).join('')}</ol>`;
   }
   function insights() {
+   if(!insightsAllowed()){resetInsights();return '<section class="card" data-insights-upgrade><h1>Insights is available on Standard and Premium</h1><p>Essential includes your booking calendar and basic Dashboard statistics. Upgrade to see booking trends and top services in Insights.</p><div class="row"><a class="btn primary" href="#billing">Compare plans</a><a class="btn" href="#dashboard">Open Dashboard</a></div></section>';}
+   if(insightsSalonId!==salon().id)resetInsights();
    if(filter.staff!=='all'&&!salon().staff.some(m=>m.id===filter.staff))filter.staff='all';
    const data=insightData(),formatHours=value=>new Intl.NumberFormat('en-GB',{maximumFractionDigits:1}).format(value);
    return `<div class="ot-insights"><div class="ot-heading"><div><h1>Insights</h1><p>See when clients book and which services they choose.</p></div></div>
@@ -116,12 +121,15 @@
   }
   function submit(type,form) {
    if(type==='owner-insights'){
+    if(!insightsAllowed()){resetInsights();error(form,'Insights is included in Standard and Premium.');render();return true;}
+    if(insightsSalonId!==salon().id)resetInsights();
     try {const data=new FormData(form),preset=String(data.get('period')||'month'),range=preset==='custom'?{start:String(data.get('start')||''),end:String(data.get('end')||'')}:periodRange(preset);if(!validDate(range.start)||!validDate(range.end)||range.start>range.end||dateDifference(range.start,range.end)>365)throw Error('Choose a valid date range of up to one year.');const staff=String(data.get('staff')||'all');if(staff!=='all'&&!salon().staff.some(m=>m.id===staff))throw Error('Choose a team member from this salon.');filter={preset:['month','week','last30','custom'].includes(preset)?preset:'month',...range,staff};render();}catch(caught){error(form,caught.message);}return true;
    }
    if(type==='owner-series') {try {if(pending)return true;if(!supported())throw Error('Multiple bookings are not enabled for this salon yet.');const request=readSeries(form);error(form,'');showPreview(form,request,checkDates(request));}catch(caught){preview=null;error(form,caught.message);}return true;}
    return false;
   }
   function change(el) {
+   if(el.matches('[data-owner-period]')&&!insightsAllowed()){resetInsights();render();return true;}
    if(el.matches('[data-owner-period]')){const form=el.closest('form'),custom=el.value==='custom';form.querySelector('[data-owner-custom]').hidden=!custom;if(!custom){const range=periodRange(el.value);form.elements.start.value=range.start;form.elements.end.value=range.end;}return true;}
    const form=el.closest('[data-form="owner-series"]');if(!form)return false;
    preview=null;form.querySelector('[data-owner-series-preview]').innerHTML='<p class="ot-help">Check the dates again after making changes.</p>';error(form,'');

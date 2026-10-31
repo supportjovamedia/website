@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",
-    "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check scheduling-core.js && node --check reschedule-core.js && node --check owner-tools.js && node --check notifications.js && node --check subscriptions.js && node --check management.js && node --check dashboard-core.js && node --check enhance.js && node --check demo-data.js && node --check booking-palette.js && node --check staff-editor.js && node --check service-management.js && node --check dirty-forms.js && node --check email-delivery.js && node --check workspace-themes.js && node --check sidebar-behaviour.js",
+    "check": "node --check app.js && node --check accounts.js && node --check calendar-workspace.js && node --check workspace.js && node --check scheduling-core.js && node --check reschedule-core.js && node --check owner-tools.js && node --check notifications.js && node --check subscriptions.js && node --check management.js && node --check dashboard-core.js && node --check enhance.js && node --check demo-data.js && node --check booking-palette.js && node --check staff-editor.js && node --check service-management.js && node --check dirty-forms.js && node --check email-delivery.js && node --check workspace-themes.js && node --check sidebar-behaviour.js && node --check business-website.js",
     "test:workflows": "node tests/owner-experience-browser.mjs",
     "test:accounts": "node --test tests/demo-login.mjs",
-    "test:owner": "node --test tests/demo-login.mjs tests/scheduling-core.mjs tests/reschedule-core.mjs tests/owner-tools.mjs tests/notifications.mjs tests/subscriptions.mjs tests/dashboard-core.mjs tests/management.mjs tests/demo-data.mjs tests/staff-editor.mjs tests/service-management.mjs tests/insights-chart.mjs tests/workspace-themes.mjs tests/data-isolation-audit.mjs tests/category-colours.mjs",
+    "test:owner": "node --test tests/demo-login.mjs tests/scheduling-core.mjs tests/reschedule-core.mjs tests/owner-tools.mjs tests/notifications.mjs tests/subscriptions.mjs tests/dashboard-core.mjs tests/management.mjs tests/demo-data.mjs tests/staff-editor.mjs tests/service-management.mjs tests/insights-chart.mjs tests/workspace-themes.mjs tests/data-isolation-audit.mjs tests/category-colours.mjs tests/essential-package.mjs tests/business-website.mjs tests/website-images.mjs",
     "test:database": "node --test tests/owner-experience-sql.mjs tests/subscription-requests-sql.mjs",
     "test:owner:browser": "node tests/owner-experience-browser.mjs",
     "test:dashboard:browser": "node tests/dashboard-browser.mjs",
@@ -22,6 +22,9 @@
     "test:personalise:browser": "node tests/personalisation-controls-browser.mjs",
     "test:themes:browser": "node tests/workspace-themes-browser.mjs",
     "test:category-colours": "node --test tests/category-colours.mjs",
-    "test:category-colours:browser": "node tests/category-colours-browser.mjs"
+    "test:category-colours:browser": "node tests/category-colours-browser.mjs",
+    "test:website": "node --test tests/business-website.mjs tests/website-images.mjs tests/website-images-sql.mjs",
+    "test:website:browser": "node tests/business-website-browser.mjs",
+    "test:essential:browser": "node tests/essential-package-browser.mjs"
   }
 }
