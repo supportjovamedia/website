@@ -82,6 +82,8 @@ async function setDay(form,day,closed,start='09:00',end='17:00'){
  await form.locator(`[name="day_${day}_closed"]`).setChecked(closed);
  if(!closed){await form.locator(`[name="day_${day}_start"]`).fill(start);await form.locator(`[name="day_${day}_end"]`).fill(end);}
 }
+async function openStaffActions(id){const menu=page.locator(`tr[data-mg-staff="${id}"] details.mg-actions`);if(await menu.getAttribute('open')===null)await menu.locator('summary').click();return menu;}
+async function openSeries(){const menu=page.locator('.db-more-actions');if(await menu.count()&&await menu.getAttribute('open')===null)await menu.locator('summary').click();await page.locator('[data-action="owner-series"]').first().click();}
 async function seriesDetails(start,count=3){
  const form=page.locator('[data-form="owner-series"]');await form.locator('[name="name"]').fill('QA Series Client');await form.locator('[name="email"]').fill('qa-series@example.com');
  await form.locator('[name="startDate"]').fill(start);await form.locator('[name="startDate"]').dispatchEvent('change');await form.locator('[name="time"]').selectOption('10:00');
@@ -113,24 +115,25 @@ function mockedBackend(s,{capabilities=true,rejectTables=[]}={}){
 }
 async function withMockBackend(settings,task){
  const previous=page,mock=mockedBackend(selected(baseline),settings),ctx=await newContext(mock.handler);page=await attach(ctx);
- try{if(settings?.clock)await page.clock.install({time:new Date()});await login('qa-owner@example.test','QAOnly2026');await page.waitForURL(/#calendar$/);await task(mock);}
+ try{if(settings?.clock)await page.clock.install({time:new Date()});await login('qa-owner@example.test','QAOnly2026');await page.waitForURL(/#dashboard$/);await task(mock);}
  finally{await ctx.close();page=previous;}
 }
 
 try{
  await mkdir(output,{recursive:true});await start();report.sourceHashesBefore=await sourceHashes();const {chromium,expect}=playwright();
  let launchError;for(const choice of process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?[{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}]:[{}, {channel:'chrome'}, {channel:'msedge'}]){try{browser=await chromium.launch({headless:true,...choice});report.browser=choice.channel||choice.executablePath||'playwright-chromium';break;}catch(error){launchError=error;}}if(!browser)throw launchError;
- context=await newContext();page=await attach(context);await login();await page.waitForURL(/#calendar$/);baseline=await storage();
+ context=await newContext();page=await attach(context);await login();await page.waitForURL(/#dashboard$/);baseline=await storage();
  assert(await page.evaluate(()=>!!window.JOVA_SUPABASE),'Production config must remain loaded');assert.equal(report.blockedRequests.length,0,'Fresh demo login should not need remote API calls');report.demoLogin='Fresh demo login succeeds with real configuration';
 
  await run('Stale demo password repairs without losing records',async()=>{
   const previous=await storage(),accountId=previous.accounts[0].id;
+  await go('home');
   await page.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));const dir=JovaAccounts.create(()=>state,()=>{});dir.seed({salonId:state.active,email:'demo@jovamedia.com',password:'OldDemo2025',owner:'Sam Taylor'});state.salons.find(s=>s.id===state.active).customers.push({id:'qa-preserved',name:'Preserved Client',email:'preserved@example.com'});localStorage.setItem(key,JSON.stringify(state));sessionStorage.removeItem('jovabook-owner');},KEY);
-  await page.reload();await login();await expect(page).toHaveURL(/#calendar$/);const after=await storage();assert.equal(after.accounts[0].id,accountId);assert(selected(after).customers.some(c=>c.id==='qa-preserved'));assert.equal(report.blockedRequests.length,0);
+  await page.reload();await login();await expect(page).toHaveURL(/#dashboard$/);const after=await storage();assert.equal(after.accounts[0].id,accountId);assert(selected(after).customers.some(c=>c.id==='qa-preserved'));assert.equal(report.blockedRequests.length,0);
  });
  await run('Owner navigation and real editor controls',async()=>{
   const nav=page.getByRole('navigation',{name:'Workspace'});
-  await expect(nav.locator('.jb-nav-section a')).toHaveText(['Calendar','Appointments','Clients','Services','Staff','Personalise','Insights']);
+  await expect(nav.locator('.jb-nav-section a')).toHaveText(['Dashboard','Calendar','Appointments','Clients','Services','Staff','Personalise','Insights']);
   const settings=nav.locator('details');await expect(settings).not.toHaveAttribute('open','');await settings.locator('summary').click();
   for(const name of ['Working hours','Business details','Email reminders','Payments','Subscription'])await expect(settings.getByRole('link',{name,exact:true})).toBeVisible();
   for(const route of ['calendar','appointments','customers','services','staff','scheduling','insights']){await go(route);await expect(page.locator('h1')).toBeVisible();}
@@ -155,11 +158,11 @@ try{
   const date=future(2);await fixture(s=>{teamFixture(s,3);const template=s.bookings[0];s.bookings=s.staff.map((m,i)=>({...clone(template),id:'qa-cal-'+i,date,time:(10+i)+':00',staffId:m.id,name:'Calendar Client '+i}));});
   await page.locator('[data-change="calendar-date"]').fill(date);await page.locator('[data-change="calendar-date"]').dispatchEvent('change');await page.locator('[data-change="calendar-staff"][value="all"]').check();
   const staff=(await salon()).staff;await page.locator(`[data-change="calendar-staff"][value="${staff[0].id}"]`).uncheck();
-  await expect(page.locator('[data-action="booking-details"][data-id="qa-cal-0"]')).toHaveCount(0);await expect(page.locator('[data-action="booking-details"][data-id="qa-cal-1"]')).toBeVisible();await expect(page.locator('[data-action="booking-details"][data-id="qa-cal-2"]')).toBeVisible();
-  await page.locator('[data-action="cal-view"][data-value="day"]').click();await expect(page.locator('[data-action="booking-details"][data-id="qa-cal-0"]')).toHaveCount(0);await expect(page.locator('[data-action="booking-details"][data-id="qa-cal-1"]')).toBeVisible();
+  await expect(page.locator('.db-diary [data-action="booking-details"][data-id="qa-cal-0"]')).toHaveCount(0);await expect(page.locator('.db-diary [data-action="booking-details"][data-id="qa-cal-1"]')).toBeVisible();await expect(page.locator('.db-diary [data-action="booking-details"][data-id="qa-cal-2"]')).toBeVisible();
+  await page.locator('[data-action="cal-view"][data-value="day"]').click();await expect(page.locator('.db-diary [data-action="booking-details"][data-id="qa-cal-0"]')).toHaveCount(0);await expect(page.locator('.db-diary [data-action="booking-details"][data-id="qa-cal-1"]')).toBeVisible();
   await page.locator('[data-action="cal-view"][data-value="month"]').click();await expect(page.locator(`.mday[data-date="${date}"]`)).toHaveAttribute('aria-label',/2 appointments/);await shot('calendar-month-selected-staff');
-  await page.locator('[data-change="calendar-staff"][value="all"]').check();await page.locator('[data-change="calendar-staff"][value="all"]').uncheck();await expect(page.locator('.jb-calendar-main .empty')).toContainText('Select one or more staff members');
-  await page.locator('[data-change="calendar-staff"][value="all"]').check();await page.locator('[data-action="cal-view"][data-value="week"]').click();await expect(page.locator('[data-action="booking-details"][data-id="qa-cal-0"]')).toBeVisible();
+  await page.locator('[data-change="calendar-staff"][value="all"]').check();await page.locator('[data-change="calendar-staff"][value="all"]').uncheck();await expect(page.locator('.jb-calendar-main .empty')).toContainText('No staff selected');
+  await page.locator('[data-change="calendar-staff"][value="all"]').check();await page.locator('[data-action="cal-view"][data-value="week"]').click();await expect(page.locator('.db-diary [data-action="booking-details"][data-id="qa-cal-0"]')).toBeVisible();
   await page.locator(`[data-action="calendar-slot"][data-date="${date}"][data-time="14:00"]`).first().click();await expect(page.locator('[data-form="manual-booking"] [name="date"]')).toHaveValue(date);await expect(page.locator('[data-form="manual-booking"] [name="time"]')).toHaveValue('14:00');await closeModal();
  });
  await run('Essential Standard and Premium staff caps',async()=>{
@@ -168,6 +171,9 @@ try{
   for(const [plan,limit] of [['Standard',5],['Premium',10]]){
    await fixture(s=>teamFixture(s,limit-1,plan),'staff');await page.locator('[data-action="add-staff"]').click();const form=page.locator('[data-form="staff"]');await form.locator('[name="name"]').fill('QA Last '+plan);await form.locator('button.primary').click();assert.equal((await salon()).staff.length,limit);
    const capped=page.locator('[data-action="add-staff"]');if(await capped.isEnabled())await capped.click();await expect(page.locator('[data-form="staff"]')).toHaveCount(0);assert.equal((await salon()).staff.length,limit);
+   const added=(await salon()).staff.find(member=>member.name==='QA Last '+plan);let actions=await openStaffActions(added.id);await actions.locator('[data-action="edit-staff"]').click();const editor=page.locator('[data-form="staff"]');await editor.locator('[name="name"]').fill('QA Updated '+plan);await editor.locator('button.primary').click();assert.equal((await salon()).staff.find(member=>member.id===added.id).name,'QA Updated '+plan);
+   actions=await openStaffActions(added.id);await actions.locator('[data-action="staff-calendar"]').click();await expect(page).toHaveURL(/#calendar$/);await expect(page.locator(`[data-change="calendar-staff"][value="${added.id}"]`)).toBeChecked();await expect(page.locator('[data-change="calendar-staff"][value="all"]')).not.toBeChecked();
+   await go('staff');actions=await openStaffActions(added.id);await actions.locator('[data-action="delete-staff"]').click();await page.locator('[data-action="delete-staff-confirm"]').click();assert.equal((await salon()).staff.length,limit-1);assert(!(await salon()).staff.some(member=>member.id===added.id));await expect(page.locator('[data-action="add-staff"]')).toBeEnabled();
   }
  });
  await run('Insights reflect records and filter selections',async()=>{
@@ -179,9 +185,9 @@ try{
  });
  await run('Multiple appointments are checked then saved atomically',async()=>{
   const date=future(2);await fixture(s=>{s.bookings=[];s.hours=weekly(Object.fromEntries(Array.from({length:7},(_,i)=>[i,['09:00','18:00']])));});
-  await page.locator('[data-action="owner-series"]').first().click();let form=await seriesDetails(date);await form.getByRole('button',{name:'Check dates',exact:true}).click();await expect(form.locator('[data-action="owner-series-confirm"]')).toBeVisible();assert.equal((await salon()).bookings.length,0,'Preview creates no appointments');await shot('owner-series-checked-dates');
+  await openSeries();let form=await seriesDetails(date);await form.getByRole('button',{name:'Check dates',exact:true}).click();await expect(form.locator('[data-action="owner-series-confirm"]')).toBeVisible();assert.equal((await salon()).bookings.length,0,'Preview creates no appointments');await shot('owner-series-checked-dates');
   await form.locator('[data-action="owner-series-confirm"]').click();await expect(page.getByRole('dialog')).toHaveCount(0);let s=await salon();assert.equal(s.bookings.length,3);assert.deepEqual(s.bookings.map(b=>b.date).sort(),[date,plus(date,7),plus(date,14)]);
-  await page.locator('[data-action="owner-series"]').first().click();form=await seriesDetails(plus(date,-7));await form.getByRole('button',{name:'Check dates',exact:true}).click();await expect(form.locator('[data-action="owner-series-confirm"]')).toHaveCount(0);await expect(form.locator('[data-owner-series-preview]')).toContainText('Unavailable');assert.equal((await salon()).bookings.length,3,'Conflicting preview creates no ghost appointments');await closeModal();
+  await openSeries();form=await seriesDetails(plus(date,-7));await form.getByRole('button',{name:'Check dates',exact:true}).click();await expect(form.locator('[data-action="owner-series-confirm"]')).toHaveCount(0);await expect(form.locator('[data-owner-series-preview]')).toContainText('Unavailable');assert.equal((await salon()).bookings.length,3,'Conflicting preview creates no ghost appointments');await closeModal();
   await go('book/service');await expect(page.locator('[data-action="owner-series"]')).toHaveCount(0);await page.locator('[data-action="select-service"]').first().click();await expect(page.locator('[data-form="owner-series"]')).toHaveCount(0);
  });
  await run('Public customer books reschedules and cancels one appointment',async()=>{
@@ -222,12 +228,12 @@ try{
  }));
  await run('Local demo does not poll the connected backend',async()=>{
   const previous=page,ctx=await newContext();page=await attach(ctx);
-  try{await page.clock.install({time:new Date()});await login();await page.clock.runFor(1000);await expect(page).toHaveURL(/#calendar$/);const blocked=report.blockedRequests.length,mocked=report.mockRequests.length;await page.clock.runFor(60050);assert.equal(report.blockedRequests.length,blocked);assert.equal(report.mockRequests.length,mocked);}
+  try{await page.clock.install({time:new Date()});await login();await page.clock.runFor(1000);await expect(page).toHaveURL(/#dashboard$/);const blocked=report.blockedRequests.length,mocked=report.mockRequests.length;await page.clock.runFor(60050);assert.equal(report.blockedRequests.length,blocked);assert.equal(report.mockRequests.length,mocked);}
   finally{await ctx.close();page=previous;}
  });
  await run('Missing owner capabilities show setup guards',async()=>withMockBackend({capabilities:false},async()=>{
   await go('availability');await expect(page.locator('[data-form="ws-business-hours"] button.primary')).toBeDisabled();await expect(page.locator('.ws-capability')).toContainText('booking system update');
-  await go('calendar');await page.locator('[data-action="owner-series"]').first().click();await expect(page.getByRole('dialog')).toContainText('booking update');await expect(page.locator('[data-form="owner-series"]')).toHaveCount(0);
+  await go('calendar');await openSeries();await expect(page.getByRole('dialog')).toContainText('booking update');await expect(page.locator('[data-form="owner-series"]')).toHaveCount(0);
  }));
  await run('Rejected connected writes restore records without phantom saves',async()=>withMockBackend({rejectTables:['bookings','staff']},async mock=>{
   await page.locator('[data-action="new-booking"]').first().click();const booking=page.locator('[data-form="manual-booking"]');
@@ -241,13 +247,13 @@ try{
   const backup=await page.evaluate(key=>JSON.parse(localStorage.getItem(key+'-unsaved')||'null'),KEY);assert(backup,'Rejected optimistic data has a local recovery copy');await shot('connected-rejected-write-restored');
  }));
  await run('Responsive 390 768 and 1440 page and button coverage',async()=>{
-  const routes=['calendar','appointments','customers','services','staff','scheduling','insights','availability','notifications','activity'];
+  const routes=['dashboard','calendar','appointments','customers','services','staff','scheduling','insights','availability','notifications','activity'];
   for(const width of [390,768,1440]){
    await page.setViewportSize({width,height:width===390?844:1000});
    for(const route of routes){await go(route);await expect(page.getByRole('dialog')).toHaveCount(0);await noOverflow(`${width} ${route}`);if(route==='insights'&&await page.locator('.ot-chart-fit').count()){const chart=await page.locator('.ot-chart-scroll').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));assert(chart.scroll<=chart.width+1,'A month of daily bars fits the chart viewport');}await shot(`${width}-${route}`);}
    await go('calendar');const menu=page.getByRole('button',{name:'Toggle workspace navigation',exact:true});if(await menu.isVisible()){await menu.click();await expect(menu).toHaveAttribute('aria-expanded','true');await noOverflow(`${width} navigation`);await shot(`${width}-navigation-open`);await menu.click();}
    await page.locator('[data-action="new-booking"]').first().click();await expect(page.getByRole('dialog')).toBeVisible();await noOverflow(`${width} appointment modal`);await shot(`${width}-new-appointment`);await closeModal();
-   await page.locator('[data-action="owner-series"]').first().click();await expect(page.getByRole('dialog')).toBeVisible();await noOverflow(`${width} series modal`);await shot(`${width}-series-modal`);await closeModal();
+   await openSeries();await expect(page.getByRole('dialog')).toBeVisible();await noOverflow(`${width} series modal`);await shot(`${width}-series-modal`);await closeModal();
   }
  });
 }catch(error){report.fatal=String(error.stack||error);process.exitCode=1;console.error(report.fatal);}
