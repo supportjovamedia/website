@@ -52,7 +52,7 @@ async function salon(){return selected(await storage());}
 async function fixture(mutate,route='calendar'){
  const state=clone(baseline);if(mutate)mutate(selected(state),state);
  await closeModal();await page.setViewportSize({width:1440,height:1000});
- await page.evaluate(({key,state})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.removeItem('jovabook-auth');},{key:KEY,state});
+ await page.evaluate(({key,state})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.removeItem('jovabook-auth');localStorage.removeItem('jovabook-calendar-view');},{key:KEY,state});
  await page.reload();await go(route);
 }
 async function shot(name){
