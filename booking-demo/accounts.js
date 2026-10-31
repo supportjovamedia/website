@@ -281,6 +281,11 @@
       finally { clearTimeout(timer); }
     }
     const rpc = (fn, args, token) => call('/rest/v1/rpc/' + fn, { body: args || {}, token,owner:!!token });
+    function smsOwnerData(d){
+      const flags=['eligible','provider_configured','global_enabled','business_enabled','budget_configured','enabled'];
+      if(!d||d.provider!=='The SMS Works'||!['essential','standard','premium'].includes(d.plan)||flags.some(key=>typeof d[key]!=='boolean')||d.consent_required!==true||d.reminder_hours!==24||(d.remaining_segments!==null&&(!Number.isSafeInteger(d.remaining_segments)||d.remaining_segments<0)))return null;
+      const counts=['scheduled','sent','delivered','failed','unknown','cancelled','suppressed'];if(d.delivery_counts&&(typeof d.delivery_counts!=='object'||counts.some(key=>!Number.isSafeInteger(d.delivery_counts[key])||d.delivery_counts[key]<0)))return null;const result=Object.fromEntries(['provider','plan',...flags,'consent_required','reminder_hours','remaining_segments'].map(key=>[key,d[key]]));if(d.delivery_counts){result.delivery_counts=Object.fromEntries(counts.map(key=>[key,d.delivery_counts[key]]));result.needs_review=!!d.needs_review||result.delivery_counts.failed>0||result.delivery_counts.unknown>0;}return result;
+    }
     const NET = 'We couldn’t reach the server. Check your connection and try again.';
     async function token() {
       const expected=stamp(),s = load(); if (!s) return null;
@@ -438,6 +443,22 @@
         const r = await rpc('email_delivery_info', {}, t), data = r.data;
         if (!r.ok || !data || typeof data.enabled !== 'boolean' || data.provider !== 'Resend' || data.reminder_hours !== 24) return {ok:false, network:r.network};
         return {ok:true, data:{enabled:data.enabled, provider:data.provider, reminder_hours:data.reminder_hours}};
+      },
+      async smsReminderInfo() {
+        const t=await token();if(!t)return authFailure();
+        const r=await rpc('sms_reminder_info',{},t),data=smsOwnerData(r.data);
+        return r.ok&&data?{ok:true,data}:{ok:false,stale:r.stale,auth:r.auth,network:r.network,status:r.status,message:'We could not load SMS status. Please try again.'};
+      },
+      async setSmsReminders(enabled,salonId) {
+        if(typeof enabled!=='boolean'||!writeScope(salonId))return scopeFailure();
+        const t=await token();if(!t)return authFailure();if(!writeScope(salonId))return scopeFailure();
+        const r=await rpc('set_sms_reminders',{p_enabled:enabled,p_salon:salonId},t),data=smsOwnerData(r.data);
+        if(r.stale||!writeScope(salonId))return scopeFailure();
+        return r.ok&&data?{ok:true,data}:{ok:false,stale:r.stale,auth:r.auth,network:r.network,status:r.status,message:'Your SMS setting was not saved. Check availability and try again.'};
+      },
+      async publicSmsReminderInfo(slug) {
+        const r=await rpc('public_sms_reminder_info',{p_slug:slug}),d=r.data;
+        return r.ok&&d&&typeof d.available==='boolean'&&d.consent_required===true&&d.reminder_hours===24?{ok:true,data:{available:d.available,consent_required:true,reminder_hours:24}}:{ok:false,data:{available:false}};
       },
       async ownerCapabilities() {
         const t = await token();

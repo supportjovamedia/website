@@ -14,7 +14,7 @@ Authoritative package decision: the user's latest package selection, followed by
 | Website setup | Built and set up by JovaMedia | Built and set up by JovaMedia | Built and set up by JovaMedia |
 | Website brand and heading colours | Owner can edit in Personalise | Owner can edit in Personalise | Owner can edit in Personalise |
 | Email reminders | Included | Included | Included |
-| Text reminders | Excluded | Included, implementation pending | Included, implementation pending |
+| Text reminders | Excluded | Included, activation pending | Included, activation pending |
 | Slot recovery | Excluded | Included, implementation pending | Included, implementation pending |
 | AI assistant | Excluded | Excluded | Deferred until a paying Premium customer needs it |
 
@@ -31,7 +31,7 @@ JovaMedia supplies and sets up the fixed template. Owners edit its headline, her
 | Standard/Premium Insights | Existing date/staff filters, status counts, booking trends and service rankings | Access follows the freshly loaded authoritative plan, including downgrade and account changes. |
 | Websites | Separate Website and Booking page tabs in Personalise; saved tenant-specific public website, image upload, headline, About text and brand/heading colours; both booking buttons preserve the business link | Set up each business's real content and domain. Premium multipage template choices remain future work. Hosted Storage configuration is verified; authenticated upload HTTP behaviour is covered with isolated mocks and actual SQL policies, without a new production test account. |
 | Email reminders | SQL-owned event/queue records, automatic booking changes and 24-hour reminder workflow, provider worker/webhook integration and owner-visible status | Read-only production verification on 31 October 2026 confirmed delivery enabled, worker/webhook configured and reminder schedule active. No real customer message was sent during this change. |
-| Text reminders | No completed SMS provider/reminder workflow in the booking app | Implement provider integration, permissions/consent, scheduling, delivery state and operational handling before advertising it as active. Not implemented by this correction. |
+| Text reminders | The SMS Works adapter, private queue, segment budgets, Standard/Premium controls and optional customer consent are implemented and isolated tests pass | Sending remains disabled. The disabled production migration is installed. Worker configuration/schedule, agreed limits, provider credits and a recipient-approved delivery test are required before activation. No paid credits have been bought. |
 | Slot recovery | No completed cancellation-to-waitlist/rebooking workflow | Define and implement eligibility, contact permissions, availability rechecks and customer messaging. Not implemented by this correction. |
 | Premium AI assistant | `chatSend` is an explicitly scripted demo preview | Deferred until a paying Premium customer needs it. No live AI integration is claimed. |
 | Recurring paid subscription billing | `owner_subscription` returns `billing_connected:false`; plan changes are review requests. `checkoutPage` explicitly says no card is charged and no real subscription is created | Real recurring checkout, payment lifecycle/webhooks, renewal failures, customer billing management and commercial activation remain to be completed/verified for JovaBook. A generic site Stripe integration is not proof this booking subscription flow collects money. |
