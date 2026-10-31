@@ -10,3 +10,4 @@ playwright-report/
 .lighthouseci/
 artifacts/lighthouse/
 booking-demo/supabase/.temp/
+/.jovabook-test/

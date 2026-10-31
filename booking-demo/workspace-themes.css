@@ -3,12 +3,12 @@ html[data-workspace-theme] body,html[data-workspace-theme] .shell{
  --studio-paper:var(--theme-page);--studio-ink:var(--theme-heading);--studio-muted:var(--theme-muted);--studio-line:var(--theme-line);--studio-blush:var(--theme-rail-selected);
  --ink:var(--theme-heading);--ink-2:var(--theme-body);--muted:var(--theme-muted);--line:var(--theme-line);--line-2:var(--theme-line);--paper:var(--theme-page);--surface:var(--theme-panel);--soft:var(--theme-inset);--blue:var(--theme-primary)!important;--blue-3:var(--theme-primary);--blush:var(--theme-soft);
  --al-ink:var(--theme-heading);--db-ink:var(--theme-heading);--desk-ink:var(--theme-heading);--al-muted:var(--theme-muted);--desk-muted:var(--theme-muted);--al-paper:var(--theme-page);--db-paper:var(--theme-page);--al-rule:var(--theme-line);--db-rule:var(--theme-line);--desk-line:var(--theme-line);--al-blue:var(--theme-primary);
- --workspace-accent:var(--theme-primary)!important;--workspace-on-accent:var(--theme-on-primary)!important;
- --theme-success-bg:#e4f1e8;--theme-success-text:#245b3c;--theme-warning-bg:#f7eccd;--theme-warning-text:#765214;--theme-error-bg:#f8e4e5;--theme-error-text:#8f3441;--theme-info-bg:#e1edf8;--theme-info-text:#25547c;--theme-neutral-bg:#e8edf1;--theme-neutral-text:#4b5d6c;
+ --workspace-accent:var(--theme-primary)!important;--workspace-on-accent:var(--theme-on-primary)!important;--workspace-link:var(--theme-body)!important;
+ --theme-success-bg:#e4f1e8;--theme-success-text:#245b3c;--theme-warning-bg:#f7eccd;--theme-warning-text:#765214;--theme-error-bg:#f8e4e5;--theme-error-text:#8f3441;--theme-info-bg:#e1edf8;--theme-info-text:#25547c;--theme-neutral-bg:#ececec;--theme-neutral-text:#555555;
  background:var(--theme-page);color:var(--theme-body);color-scheme:light;
 }
 html[data-workspace-theme=midnight-glass] body,html[data-workspace-theme=midnight-glass] .shell{
- --theme-success-bg:#203f32;--theme-success-text:#a9dfc0;--theme-warning-bg:#47391e;--theme-warning-text:#f0d593;--theme-error-bg:#482831;--theme-error-text:#f0b3be;--theme-info-bg:#253d55;--theme-info-text:#b6d4f3;--theme-neutral-bg:#303d4b;--theme-neutral-text:#c1cedc;color-scheme:dark;
+ --theme-success-bg:#203f32;--theme-success-text:#a9dfc0;--theme-warning-bg:#47391e;--theme-warning-text:#f0d593;--theme-error-bg:#482831;--theme-error-text:#f0b3be;--theme-info-bg:#253d55;--theme-info-text:#b6d4f3;--theme-neutral-bg:#353535;--theme-neutral-text:#d2d2d2;color-scheme:dark;
 }
 html[data-workspace-theme] .shell :is(.workspace,.workspace-main,.workspace-header){background:var(--theme-page)!important;color:var(--theme-body)}
 html[data-workspace-theme] :is(.demo-bar,.st-date-pill){background:var(--theme-inset);color:var(--theme-muted);border-color:var(--theme-line)}
@@ -27,7 +27,7 @@ html[data-workspace-theme] .shell :is(.btn:not(.primary),button:not(.primary):no
 html[data-workspace-theme] .shell :is(.workspace-header .btn,.workspace-header .nf-trigger,.jb-mobile-nav,.db-actions>a,.st-series-button,.mg-search-button,.mg-status-filter select,.mg-clear,.sm-row-actions button,.sm-category-actions button,.sm-sidebar-title>button,.db-navigation button,.db-list-heading>a,.db-appointment-row>button,.table-wrap .actions button,.table-wrap button.small){background:var(--theme-panel)!important;color:var(--theme-body)!important;border-color:var(--theme-control-line)!important}
 html[data-workspace-theme] .shell :is(button.primary,.btn.primary),html[data-workspace-theme] #modal-root :is(button.primary,.btn.primary){background:var(--theme-primary)!important;color:var(--theme-on-primary)!important;border-color:transparent!important}
 html[data-workspace-theme] .shell :is(button.primary,.btn.primary):hover,html[data-workspace-theme] #modal-root :is(button.primary,.btn.primary):hover{background:color-mix(in srgb,var(--theme-primary) 92%,#000)!important}
-html[data-workspace-theme] .shell :is(a:not(.btn):not(.active),.ws-copy-service){color:var(--theme-primary)}
+html[data-workspace-theme] .shell :is(a:not(.btn):not(.active),.ws-copy-service){color:var(--theme-body)}
 html[data-workspace-theme] .shell :is(input,textarea,select),html[data-workspace-theme] #modal-root :is(input,textarea,select){background-color:var(--theme-panel)!important;color:var(--theme-heading)!important;border-color:var(--theme-control-line)!important;accent-color:var(--theme-primary)}
 html[data-workspace-theme] :is(.shell,#modal-root) :is(input,textarea)::placeholder{color:var(--theme-muted);opacity:1}
 html[data-workspace-theme] :is(.shell,#modal-root) :is(input[readonly],textarea[readonly]){background:var(--theme-inset)!important}
@@ -44,25 +44,26 @@ html[data-workspace-theme=midnight-glass] .shell .sidebar :is(.brand.jb-wordmark
 html[data-workspace-theme] .shell .sidebar :is(a,summary):focus-visible{outline-color:#fff!important}
 html[data-workspace-theme] .shell .st-settings-links :is(a,button){color:var(--theme-body)!important}
 html[data-workspace-theme] .shell .st-settings-links a.active{background:var(--theme-soft)!important;color:var(--theme-heading)!important}
-/* Stats retain a deliberate strong / neutral / soft hierarchy in every palette. */
+/* Working cards stay neutral. Theme colour is limited to small icons and data marks. */
 html[data-workspace-theme] .shell :is(.db-metric,.st-calendar-stat,.ot-metric){background:var(--theme-panel)!important;color:var(--theme-heading)!important;border-color:var(--theme-line)}
 html[data-workspace-theme] .shell :is(.db-metric-label,.db-metric-note,.st-calendar-stat>span,.ot-metric span,.ot-metric small){color:var(--theme-muted)!important}
 html[data-workspace-theme] .shell :is(.db-metric-value,.st-calendar-stat>strong,.ot-metric strong){color:var(--theme-heading)!important}
-html[data-workspace-theme] .shell :is(.db-metric-bookings,.st-calendar-stat:first-child,.ot-metric:first-child){background:var(--theme-stat-strong)!important;color:#fff!important}
-html[data-workspace-theme] .shell :is(.db-metric-bookings,.st-calendar-stat:first-child,.ot-metric:first-child) :is(span,strong,small,.db-metric-label,.db-metric-note,.db-metric-value,.al-dot-key){color:#fff!important}
+html[data-workspace-theme] .shell :is(.db-metric-bookings,.st-calendar-stat:first-child,.ot-metric:first-child){background:var(--theme-panel)!important;color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell :is(.db-metric-bookings,.st-calendar-stat:first-child,.ot-metric:first-child) :is(span,small,.db-metric-label,.db-metric-note,.al-dot-key){color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell :is(.db-metric-bookings,.st-calendar-stat:first-child,.ot-metric:first-child) :is(strong,.db-metric-value){color:var(--theme-heading)!important}
 html[data-workspace-theme] .shell :is(.db-metric-completed,.st-calendar-stat:last-child,.ot-metric:nth-child(2)){background:var(--theme-stat-soft)!important}
 html[data-workspace-theme] .shell :is(.db-metric-completed,.st-calendar-stat:last-child,.ot-metric:nth-child(2)) :is(span,strong,small,.db-metric-label,.db-metric-note,.db-metric-value){color:var(--theme-heading)!important}
-html[data-workspace-theme] .shell :is(.db-metric-cancelled,.ot-metric:last-child){background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell :is(.db-metric-cancelled,.ot-metric:last-child){background:var(--theme-panel)!important}
 html[data-workspace-theme] .shell .db-metric-icon{background:var(--theme-soft)!important;color:var(--theme-primary)!important}
-html[data-workspace-theme] .shell .db-metric-bookings .db-metric-icon{background:#ffffff18!important;color:var(--theme-rail-selected)!important}
-html[data-workspace-theme] .shell .al-booking-dots i{background:#ffffff26!important}
-html[data-workspace-theme] .shell .al-booking-dots i.is-filled{background:var(--theme-rail-selected)!important}
+html[data-workspace-theme] .shell .db-metric-bookings .db-metric-icon{background:var(--theme-soft)!important;color:var(--theme-primary)!important}
+html[data-workspace-theme] .shell .al-booking-dots i{background:var(--theme-line)!important}
+html[data-workspace-theme] .shell .al-booking-dots i.is-filled{background:var(--theme-primary)!important}
 html[data-workspace-theme] .shell :is(.ot-service-fill,.ot-bar-fill,.al-revenue-bars i){background:var(--theme-primary)!important}
 html[data-workspace-theme] .shell :is(.ot-chart-line,.ot-line-chart path.ot-chart-line){stroke:var(--theme-primary)!important}
 html[data-workspace-theme] .shell .ot-chart-point{fill:var(--theme-primary);stroke:var(--theme-panel)}
 html[data-workspace-theme] .shell :is(.ot-chart-x-label,.ot-chart-y-label,.ot-bar-date,.ot-chart-day){fill:var(--theme-muted);color:var(--theme-muted)!important}
 /* Calendar event identity colours remain untouched. Pale events always use dark ink. */
-html[data-workspace-theme] .shell :is(.dg-event,.jb-calendar-event,.jb-month-event),html[data-workspace-theme] .shell :is(.dg-event,.jb-calendar-event,.jb-month-event) :is(strong,small,span){color:#243247!important}
+html[data-workspace-theme] .shell :is(.dg-event,.jb-calendar-event,.jb-month-event),html[data-workspace-theme] .shell :is(.dg-event,.jb-calendar-event,.jb-month-event) :is(strong,small,span){color:var(--event-ink,#243247)!important}
 html[data-workspace-theme] .shell :is(.dg-off,.jb-calendar-slot.is-closed){background:repeating-linear-gradient(-45deg,var(--theme-panel),var(--theme-panel) 8px,var(--theme-inset) 8px,var(--theme-inset) 9px)!important}
 html[data-workspace-theme] .shell .jb-week-heading>button{background:var(--theme-inset)!important;color:var(--theme-body)!important}
 html[data-workspace-theme] .shell :is(.jb-week-heading>button.is-today,.jb-month-day.is-today){background:var(--theme-soft)!important;color:var(--theme-heading)!important}
@@ -94,8 +95,8 @@ html[data-workspace-theme] .shell .mg-day-open{background:var(--theme-success-bg
 html[data-workspace-theme] :is(.shell,#modal-root,.mg-action-list) :is(.danger,.mg-delete,.sm-delete-category,.sm-delete-service,[data-action=remove-service],[data-action=remove-service-confirm],[data-action=delete-category-confirm],[data-staff-discard-confirm]){color:var(--theme-error-text)!important;background:var(--theme-error-bg)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) :is(.error,.se-save-status.is-dirty,.df-save-status.is-dirty){color:var(--theme-error-text)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) :is(.se-save-status.is-dirty .se-save-dot,.df-save-status.is-dirty .df-save-dot){background:var(--theme-error-text)!important}
-html[data-workspace-theme=midnight-glass] :is(.shell,#modal-root) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5' stroke='%23A7B9CC' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")!important}
-html[data-workspace-theme=midnight-glass] :is(.nf-popover,.st-settings-links){background:rgba(28,40,54,.94)!important;backdrop-filter:blur(12px);box-shadow:0 12px 32px #0003}
+html[data-workspace-theme=midnight-glass] :is(.shell,#modal-root) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5' stroke='%23B8B8B8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")!important}
+html[data-workspace-theme=midnight-glass] :is(.nf-popover,.st-settings-links){background:rgba(35,35,35,.94)!important;backdrop-filter:blur(12px);box-shadow:0 12px 32px #0003}
 html[data-workspace-theme] #modal-root .modal-backdrop{background:var(--theme-overlay)!important}
 html[data-workspace-theme] .shell :is(.jb-week-scroll,.jb-week-body,.jb-week-day,.dg-times,.dg-body,.month-head,.mday){background:var(--theme-panel)!important;border-color:var(--theme-line)!important;color:var(--theme-body)!important}
 html[data-workspace-theme] .shell :is(.jb-week-day.is-today,.mday.other){background:var(--theme-inset)!important}
@@ -123,7 +124,7 @@ html[data-workspace-theme] :is(.shell,#modal-root) :is(.ed-status-error,.ed-refr
 html[data-workspace-theme] :is(.shell,#modal-root) :is(.ed-row-time,.ed-details dt,.ed-notice small){color:var(--theme-muted)!important}
 /* Secondary ink on tinted surfaces avoids low-contrast moss/lilac small text. */
 html[data-workspace-theme] :is(.demo-bar,.st-date-pill),html[data-workspace-theme] .shell .sm-group-heading>div>span,html[data-workspace-theme] .nf-popover .nf-popover-header p,html[data-workspace-theme] .nf-popover .nf-item.is-unread :is(.nf-client,.nf-appointment-time,.nf-event-age,.nf-item-top>b){color:var(--theme-body)!important}
-html[data-workspace-theme] .demo-bar :is(b,button){color:var(--theme-primary)!important}
+html[data-workspace-theme] .demo-bar :is(b,button){color:var(--theme-body)!important}
 html[data-workspace-theme] .shell .db-list-note{color:var(--theme-muted)!important;border-color:var(--theme-line)!important}
 html[data-workspace-theme] .shell .st-calendar-filter>summary{background:var(--theme-panel)!important;color:var(--theme-body)!important;border-color:var(--theme-control-line)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) .pill:not(.green):not(.red):not(.blue):not(.yellow):not(.amber){background:var(--theme-neutral-bg)!important;color:var(--theme-neutral-text)!important}
@@ -135,10 +136,12 @@ html[data-workspace-theme] :is(.shell,#modal-root) .pill.amber{background:var(--
 .wt-choice-card{display:block;border:1px solid var(--theme-line,#d3dfea);border-radius:15px;padding:7px;background:var(--theme-panel,#fff);height:100%}.wt-choice input:checked+.wt-choice-card{border-color:var(--theme-primary,#235789);outline:2px solid var(--theme-primary,#235789);outline-offset:1px}.wt-choice input:focus-visible+.wt-choice-card{outline:2px solid var(--theme-focus,#1d5fa3);outline-offset:4px}
 .wt-preview{display:flex;gap:10px;height:101px;border-radius:9px;overflow:hidden;background:var(--preview-page);padding:10px}.wt-preview-rail{width:17px;flex:none;display:flex;align-items:center;flex-direction:column;gap:9px;background:var(--preview-rail);border-radius:9px;padding:7px 4px}.wt-preview-rail i{width:5px;height:5px;display:block;border-radius:50%;background:var(--preview-soft)}
 .wt-preview-main{display:flex;flex-direction:column;gap:9px;min-width:0;flex:1}.wt-preview-heading{width:45%;height:5px;background:var(--preview-ink);border-radius:2px;opacity:.8}.wt-preview-stats{display:flex;gap:5px;height:25px}.wt-preview-stats i{flex:1;border-radius:5px;background:var(--preview-panel)}.wt-preview-stats i:first-child{background:var(--preview-strong)}.wt-preview-stats i:last-child{background:var(--preview-soft)}.wt-preview-table{display:grid;gap:6px;background:var(--preview-panel);padding:8px;border-radius:5px;flex:1}.wt-preview-table i{height:2px;width:100%;background:var(--preview-line)}
+.wt-preview-stats i:last-child{background:var(--preview-panel)}.wt-preview-stats i:first-child{position:relative}.wt-preview-stats i:first-child:before{content:'';position:absolute;width:7px;height:7px;left:6px;top:6px;border-radius:50%;background:var(--preview-primary)}.wt-preview-table{border-top:4px solid var(--preview-soft);padding-top:4px}
 .wt-choice-title{display:flex;align-items:center;justify-content:space-between;gap:5px;color:var(--theme-heading,#172d43);padding:10px 4px 4px;font-size:12px;font-weight:500}.wt-choice-check{visibility:hidden;width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:var(--theme-primary,#235789);color:var(--theme-on-primary,#fff);font-size:11px}.wt-choice input:checked+.wt-choice-card .wt-choice-check{visibility:visible}.wt-choice-description{display:block;font-size:10px;line-height:1.5;padding:0 4px 5px;color:var(--theme-muted,#526a80)}
 @media(max-width:650px){.wt-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wt-preview{height:90px;padding:8px;gap:8px}}
 @media(forced-colors:active){.wt-choice input:checked+.wt-choice-card{outline:2px solid Highlight}.wt-choice-check{forced-color-adjust:none}.wt-choice>input{position:static;width:auto;height:auto;clip-path:none}}
 /* Final visual review: descriptive copy and native select affordances stay legible. */
 html[data-workspace-theme] .st-settings-layout .card>p,
-html[data-workspace-theme] .st-staff-toolbar label{color:var(--theme-muted)!important}
+html[data-workspace-theme] .st-staff-toolbar label,
+html[data-workspace-theme] .shell :is(.mg-status-filter,.mg-search svg,.mg-actions summary){color:var(--theme-muted)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) select:not([multiple]){background-repeat:no-repeat!important;background-position:right 16px center!important;background-size:12px 12px!important;padding-right:44px!important}

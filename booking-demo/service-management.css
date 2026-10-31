@@ -13,6 +13,17 @@
 .sm-categories{display:grid;gap:5px}
 .shell .sm-categories>button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:43px;padding:10px 12px;border:0;border-radius:13px;background:transparent;color:#786557;text-align:left;font-size:12px;font-weight:400;box-shadow:none}
 .sm-categories>button>span:first-child{min-width:0;overflow-wrap:anywhere}
+.sm-categories>button>span:first-child{display:flex;align-items:center;gap:9px}
+.sm-category-swatch{display:inline-block;flex:none;width:15px;height:15px;border-radius:5px;background:var(--category-swatch,#e3e7ed);border:1px solid #0002;box-shadow:0 0 0 1px #ffffff70;vertical-align:middle}
+.sm-group-heading h2 .sm-category-swatch{width:18px;height:18px;margin-right:9px;vertical-align:baseline}
+.sm-colour-picker{border:0;margin:20px 0;padding:0;min-width:0}
+.sm-colour-picker legend{padding:0;font-size:13px;font-weight:600}
+.sm-colour-picker>p{margin:7px 0 12px;font-size:12px;line-height:1.5;color:var(--theme-muted,#76675c)}
+.sm-colour-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sm-colour-choice{display:flex;align-items:center;gap:9px;position:relative;min-height:43px;padding:10px;border:1px solid var(--theme-control-line,#d6cdc7);border-radius:10px;font-size:12px;cursor:pointer;color:var(--theme-body,#41352e)}
+.sm-colour-choice:has(input:checked){border-color:var(--theme-primary,#41352e);box-shadow:inset 0 0 0 1px var(--theme-primary,#41352e)}
+#modal-root .sm-colour-choice input{flex:none;width:15px;height:15px;margin:0;accent-color:var(--theme-primary,#41352e)}
+.sm-colour-swatch{flex:none;width:19px;height:19px;background:var(--category-swatch);border:1px solid #0002;border-radius:6px}
 .shell .sm-categories>button:hover{background:#ece0d6}
 .shell .sm-categories>button.is-selected{background:var(--workspace-accent,#2b221e);color:var(--workspace-on-accent,#fff)}
 .sm-category-count{display:inline-grid;place-items:center;flex:none;min-width:22px;height:22px;padding:0 5px;border-radius:100px;background:#fff;color:#735e4e;font-size:10px;font-variant-numeric:tabular-nums}
