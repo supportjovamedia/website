@@ -18,8 +18,8 @@ body:has(.shell){background:var(--studio-paper)}
 .shell .sidebar .brand.jb-wordmark:before{content:'j';font-size:37px;line-height:1;font-weight:450;margin-top:-6px}
 .shell .sidebar .jb-wordmark :is(span,small),.shell .sidebar .salon-switch,.shell .sidebar .bottom{display:none}
 .shell .side-nav{width:100%;display:flex;flex-direction:column;flex:1}
-.shell .jb-nav-section{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0}
-.shell .side-nav .jb-nav-section>a{width:50px;height:50px;min-height:50px;display:flex;justify-content:center;padding:0;margin:0;border-radius:50%;font-size:0;color:#d7c9bf;background:transparent;position:relative}
+.shell .sidebar .jb-nav-section{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0}
+.shell .side-nav .jb-nav-section>a{width:50px;height:50px;min-height:50px;display:flex;align-items:center;justify-content:center;gap:0;padding:0;margin:0;border-radius:50%;font-size:0;color:#d7c9bf;background:transparent;position:relative}
 .shell .side-nav .jb-nav-section>a :is(.jb-nav-icon,svg){width:21px;height:21px;flex-basis:21px}
 .shell .side-nav .jb-nav-section>a.active{background:var(--studio-blush);color:var(--studio-ink)}
 .shell .side-nav .jb-nav-section>a:hover{background:#4a3e36;color:#fff}
@@ -157,7 +157,7 @@ body:has(.shell) #modal-root .nf-kind{background:#ead5d0;color:#98575c}
 @media(max-width:800px){
   .shell{display:block}.shell .workspace{background:var(--studio-paper)}.shell .workspace-header{padding:0 16px;height:66px;background:var(--studio-paper)}.shell .workspace-header>div:not(.row){display:block}.shell .workspace-header .jb-header-title:before{display:none}.shell .workspace-header .jb-header-title{font-size:13px}.shell .workspace-header .tiny{font-size:10px;margin-top:3px}.shell .workspace-header .row{gap:6px}.shell .workspace-header .nf-trigger{width:35px;height:35px}.shell .workspace-header .jb-mobile-nav{background:#fff;border-color:#ddcfc3;color:#654a34;border-radius:11px}
   .shell .workspace-main{padding:24px 16px 35px}.st-date-pill{font-size:10px;padding:4px 11px;margin-bottom:10px}.shell :is(.db-title,.page-heading h1,.mg-heading h1,.ws h1,.ot-heading h1,.nf-heading h1,.sb-header h1){font-size:39px;font-weight:350;letter-spacing:-1.3px}.shell :is(.db-heading>div>p,.page-heading p,.mg-heading p,.ws-heading p,.ot-heading p){font-size:12px}
-  .shell .sidebar{display:none;position:static;width:auto;margin:12px 14px 0;min-height:0;height:auto;border-radius:25px;padding:18px;background:#2b221e;align-items:stretch}.shell.is-menu-open .sidebar{display:flex}.shell .sidebar .brand.jb-wordmark{margin-bottom:15px;width:45px;height:45px}.shell .side-nav{display:block}.shell .jb-nav-section{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.shell .side-nav .jb-nav-section>a{font-size:12px;width:auto;height:43px;min-height:43px;border-radius:12px;justify-content:flex-start;padding:10px 13px;gap:10px}.shell .side-nav .jb-nav-section>a .jb-nav-icon{width:17px;height:17px;flex-basis:17px}.shell .jb-more-settings{margin-top:12px}.shell .jb-more-settings>summary{font-size:12px;gap:10px;width:100%;justify-content:flex-start;padding:0 13px;height:42px;border-radius:12px}.st-settings-links{position:static;width:auto;margin-top:7px;border-radius:15px}.shell .st-settings-links a{font-size:12px}
+  .shell .sidebar{display:none;position:static;width:auto;margin:12px 14px 0;min-height:0;height:auto;border-radius:25px;padding:18px;background:#2b221e;align-items:stretch}.shell.is-menu-open .sidebar{display:flex}.shell .sidebar .brand.jb-wordmark{margin-bottom:15px;width:45px;height:45px}.shell .side-nav{display:block}.shell .sidebar .jb-nav-section{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.shell .side-nav .jb-nav-section>a{font-size:12px;width:auto;height:43px;min-height:43px;border-radius:12px;justify-content:flex-start;padding:10px 13px;gap:10px}.shell .side-nav .jb-nav-section>a .jb-nav-icon{width:17px;height:17px;flex-basis:17px}.shell .jb-more-settings{margin-top:12px}.shell .jb-more-settings>summary{font-size:12px;gap:10px;width:100%;justify-content:flex-start;padding:0 13px;height:42px;border-radius:12px}.st-settings-links{position:static;width:auto;margin-top:7px;border-radius:15px}.shell .st-settings-links a{font-size:12px}
   .shell .db-heading{gap:15px;align-items:flex-start}.shell .db-heading .db-actions{gap:8px;flex-wrap:wrap}.shell .db-heading .db-actions>button,.shell .db-heading .db-actions>a{border-radius:12px;min-height:41px;padding:11px 15px;font-size:11px}.shell .db-summary{gap:11px}.shell .db-metric{border-radius:23px;min-height:195px;padding:20px 17px}.shell .db-metric-value{font-size:43px}.shell .db-metric-revenue .db-metric-value{font-size:32px}
   .st-calendar-stats{gap:10px;margin-bottom:23px}.st-calendar-stat{padding:18px 15px;border-radius:23px}.st-calendar-stat>span{font-size:10px;margin-bottom:8px}.st-calendar-stat>strong{font-size:31px;letter-spacing:-1px}.st-calendar-stat:nth-child(2)>strong{font-size:27px}.shell .db-calendar-page>.db-heading{margin-bottom:22px}
   .shell .st-calendar-toolbar{padding:16px 13px;gap:13px;border-radius:24px 24px 0 0}.st-calendar-date{flex-basis:100%;flex-wrap:wrap;gap:12px}.st-calendar-date .db-date-controls{width:100%;gap:5px;justify-content:flex-start}.st-calendar-date .db-period-controls{order:0;margin:0;width:auto}.shell .db-calendar-page .st-calendar-toolbar .db-navigation button{font-size:10px;padding:9px;min-height:37px}.shell .db-calendar-page .st-calendar-toolbar .db-date-controls input{width:139px;font-size:11px;min-height:37px;padding:8px 10px}.shell .db-calendar-page .st-calendar-filter>summary{min-height:37px;padding:9px 14px;font-size:11px}.st-calendar-filter{margin-left:auto}.shell .db-calendar-page .db-diary{border-radius:24px}.shell .db-calendar-footer{padding:13px;border-radius:0 0 24px 24px;gap:8px}.shell .db-calendar-hint{display:none}
@@ -192,3 +192,49 @@ body:has(.shell) #modal-root .nf-kind{background:#ead5d0;color:#98575c}
 .shell .ot-metric:last-child{background:#e9e1d6}
 .shell .ot-metric strong{font-weight:400;letter-spacing:-1px}
 @media(max-width:800px){.shell .ot-metrics{gap:11px}.shell .ot-metric{padding:21px 17px;border-radius:22px}}
+
+body:has(.shell){--panel-inset:24px;--control-height:44px;--control-inline:14px}
+@media(max-width:800px){body:has(.shell){--panel-inset:18px;--control-inline:12px}}
+
+/* Shared insets keep every owner page and its nested panels on the same grid. */
+.shell{--panel-inset:24px;--row-inset:24px;--row-block:18px;--control-height:44px;--control-inline:14px}
+.shell .workspace-header{max-width:1900px;width:100%;margin-inline:auto}
+.shell .workspace-main>:not(.st-date-pill){max-width:none;width:100%;margin-left:0;margin-right:0}
+.shell :is(.card,.ws-panel,.ot-panel,.sb-current,.sb-change-summary),.shell .st-settings-side .card{padding:var(--panel-inset)}
+.shell :is(.db-metric,.st-calendar-stat,.ot-metric){padding:var(--panel-inset)}
+.shell .db-metric .db-metric-top{margin-bottom:16px}
+.shell .db-metric .db-metric-value{font-size:48px;line-height:1.1;min-height:53px;margin:0 0 9px}
+.shell .db-metric .db-metric-note{margin-top:0}
+.shell :is(.db-list-heading,.mg-toolbar,.st-calendar-toolbar){padding:20px var(--panel-inset)}
+.shell .workspace-main .toolbar{padding:18px var(--panel-inset)}
+.shell .db-appointment-row{padding:var(--row-block) var(--row-inset)}
+.shell :is(.table-wrap,.sm-table-scroll) th{padding:16px var(--row-inset);vertical-align:middle}
+.shell :is(.table-wrap,.sm-table-scroll) td{padding:var(--row-block) var(--row-inset);vertical-align:middle}
+.shell .sm-group-heading{padding:16px var(--row-inset)}
+.shell :is(.mg-footer,.db-calendar-footer){padding:16px var(--panel-inset)}
+.shell .sm-sidebar{padding:16px 12px}
+.shell .sm-sidebar-title{padding:8px 12px 16px}
+.shell .sm-categories>button{padding:11px 12px}
+.shell .sm-sidebar-note{margin:16px 12px 0}
+.shell .nf-panel{padding:0}
+.shell .nf-page .nf-item{padding:var(--row-block) var(--row-inset)}
+.shell .field :is(input:not([type=checkbox]):not([type=radio]):not([type=color]),select),body:has(.shell) #modal-root .field :is(input:not([type=checkbox]):not([type=radio]):not([type=color]),select){min-height:var(--control-height,44px);padding:11px var(--control-inline,14px)}
+.shell .field textarea,body:has(.shell) #modal-root .field textarea{padding:12px var(--control-inline,14px)}
+.shell :is(.btn.primary,button.primary),body:has(.shell) #modal-root button.primary{min-height:var(--control-height,44px);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+body:has(.shell) #modal-root .modal{padding:var(--panel-inset,24px)}
+body:has(.shell) #modal-root .modal-head button{width:36px;height:36px;min-height:36px;padding:0;display:grid;place-items:center;line-height:1}
+.df-save-bar,.se-save-bar{align-items:center;padding-top:20px;margin-top:24px;min-height:64px}
+.df-save-bar>button,.se-save-bar>button{margin:0;min-height:44px}
+.nf-popover .nf-popover-header{padding:24px}
+.nf-popover .nf-dialog .nf-toolbar{padding:12px 24px}
+.nf-popover .nf-dialog .nf-item{padding:18px 24px}
+@media(max-width:800px){
+  .shell{--panel-inset:18px;--row-inset:16px;--row-block:16px;--control-inline:12px}
+  .shell .db-metric .db-metric-value{font-size:38px;min-height:42px;margin-top:0}
+  .shell .db-metric-revenue .db-metric-value{font-size:30px;line-height:1.4;letter-spacing:-1px}
+  .shell :is(.db-list-heading,.mg-toolbar,.st-calendar-toolbar){padding:17px var(--panel-inset)}
+  .shell .workspace-main .toolbar{padding:16px var(--panel-inset)}
+  .shell :is(.mg-footer,.db-calendar-footer){padding:14px var(--panel-inset)}
+  .shell .field :is(input:not([type=checkbox]):not([type=radio]),select,textarea){font-size:16px}
+  .nf-popover .nf-popover-header{padding:20px 18px}.nf-popover .nf-dialog .nf-toolbar{padding:12px 18px}.nf-popover .nf-dialog .nf-item{padding:16px 18px}
+}
