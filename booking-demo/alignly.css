@@ -1,0 +1,201 @@
+/* JovaBook's adaptation of the selected Alignly visual direction.
+   Existing routes, calendar composition and saved workspace colours are retained. */
+@font-face{font-family:Outfit;src:url('fonts/outfit-variable.ttf') format('truetype');font-style:normal;font-weight:100 900;font-display:swap}
+.shell{
+  --al-ink:#202622;
+  --al-muted:#66736e;
+  --al-paper:#fff;
+  --al-wash:#f2f6f5;
+  --al-blue:#40758a;
+  --al-rule:#e8eeeb;
+  --db-ink:var(--al-ink);
+  --db-muted:var(--al-muted);
+  --db-paper:var(--al-paper);
+  --db-rule:var(--al-rule);
+  font-family:Outfit,system-ui,sans-serif;
+  font-weight:400;
+  background:var(--al-paper);
+  grid-template-columns:216px minmax(0,1fr);
+}
+.shell :is(button,input,select,textarea,.btn){font-family:inherit}
+.shell :is(h1,h2,h3){text-wrap:balance;color:var(--al-ink)}
+.shell :is(p,.db-metric-note){text-wrap:pretty}
+.shell a{color:var(--workspace-link,#316745)}
+.shell .workspace{background:#fff}
+.shell .workspace-header{height:89px;padding:0 38px;background:#fff;border-bottom:1px solid var(--al-rule)}
+.shell .workspace-header .jb-header-title{font-size:14px;font-weight:450;color:#303e36}
+.shell .workspace-header .tiny{font-size:11px;color:#7c8881}
+.shell .workspace-header .row{gap:12px}
+.shell .workspace-header .btn{background:#f3f6f4;border:0;border-radius:100px;padding:12px 19px;font-size:12px;color:#3b5144;font-weight:450}
+.shell .workspace-header .quiet{font-size:12px;color:#68786d;font-weight:400}
+.shell .workspace-header .nf-trigger{border:0;border-radius:50%;background:#f3f6f4;color:#3b5144;width:40px;height:40px}
+.shell .workspace-main{padding:36px 38px 46px}
+.shell .sidebar{padding:36px 17px 24px;border-right:1px solid var(--al-rule);background:#fff;color:var(--al-muted)}
+.shell .sidebar .brand.jb-wordmark{padding-left:14px;font-size:30px;font-weight:580;color:#202b23;margin-bottom:34px}
+.shell .sidebar .jb-wordmark span{color:#548e61;font-weight:400}
+.shell .sidebar .jb-wordmark small{font-size:10px;color:#7d8a80;font-weight:400;letter-spacing:.02em;margin-top:8px}
+.shell .sidebar .salon-switch{border-radius:20px;background:#f4f7f4;border:0;padding:17px 15px;margin-bottom:26px}
+.shell .sidebar .salon-switch label{font-size:11px;letter-spacing:0;color:#768579}
+.shell .sidebar .salon-switch strong{font-size:13px;font-weight:450;color:#34493a;margin-top:5px}
+.shell .side-nav a{min-height:44px;padding:12px 16px;margin:5px 0;border-radius:100px;font-size:13px;font-weight:400;color:#69756e;gap:12px}
+.shell .side-nav a:hover{background:#f2f6f3;color:#253b2b}
+.shell .side-nav a.active{background:var(--workspace-accent,#8bcf97);color:var(--workspace-on-accent,#173d28);font-weight:450}
+.shell .jb-nav-icon,.shell .jb-nav-icon svg{width:18px;height:18px;flex-basis:18px}
+.shell .jb-more-settings{border-color:var(--al-rule);padding-top:19px;margin-top:24px}
+.shell .jb-more-settings summary{font-size:13px;font-weight:400;color:#657469}
+.shell .jb-personalise{color:#657469;font-weight:400}
+.shell .sidebar .bottom{border-color:var(--al-rule);padding:17px 6px 0}
+.shell .sidebar .bottom .pill{background:#f1f6f2;border-radius:100px;color:#536e59;font-size:10px;font-weight:400;padding:8px 10px}
+.shell :is(button,.btn){box-shadow:none;transition:background-color .15s,color .15s}
+.shell :is(button,.btn):active:not(:disabled){transform:translateY(1px)}
+.shell :is(button,.btn,.ws .primary).primary{background:var(--workspace-accent,#8bcf97);border-color:transparent;color:var(--workspace-on-accent,#173d28);font-weight:450;border-radius:100px;box-shadow:none}
+.shell :is(button,.btn).primary:hover{background:color-mix(in srgb,var(--workspace-accent,#8bcf97) 87%,#fff);border-color:transparent}
+.shell :is(button,a,input,select,textarea,summary):focus-visible{outline:2px solid #2e6a45;outline-offset:3px}
+.shell :is(.db-title,.page-heading h1,.mg-heading h1,.ws h1){font-size:40px;line-height:1.16;font-weight:400;letter-spacing:-1.3px;color:#202622}
+.shell .db-heading{gap:18px}
+.shell .db-heading>div>p{font-size:13px;color:#7b877f;margin-top:9px}
+.shell .db-heading .db-actions{gap:10px}
+.shell .db-heading .db-actions>button,.shell .db-heading .db-actions>a{min-height:43px;padding:12px 19px;font-size:12px;border-radius:100px;box-shadow:none;font-weight:450}
+.shell .db-heading .db-actions>a{border:0;background:#f0f4f1;color:#526c59}
+.shell .db-heading .db-actions>details>summary{border:0;background:#f0f4f1;color:#526c59;border-radius:100px;padding:11px 17px;font-size:12px}
+.shell .db-dashboard-period{margin:28px 0 0}
+.shell :is(.db-dashboard-period,.db-toolbar) .seg{padding:4px;background:#f1f4f2;border-radius:100px;gap:3px;border:0}
+.shell :is(.db-dashboard-period,.db-toolbar) .seg button{border:0;border-radius:100px;background:transparent;min-height:35px;min-width:66px;color:#7a867e;font-size:12px;padding:8px 17px;font-weight:400;box-shadow:none}
+.shell :is(.db-dashboard-period,.db-toolbar) .seg button.active{background:#fff;color:#253c2c;box-shadow:0 1px 4px #203d2510}
+.shell :is(.db-dashboard-period,.db-toolbar) .db-navigation button{min-height:37px;border-radius:100px;border:0;background:#f2f5f3;color:#64766a;padding:9px 13px;font-size:11px;font-weight:400}
+.shell :is(.db-dashboard-period,.db-toolbar) .db-navigation button[data-action=calendar-now]{background:#e5f1e7;color:#376b42}
+.shell .db-date-controls input[type=date]{border:0;border-radius:100px;background:#f2f5f3;color:#586e60;font-size:12px;padding:9px 14px;width:151px;min-height:37px}
+.shell .db-summary{grid-template-columns:1.4fr 1.15fr 1fr 1fr;gap:14px;padding:24px 0 30px;align-items:stretch}
+.shell .db-metric{padding:24px 23px 23px;border:0;border-radius:26px;background:#f0f5f7;box-shadow:none;min-height:221px;display:flex;flex-direction:column;overflow:hidden}
+.shell .db-metric-top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.shell .db-metric-icon{width:29px;height:29px;border-radius:50%;margin:0;background:#fff;color:#40758a;flex:none}
+.shell .db-metric-icon svg{width:16px;height:16px;stroke-width:1.6}
+.shell .db-metric-label{font-size:13px;font-weight:400;margin:0;color:#5e7580}
+.shell .db-metric-value{font-size:49px;line-height:1.05;font-weight:400;letter-spacing:-1.9px;color:#222b27;margin:0 0 8px;font-variant-numeric:tabular-nums}
+.shell .db-metric-note{font-size:11px;line-height:1.6;color:#6a7f87;font-weight:400;max-width:none}
+.shell .db-metric-revenue{background:var(--al-blue)}
+.shell .db-metric-revenue :is(.db-metric-label,.db-metric-value){color:#fff}
+.shell .db-metric-revenue .db-metric-note{color:#e0eef1}
+.shell .db-metric-revenue .db-metric-icon{color:var(--al-blue);background:#fff}
+.shell .db-metric-revenue .db-metric-value{font-size:43px;letter-spacing:-1.6px;margin-top:15px}
+.shell .db-metric-completed{background:#eaf4eb}
+.shell .db-metric-completed .db-metric-icon{background:#fff;color:#568c62}
+.shell .db-metric-completed .db-metric-value{margin-top:15px}
+.shell .db-metric-completed :is(.db-metric-label,.db-metric-note){color:#5c7963}
+.shell .db-metric-cancelled{background:#f4f4f0}
+.shell .db-metric-cancelled .db-metric-icon{background:#fff;color:#8c8b73}
+.shell .db-metric-cancelled .db-metric-value{margin-top:15px}
+.shell .db-metric-cancelled :is(.db-metric-label,.db-metric-note){color:#777b6a}
+.al-booking-dots{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:4px;margin:16px 0 7px;max-width:250px}
+.al-booking-dots i{display:block;aspect-ratio:1;border-radius:50%;background:#dce7ec}
+.al-booking-dots i.is-filled{background:#40758a}
+.al-dot-key{font-size:9px;color:#6c838e;line-height:1.4}
+.shell .db-appointments{border:0;border-radius:26px;background:#f5f7f5;padding:7px 8px 8px;box-shadow:none}
+.shell .db-list-heading{border:0;padding:20px 20px 24px;gap:16px}
+.shell .db-list-heading h2{font-size:23px;font-weight:400;color:#29372e;letter-spacing:-.6px}
+.shell .db-list-heading p{font-size:12px;color:#7a897f;margin-top:6px}
+.shell .db-list-heading>a{border:0;border-radius:100px;background:#fff;color:#5d7465;min-height:35px;font-weight:400;padding:10px 16px;font-size:11px}
+.shell .db-appointment-list{background:#fff;border-radius:20px;overflow:hidden}
+.shell .db-appointment-row{padding:19px 21px;border-color:#edf1ed;grid-template-columns:112px minmax(120px,1fr) minmax(100px,.6fr) 95px 55px;gap:16px}
+.shell .db-appointment-row:hover{background:#fafcfa}
+.shell .db-list-time strong{font-size:17px;font-weight:400;letter-spacing:-.2px;color:#314c3b}
+.shell .db-list-client strong{font-size:14px;font-weight:450;color:#34473b}
+.shell :is(.db-list-time span,.db-list-client span,.db-list-staff){color:#7c8b81;font-size:11px;font-weight:400}
+.shell .db-appointment-row>button{border:0;background:#f2f6f3;color:#426c4b;border-radius:100px;font-size:11px;font-weight:400;padding:8px 12px}
+.shell .db-appointments .empty{border-radius:20px;background:#fff;padding:43px 24px}
+.shell .db-appointments .empty h3{font-size:19px;font-weight:400}
+.shell .db-appointments .empty p{color:#7a887e;font-size:13px}
+.shell .pill{border-radius:100px;font-weight:400;font-size:10px;border:0}
+.shell .pill.green{background:#eaf4ec;color:#4c7857}
+.shell .pill.red{background:#f8ece8;color:#a16a56}
+.shell .db-list-note{color:#75857b;padding:16px 20px 10px}
+.shell .db-diary{border:0;border-radius:26px;background:#f3f6f4;box-shadow:none;padding:6px;overflow:hidden}
+.shell .db-toolbar{padding:16px 16px 20px;background:transparent;border:0;border-radius:20px 20px 0 0}
+.shell .db-diary .jb-week-heading{background:#fff;border:0;border-radius:18px 18px 0 0;padding:9px 0;gap:0;height:88px}
+.shell .db-diary .jb-week-heading>button{background:#f5f7f5;border-radius:15px;border:0}
+.shell .db-diary .jb-week-heading>button>span{font-size:11px;color:#7d8c82;font-weight:400}
+.shell .db-diary .jb-week-heading>button>b{font-size:25px;font-weight:400;color:#314d3c}
+.shell .db-diary .jb-week-heading>button.is-today{background:#e4f2e7}
+.shell .db-diary .jb-week-heading>button.is-today>b{background:transparent;color:#356844}
+.shell .db-diary .jb-week-scroll{border-radius:18px;background:#fff}
+.shell .db-diary .jb-grid-event{border-radius:12px;border-left-width:0;padding:9px 10px;background:color-mix(in srgb,var(--ev) 12%,white)}
+.shell .db-diary .jb-grid-event strong{font-size:12px;font-weight:450}
+.shell .db-diary .jb-grid-event small{font-size:10px;font-weight:400}
+.shell .db-calendar-footer{border-color:#e7ede8;background:transparent;border-radius:0 0 20px 20px;font-size:10px;color:#7a8b7f}
+.shell .db-calendar-aside>.jb-mini{border:0;background:#f3f6f3;box-shadow:none;border-radius:24px;padding:20px 12px}
+.shell .db-calendar-aside .jb-mini-title>b{font-size:13px;font-weight:450;color:#38513e}
+.shell .db-calendar-aside .jb-mini-title button{background:#fff;border-radius:100px;border:0;color:#6f8374}
+.shell .db-calendar-aside .jb-mini-grid>button{color:#667c6c;font-size:11px;font-weight:400;border-radius:50%}
+.shell .db-calendar-aside .jb-mini-grid>button.is-selected{background:var(--workspace-accent,#8bcf97);color:var(--workspace-on-accent,#173d28)}
+.shell .db-filter-panel{background:#f3f6f3;border:0;border-radius:24px;padding:22px 19px}
+.shell .db-filter-panel h2{font-size:19px;font-weight:400;color:#334d3b}
+.shell .db-filter-panel legend{font-weight:450;color:#708476}
+.shell .db-filter-panel .jb-staff-filter{font-size:12px;font-weight:400;color:#637a69}
+.shell .db-filter-panel input{accent-color:#579968}
+.shell .db-up-next{border:0;border-radius:24px;padding:23px 20px;background:var(--al-blue);color:#fff}
+.shell .db-up-next>span{color:#dbeaf0;font-size:11px;font-weight:400}
+.shell .db-up-next h2{font-size:21px;font-weight:400;line-height:1.3;color:#fff}
+.shell .db-up-next p{font-size:12px;color:#e1edf0}
+.shell .db-up-next button{background:#fff;color:#3b6e82;border-radius:100px;padding:10px 15px;font-weight:400}
+.shell :is(.mg-heading h1,.page-heading h1,.ws h1){font-size:34px}
+.shell .mg-heading p,.shell .page-heading p,.shell .ws-heading p{color:#7a887e;font-size:13px}
+.shell :is(.mg-surface,.table-wrap,.ws-panel,.card){border-color:var(--al-rule);border-radius:23px;box-shadow:none}
+.shell .mg-surface{background:#f3f6f4;padding:6px}
+.shell .mg-toolbar{padding:17px 18px 22px;border:0}
+.shell .mg-search input{border:0;border-radius:100px;background:#fff;height:41px;color:#45614e}
+.shell :is(.mg-search-button,.mg-clear,.mg-status-filter select){border:0;border-radius:100px;background:#fff;color:#617667;font-weight:400}
+.shell .mg-staff-scroll{background:#fff;border-radius:18px}
+.shell .table-wrap th{background:#f4f7f4;color:#788b7d;font-size:11px;font-weight:400;padding:18px 20px}
+.shell .table-wrap td{border-color:#edf1ed;padding:21px 20px;color:#3d5444}
+.shell .table-wrap tbody tr:hover{background:#f9fcf9}
+.shell .mg-person strong{font-size:14px;font-weight:450;color:#3e5546}
+.shell .mg-person>div>span{color:#829086;font-size:11px}
+.shell .mg-avatar{width:40px;height:40px;border-radius:14px;background:#e9f2ec;color:#5c8d68;font-weight:450}
+.shell .mg-day{background:#f2f5f2;color:#89978d;font-weight:400}
+.shell .mg-day-open{background:#dcefe0;color:#43744e}
+.shell :is(.mg-count,.mg-upcoming){background:#eaf2ec;color:#64806b;font-weight:400;border-radius:100px}
+.shell .mg-status{border-radius:100px;font-size:11px;font-weight:400}
+.shell .mg-footer{border:0;color:#7e8e83;font-size:11px;padding:18px}
+.shell .mg-footer span{color:inherit}
+body:has(.shell) #modal-root{font-family:Outfit,system-ui,sans-serif;color:#34473b}
+body:has(.shell) #modal-root .modal{border-radius:26px;background:#fff;box-shadow:0 18px 60px #173d281c}
+body:has(.shell) #modal-root .modal-head h2{font-family:inherit;font-size:27px;font-weight:400;color:#27392d;letter-spacing:-.5px}
+body:has(.shell) #modal-root :is(button,input,select,textarea){font-family:inherit}
+body:has(.shell) #modal-root .field{font-size:13px;font-weight:400;color:#597060}
+body:has(.shell) #modal-root .field :is(input,select,textarea){border:1px solid #dfe8e1;border-radius:12px;background:#f7faf7;color:#34473b}
+body:has(.shell) #modal-root button{border-radius:100px;font-weight:450}
+body:has(.shell) #modal-root button.primary{background:#8bcf97;border-color:transparent;color:#173d28}
+body:has(.shell) #modal-root .modal-head button{border:0;background:#eff4f0;color:#5d7464}
+.shell .mg-roster{color:#738579;font-weight:400}
+.shell .mg-roster b{color:#405d49;font-weight:450}
+.shell .ws-panel{background:#f5f8f5;border:0;padding:26px}
+.shell .ws h2{font-size:20px;font-weight:400;letter-spacing:-.3px}
+.shell .ws .field{font-size:12px;font-weight:400;color:#617566}
+.shell .ws .field :is(input,select,textarea){border-color:#e1e9e3;border-radius:13px;background:#fff;font-size:13px;font-weight:400;padding:12px}
+.shell .ws-form-footer{border-color:#e1e9e3}
+.shell .ws-help{color:#74877b!important;font-size:12px!important}
+/* Resolve the older calendar's more specific rules without moving its columns. */
+.shell .db-calendar-page .db-toolbar .seg button.active{background:#fff;color:#253c2c;font-weight:450;box-shadow:0 1px 4px #203d2510}
+.shell .db-calendar-page .db-diary .jb-week-heading>button{background:#f3f6f4;border-radius:15px}
+.shell .db-calendar-page .db-diary .jb-week-heading>button.is-today{background:#e4f2e7}
+.shell .db-calendar-page .db-diary .jb-week-heading>button.is-today>b{background:transparent;color:#356844}
+.shell .db-calendar-page .db-diary .jb-grid-event{border-radius:12px;border-left-width:0;color:color-mix(in srgb,var(--ev) 62%,#152e21);padding:9px 10px}
+.shell .db-calendar-page .db-diary .jb-grid-event.completed{opacity:1;background:color-mix(in srgb,var(--ev) 7%,white)}
+.shell .db-calendar-page .db-diary .jb-grid-event.is-short{padding:3px 5px}
+/* Small labels stay readable on the pale surfaces. */
+.shell :is(.db-heading>div>p,.db-list-heading p,.db-list-note,.db-list-staff,.db-list-time span,.db-list-client span,.mg-heading p,.mg-person>div>span,.mg-footer,.mg-roster,.mg-heading p,.page-heading p,.ws-heading p){color:#637368}
+.shell :is(.db-metric-bookings,.db-metric-completed,.db-metric-cancelled) :is(.db-metric-label,.db-metric-note){color:#596e64}
+.shell .al-dot-key{color:#546c78}
+.shell .mg-footer span{color:inherit}
+@media(min-width:1600px){.shell .workspace-main{padding:42px 52px 55px}.shell .workspace-header{padding:0 52px}.shell .db-title{font-size:46px}.shell .db-metric{min-height:240px;padding:27px}.shell .db-metric-value{font-size:58px}.shell .db-metric-revenue .db-metric-value{font-size:50px}}
+@media(min-width:801px) and (max-width:1150px){.shell{grid-template-columns:180px minmax(0,1fr)}.shell .sidebar{padding:30px 12px 20px}.shell .side-nav a{font-size:12px;padding:12px}.shell .workspace-main{padding:30px 24px 38px}.shell .workspace-header{padding:0 24px}.shell .db-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.shell .db-metric{min-height:205px}.shell .db-title{font-size:36px}.shell .db-calendar-page .db-toolbar .db-navigation button{padding:8px 10px}.shell .db-calendar-page .db-date-controls input{width:142px}}
+@media(max-width:800px){
+  .shell{display:block}.shell .workspace-header{height:72px;padding:0 16px}.shell .workspace-header .row{gap:6px}.shell .workspace-header .btn{font-size:10px;padding:9px 12px}.shell .workspace-header .quiet{font-size:11px}.shell .workspace-header .nf-trigger{width:35px;height:35px}.shell .workspace-header .jb-header-title{font-size:13px}.shell .workspace-header .tiny{font-size:10px}
+  .shell .sidebar{padding:20px 17px}.shell .workspace-main{padding:28px 17px 36px}.shell .db-title{font-size:34px}.shell .db-heading{align-items:flex-start;flex-wrap:wrap;gap:17px}.shell .db-heading .db-actions{gap:7px}.shell .db-heading .db-actions>button,.shell .db-heading .db-actions>a{font-size:11px;min-height:40px;padding:11px 15px}.shell .db-heading>div>p{font-size:12px}
+  .shell .db-dashboard-period{margin-top:23px;gap:14px}.shell .db-dashboard-period .db-period-controls,.shell .db-dashboard-period .db-date-controls{width:auto}.shell .db-dashboard-period .db-date-controls{gap:6px;flex-wrap:wrap}.shell .db-date-controls input[type=date]{width:145px;min-height:40px}.shell .db-dashboard-period .db-navigation button{font-size:10px;padding:10px;min-height:40px}.shell :is(.db-dashboard-period,.db-toolbar) .seg button{min-height:37px;font-size:12px}
+  .shell .db-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:23px 0 24px}.shell .db-metric{padding:20px 17px;min-height:203px;border-radius:23px}.shell .db-metric-label{font-size:12px}.shell .db-metric-top{gap:7px;margin-bottom:14px}.shell .db-metric-icon{width:25px;height:25px}.shell .db-metric-value{font-size:43px}.shell .db-metric-revenue .db-metric-value{font-size:32px;letter-spacing:-1.2px}.shell .db-metric-note{font-size:10px}.al-booking-dots{grid-template-columns:repeat(10,minmax(0,1fr));max-width:140px;gap:3px;margin-top:12px}.al-dot-key{font-size:8px}
+  .shell .db-list-heading{padding:17px 13px 20px}.shell .db-list-heading h2{font-size:22px}.shell .db-list-heading>a{font-size:10px;padding:9px 12px}.shell .db-appointment-row{grid-template-columns:60px minmax(0,1fr) auto;gap:9px 10px;padding:17px 13px}.shell .db-list-time{grid-column:1;grid-row:1/span 2}.shell .db-list-client{grid-column:2;grid-row:1}.shell .db-list-time strong{font-size:16px}.shell .db-list-time span{font-size:9px}.shell .db-list-client strong{font-size:13px}.shell .db-list-client span{font-size:10px}.shell .db-list-staff{grid-column:2;grid-row:2;font-size:10px}.shell .db-appointment-row>.pill{grid-column:3;grid-row:1;font-size:9px;max-width:80px;padding:5px 7px}.shell .db-appointment-row>button{grid-column:3;grid-row:2;min-height:34px}.shell .db-appointments .empty{padding:33px 17px}
+  .shell .db-calendar-aside>.jb-mini{padding:16px 8px;border-radius:22px}.shell .db-calendar-aside .jb-mini-title>b{font-size:11px}.shell .db-calendar-aside .jb-mini-grid>button{font-size:10px}.shell .db-filter-panel{padding:19px 14px;border-radius:22px}.shell .db-filter-panel h2{font-size:18px}.shell .db-filter-panel .jb-staff-filter{font-size:11px}.shell .db-up-next{padding:21px 18px;border-radius:22px}.shell .db-diary{border-radius:22px;padding:4px}.shell .db-toolbar{padding:13px 9px 17px;gap:12px}.shell .db-toolbar .db-date-controls{width:100%;gap:6px}.shell .db-toolbar .db-navigation button{font-size:10px;padding:9px}.shell .db-toolbar input[type=date]{width:143px;font-size:11px}
+  .shell :is(.mg-heading h1,.page-heading h1,.ws h1){font-size:30px}.shell .ws-panel{padding:22px 18px}.shell .mg-toolbar{padding:15px 12px 20px}.shell .mg-footer{padding:15px 12px}.shell .mg-staff-scroll{overflow:auto}.shell .table-wrap:not(.mg-staff-scroll) tbody tr{border-color:var(--al-rule);border-radius:20px}
+}
+@media(prefers-reduced-motion:reduce){.shell :is(button,.btn){transition:none}.shell :is(button,.btn):active:not(:disabled){transform:none}}
