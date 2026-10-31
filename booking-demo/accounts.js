@@ -323,9 +323,16 @@
       async loadActivity(salonId, since) {
         const t = await token();
         if (!t) return {ok:false, auth:true};
-        const after = since && Number.isFinite(Date.parse(since)) ? '&sent_at=gte.' + encodeURIComponent(new Date(since).toISOString()) : '';
-        const r = await call('/rest/v1/email_log?select=*&salon_id=eq.' + encodeURIComponent(salonId) + after + '&order=sent_at.desc&limit=200', {method:'GET', token:t});
+        const after = since && Number.isFinite(Date.parse(since)) ? '&updated_at=gte.' + encodeURIComponent(new Date(since).toISOString()) : '';
+        const r = await call('/rest/v1/email_log?select=*&salon_id=eq.' + encodeURIComponent(salonId) + after + '&order=updated_at.desc&limit=200', {method:'GET', token:t});
         return {ok:r.ok && Array.isArray(r.data), rows:r.ok && Array.isArray(r.data) ? r.data : []};
+      },
+      async emailDeliveryInfo() {
+        const t = await token();
+        if (!t) return {ok:false, auth:true};
+        const r = await rpc('email_delivery_info', {}, t), data = r.data;
+        if (!r.ok || !data || typeof data.enabled !== 'boolean' || data.provider !== 'Resend' || data.reminder_hours !== 24) return {ok:false, network:r.network};
+        return {ok:true, data:{enabled:data.enabled, provider:data.provider, reminder_hours:data.reminder_hours}};
       },
       async ownerCapabilities() {
         const t = await token();
@@ -339,16 +346,21 @@
         const names = ['categories', 'staff', 'services', 'customers', 'bookings', 'email_log', 'payments'];
         const orders = ['created_at,id', 'created_at,id', 'created_at,id', 'created_at,id', 'date,time', 'sent_at.desc', 'created_at.desc'];
         const res = await Promise.all([get('salons?select=*')].concat(names.map((n, i) => get(n + '?select=*&order=' + orders[i]))));
-        if (res.some(r => !r.ok || !Array.isArray(r.data))) return { ok: false, network: res.some(r => r.network), auth: res.some(r => r.status === 401) };
-        const rows = {}; names.forEach((n, i) => { rows[n] = res[i + 1].data; });
-        return { ok: true, salon: res[0].data[0] || null, rows };
+        const emailIndex=names.indexOf('email_log')+1;
+        const core=res.filter((r,index)=>index!==emailIndex);
+        if (core.some(r => !r.ok || !Array.isArray(r.data))) return { ok: false, network: core.some(r => r.network), auth: core.some(r => r.status === 401) };
+        const emailActivityUnavailable=!res[emailIndex].ok || !Array.isArray(res[emailIndex].data);
+        const rows = {}; names.forEach((n, i) => { rows[n] = n==='email_log'&&emailActivityUnavailable?[]:res[i + 1].data; });
+        return { ok: true, salon: res[0].data[0] || null, rows, emailActivityUnavailable };
       },
       async upsertRows(table, rows) {
+        if (table === 'email_log') return {ok:false, status:403, message:'Email delivery records are read-only.'};
         const t = await token(); if (!t) return { ok: false, auth: true };
         const r = await call('/rest/v1/' + table + '?on_conflict=salon_id,id', { token: t, body: rows, headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
         return { ok: r.ok, network: r.network, status: r.status, message: r.data && r.data.message };
       },
       async deleteRows(table, salonId, ids) {
+        if (table === 'email_log') return {ok:false, status:403, message:'Email delivery records are read-only.'};
         const t = await token(); if (!t) return { ok: false, auth: true };
         const list = ids.map(i => '"' + String(i).replace(/"/g, '') + '"').join(',');
         const r = await call('/rest/v1/' + table + '?salon_id=eq.' + salonId + '&id=in.(' + encodeURIComponent(list) + ')', { method: 'DELETE', token: t, headers: { Prefer: 'return=minimal' } });
