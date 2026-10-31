@@ -30,3 +30,43 @@ test('empty menus offer recovery and untrusted names stay escaped',()=>{
  const x=setup();x.state.categories[0].name='<script>Category</script>';x.state.services[0].name='<img src=x>';let html=x.tools.pages.services();assert(html.includes('&lt;script&gt;'));assert(html.includes('&lt;img src=x&gt;'));assert(!html.includes('<script>'));
  x.state.categories=[];x.state.services=[];html=x.tools.pages.services();assert(html.includes('Add your first service'));assert(!html.includes('<table'));
 });
+
+test('a successfully added empty category is revealed immediately from another category filter',()=>{
+ const x=setup();x.tools.pages.services();x.tools.click('sm-category',{dataset:{category:'hair'}});
+ x.state.categories.push({id:'skin',name:'Skin treatments'});
+ const before=structuredClone(x.state);assert.equal(x.tools.revealCategory('skin'),true);
+ const html=x.tools.pages.services();assert(html.includes('data-category="skin" aria-pressed="true"'));
+ assert(html.includes('data-service-category="skin"'));assert(html.includes('No services in this category'));
+ assert(!html.includes('data-service-category="hair"'));assert.equal(x.tools.creationCategory(),'skin');
+ assert.deepEqual(x.state,before,'Revealing a saved category must not rewrite business data');
+});
+
+test('new service forms inherit the selected valid category and a saved service reveals its actual group',()=>{
+ const x=setup();x.tools.pages.services();assert.equal(x.tools.creationCategory(),'');
+ x.tools.click('sm-category',{dataset:{category:'nails'}});assert.equal(x.tools.creationCategory(),'nails');
+ x.state.services.push({id:'new-service',name:'New manicure',duration:30,price:42,categoryId:'nails',staffIds:['a']});
+ assert.equal(x.tools.revealService('new-service'),true);let html=x.tools.pages.services();
+ assert(html.includes('data-service-id="new-service"'));assert(html.includes('£42.00'));
+ x.state.services.find(s=>s.id==='new-service').categoryId='hair';
+ assert.equal(x.tools.revealService('new-service'),true);html=x.tools.pages.services();
+ assert(html.includes('data-category="hair" aria-pressed="true"'));assert(html.includes('data-service-id="new-service"'));
+ assert(!html.includes('data-service-category="nails"'));
+});
+
+test('uncategorised saves stay visible and removing the last ungrouped service resets the invisible filter',()=>{
+ const x=setup();x.tools.pages.services();assert.equal(x.tools.revealService('other'),true);
+ let html=x.tools.pages.services();assert(html.includes('data-category="__uncategorised__" aria-pressed="true"'));
+ assert.equal(x.tools.creationCategory(),'');x.state.services=x.state.services.filter(s=>s.id!=='other');
+ html=x.tools.pages.services();assert(html.includes('data-category="all" aria-pressed="true"'));
+ assert(!html.includes('data-category="__uncategorised__"'));
+});
+
+test('save reveal hooks reject missing records and stale business identities without changing filters',()=>{
+ const x=setup();x.tools.pages.services();x.tools.click('sm-category',{dataset:{category:'nails'}});
+ assert.equal(x.tools.revealCategory('missing'),false);assert.equal(x.tools.revealService('missing'),false);
+ assert(x.tools.pages.services().includes('data-category="nails" aria-pressed="true"'));
+ x.setState({...x.state,id:'business-b'});
+ assert.equal(x.tools.revealCategory('hair','business-a'),false);assert.equal(x.tools.revealService('cut','business-a'),false);
+ assert(x.tools.pages.services().includes('data-category="all" aria-pressed="true"'));
+ assert.equal(x.tools.creationCategory(),'');
+});

@@ -1,0 +1,144 @@
+/* Last-loaded owner palette layer. Measurements and calendar identity fills stay intact. */
+html[data-workspace-theme] body,html[data-workspace-theme] .shell{
+ --studio-paper:var(--theme-page);--studio-ink:var(--theme-heading);--studio-muted:var(--theme-muted);--studio-line:var(--theme-line);--studio-blush:var(--theme-rail-selected);
+ --ink:var(--theme-heading);--ink-2:var(--theme-body);--muted:var(--theme-muted);--line:var(--theme-line);--line-2:var(--theme-line);--paper:var(--theme-page);--surface:var(--theme-panel);--soft:var(--theme-inset);--blue:var(--theme-primary)!important;--blue-3:var(--theme-primary);--blush:var(--theme-soft);
+ --al-ink:var(--theme-heading);--db-ink:var(--theme-heading);--desk-ink:var(--theme-heading);--al-muted:var(--theme-muted);--desk-muted:var(--theme-muted);--al-paper:var(--theme-page);--db-paper:var(--theme-page);--al-rule:var(--theme-line);--db-rule:var(--theme-line);--desk-line:var(--theme-line);--al-blue:var(--theme-primary);
+ --workspace-accent:var(--theme-primary)!important;--workspace-on-accent:var(--theme-on-primary)!important;
+ --theme-success-bg:#e4f1e8;--theme-success-text:#245b3c;--theme-warning-bg:#f7eccd;--theme-warning-text:#765214;--theme-error-bg:#f8e4e5;--theme-error-text:#8f3441;--theme-info-bg:#e1edf8;--theme-info-text:#25547c;--theme-neutral-bg:#e8edf1;--theme-neutral-text:#4b5d6c;
+ background:var(--theme-page);color:var(--theme-body);color-scheme:light;
+}
+html[data-workspace-theme=midnight-glass] body,html[data-workspace-theme=midnight-glass] .shell{
+ --theme-success-bg:#203f32;--theme-success-text:#a9dfc0;--theme-warning-bg:#47391e;--theme-warning-text:#f0d593;--theme-error-bg:#482831;--theme-error-text:#f0b3be;--theme-info-bg:#253d55;--theme-info-text:#b6d4f3;--theme-neutral-bg:#303d4b;--theme-neutral-text:#c1cedc;color-scheme:dark;
+}
+html[data-workspace-theme] .shell :is(.workspace,.workspace-main,.workspace-header){background:var(--theme-page)!important;color:var(--theme-body)}
+html[data-workspace-theme] :is(.demo-bar,.st-date-pill){background:var(--theme-inset);color:var(--theme-muted);border-color:var(--theme-line)}
+html[data-workspace-theme] .shell :is(h1,h2,h3,h4,.jb-header-title,.mg-person strong,.sm-table td>strong,.db-list-time strong,.db-list-client strong,.mg-roster b,.sm-price,.dg-staff){color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell :is(.tiny,.secondary,.quiet,.field,.db-heading>div>p,.page-heading p,.ws-heading p,.mg-heading p,.sm-heading p,.ot-heading p,.sb-header p,.nf-heading p,.mg-roster,.mg-person>div>span,.mg-footer,.sm-note,.sm-sidebar-note,.sm-offered-by,.sm-buffer,.sm-group-heading>div>span,.db-list-heading p,.db-list-time span,.db-list-client span,.db-list-staff,.db-calendar-footer,.dg-staff small,.dg-times span,.jb-time-ruler>span,.ot-help,.ws-help,.ws-kicker,.ws-section-title p,.se-help,.df-save-status,.se-save-status){color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell :is(.card,.ws-panel,.sb-current,.sb-change-summary,.sb-plan,.ot-panel,.ot-chart,.nf-panel,.mg-surface,.mg-staff-scroll,.sm-sidebar,.sm-groups,.sm-group,.sm-table-scroll,.table-wrap,.db-appointments,.db-diary,.db-toolbar,.st-calendar-toolbar,.st-calendar-filter>div,.dg-head,.db-calendar-footer,.st-settings-links,.workspace-main .toolbar,.jb-week-heading,.jb-month-grid,.jb-month-day){background:var(--theme-panel)!important;color:var(--theme-body);border-color:var(--theme-line)!important}
+html[data-workspace-theme] .shell :is(th,td,.mg-toolbar,.mg-footer,.db-list-heading,.db-appointment-row,.dg-col,.dg-staff,.ot-chart-grid,.ws-details,.ws-daily-row,.key-value,.sb-feature,.nf-list>li){border-color:var(--theme-line)!important}
+html[data-workspace-theme] .shell :is(.table-wrap th,.sm-table th,.mg-table th){background:var(--theme-panel)!important;color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell :is(.table-wrap td,.sm-table td,.mg-table td){background:var(--theme-panel)!important;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell :is(.table-wrap tbody tr:hover td,.sm-table tbody tr:hover td,.mg-table tbody tr:hover td){background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell .sm-group-heading{background:var(--theme-soft)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] .shell .sm-group-heading h2{color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell :is(.sm-category-count,.sm-total,.mg-count,.mg-upcoming,.mg-avatar,.ws-tag,.ws-preview,.ws-details,.se-services,.ot-bar-track,.ot-service-track,.ot-chart-key,.sb-featured,.sb-note){background:var(--theme-inset)!important;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell :is(.btn,button,summary){border-color:var(--theme-line)}
+html[data-workspace-theme] .shell :is(.btn:not(.primary),button:not(.primary):not(.dg-event):not(.jb-calendar-event):not(.jb-month-event):not(.nf-item):not([role=tab]),.st-calendar-filter>summary){color:var(--theme-body)}
+html[data-workspace-theme] .shell :is(.workspace-header .btn,.workspace-header .nf-trigger,.jb-mobile-nav,.db-actions>a,.st-series-button,.mg-search-button,.mg-status-filter select,.mg-clear,.sm-row-actions button,.sm-category-actions button,.sm-sidebar-title>button,.db-navigation button,.db-list-heading>a,.db-appointment-row>button,.table-wrap .actions button,.table-wrap button.small){background:var(--theme-panel)!important;color:var(--theme-body)!important;border-color:var(--theme-control-line)!important}
+html[data-workspace-theme] .shell :is(button.primary,.btn.primary),html[data-workspace-theme] #modal-root :is(button.primary,.btn.primary){background:var(--theme-primary)!important;color:var(--theme-on-primary)!important;border-color:transparent!important}
+html[data-workspace-theme] .shell :is(button.primary,.btn.primary):hover,html[data-workspace-theme] #modal-root :is(button.primary,.btn.primary):hover{background:color-mix(in srgb,var(--theme-primary) 92%,#000)!important}
+html[data-workspace-theme] .shell :is(a:not(.btn):not(.active),.ws-copy-service){color:var(--theme-primary)}
+html[data-workspace-theme] .shell :is(input,textarea,select),html[data-workspace-theme] #modal-root :is(input,textarea,select){background-color:var(--theme-panel)!important;color:var(--theme-heading)!important;border-color:var(--theme-control-line)!important;accent-color:var(--theme-primary)}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(input,textarea)::placeholder{color:var(--theme-muted);opacity:1}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(input[readonly],textarea[readonly]){background:var(--theme-inset)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(button,a,input,select,textarea,summary):focus-visible{outline:2px solid var(--theme-focus)!important;outline-offset:3px}
+html[data-workspace-theme] .shell :is(.seg,.se-tabs){background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell :is(.seg button,.sm-categories>button){background:transparent!important;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell :is(.seg button.active,.sm-categories>button.is-selected){background:var(--theme-primary)!important;color:var(--theme-on-primary)!important}
+html[data-workspace-theme] .shell :is(.sm-categories>button:not(.is-selected):hover,.st-settings-links a:hover,.st-settings-links button:hover){background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell .sidebar{background:var(--theme-rail)!important;color:var(--theme-rail-text)}
+html[data-workspace-theme] .shell .sidebar :is(.jb-nav-section>a,.jb-more-settings>summary){color:var(--theme-rail-text)!important;background:transparent!important}
+html[data-workspace-theme] .shell .sidebar :is(.jb-nav-section>a:hover,.jb-more-settings>summary:hover,.jb-more-settings[open]>summary,.jb-more-settings.is-current>summary){background:var(--theme-rail-hover)!important;color:#fff!important}
+html[data-workspace-theme] .shell .sidebar :is(.brand.jb-wordmark,.jb-nav-section>a.active,.jb-nav-section>a.active:hover){background:var(--theme-rail-selected)!important;color:var(--theme-heading)!important}
+html[data-workspace-theme=midnight-glass] .shell .sidebar :is(.brand.jb-wordmark,.jb-nav-section>a.active,.jb-nav-section>a.active:hover){color:var(--theme-on-primary)!important}
+html[data-workspace-theme] .shell .sidebar :is(a,summary):focus-visible{outline-color:#fff!important}
+html[data-workspace-theme] .shell .st-settings-links :is(a,button){color:var(--theme-body)!important}
+html[data-workspace-theme] .shell .st-settings-links a.active{background:var(--theme-soft)!important;color:var(--theme-heading)!important}
+/* Stats retain a deliberate strong / neutral / soft hierarchy in every palette. */
+html[data-workspace-theme] .shell :is(.db-metric,.st-calendar-stat,.ot-metric){background:var(--theme-panel)!important;color:var(--theme-heading)!important;border-color:var(--theme-line)}
+html[data-workspace-theme] .shell :is(.db-metric-label,.db-metric-note,.st-calendar-stat>span,.ot-metric span,.ot-metric small){color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell :is(.db-metric-value,.st-calendar-stat>strong,.ot-metric strong){color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell :is(.db-metric-bookings,.st-calendar-stat:first-child,.ot-metric:first-child){background:var(--theme-stat-strong)!important;color:#fff!important}
+html[data-workspace-theme] .shell :is(.db-metric-bookings,.st-calendar-stat:first-child,.ot-metric:first-child) :is(span,strong,small,.db-metric-label,.db-metric-note,.db-metric-value,.al-dot-key){color:#fff!important}
+html[data-workspace-theme] .shell :is(.db-metric-completed,.st-calendar-stat:last-child,.ot-metric:nth-child(2)){background:var(--theme-stat-soft)!important}
+html[data-workspace-theme] .shell :is(.db-metric-completed,.st-calendar-stat:last-child,.ot-metric:nth-child(2)) :is(span,strong,small,.db-metric-label,.db-metric-note,.db-metric-value){color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell :is(.db-metric-cancelled,.ot-metric:last-child){background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell .db-metric-icon{background:var(--theme-soft)!important;color:var(--theme-primary)!important}
+html[data-workspace-theme] .shell .db-metric-bookings .db-metric-icon{background:#ffffff18!important;color:var(--theme-rail-selected)!important}
+html[data-workspace-theme] .shell .al-booking-dots i{background:#ffffff26!important}
+html[data-workspace-theme] .shell .al-booking-dots i.is-filled{background:var(--theme-rail-selected)!important}
+html[data-workspace-theme] .shell :is(.ot-service-fill,.ot-bar-fill,.al-revenue-bars i){background:var(--theme-primary)!important}
+html[data-workspace-theme] .shell :is(.ot-chart-line,.ot-line-chart path.ot-chart-line){stroke:var(--theme-primary)!important}
+html[data-workspace-theme] .shell .ot-chart-point{fill:var(--theme-primary);stroke:var(--theme-panel)}
+html[data-workspace-theme] .shell :is(.ot-chart-x-label,.ot-chart-y-label,.ot-bar-date,.ot-chart-day){fill:var(--theme-muted);color:var(--theme-muted)!important}
+/* Calendar event identity colours remain untouched. Pale events always use dark ink. */
+html[data-workspace-theme] .shell :is(.dg-event,.jb-calendar-event,.jb-month-event),html[data-workspace-theme] .shell :is(.dg-event,.jb-calendar-event,.jb-month-event) :is(strong,small,span){color:#243247!important}
+html[data-workspace-theme] .shell :is(.dg-off,.jb-calendar-slot.is-closed){background:repeating-linear-gradient(-45deg,var(--theme-panel),var(--theme-panel) 8px,var(--theme-inset) 8px,var(--theme-inset) 9px)!important}
+html[data-workspace-theme] .shell .jb-week-heading>button{background:var(--theme-inset)!important;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell :is(.jb-week-heading>button.is-today,.jb-month-day.is-today){background:var(--theme-soft)!important;color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell .jb-week-heading>button.is-today>b{color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell .dg-now{background:var(--theme-focus)!important}
+/* External modal and top-layer roots inherit the same owner palette. */
+html[data-workspace-theme] #modal-root .modal,html[data-workspace-theme] :is(.mg-action-list,.nf-popover,#toast){background:var(--theme-panel)!important;color:var(--theme-body)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] #modal-root .overlay{background:var(--theme-overlay)!important}
+html[data-workspace-theme] #modal-root :is(h2,h3,strong){color:var(--theme-heading)!important}
+html[data-workspace-theme] #modal-root :is(p,.field,.check,.se-check,.se-help,.se-closed,.se-hours-row>span,.se-save-status,.df-save-status){color:var(--theme-muted)!important}
+html[data-workspace-theme] #modal-root :is(.modal-head button,.se-tabs,.se-services,.se-discard,.se-tabs button,.se-services label){background:var(--theme-inset)!important;color:var(--theme-body)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] #modal-root .se-tabs button[aria-selected=true]{background:var(--theme-primary)!important;color:var(--theme-on-primary)!important}
+html[data-workspace-theme] #modal-root :is(.se-save-bar,.df-save-bar,.se-hours-row,.form-footer){border-color:var(--theme-line)!important}
+html[data-workspace-theme] :is(.mg-action-list button,.nf-popover .nf-item){background:var(--theme-panel)!important;color:var(--theme-body)!important}
+html[data-workspace-theme] :is(.mg-action-list button:hover,.nf-popover .nf-item:hover,.nf-popover .nf-item.is-unread){background:var(--theme-inset)!important;border-radius:0}
+html[data-workspace-theme] .nf-popover :is(.nf-popover-header,.nf-popover-close){background:var(--theme-inset)!important;color:var(--theme-body)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] .nf-popover :is(h2,.nf-client strong){color:var(--theme-heading)!important}
+html[data-workspace-theme] .nf-popover :is(p,.nf-client,.nf-appointment-time,.nf-event-age,.nf-item-top>b,.nf-toolbar p,.nf-history-note){color:var(--theme-muted)!important}
+html[data-workspace-theme] .nf-popover :is(.nf-view-all,.nf-mark){background:var(--theme-panel)!important;color:var(--theme-primary)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] .nf-popover :is(.nf-toolbar,.nf-list>li,.nf-popover-header){border-color:var(--theme-line)!important}
+html[data-workspace-theme] .nf-popover .nf-unread-dot{background:var(--theme-primary)}
+/* Semantic roles remain readable independently of the decorative theme. */
+html[data-workspace-theme] :is(.shell,.nf-popover,#modal-root) :is(.pill.green,.mg-status-active,.sm-status.is-bookable,.nf-kind-booked,.nf-kind-created,.ws-saved){background:var(--theme-success-bg)!important;color:var(--theme-success-text)!important}
+html[data-workspace-theme] :is(.shell,.nf-popover,#modal-root) :is(.pill.red,.nf-kind-cancelled,.ot-status-cancelled){background:var(--theme-error-bg)!important;color:var(--theme-error-text)!important}
+html[data-workspace-theme] :is(.shell,.nf-popover,#modal-root) :is(.pill.yellow,.sm-status.needs-staff,.nf-kind-rescheduled,.ot-status-no-show){background:var(--theme-warning-bg)!important;color:var(--theme-warning-text)!important}
+html[data-workspace-theme] :is(.shell,.nf-popover,#modal-root) :is(.pill.blue,.nf-kind,.ot-status-confirmed){background:var(--theme-info-bg);color:var(--theme-info-text)}
+html[data-workspace-theme] .shell :is(.mg-status-inactive,.sm-status:not(.is-bookable):not(.needs-staff),.mg-day:not(.mg-day-open)){background:var(--theme-neutral-bg)!important;color:var(--theme-neutral-text)!important}
+html[data-workspace-theme] .shell .mg-day-open{background:var(--theme-success-bg)!important;color:var(--theme-success-text)!important}
+html[data-workspace-theme] :is(.shell,#modal-root,.mg-action-list) :is(.danger,.mg-delete,.sm-delete-category,.sm-delete-service,[data-action=remove-service],[data-action=remove-service-confirm],[data-action=delete-category-confirm],[data-staff-discard-confirm]){color:var(--theme-error-text)!important;background:var(--theme-error-bg)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(.error,.se-save-status.is-dirty,.df-save-status.is-dirty){color:var(--theme-error-text)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(.se-save-status.is-dirty .se-save-dot,.df-save-status.is-dirty .df-save-dot){background:var(--theme-error-text)!important}
+html[data-workspace-theme=midnight-glass] :is(.shell,#modal-root) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5' stroke='%23A7B9CC' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")!important}
+html[data-workspace-theme=midnight-glass] :is(.nf-popover,.st-settings-links){background:rgba(28,40,54,.94)!important;backdrop-filter:blur(12px);box-shadow:0 12px 32px #0003}
+html[data-workspace-theme] #modal-root .modal-backdrop{background:var(--theme-overlay)!important}
+html[data-workspace-theme] .shell :is(.jb-week-scroll,.jb-week-body,.jb-week-day,.dg-times,.dg-body,.month-head,.mday){background:var(--theme-panel)!important;border-color:var(--theme-line)!important;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell :is(.jb-week-day.is-today,.mday.other){background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell .jb-calendar-slot:not(.is-closed){background:transparent!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] .shell .jb-week-heading>button :is(span,b){color:var(--theme-body)!important}
+html[data-workspace-theme] .shell :is(.jb-grid-event,.mchip),html[data-workspace-theme] .shell :is(.jb-grid-event,.mchip) :is(strong,small,span){color:var(--event-ink,#243247)!important}
+html[data-workspace-theme] .shell :is(.ot-chart-grid text,.ot-chart-x-label){fill:var(--theme-muted)!important}
+html[data-workspace-theme] .shell .ot-chart-grid line{stroke:var(--theme-line)!important}
+html[data-workspace-theme] .shell .ot-chart-area{fill:var(--theme-soft)!important}
+html[data-workspace-theme] .shell :is(.ot-service-track i,.ot-chart-key i){background:var(--theme-primary)!important}
+html[data-workspace-theme] .shell .ot-service-ranking li:nth-child(2) .ot-service-track i{background:var(--theme-chart2)!important}
+html[data-workspace-theme] .shell .ot-service-ranking li:nth-child(3) .ot-service-track i{background:var(--theme-chart3)!important}
+html[data-workspace-theme] .shell :is(.ot-service-heading b,.ot-service-heading strong,.ot-volume-figure figcaption b){color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell :is(.ot-panel-heading p,.ot-service-heading small,.ot-volume-figure figcaption,.ot-statuses,.ws-section-title p){color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell :is(.db-appointment-list,.db-appointments .empty,.sb-plan-grid,.sb-plan-card,.ot-filters,.nf-page .nf-item,.nf-page .nf-list,.ws-share-box){background:var(--theme-panel)!important;color:var(--theme-body)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] .shell :is(.db-appointment-row:hover,.nf-page .nf-item:hover,.nf-page .nf-item.is-unread,.ws-appearance,.ws-appearance-icon,.sb-plan-card.is-current){background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell :is(.sb-plan-price,.sb-plan-price strong,.sb-plan-features,.nf-client strong,.ws-daily-row>b){color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell :is(.sb-eyebrow,.sb-plan-price small,.sb-current small,.nf-client,.nf-appointment-time,.nf-item time,.nf-item-top b,.ws-closed,.ws-time-to,.ws-daily-labels,.ws-appearance p,.ws-overline){color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell .mday.today{background:var(--theme-soft)!important;border-color:var(--theme-focus)!important;box-shadow:inset 0 0 0 1px var(--theme-focus)}
+html[data-workspace-theme] .shell .mday.today .mnum{background:var(--theme-primary)!important;color:var(--theme-on-primary)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(.ed-notice,.ed-status){background:var(--theme-inset)!important;color:var(--theme-body)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(.ed-notice-warning,.ed-status-pending){background:var(--theme-warning-bg)!important;color:var(--theme-warning-text)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) .ed-status-success{background:var(--theme-success-bg)!important;color:var(--theme-success-text)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(.ed-status-error,.ed-refresh-error){background:var(--theme-error-bg)!important;color:var(--theme-error-text)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) :is(.ed-row-time,.ed-details dt,.ed-notice small){color:var(--theme-muted)!important}
+/* Secondary ink on tinted surfaces avoids low-contrast moss/lilac small text. */
+html[data-workspace-theme] :is(.demo-bar,.st-date-pill),html[data-workspace-theme] .shell .sm-group-heading>div>span,html[data-workspace-theme] .nf-popover .nf-popover-header p,html[data-workspace-theme] .nf-popover .nf-item.is-unread :is(.nf-client,.nf-appointment-time,.nf-event-age,.nf-item-top>b){color:var(--theme-body)!important}
+html[data-workspace-theme] .demo-bar :is(b,button){color:var(--theme-primary)!important}
+html[data-workspace-theme] .shell .db-list-note{color:var(--theme-muted)!important;border-color:var(--theme-line)!important}
+html[data-workspace-theme] .shell .st-calendar-filter>summary{background:var(--theme-panel)!important;color:var(--theme-body)!important;border-color:var(--theme-control-line)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) .pill:not(.green):not(.red):not(.blue):not(.yellow):not(.amber){background:var(--theme-neutral-bg)!important;color:var(--theme-neutral-text)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) .pill.amber{background:var(--theme-warning-bg)!important;color:var(--theme-warning-text)!important}
+@media(prefers-reduced-transparency:reduce){html[data-workspace-theme=midnight-glass] :is(.nf-popover,.st-settings-links){background:var(--theme-panel)!important;backdrop-filter:none}}
+/* Six miniature workspaces, not colour dots. Native radio semantics and focus remain. */
+.wt-choices{margin:0;padding:0;border:0;min-width:0}.wt-legend{font-size:13px;font-weight:500;margin-bottom:14px;color:var(--theme-heading,#172d43)}
+.wt-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.wt-choice{position:relative;display:block;cursor:pointer;min-width:0}.wt-choice>input{position:absolute;width:1px;height:1px;padding:0;margin:0;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+.wt-choice-card{display:block;border:1px solid var(--theme-line,#d3dfea);border-radius:15px;padding:7px;background:var(--theme-panel,#fff);height:100%}.wt-choice input:checked+.wt-choice-card{border-color:var(--theme-primary,#235789);outline:2px solid var(--theme-primary,#235789);outline-offset:1px}.wt-choice input:focus-visible+.wt-choice-card{outline:2px solid var(--theme-focus,#1d5fa3);outline-offset:4px}
+.wt-preview{display:flex;gap:10px;height:101px;border-radius:9px;overflow:hidden;background:var(--preview-page);padding:10px}.wt-preview-rail{width:17px;flex:none;display:flex;align-items:center;flex-direction:column;gap:9px;background:var(--preview-rail);border-radius:9px;padding:7px 4px}.wt-preview-rail i{width:5px;height:5px;display:block;border-radius:50%;background:var(--preview-soft)}
+.wt-preview-main{display:flex;flex-direction:column;gap:9px;min-width:0;flex:1}.wt-preview-heading{width:45%;height:5px;background:var(--preview-ink);border-radius:2px;opacity:.8}.wt-preview-stats{display:flex;gap:5px;height:25px}.wt-preview-stats i{flex:1;border-radius:5px;background:var(--preview-panel)}.wt-preview-stats i:first-child{background:var(--preview-strong)}.wt-preview-stats i:last-child{background:var(--preview-soft)}.wt-preview-table{display:grid;gap:6px;background:var(--preview-panel);padding:8px;border-radius:5px;flex:1}.wt-preview-table i{height:2px;width:100%;background:var(--preview-line)}
+.wt-choice-title{display:flex;align-items:center;justify-content:space-between;gap:5px;color:var(--theme-heading,#172d43);padding:10px 4px 4px;font-size:12px;font-weight:500}.wt-choice-check{visibility:hidden;width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:var(--theme-primary,#235789);color:var(--theme-on-primary,#fff);font-size:11px}.wt-choice input:checked+.wt-choice-card .wt-choice-check{visibility:visible}.wt-choice-description{display:block;font-size:10px;line-height:1.5;padding:0 4px 5px;color:var(--theme-muted,#526a80)}
+@media(max-width:650px){.wt-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wt-preview{height:90px;padding:8px;gap:8px}}
+@media(forced-colors:active){.wt-choice input:checked+.wt-choice-card{outline:2px solid Highlight}.wt-choice-check{forced-color-adjust:none}.wt-choice>input{position:static;width:auto;height:auto;clip-path:none}}
+/* Final visual review: descriptive copy and native select affordances stay legible. */
+html[data-workspace-theme] .st-settings-layout .card>p,
+html[data-workspace-theme] .st-staff-toolbar label{color:var(--theme-muted)!important}
+html[data-workspace-theme] :is(.shell,#modal-root) select:not([multiple]){background-repeat:no-repeat!important;background-position:right 16px center!important;background-size:12px 12px!important;padding-right:44px!important}

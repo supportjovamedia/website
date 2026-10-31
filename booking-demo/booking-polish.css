@@ -1,0 +1,71 @@
+/* Customer booking refinement. Workspace themes stay independent of business branding. */
+body:is([data-view="book"],[data-view="manage"]){
+ --ink:#29231f;--ink-2:#4c413a;--muted:#6d625a;--line:#e3d9d1;--line-2:#eee7e1;
+ --paper:#fffdfb;--soft:#f2ebe5;--blue:var(--salon);background:#f4efea;color:var(--ink);
+}
+body[data-booking-font="system"]:is([data-view="book"],[data-view="manage"]),body[data-booking-font="system"]:is([data-view="book"],[data-view="manage"]) :is(button,input,select,textarea){font-family:system-ui,sans-serif}
+.book-header{background:#fffdfb;border-color:var(--line);padding-block:22px}
+.book-header .avatar{border-radius:14px;flex:none}
+.book-header .row{gap:14px}
+.book-header b{font-size:19px;line-height:1.4;overflow-wrap:anywhere}
+.book-header .secondary{font-size:13px;line-height:1.5}
+.booking-flow{padding-top:30px}
+.booking-progress li{border-bottom-color:#dcd1c8;color:#6d625a}
+.booking-progress li.active{border-color:var(--booking-link,var(--salon));color:var(--ink)}
+.booking-progress li.complete{border-color:var(--booking-link,var(--salon))}
+.booking-flow .booking-layout{grid-template-columns:minmax(0,1fr) 286px;align-items:start;gap:24px}
+.booking-flow .booking-layout>.card{background:#fffdfb;border-color:var(--line);border-radius:22px;padding:30px;box-shadow:none}
+.booking-flow .booking-layout h1{font-size:clamp(27px,3vw,34px);line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}
+.booking-flow .booking-layout h1+p{line-height:1.65;max-width:62ch;color:var(--muted)}
+.booking-flow .cat-title{font-size:14px;font-weight:700;line-height:1.5;margin:30px 0 12px;overflow-wrap:anywhere;min-width:0;color:var(--ink-2)}
+.booking-flow .select-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(90px,35%);align-items:center;gap:16px;min-height:88px;padding:18px;border:1px solid var(--line);border-radius:14px;background:#fffdfb;box-shadow:none;color:var(--ink);text-align:left;transition:background-color 150ms ease,border-color 150ms ease}
+.booking-flow .select-card>span{min-width:0;overflow-wrap:anywhere}
+.booking-flow .select-card strong{font-size:15px;font-weight:600;line-height:1.5}
+.booking-flow .select-card small{font-size:12px;line-height:1.5;color:var(--muted)}
+.booking-flow .select-card .jb-service-action{display:grid;gap:4px;justify-items:end;text-align:right;min-width:0}
+.booking-flow .select-card .money{font-size:15px;font-weight:600;white-space:nowrap}
+.booking-flow .select-card.chosen{border-color:var(--booking-link,var(--salon));background:color-mix(in srgb,var(--salon) 7%,#fffdfb);box-shadow:none}
+.booking-flow .select-card:hover{background:color-mix(in srgb,var(--salon) 5%,#fffdfb);border-color:var(--booking-link,var(--salon))}
+.booking-flow aside.card h3{font-size:18px;margin-bottom:16px}
+.booking-flow aside .key-value{gap:16px;line-height:1.5;padding-block:13px}
+.booking-flow aside .key-value:last-of-type{font-weight:600}
+.booking-flow aside .section-space{line-height:1.65;margin-top:24px}
+.booking-flow :is(.btn.primary,.slots button.chosen){background:var(--salon);border-color:var(--salon);color:var(--booking-on-brand,#fff)}
+.booking-flow .slots button{min-height:44px;border-radius:11px}
+.booking-flow .jb-mini-grid button.is-selected{background:var(--salon)!important;color:var(--booking-on-brand,#fff)!important;border-color:var(--salon)!important}
+.booking-flow .jb-mini-grid button.is-today:not(.is-selected){color:var(--booking-link,var(--salon));box-shadow:inset 0 0 0 1px var(--booking-link,var(--salon))}
+.booking-flow :is(button,a,input,select,textarea):focus-visible{outline:3px solid var(--booking-link,#235789);outline-offset:3px}
+.booking-flow .field :is(input,select,textarea){border-radius:12px;border-color:#cdbfb3;background:#fffdfb;line-height:1.5}
+.booking-flow .form-footer{border-color:var(--line)}
+.booking-flow .footer{gap:16px;flex-wrap:wrap;line-height:1.6}
+.booking-flow.jb-compact .booking-layout>.card{padding:22px}
+.booking-flow.jb-compact .select-card{min-height:72px;padding:13px 16px}
+.booking-flow.jb-compact .cat-title{margin-top:22px}
+body[data-view="manage"] .narrow{max-width:760px}
+body[data-view="manage"] :is(h1,p,b,.mono){overflow-wrap:anywhere;min-width:0}
+body[data-view="manage"] .key-value{gap:16px}
+body[data-view="manage"] .key-value>b{text-align:right;max-width:64%}
+body[data-view="manage"] .row.section-space{flex-wrap:wrap;gap:12px}
+@media(max-width:800px){
+ .booking-flow .booking-layout{grid-template-columns:1fr}
+ .booking-flow .booking-layout aside{position:static}
+ .booking-flow .booking-layout>.card{padding:26px}
+}
+@media(max-width:600px){
+ .book-header{padding-block:18px}
+ .book-header b{font-size:17px}
+ .booking-flow{padding:24px 18px 40px}
+ .booking-flow .booking-layout>.card{padding:20px;border-radius:18px}
+ .booking-progress{margin-bottom:24px}
+ .booking-progress ol{gap:8px}
+ .booking-progress li{font-size:11px;overflow-wrap:anywhere}
+ .booking-flow .select-card{padding:15px;gap:12px;grid-template-columns:minmax(0,1fr) minmax(75px,34%)}
+ .booking-flow .select-card strong{font-size:14px}
+ .booking-flow .select-card small{font-size:12px}
+ .booking-flow :is(input,select,textarea){font-size:16px}
+ .booking-flow.jb-compact .booking-layout>.card{padding:17px}
+ .booking-flow.jb-compact .select-card{padding:12px}
+ .shell :is(input,select,textarea){font-size:16px}
+ .shell textarea[readonly],.shell textarea.ws-code[readonly]{font-size:13px!important;line-height:1.5}
+}
+@media(prefers-reduced-motion:reduce){.booking-flow .select-card{transition:none}}
