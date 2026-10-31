@@ -1,0 +1,39 @@
+/* Hover is an overlay; only an explicit pin changes the workspace track. */
+.sb-nav-label,.sb-brand-label{font:inherit}.sb-pin{display:none}
+@media(min-width:1001px) and (hover:hover) and (pointer:fine){
+ .shell.sb-enhanced{--sb-track:110px;--sb-rail:77px;--sb-offset:12px;--sb-panel:244px;--sb-pinned-track:276px;--sb-rail-text:var(--theme-rail-text,var(--studio-blush));--sb-hover:var(--theme-rail-hover,color-mix(in srgb,var(--studio-ink) 78%,white));grid-template-columns:var(--sb-track) minmax(0,1fr)}
+ .shell.sb-enhanced.sb-pinned{grid-template-columns:var(--sb-pinned-track) minmax(0,1fr)}
+ .shell.sb-enhanced>.sidebar{width:var(--sb-rail);margin-left:var(--sb-offset);height:calc(100dvh - 64px);min-height:0;border-radius:39px;flex-shrink:0;isolation:isolate;color:var(--sb-rail-text);transition:none}
+ .shell.sb-enhanced>.sidebar .side-nav{min-height:0;flex:1;overflow:visible}
+ .shell.sb-enhanced>.sidebar .jb-nav-section{min-height:0;overflow-x:hidden;overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--sb-hover) transparent;padding:4px 0;scroll-padding-block:6px}
+ .shell.sb-enhanced>.sidebar .jb-nav-section>a{flex:none}
+ .shell.sb-enhanced .sb-nav-label,.shell.sb-enhanced>.sidebar .jb-wordmark .sb-brand-label{display:none}
+ .shell.sb-enhanced>.sidebar .salon-switch,.shell.sb-enhanced>.sidebar .bottom{display:none}
+ .shell.sb-enhanced .jb-more-settings{flex:none;margin-top:12px}
+ .shell.sb-enhanced>.sidebar .sb-pin{display:flex;align-items:center;justify-content:center;gap:0;width:50px;min-height:42px;padding:10px;margin:15px auto 0;border:1px solid transparent;border-radius:50%;background:transparent!important;color:var(--sb-rail-text)!important;flex:none;cursor:pointer;box-shadow:none;overflow:hidden;font-size:0;font-weight:400;transform:none}
+ .shell.sb-enhanced>.sidebar .sb-pin:hover{background:var(--sb-hover)!important;color:var(--sb-rail-text)!important}
+ .shell.sb-enhanced>.sidebar .sb-pin:focus-visible{outline:2px solid var(--theme-focus,var(--sb-rail-text));outline-offset:3px}
+ .shell.sb-enhanced>.sidebar .sb-pin svg{display:block;width:20px;height:20px;flex:none}
+ .shell.sb-enhanced>.sidebar .sb-pin[aria-pressed=false] svg{transform:rotate(35deg)}
+ .shell.sb-enhanced>.sidebar .sb-pin-text{display:none;white-space:nowrap}
+ .shell.sb-enhanced.sb-expanded>.sidebar{width:var(--sb-panel);align-items:stretch;border-radius:29px;box-shadow:8px 8px 25px color-mix(in srgb,var(--studio-ink) 15%,transparent)}
+ .shell.sb-enhanced.sb-pinned>.sidebar{box-shadow:none}
+ .shell.sb-enhanced.sb-expanded>.sidebar .brand.jb-wordmark{width:100%;height:53px;padding:0 15px;justify-content:flex-start;gap:16px;border-radius:17px;margin-bottom:17px}
+ .shell.sb-enhanced.sb-expanded>.sidebar .jb-wordmark .sb-brand-label{display:block;font-size:20px;line-height:1.2;font-weight:500;letter-spacing:-.5px;color:inherit}
+ .shell.sb-enhanced.sb-expanded>.sidebar .salon-switch{display:block;flex:none;background:var(--sb-hover);color:var(--sb-rail-text);border:0;border-radius:15px;padding:11px 14px;margin:0 0 15px}
+ .shell.sb-enhanced.sb-expanded>.sidebar .salon-switch label{font-size:10px;color:inherit;opacity:.85;letter-spacing:0}
+ .shell.sb-enhanced.sb-expanded>.sidebar .salon-switch strong{font-size:12px;font-weight:400;color:inherit;line-height:1.6;overflow-wrap:anywhere}
+ .shell.sb-enhanced.sb-expanded .sb-nav-label{display:block;font-size:13px;font-weight:400;line-height:1.4;white-space:nowrap;opacity:1}
+ .shell.sb-enhanced.sb-expanded>.sidebar .jb-nav-section{align-items:stretch;gap:6px}
+ .shell.sb-enhanced.sb-expanded .side-nav .jb-nav-section>a{width:100%;height:44px;min-height:44px;padding:11px 15px;justify-content:flex-start;gap:13px;border-radius:13px}
+ .shell.sb-enhanced.sb-expanded .side-nav .jb-nav-section>a :is(.jb-nav-icon,svg){width:19px;height:19px;flex-basis:19px}
+ .shell.sb-enhanced.sb-expanded .jb-more-settings>summary{width:100%;height:44px;padding:11px 15px;justify-content:flex-start;gap:13px;border-radius:13px;margin:0}
+ .shell.sb-enhanced.sb-expanded .jb-more-settings>summary .jb-nav-icon,.shell.sb-enhanced.sb-expanded .jb-more-settings>summary svg{width:19px;height:19px;flex-basis:19px}
+ .shell.sb-enhanced.sb-expanded .st-settings-links{position:static;width:auto;left:auto;bottom:auto;padding:6px;margin-top:7px;border:0;border-radius:15px;box-shadow:none}
+ .shell.sb-enhanced.sb-expanded>.sidebar .sb-pin{width:100%;justify-content:flex-start;gap:13px;padding:11px 15px;margin-top:14px;border-radius:13px;font-size:12px}
+ .shell.sb-enhanced.sb-expanded>.sidebar .sb-pin-text{display:block;line-height:1.4}
+ .shell.sb-enhanced.sb-pinned>.sidebar .sb-pin{background:var(--sb-hover)!important}
+ .shell.sb-enhanced.sb-pinned>.sidebar .sb-pin svg{transform:none}
+}
+@media(min-width:1001px) and (max-width:1100px) and (hover:hover) and (pointer:fine){.shell.sb-enhanced{--sb-track:95px;--sb-rail:68px;--sb-offset:10px}}
+@media(prefers-reduced-motion:reduce){.shell.sb-enhanced>.sidebar,.shell.sb-enhanced .sb-nav-label,.shell.sb-enhanced .sb-pin{transition:none}}

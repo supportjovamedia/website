@@ -15,6 +15,8 @@ run(['--test',
   'tests/live-chat.test.mjs', 'tests/marketing-analytics.test.mjs',
   'tests/social-preview.test.mjs',
   'tests/jovabook-email.test.mjs', 'tests/jovabook-email-sql.test.mjs',
+  'booking-demo/tests/data-isolation-audit.mjs', 'booking-demo/tests/data-isolation-audit-sql.mjs',
+  'booking-demo/tests/workspace-themes.mjs', 'booking-demo/tests/service-management.mjs',
 ]);
 if (!process.env.REGRESSION_URL) {
   run(['node_modules/next/dist/bin/next', 'build'], { JOVA_BUILD_DIR: '.next-regression' });

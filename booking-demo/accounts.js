@@ -216,37 +216,71 @@
     const cfg = window.JOVA_SUPABASE, AUTH = 'jovabook-auth';
     const DEMO = normEmail('demo@jovamedia.com');
     const load = () => { try { return JSON.parse(localStorage.getItem(AUTH) || 'null'); } catch (e) { return null; } };
-    const keep = s => { try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} };
-    async function call(path, { method = 'POST', body, token, headers } = {}) {
+    let generation=0,refreshFlight=null,refreshFailure=null,verifiedSalon=null;
+    const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
+    const stamp=()=>({raw:rawSession(),generation});
+    const current=expected=>expected.generation===generation&&expected.raw===rawSession();
+    const keep = s => {if(!s||load()?.user?.id!==s.user?.id)verifiedSalon=null;generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} };
+    const intent=()=>{generation++;refreshFlight=null;return stamp();};
+    const stale=()=>({ok:false,stale:true,status:0,message:'Your session changed. Open this page again.'});
+    const authFailure=()=>refreshFailure&&current(refreshFailure.expected)?refreshFailure.result:load()?stale():{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'};
+    const writeScope=(salonId)=>!!salonId&&!!verifiedSalon?.ownerId&&verifiedSalon.id===salonId&&verifiedSalon.ownerId===load()?.user?.id;
+    const scopeFailure=()=>({...stale(),invalidTenant:true,message:'Your business changed. Refresh before saving.'});
+    async function call(path, { method = 'POST', body, token, headers, owner=false } = {}) {
+      const expected=owner?stamp():null;
+      if(owner&&(!token||load()?.access_token!==token))return stale();
       const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
       try {
         const r = await fetch(cfg.url + path, { method, signal: ctl.signal, body: body === undefined ? undefined : JSON.stringify(body),
           headers: Object.assign({ apikey: cfg.key, 'Content-Type': 'application/json' }, (token || /^eyJ/.test(cfg.key)) ? { Authorization: 'Bearer ' + (token || cfg.key) } : {}, headers || {}) });
         let data = null; try { data = await r.json(); } catch (e) {}
+        if(expected&&!current(expected))return stale();
         return { ok: r.ok, status: r.status, data };
-      } catch (e) { return { ok: false, status: 0, data: null, network: true }; }
+      } catch (e) { return expected&&!current(expected)?stale():{ ok: false, status: 0, data: null, network: true }; }
       finally { clearTimeout(timer); }
     }
-    const rpc = (fn, args, token) => call('/rest/v1/rpc/' + fn, { body: args || {}, token });
+    const rpc = (fn, args, token) => call('/rest/v1/rpc/' + fn, { body: args || {}, token,owner:!!token });
     const NET = 'We couldn’t reach the server. Check your connection and try again.';
     async function token() {
-      const s = load(); if (!s) return null;
+      const expected=stamp(),s = load(); if (!s) return null;
       if (s.expires_at * 1000 > Date.now() + 30000) return s.access_token;
-      const r = await call('/auth/v1/token?grant_type=refresh_token', { body: { refresh_token: s.refresh_token } });
-      if (r.ok && r.data && r.data.access_token) { keep(r.data); return r.data.access_token; }
-      keep(null); return null;
+      if(refreshFlight&&refreshFlight.raw===expected.raw&&refreshFlight.generation===expected.generation)return refreshFlight.promise;
+      const promise=(async()=>{const r = await call('/auth/v1/token?grant_type=refresh_token', { body: { refresh_token: s.refresh_token } });
+        if(!current(expected))return null;
+        if (r.ok && r.data && r.data.access_token) { keep(r.data); return r.data.access_token; }
+        if(r.network||r.status===429||r.status>=500){refreshFailure={expected,result:{ok:false,network:!!r.network,status:r.status,message:r.network?NET:'Your session could not be refreshed. Try again shortly.'}};return null;}
+        keep(null); return null;})();
+      refreshFlight={...expected,promise};try{return await promise;}finally{if(refreshFlight?.promise===promise)refreshFlight=null;}
     }
-    async function signInPassword(email, password) {
+    async function signInPassword(email, password,expected=intent()) {
       const r = await call('/auth/v1/token?grant_type=password', { body: { email: String(email).trim(), password } });
+      if(!current(expected))return stale();
       if (r.ok && r.data && r.data.access_token) keep(r.data);
-      return r;
+      return {...r,authStamp:stamp()};
     }
     async function mySalon() {
       const t = await token(); if (!t) return null;
-      const r = await call('/rest/v1/salons?select=*&limit=1', { method: 'GET', token: t });
-      return r.ok && Array.isArray(r.data) ? r.data[0] || null : null;
+      const r = await call('/rest/v1/salons?select=*&limit=1', { method: 'GET', token: t,owner:true });
+      const row=r.ok&&Array.isArray(r.data)&&r.data.length===1?r.data[0]:null;
+      if(row&&row.owner_id===load()?.user?.id){verifiedSalon={id:row.id,ownerId:row.owner_id};return row;}
+      return null;
     }
     const isDemo = email => normEmail(email) === DEMO;
+    const RECOVERY='jovabook-recovery-v1';
+    const recoveryRaw=()=>{try{return sessionStorage.getItem(RECOVERY);}catch{return null;}};
+    const recovery=()=>{try{return JSON.parse(recoveryRaw()||'null');}catch{return null;}};
+    const clearRecovery=expected=>{if(expected!==undefined&&expected!==recoveryRaw())return;try{sessionStorage.removeItem(RECOVERY);}catch{}};
+    const expiredRecovery=()=>({ok:false,reason:'expired',message:'This link has expired. Request a new one.'});
+    function recoveryContext(tok='') {const saved=recovery();if(!saved||saved.kind!=='recovery'||(tok&&tok!==saved.access_token)||typeof saved.access_token!=='string'||!Number.isFinite(saved.expires_at)||saved.expires_at*1000<=Date.now())return null;return {session:saved,raw:recoveryRaw()};}
+    async function verifyRecovery(tok='') {
+      const expected=recoveryContext(tok);if(!expected){if(!tok||recovery()?.access_token===tok)clearRecovery();return expiredRecovery();}
+      const r=await call('/auth/v1/user',{method:'GET',token:expected.session.access_token});
+      if(recoveryRaw()!==expected.raw)return stale();
+      if(r.network)return {ok:false,reason:'network',network:true,retryable:true,message:NET};
+      if(r.status===429||r.status>=500)return {ok:false,reason:'unavailable',retryable:true,message:'Password reset is temporarily unavailable. Try again shortly.'};
+      if(!r.ok||!r.data?.id){clearRecovery(expected.raw);return expiredRecovery();}
+      return {ok:true,mode:'live',context:expected};
+    }
 
     return Object.assign({}, local, {
       remote: true,
@@ -264,35 +298,61 @@
         return r.data === true ? { ok: true } : { ok: false, reason: 'taken' };
       },
       async register({ name, slug, owner, email, password }) {
+        const expected=intent();
         const r = await call('/functions/v1/signup', { body: { name, slug, owner, email, password, device_id: deviceId() } });
+        if(!current(expected))return stale();
         if (r.network || !r.data) return { ok: false, field: '', message: NET };
         if (!r.data.ok) return { ok: false, field: r.data.field || '', message: r.data.message || 'We couldn’t create your account.' };
-        const s = await signInPassword(email, password);
+        const s = await signInPassword(email, password,expected);
+        if(s.stale)return s;
         if (!s.ok) return { ok: false, field: '', message: 'Your account was created. Log in to continue.' };
+        if(!current(s.authStamp))return stale();
+        verifiedSalon={id:r.data.salon_id,ownerId:load()?.user?.id};
         return { ok: true, account: { salonId: r.data.salon_id } };
       },
       async login(email, password) {
-        if (isDemo(email)) return local.login(email, password);
+        if (isDemo(email)) {const expected=intent(),result=await local.login(email,password);if(!current(expected))return stale();if(result.ok)keep(null);return result;}
         const r = await signInPassword(email, password);
+        if(r.stale)return r;
         if (r.network) return { ok: false, message: NET };
         if (r.status === 429) return { ok: false, locked: true, message: 'Too many attempts. Wait a minute, then try again.' };
         if (!r.ok) return { ok: false, message: 'That email and password do not match.' };
         const row = await mySalon();
+        if(!current(r.authStamp))return stale();
         if (!row) { keep(null); return { ok: false, message: 'That email and password do not match.' }; }
         return { ok: true, account: { salonId: row.id }, salon: row };
       },
       async requestReset(email) {
         if (isDemo(email)) return local.requestReset(email);
-        await call('/auth/v1/recover?redirect_to=' + encodeURIComponent(location.origin + '/'), { body: { email: String(email).trim() } });
-        return { ok: true, sent: true };   // same answer whether or not the account exists
+        const r=await call('/auth/v1/recover?redirect_to=' + encodeURIComponent(location.origin + '/'), { body: { email: String(email).trim() } });
+        if(r.network)return {ok:false,network:true,message:NET};
+        if(r.status===429)return {ok:false,locked:true,message:'Too many reset requests. Wait a minute, then try again.'};
+        if(!r.ok)return {ok:false,message:'The password reset email could not be requested. Try again shortly.'};
+        return { ok: true, sent: true };   // normal success stays the same whether or not the account exists
       },
-      async resetPassword(tok, password) {
+      consumeRecoveryCallback(hash) {
+        const params=new URLSearchParams(String(hash||'').replace(/^#/,''));
+        if(params.has('error')){clearRecovery();return {handled:true,...expiredRecovery()};}
+        if(params.get('type')!=='recovery')return {handled:false};
+        const access=params.get('access_token')||'';
+        try{if(!/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(access))throw Error();const payload=JSON.parse(atob(access.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));const exp=Number(payload.exp),hint=params.has('expires_at')?Number(params.get('expires_at')):params.has('expires_in')?Date.now()/1000+Number(params.get('expires_in')):exp;const expires_at=Math.min(exp,hint);if(!Number.isFinite(expires_at)||expires_at*1000<=Date.now())throw Error();sessionStorage.setItem(RECOVERY,JSON.stringify({kind:'recovery',access_token:access,expires_at}));return {handled:true,ok:true};}catch{clearRecovery();return {handled:true,...expiredRecovery()};}
+      },
+      async checkResetToken(tok='') {
+        if(tok&&(getState().resets||[]).some(x=>x.token===tok))return local.checkResetToken(tok);
+        const result=await verifyRecovery(tok);if(result.context)delete result.context;return result;
+      },
+      async resetPassword(tok='', password) {
         if (passwordIssues(password).length) return { ok: false, message: 'Your password needs 8 or more characters, a capital letter and a number.' };
         if ((getState().resets || []).some(x => x.token === tok)) return local.resetPassword(tok, password);
-        const r = await call('/auth/v1/user', { method: 'PUT', body: { password }, token: tok });
+        const verified=await verifyRecovery(tok);if(!verified.ok)return verified;
+        const expected=verified.context;
+        const r = await call('/auth/v1/user', { method: 'PUT', body: { password }, token: expected.session.access_token });
+        if(recoveryRaw()!==expected.raw)return stale();
         if (r.network) return { ok: false, message: NET };
-        if (!r.ok) return { ok: false, message: /same|different/i.test((r.data && (r.data.msg || r.data.message)) || '') ? 'Choose a password you haven’t used before.' : 'This link has expired. Request a new one.' };
-        keep(null);
+        if(r.status===401||r.status===403){clearRecovery(expected.raw);return expiredRecovery();}
+        if(r.status===429||r.status>=500)return {ok:false,reason:'unavailable',retryable:true,message:'Password reset is temporarily unavailable. Try again shortly.'};
+        if (!r.ok) return { ok: false, message: /same|different/i.test((r.data && (r.data.msg || r.data.message)) || '') ? 'Choose a password you haven’t used before.' : 'Your password could not be updated. Try again, or request a new reset link.' };
+        clearRecovery(expected.raw);
         return { ok: true };
       },
       async syncSetup(salon) {
@@ -316,20 +376,22 @@
       // ---- diary tables (every row belongs to one salon; the database only returns the signed-in owner's) ----
       async ownerRpc(fn, args = {}) {
         const t = await token();
-        if (!t) return {ok:false, auth:true, message:'Your session has ended. Log in again.'};
+        if (!t) return authFailure();
         const r = await rpc(fn, args, t);
-        return {ok:r.ok, data:r.data, network:r.network, message:r.data?.message || (r.network ? NET : 'We could not save that change. Please try again.')};
+        return {ok:r.ok, data:r.data, network:r.network,stale:r.stale,auth:r.auth, message:r.message||r.data?.message || (r.network ? NET : 'We could not save that change. Please try again.')};
       },
       async loadActivity(salonId, since) {
         const t = await token();
-        if (!t) return {ok:false, auth:true};
+        if (!t) return authFailure();
         const after = since && Number.isFinite(Date.parse(since)) ? '&updated_at=gte.' + encodeURIComponent(new Date(since).toISOString()) : '';
-        const r = await call('/rest/v1/email_log?select=*&salon_id=eq.' + encodeURIComponent(salonId) + after + '&order=updated_at.desc&limit=200', {method:'GET', token:t});
-        return {ok:r.ok && Array.isArray(r.data), rows:r.ok && Array.isArray(r.data) ? r.data : []};
+        const r = await call('/rest/v1/email_log?select=*&salon_id=eq.' + encodeURIComponent(salonId) + after + '&order=updated_at.desc&limit=200', {method:'GET', token:t,owner:true});
+        if(r.stale)return r;
+        const valid=r.ok&&Array.isArray(r.data)&&r.data.every(row=>row.salon_id===salonId);
+        return {ok:valid, rows:valid?r.data:[],...(!valid&&r.ok?{invalidTenant:true}:{})};
       },
       async emailDeliveryInfo() {
         const t = await token();
-        if (!t) return {ok:false, auth:true};
+        if (!t) return authFailure();
         const r = await rpc('email_delivery_info', {}, t), data = r.data;
         if (!r.ok || !data || typeof data.enabled !== 'boolean' || data.provider !== 'Resend' || data.reminder_hours !== 24) return {ok:false, network:r.network};
         return {ok:true, data:{enabled:data.enabled, provider:data.provider, reminder_hours:data.reminder_hours}};
@@ -341,35 +403,52 @@
         return r.ok && r.data ? r.data : null;
       },
       async loadDiary() {
-        const t = await token(); if (!t) return { ok: false, auth: true };
-        const get = q => call('/rest/v1/' + q + '&limit=5000', { method: 'GET', token: t });
+        const t = await token(); if (!t) return authFailure();
+        const expected=stamp();
+        const get = q => call('/rest/v1/' + q + '&limit=5000', { method: 'GET', token: t,owner:true });
         const names = ['categories', 'staff', 'services', 'customers', 'bookings', 'email_log', 'payments'];
         const orders = ['created_at,id', 'created_at,id', 'created_at,id', 'created_at,id', 'date,time', 'sent_at.desc', 'created_at.desc'];
-        const res = await Promise.all([get('salons?select=*')].concat(names.map((n, i) => get(n + '?select=*&order=' + orders[i]))));
+        const salonResult=await get('salons?select=*');
+        if(!current(expected)||salonResult.stale)return stale();
+        if(!salonResult.ok||!Array.isArray(salonResult.data))return {...salonResult,auth:salonResult.status===401};
+        if(salonResult.data.length!==1)return {ok:false,invalidTenant:salonResult.data.length>1,message:'Your business could not be loaded. Log in again.'};
+        const selected=salonResult.data[0],owner=load()?.user?.id;
+        if(!owner||selected.owner_id!==owner)return {ok:false,invalidTenant:true,message:'Your business could not be loaded. Log in again.'};
+        const res=[salonResult,...await Promise.all(names.map((n,i)=>get(n+'?select=*&salon_id=eq.'+encodeURIComponent(selected.id)+'&order='+orders[i])))];
+        if(!current(expected)||res.some(r=>r.stale))return stale();
+        if(res.slice(1).some(r=>r.ok&&Array.isArray(r.data)&&r.data.some(row=>row.salon_id!==selected.id)))return {ok:false,invalidTenant:true,message:'Your business records could not be verified. Refresh and try again.'};
         const emailIndex=names.indexOf('email_log')+1;
         const core=res.filter((r,index)=>index!==emailIndex);
         if (core.some(r => !r.ok || !Array.isArray(r.data))) return { ok: false, network: core.some(r => r.network), auth: core.some(r => r.status === 401) };
         const emailActivityUnavailable=!res[emailIndex].ok || !Array.isArray(res[emailIndex].data);
         const rows = {}; names.forEach((n, i) => { rows[n] = n==='email_log'&&emailActivityUnavailable?[]:res[i + 1].data; });
+        verifiedSalon={id:selected.id,ownerId:selected.owner_id};
         return { ok: true, salon: res[0].data[0] || null, rows, emailActivityUnavailable };
       },
       async upsertRows(table, rows) {
         if (table === 'email_log') return {ok:false, status:403, message:'Email delivery records are read-only.'};
-        const t = await token(); if (!t) return { ok: false, auth: true };
-        const r = await call('/rest/v1/' + table + '?on_conflict=salon_id,id', { token: t, body: rows, headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
-        return { ok: r.ok, network: r.network, status: r.status, message: r.data && r.data.message };
+        const target=Array.isArray(rows)&&rows.length?rows[0].salon_id:null;
+        if(!writeScope(target)||rows.some(row=>row.salon_id!==target))return scopeFailure();
+        const t = await token(); if (!t) return authFailure();
+        if(!writeScope(target))return scopeFailure();
+        const r = await call('/rest/v1/' + table + '?on_conflict=salon_id,id', { token: t,owner:true, body: rows, headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
+        return { ok: r.ok,stale:r.stale,auth:r.auth, network: r.network, status: r.status, message: r.message||r.data && r.data.message };
       },
       async deleteRows(table, salonId, ids) {
         if (table === 'email_log') return {ok:false, status:403, message:'Email delivery records are read-only.'};
-        const t = await token(); if (!t) return { ok: false, auth: true };
+        if(!writeScope(salonId))return scopeFailure();
+        const t = await token(); if (!t) return authFailure();
+        if(!writeScope(salonId))return scopeFailure();
         const list = ids.map(i => '"' + String(i).replace(/"/g, '') + '"').join(',');
-        const r = await call('/rest/v1/' + table + '?salon_id=eq.' + salonId + '&id=in.(' + encodeURIComponent(list) + ')', { method: 'DELETE', token: t, headers: { Prefer: 'return=minimal' } });
-        return { ok: r.ok, network: r.network, status: r.status };
+        const r = await call('/rest/v1/' + table + '?salon_id=eq.' + salonId + '&id=in.(' + encodeURIComponent(list) + ')', { method: 'DELETE', token: t,owner:true, headers: { Prefer: 'return=minimal' } });
+        return { ok: r.ok,stale:r.stale,auth:r.auth, network: r.network, status: r.status };
       },
-      async saveSalon(a) {
-        const t = await token(); if (!t) return { ok: false, auth: true };
+      async saveSalon(a,expectedSalonId) {
+        if(!writeScope(expectedSalonId))return scopeFailure();
+        const t = await token(); if (!t) return authFailure();
+        if(!writeScope(expectedSalonId))return scopeFailure();
         const r = await rpc('save_salon', a, t);
-        return { ok: r.ok, network: r.network, status: r.status, message: r.data && r.data.message };
+        return { ok: r.ok,stale:r.stale,auth:r.auth, network: r.network, status: r.status, message: r.message||r.data && r.data.message };
       },
       async setSubscription(kind) {
         const t = await token(); if (!t) return { ok: false };
