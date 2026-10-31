@@ -19,6 +19,8 @@ run(['--test',
   'booking-demo/tests/data-isolation-audit.mjs', 'booking-demo/tests/data-isolation-audit-sql.mjs',
   'booking-demo/tests/workspace-themes.mjs', 'booking-demo/tests/service-management.mjs',
   'booking-demo/tests/category-colours.mjs',
+  'booking-demo/tests/essential-package.mjs', 'booking-demo/tests/business-website.mjs',
+  'booking-demo/tests/website-images.mjs', 'booking-demo/tests/website-images-sql.mjs',
 ]);
 if (!process.env.REGRESSION_URL) {
   run(['node_modules/next/dist/bin/next', 'build'], { JOVA_BUILD_DIR: '.next-regression' });

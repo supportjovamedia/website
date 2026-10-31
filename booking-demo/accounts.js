@@ -226,6 +226,47 @@
     const authFailure=()=>refreshFailure&&current(refreshFailure.expected)?refreshFailure.result:load()?stale():{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'};
     const writeScope=(salonId)=>!!salonId&&!!verifiedSalon?.ownerId&&verifiedSalon.id===salonId&&verifiedSalon.ownerId===load()?.user?.id;
     const scopeFailure=()=>({...stale(),invalidTenant:true,message:'Your business changed. Refresh before saving.'});
+    const websiteBucket='jovabook-website-images',websiteImageLimit=5*1024*1024;
+    const websiteUuid='[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+    const websiteId=value=>typeof value==='string'&&new RegExp('^'+websiteUuid+'$').test(value);
+    function safeWebsiteImage(value,salonId) {
+      if(!websiteId(salonId)||typeof value!=='string'||value.length>600||/[\\?#\s]/.test(value))return '';
+      try {
+        const configured=new URL(cfg.url),url=new URL(value),raw=value.match(/^https:\/\/[^/]+(\/[^?#]*)$/);
+        if(configured.protocol!=='https:'||url.protocol!=='https:'||url.origin!==configured.origin||url.username||url.password||!raw)return '';
+        const path=new RegExp('^/storage/v1/object/public/'+websiteBucket+'/'+salonId+'/'+websiteUuid+'\\.(jpg|png|webp)$');
+        if(!path.test(raw[1])||!path.test(url.pathname)||decodeURIComponent(url.pathname)!==url.pathname)return '';
+        return url.href;
+      }catch{return '';}
+    }
+    async function uploadWebsiteImage(file,salonId) {
+      if(!websiteId(salonId)||!writeScope(salonId))return scopeFailure();
+      const types={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'},type=file?.type;
+      if(!Object.hasOwn(types,type)||typeof file?.arrayBuffer!=='function')return {ok:false,message:'Choose a JPEG, PNG or WebP image.'};
+      if(!Number.isInteger(file.size)||file.size<=0||file.size>websiteImageLimit)return {ok:false,message:'Choose an image no larger than 5 MB.'};
+      const reading=stamp();let bytes;
+      try{bytes=new Uint8Array(await file.arrayBuffer());}catch{return !current(reading)?stale():{ok:false,message:'This image could not be read. Choose it again.'};}
+      if(!current(reading))return stale();
+      if(!writeScope(salonId))return scopeFailure();
+      const starts=signature=>signature.every((value,index)=>bytes[index]===value);
+      const raster=type==='image/jpeg'?starts([255,216,255]):type==='image/png'?starts([137,80,78,71,13,10,26,10]):starts([82,73,70,70])&&[87,69,66,80].every((value,index)=>bytes[index+8]===value);
+      if(bytes.byteLength!==file.size||!raster)return {ok:false,message:'This file is not a supported image. Choose a JPEG, PNG or WebP image.'};
+      const owner=load()?.user?.id,t=await token();if(!t)return authFailure();
+      if(!writeScope(salonId)||load()?.user?.id!==owner||load()?.access_token!==t)return scopeFailure();
+      const expected=stamp(),path=salonId+'/'+crypto.randomUUID()+'.'+types[type];
+      const url=safeWebsiteImage(cfg.url.replace(/\/$/,'')+'/storage/v1/object/public/'+websiteBucket+'/'+path,salonId);
+      if(!url)return {ok:false,message:'Image uploads are not available for this account yet.'};
+      const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),30000);
+      try {
+        const r=await fetch(cfg.url.replace(/\/$/,'')+'/storage/v1/object/'+websiteBucket+'/'+path,{method:'POST',signal:ctl.signal,body:bytes,headers:{apikey:cfg.key,Authorization:'Bearer '+t,'Content-Type':type,'Cache-Control':'max-age=3600','x-upsert':'false'}});
+        let data=null;try{data=await r.json();}catch{}
+        if(!current(expected))return stale();
+        if(!writeScope(salonId)||load()?.user?.id!==owner)return scopeFailure();
+        if(!r.ok){const status=Number(data?.statusCode)||r.status;return {ok:false,status,auth:status===401,unavailable:status===404||/bucket.*not found/i.test(String(data?.message||data?.error||'')),message:status===413?'Choose an image no larger than 5 MB.':status===401?'Your session has ended. Log in again.':status===404||/bucket.*not found/i.test(String(data?.message||data?.error||''))?'Image uploads are not available for this account yet.':'The image could not be uploaded. Please try again.'};}
+        return {ok:true,url,path,bucket:websiteBucket};
+      }catch{return !current(expected)?stale():{ok:false,network:true,status:0,message:'The image could not be uploaded. Check your connection and try again.'};}
+      finally{clearTimeout(timer);}
+    }
     async function call(path, { method = 'POST', body, token, headers, owner=false } = {}) {
       const expected=owner?stamp():null;
       if(owner&&(!token||load()?.access_token!==token))return stale();
@@ -284,6 +325,8 @@
 
     return Object.assign({}, local, {
       remote: true,
+      safeWebsiteImage,
+      uploadWebsiteImage,
 
       async slugStatus(slug) {
         const s = String(slug || '').trim().toLowerCase();
