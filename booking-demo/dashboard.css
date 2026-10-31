@@ -1,0 +1,326 @@
+/* A focused owner dashboard: one summary, one shared calendar period. */
+.shell{
+  --db-paper:color-mix(in srgb,var(--workspace-accent,#235789) 9%,white);
+  --db-ink:#20313e;
+  --db-muted:#677580;
+  --db-rule:#e7ecf4;
+  background:var(--db-paper);
+}
+.shell .workspace{margin:0;border-radius:0;background:var(--db-paper)}
+.shell .workspace-header{height:76px;border-radius:0;background:transparent;border-bottom:0;padding:0 36px}
+.shell .workspace-header .btn,.shell .workspace-header button{border-color:#dde1e2;box-shadow:none}
+.shell .workspace-main{padding:30px 36px 44px}
+.shell .sidebar{background:#fff;border-right:1px solid #e5ebf4;color:#536b80}
+.shell .sidebar .brand.jb-wordmark{color:#263f57}
+.shell .sidebar .jb-wordmark span{color:var(--workspace-accent,#235789)}
+.shell .sidebar .jb-wordmark small{color:#7d91a3}
+.shell .sidebar .salon-switch{background:#f6f8fc;border:0;border-radius:11px;padding:15px 13px}
+.shell .sidebar .salon-switch label{color:#7b8fa3}
+.shell .sidebar .salon-switch strong{color:#314c65}
+.shell .side-nav a{border-radius:9px;margin:5px 0;color:#64798e;background:transparent}
+.shell .side-nav a:hover{color:#2b517b;background:#f2f6fc}
+.shell .side-nav a.active{background:color-mix(in srgb,var(--workspace-accent,#235789) 10%,white);color:var(--workspace-accent,#235789);box-shadow:none}
+.shell .side-nav a.active:before{display:none}
+.shell .jb-more-settings{border-color:#e9eef5}
+.shell .jb-more-settings summary,.shell .jb-personalise{color:#64798e}
+.shell .sidebar .bottom .pill{background:#f3f6fb;border:0;color:#607a95}
+.db-page{color:var(--db-ink);min-width:0;max-width:1480px;margin:0 auto}
+.db-heading{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:0 0 8px}
+.shell .db-title{font-size:36px;line-height:1.18;letter-spacing:-1.2px;font-weight:750;margin:0;color:var(--db-ink)}
+.db-heading>div>p{color:#74889e;font-size:13px;line-height:1.6;margin:8px 0 0}
+.db-heading>.primary,.db-heading>.btn{min-height:44px;flex:none;padding:12px 18px;border-radius:9px;font-size:13px}
+.db-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;padding:25px 0 30px;margin:0}
+.db-metric{min-width:0;padding:22px 24px 21px;background:#fff;border:1px solid #f7f9fc;border-radius:17px;box-shadow:0 5px 0 #e5ecf670,0 9px 17px #496a8d06;position:relative}
+.db-metric-icon{display:flex;align-items:center;justify-content:center;width:37px;height:37px;border-radius:11px;background:#edf4fb;color:#7197bc;margin-bottom:17px}
+.db-metric-icon svg{width:21px;height:21px;stroke-width:1.65}
+.db-metric:nth-child(2) .db-metric-icon{background:#fcf0f4;color:#c47c99}
+.db-metric:nth-child(3) .db-metric-icon{background:#eff8f1;color:#7ba783}
+.db-metric:nth-child(4) .db-metric-icon{background:#fcf7e7;color:#bda052}
+.shell .db-metric-label{display:block;font-size:12px;font-weight:550;line-height:1.5;color:#657b8e;margin:0 0 9px}
+.shell .db-metric-value{display:block;font-size:32px;line-height:1.1;letter-spacing:-1px;font-weight:650;font-variant-numeric:tabular-nums;color:#2e4358;margin:0 0 8px;overflow-wrap:anywhere}
+.shell .db-metric-note{display:block;font-size:10px;line-height:1.55;font-weight:400;color:#71869b;margin:0;max-width:28ch}
+.shell .db-diary{min-width:0;background:#fff;border:1px solid #e7edf7;border-radius:18px;box-shadow:0 6px 0 #e5ecf650,0 10px 25px #496a8d05;overflow:visible}
+.db-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px 20px;padding:21px 22px;border-bottom:1px solid var(--db-rule);border-radius:18px 18px 0 0;background:#fff;position:relative;z-index:6}
+.db-period-controls,.db-date-controls,.db-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;min-width:0}
+.db-period-controls{gap:18px}
+.db-period-controls>b,.db-period-controls>strong,.db-toolbar h2{font-size:15px;font-weight:700;letter-spacing:-.25px;color:var(--db-ink);margin:0;line-height:1.5}
+.db-toolbar .seg{display:flex;align-items:center;background:#f0f4fb;padding:3px;border:0;border-radius:8px;gap:2px;overflow:hidden}
+.shell .db-toolbar .seg button{border:0;border-radius:6px;background:transparent;color:#64747d;min-height:34px;font-size:11px;padding:8px 12px;font-weight:550;box-shadow:none}
+.shell .db-toolbar .seg button.active{background:var(--workspace-accent,#235789);color:#fff;box-shadow:0 1px 3px #20344012}
+.shell .db-toolbar button,.shell .db-toolbar summary{font-size:11px;min-height:38px;border-radius:7px;padding:9px 11px;color:#3a5364;background:#fff;border:1px solid #dce3e5;box-shadow:none;white-space:nowrap}
+.shell .db-toolbar button:hover,.shell .db-toolbar summary:hover{background:#f3f6f6;border-color:#c4d1d7}
+.shell .db-toolbar .seg button:hover{background:#e3e9e8;color:#2d4c60}
+.shell .db-toolbar .seg button.active:hover{background:var(--workspace-accent,#235789);color:#fff}
+.shell .db-date-controls input[type=date]{width:144px;min-width:0;min-height:38px;padding:8px 9px;border:1px solid #dce3e5;border-radius:7px;color:#3a5364;background:#fff;font-size:11px;font-family:inherit}
+.db-date-controls>label{display:flex;align-items:center;gap:8px;font-size:11px;color:#657b89;margin:0}
+.db-staff-filter{position:relative;min-width:0}
+.db-staff-filter>summary{display:flex;align-items:center;justify-content:center;list-style:none;cursor:pointer;font-weight:600}
+.db-staff-filter>summary::-webkit-details-marker{display:none}
+.db-staff-filter[open]>summary{background:#edf3f6;border-color:#b9cbd7;color:var(--workspace-accent,#235789)}
+.db-staff-filter>div{position:absolute;top:calc(100% + 8px);right:0;width:245px;max-width:calc(100vw - 40px);padding:17px 18px;background:#fff;border:1px solid #dce4e7;border-radius:11px;box-shadow:0 12px 32px #17344816;z-index:12}
+.db-staff-filter fieldset,.db-staff-filter .jb-calendar-staff{margin:0;padding:0;border:0;min-width:0}
+.db-staff-filter legend{font-size:11px;font-weight:700;margin:0 0 9px;color:#526c7c}
+.shell .db-staff-filter .jb-staff-filter{min-height:38px;padding:7px 0;font-size:12px}
+.shell .db-staff-filter p{font-size:11px;line-height:1.6;color:#657b89;margin:10px 0 0}
+.db-actions>details{position:relative}
+.db-actions>details>summary{list-style:none;cursor:pointer}
+.db-actions>details>summary::-webkit-details-marker{display:none}
+.db-actions>details>div{position:absolute;right:0;top:calc(100% + 8px);background:#fff;padding:7px;border:1px solid #dce4e7;border-radius:9px;box-shadow:0 10px 28px #17344812;min-width:170px;z-index:12}
+.db-actions>details>div>button{width:100%;text-align:left;border:0!important}
+.db-navigation{display:flex;align-items:center;gap:4px;flex-wrap:nowrap}
+.shell .db-heading .db-actions>button{min-height:43px;padding:11px 17px;font-size:12px;border-radius:9px;box-shadow:0 3px 8px #365d8520}
+.shell .db-heading .db-actions>details>summary{font-size:11px;min-height:40px;display:flex;align-items:center;padding:9px 11px;border:1px solid #dfe6f1;background:#f7f9fd;color:#647c92;border-radius:8px}
+.shell .db-actions>details>div>button,.shell .db-actions>details>div>a{display:block;width:100%;padding:10px 11px;font-size:11px;color:#526d84;background:transparent;border:0;border-radius:5px;line-height:1.4;white-space:nowrap;text-decoration:none}
+.shell .db-actions>details>div>button:hover,.shell .db-actions>details>div>a:hover{background:#f0f5fc}
+.db-calendar-footer{display:flex;align-items:center;gap:14px;padding:14px 19px;border-top:1px solid #e7edf5;color:#71879b;font-size:10px;background:#fff;border-radius:0 0 17px 17px;flex-wrap:wrap}
+.db-calendar-footer>a{margin-left:auto;font-weight:550}
+.shell .db-diary .jb-week-scroll{max-height:68dvh;border-radius:0 0 14px 14px;overscroll-behavior:contain}
+.shell .db-diary .jb-week{min-width:680px}
+.shell .db-diary .jb-week-heading{height:68px;background:#fff;border-color:#e5eae9}
+.shell .db-diary .jb-week-heading>button{border-radius:0;background:#fff;border-right-color:#edf0ef}
+.shell .db-diary .jb-week-heading>button>span{color:#617786;font-size:10px}
+.shell .db-diary .jb-week-heading>button>b{font-size:18px;line-height:30px;width:30px;color:#2f4c5e}
+.shell .db-diary .jb-week-heading>button.is-today>b{background:var(--workspace-accent,#235789);color:#fff}
+.shell .db-diary .jb-time-ruler>span{font-size:10px;color:#6e8290}
+.shell .db-diary .jb-week-day{border-color:#e9eeed}
+.shell .db-diary .jb-calendar-slot{border-radius:0;border-top-color:#f1f3f2}
+.shell .db-diary .jb-calendar-slot:nth-child(odd){border-top-color:#e8edeb}
+.shell .db-diary .jb-calendar-slot.is-closed{background:repeating-linear-gradient(-45deg,#f8f9f8,#f8f9f8 4px,#f0f3f1 4px,#f0f3f1 5px)}
+.shell .db-diary .jb-week-day.is-today{background:color-mix(in srgb,var(--workspace-accent,#235789) 2%,white)}
+.shell .db-diary .jb-grid-event{border-radius:5px;border-left-width:3px}
+.shell .db-diary .jb-grid-event strong{font-size:11px}.shell .db-diary .jb-grid-event small{font-size:10px}
+.shell .db-diary .calendar-scroll{margin:0;border:0;border-radius:0;max-width:100%;overflow:auto}
+.shell .db-diary .daygrid{border:0;border-radius:0;min-width:calc(var(--gutter) + var(--cols)*140px)}
+.shell .db-diary .dg-head{border-bottom:1px solid #e3e9e6;background:#fff}
+.shell .db-diary .dg-staff{font-size:12px;padding:16px 12px}
+.shell .db-diary .dg-times span{font-size:10px;color:#6e8290}
+.shell .db-diary .dg-off{background:repeating-linear-gradient(-45deg,#f8f9f8,#f8f9f8 4px,#f0f3f1 4px,#f0f3f1 5px)}
+.shell .db-diary .month-head{padding:13px 12px;margin:0;border:0;border-bottom:1px solid #e7ece9;font-size:11px;color:#657b89;background:#fff}
+.shell .db-diary .month{padding:0;gap:0;border:0;border-radius:0;min-width:0;overflow:hidden}
+.shell .db-diary .mday{border:0;border-right:1px solid #e7ece9;border-bottom:1px solid #e7ece9;border-radius:0;padding:10px;min-height:108px;background:#fff}
+.shell .db-diary .mday:nth-child(7n){border-right:0}
+.shell .db-diary .mday.today{background:color-mix(in srgb,var(--workspace-accent,#235789) 3%,white);box-shadow:none}
+.shell .db-diary .mday.today .mnum{background:var(--workspace-accent,#235789);color:#fff}
+.shell .db-diary .mday.out{background:#fafbf9;color:#8c999e}
+.shell .db-diary .jb-calendar-legend{padding:13px 20px;font-size:10px;color:#637b8a;border-top:1px solid #e4e9e6;border-radius:0 0 14px 14px;background:#fff}
+.db-page :is(button,a,input,summary):focus-visible{outline:2px solid var(--workspace-accent,#235789);outline-offset:3px}
+@media(min-width:1600px){.shell .workspace-main{padding:36px 48px 52px}.shell .workspace-header{padding-left:48px;padding-right:48px}.shell .db-title{font-size:39px}.db-summary{padding-top:30px;padding-bottom:34px}.shell .db-metric-value{font-size:36px}}
+@media(min-width:801px) and (max-width:1100px){.shell{grid-template-columns:190px minmax(0,1fr)}.shell .workspace-main{padding:27px 24px 38px}.shell .workspace-header{padding:0 24px}.shell .sidebar{padding-left:12px;padding-right:12px}.shell .sidebar .brand.jb-wordmark{font-size:26px;padding-left:9px}.shell .side-nav a{font-size:12px;padding:11px}.db-summary{gap:11px}.db-metric{padding:18px 15px}.shell .db-metric-value{font-size:26px}.shell .db-metric-label{font-size:11px}.shell .db-metric-note{font-size:10px}.db-toolbar{padding:18px;gap:15px}.db-period-controls,.db-date-controls{width:100%;justify-content:space-between}.db-period-controls{gap:12px}.db-date-controls{gap:7px}.db-actions{margin-left:auto}}
+@media(max-width:800px){
+  .shell{background:var(--db-paper)}
+  .shell .sidebar{background:#fff}
+  .shell .workspace-header{background:#fff;height:68px;padding:0 16px}
+  .shell .workspace-main{padding:24px 16px 32px}
+  .db-heading{align-items:center;gap:16px;margin-bottom:0}
+  .db-heading>.db-actions{justify-content:flex-end;gap:7px;flex-wrap:wrap}
+  .shell .db-heading .db-actions>button{font-size:11px;padding:10px 12px;min-height:40px}
+  .shell .db-heading .db-actions>details>summary{font-size:10px;padding:9px;min-height:36px}
+  .shell .db-title{font-size:30px;letter-spacing:-.9px}
+  .db-heading>.primary,.db-heading>.btn{padding:11px 13px;min-height:43px;font-size:11px}
+  .db-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;padding:23px 0 27px}
+  .db-metric{padding:17px 16px;border-radius:14px}
+  .db-metric-icon{width:32px;height:32px;border-radius:9px;margin-bottom:13px}
+  .db-metric-icon svg{width:18px;height:18px}
+  .shell .db-metric-label{font-size:11px;margin-bottom:8px}
+  .shell .db-metric-value{font-size:27px;letter-spacing:-.8px;margin-bottom:7px}
+  .shell .db-metric-note{font-size:10px;line-height:1.6}
+  .shell .db-diary{border-radius:12px}
+  .db-toolbar{padding:15px 13px;gap:13px;border-radius:12px 12px 0 0}
+  .db-period-controls,.db-date-controls{width:100%;gap:10px;justify-content:space-between}
+  .db-period-controls{flex-wrap:wrap}
+  .db-period-controls>b,.db-period-controls>strong,.db-toolbar h2{font-size:13px}
+  .shell .db-toolbar .seg button{min-height:36px;font-size:10px;padding:8px 10px}
+  .shell .db-toolbar button,.shell .db-toolbar summary{min-height:40px;padding:9px 10px;font-size:10px}
+  .shell .db-date-controls input[type=date]{font-size:16px;width:155px;min-height:40px;padding:8px}
+  .db-actions{gap:7px}
+  .db-date-controls>label{font-size:10px}
+  .db-staff-filter>div{right:0;width:245px}
+  .shell .db-diary .jb-week-scroll{max-height:65dvh}
+  .shell .db-diary .mday{min-height:76px;padding:6px 3px}
+  .shell .db-diary .month-head{padding:11px 3px;font-size:10px}
+  .shell .db-diary .mnum{font-size:11px}
+  .shell .db-diary .jb-calendar-legend{padding:12px;font-size:9px;gap:10px}
+  .db-calendar-footer{padding:12px 13px;gap:8px;font-size:9px}.db-calendar-hint{display:none}
+}
+@media(max-width:360px){.shell .workspace-main{padding-left:12px;padding-right:12px}.shell .db-title{font-size:27px}.db-heading{gap:9px}.db-heading>.primary,.db-heading>.btn{font-size:10px;padding:11px}.shell .db-metric-value{font-size:27px}.db-metric{padding-left:14px;padding-right:14px}}
+@media(prefers-reduced-motion:reduce){.db-page *{transition:none!important;animation:none!important}}
+
+/* The calendar is a dedicated workspace with its date and filters on the left. */
+.db-calendar-page{max-width:1600px;margin:0 auto;min-width:0;color:var(--db-ink)}
+.db-calendar-layout{display:grid;grid-template-columns:208px minmax(0,1fr);gap:22px;align-items:start;min-width:0}
+.db-calendar-aside{min-width:0;display:flex;flex-direction:column;gap:17px}
+.shell .db-calendar-aside .jb-mini{background:#fff;border:1px solid #f7f9fc;padding:18px 12px;border-radius:17px;box-shadow:0 5px 0 #e5ecf650;margin:0}
+.shell .db-calendar-aside .jb-mini-title{padding:0 2px 13px;gap:6px}
+.shell .db-calendar-aside .jb-mini-title>b{font-size:13px;letter-spacing:-.2px;color:#334e64}
+.shell .db-calendar-aside .jb-mini-title button{font-size:11px;color:#718a9e;padding:5px 4px;min-height:30px}
+.shell .db-calendar-aside .jb-mini-grid{gap:3px}
+.shell .db-calendar-aside .jb-mini-grid>span{color:#8396a6;font-size:9px;padding-bottom:8px}
+.shell .db-calendar-aside .jb-mini-grid>button{font-size:10px;min-height:28px;color:#48647a;border-radius:9px;padding:7px 0}
+.shell .db-calendar-aside .jb-mini-grid>button.is-selected{color:#fff;background:var(--workspace-accent,#235789);box-shadow:0 3px 7px #3d6d921b}
+.shell .db-calendar-aside .jb-mini-grid>button.is-out{color:#a9b5c1}
+.db-filter-panel{padding:20px 17px;background:#fff;border:1px solid #f7f9fc;border-radius:17px;box-shadow:0 5px 0 #e5ecf650;min-width:0}
+.shell .db-filter-panel h2,.shell .db-filter-panel h3{font-size:16px;letter-spacing:-.3px;color:#314c62;margin:0 0 18px}
+.shell .db-filter-panel .jb-calendar-staff{padding:0;margin:0 0 16px}
+.shell .db-filter-panel .jb-calendar-staff legend{font-size:11px;color:#6d8497;margin-bottom:8px}
+.shell .db-filter-panel .jb-staff-filter{font-size:12px;min-height:38px;gap:8px;color:#527086}
+.shell .db-filter-panel .jb-staff-filter.is-active{color:#324f66}
+.shell .db-filter-panel .field{margin:15px 0 0;font-size:11px;color:#6d8497;gap:8px}
+.shell .db-filter-panel .field select{min-height:40px;font-size:12px;padding:9px 10px;border-color:#e1e8f2;border-radius:8px;background:#f9fbfe}
+.shell .db-filter-panel>p{font-size:10px;line-height:1.65;color:#71889d;margin:14px 0 0}
+.db-up-next{padding:19px 18px;background:#dff1ec;border:1px solid #dff1ec;border-radius:17px;color:#2b6963;min-width:0}
+.shell .db-up-next h2,.shell .db-up-next h3{font-size:15px;color:#285f5a;letter-spacing:-.25px;line-height:1.5;margin:0 0 9px}
+.shell .db-up-next>span,.shell .db-up-next>small{display:block;font-size:10px;line-height:1.6;color:#4d7c75;margin-bottom:9px}
+.shell .db-up-next p{font-size:11px;line-height:1.7;color:#48776f;margin:7px 0 0}
+.shell .db-up-next b,.shell .db-up-next strong{font-weight:650;color:#2c625b}
+.shell .db-up-next button,.shell .db-up-next .btn{background:#f6fcf9;color:#39756c;border:0;min-height:34px;font-size:11px;margin-top:12px;border-radius:7px;padding:8px 11px}
+.db-grid-area{min-width:0}
+.db-calendar-page .db-toolbar{gap:14px;padding:18px 20px}
+.db-calendar-page .db-period-controls{gap:12px}
+.db-calendar-page .db-date-controls{gap:6px}
+.db-calendar-page .db-date-controls input[type=date]{width:133px}
+.db-calendar-page .db-diary .jb-week-heading{height:84px;border-bottom:0;padding:7px 6px 8px;gap:5px}
+.shell .db-calendar-page .db-diary .jb-week-heading>button{border:0;border-radius:10px;background:#f6f8fb}
+.shell .db-calendar-page .db-diary .jb-week-heading>button.is-today{background:color-mix(in srgb,var(--workspace-accent,#235789) 7%,white)}
+.shell .db-calendar-page .db-diary .jb-week-heading>button>b{font-size:21px;line-height:29px;width:29px;letter-spacing:-.5px}
+.shell .db-calendar-page .db-diary .jb-week-heading>button.is-today>b{background:transparent;color:var(--workspace-accent,#235789)}
+.shell .db-calendar-page .db-diary .jb-grid-event{background:color-mix(in srgb,var(--ev) 13%,white);border-color:color-mix(in srgb,var(--ev) 15%,white);border-left:3px solid color-mix(in srgb,var(--ev) 65%,white);border-radius:7px;color:color-mix(in srgb,var(--ev) 80%,#1b2e40)}
+.db-appointments{background:#fff;border:1px solid #f7f9fc;border-radius:18px;box-shadow:0 5px 0 #e5ecf650,0 10px 25px #496a8d05;overflow:hidden;min-width:0}
+.db-appointments>header{padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #edf1f7}
+.shell .db-appointments h2{font-size:17px;color:#314b61;letter-spacing:-.3px;margin:0}
+.shell .db-appointments>header p{font-size:11px;line-height:1.6;color:#768ca0;margin:5px 0 0}
+.shell .db-appointments>header a{font-size:11px;font-weight:600}
+.db-appointments>ul{padding:0;margin:0;list-style:none}
+.db-appointments>ul>li{padding:18px 24px;border-bottom:1px solid #edf1f7;display:flex;align-items:center;gap:18px}
+.db-appointments>ul>li:last-child{border-bottom:0}
+.shell .db-appointments table{margin:0;border:0;width:100%}
+.shell .db-appointments th{background:#f8fafe;border-color:#edf1f7;font-size:11px}
+.shell .db-appointments td{padding:19px 23px;border-color:#edf1f7;font-size:12px}
+.shell .db-appointments .notice,.shell .db-appointments .empty{border:0;background:#fff;border-radius:0;margin:0;padding:32px 24px}
+.shell .db-appointments>.db-empty{padding:34px 24px;font-size:13px;line-height:1.7;color:#738b9e}
+@media(min-width:801px) and (max-width:1199px){
+  .db-calendar-layout{grid-template-columns:180px minmax(0,1fr);gap:16px}
+  .shell .db-calendar-aside .jb-mini{padding:15px 9px}
+  .shell .db-calendar-aside .jb-mini-title>b{font-size:11px}
+  .shell .db-calendar-aside .jb-mini-grid{gap:2px}
+  .db-filter-panel,.db-up-next{padding:18px 14px}
+  .db-calendar-page .db-toolbar{padding:15px;gap:12px}
+  .db-calendar-page .db-date-controls{justify-content:flex-start;gap:6px}
+  .db-calendar-page .db-date-controls input[type=date]{width:142px}
+  .db-calendar-page .db-period-controls{justify-content:space-between;gap:10px}
+}
+@media(max-width:800px){
+  .db-calendar-layout{grid-template-columns:minmax(0,1fr);gap:20px}
+  .db-calendar-aside{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px;align-items:start}
+  .shell .db-calendar-aside .jb-mini{padding:15px 8px;grid-column:1;grid-row:1/span 2;border-radius:14px}
+  .shell .db-calendar-aside .jb-mini-title{gap:4px;padding-bottom:10px;flex-wrap:wrap}
+  .shell .db-calendar-aside .jb-mini-title>b{font-size:11px}
+  .shell .db-calendar-aside .jb-mini-grid>button{min-height:30px;font-size:9px}
+  .shell .db-calendar-aside .jb-mini-grid>span{font-size:8px}
+  .db-filter-panel{grid-column:2;padding:16px 13px;border-radius:14px}
+  .shell .db-filter-panel h2,.shell .db-filter-panel h3{font-size:14px;margin-bottom:13px}
+  .shell .db-filter-panel .jb-calendar-staff{margin-bottom:8px}
+  .shell .db-filter-panel .jb-staff-filter{font-size:10px;min-height:33px;gap:6px}
+  .shell .db-filter-panel .field{margin-top:11px;font-size:10px}
+  .shell .db-filter-panel .field select{font-size:12px;padding:8px;min-height:38px}
+  .db-up-next{grid-column:1/-1;grid-row:3;padding:16px 18px;border-radius:14px;display:block}
+  .shell .db-up-next h2,.shell .db-up-next h3{font-size:14px}
+  .db-calendar-page .db-toolbar{padding:15px 13px;gap:12px}
+  .db-calendar-page .db-date-controls input[type=date]{width:152px}
+  .db-calendar-page .db-date-controls{justify-content:flex-start;gap:6px}
+  .db-appointments>header{padding:19px 18px}
+  .db-appointments>ul>li{padding:17px 18px;gap:13px;flex-wrap:wrap}
+  .shell .db-appointments td{padding:17px 16px}
+}
+
+/* Shared period controls and a quiet, structured appointments list. */
+.db-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.db-dashboard-period{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:24px 0 0}
+.db-dashboard-period .db-period-controls{width:auto}
+.db-dashboard-period .db-date-controls{width:auto}
+.db-dashboard-period .seg{display:flex;gap:3px;background:#e3eaf5;border:0;border-radius:9px;padding:4px}
+.shell .db-dashboard-period .seg button{min-height:35px;border:0;padding:9px 17px;border-radius:6px;font-size:11px;font-weight:550;background:transparent;color:#607a93}
+.shell .db-dashboard-period .seg button.active{background:#fff;color:var(--workspace-accent,#235789);box-shadow:0 2px 6px #557da715}
+.shell .db-dashboard-period .db-navigation button{font-size:11px;min-height:38px;padding:9px 12px;border-color:#dce5f0;border-radius:7px;background:#f8faff;color:#526e88}
+.shell .db-dashboard-period .db-date-controls input{background:#f8faff;border-color:#dce5f0}
+.db-calendar-page>.db-heading{margin-bottom:22px}
+.db-list-heading{padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #edf1f7}
+.shell .db-list-heading h2{font-size:17px;letter-spacing:-.3px;margin:0;color:#314b61}
+.shell .db-list-heading p{font-size:11px;color:#72899f;margin:6px 0 0;line-height:1.5}
+.shell .db-list-heading>a{font-size:11px;border-color:#e0e7f1;min-height:36px;padding:9px 11px;white-space:nowrap}
+.db-appointment-row{display:grid;grid-template-columns:125px minmax(140px,1fr) minmax(110px,.6fr) 95px 48px;align-items:center;gap:20px;padding:20px 24px;border-bottom:1px solid #edf1f7}
+.db-appointment-row:last-child{border-bottom:0}
+.db-list-time strong,.db-list-client strong{display:block;font-size:13px;font-weight:650;color:#304c64;line-height:1.5}
+.db-list-time span,.db-list-client span{display:block;font-size:11px;color:#758ca1;line-height:1.5;margin-top:5px}
+.db-list-staff{display:flex;align-items:center;gap:7px;font-size:11px;color:#647e95}
+.db-staff-dot{display:inline-block;width:7px;height:7px;border-radius:50%;flex:none}
+.shell .db-appointment-row>.pill{font-size:10px;justify-self:start;padding:5px 8px}
+.shell .db-appointment-row>button{font-size:11px;min-height:34px;padding:7px 10px;border-color:#dde6f0;color:#4e6f8c}
+.shell .db-appointments .empty{padding:42px 24px;background:#fff;margin:0;border:0}
+.shell .db-appointments .empty h3{font-size:14px;font-weight:600;color:#5c7790;margin-bottom:9px}
+.shell .db-appointments .empty p{font-size:12px;line-height:1.7;color:#7a90a4;margin:0}
+.shell .db-list-note{padding:15px 24px;margin:0;border-top:1px solid #edf1f7;font-size:11px;color:#748ca2}
+@media(min-width:801px) and (max-width:1100px){
+  .shell{display:block}
+  .shell .sidebar{display:none;position:static;width:100%;height:auto;min-height:0;padding:15px 24px}
+  .shell.is-menu-open .sidebar{display:block}
+  .shell .sidebar .brand.jb-wordmark,.shell .sidebar .salon-switch,.shell .sidebar .bottom{display:none}
+  .shell .sidebar .jb-nav-section{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .shell .sidebar .jb-more-settings{margin-top:12px;padding-top:8px}
+  .shell .workspace-header{justify-content:flex-start;gap:14px;height:70px}
+  .shell .workspace-header .jb-mobile-nav{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;flex:none}
+  .shell .workspace-header .row{margin-left:auto}
+  .db-appointment-row{grid-template-columns:100px minmax(130px,1fr) minmax(90px,.6fr) 85px 45px;gap:14px}
+}
+@media(max-width:800px){
+  .db-heading{display:block;position:relative;padding-right:0}
+  .shell .db-title{font-size:29px}
+  .db-heading>div>p{font-size:11px;line-height:1.6;margin-top:7px}
+  .db-heading>.db-actions{margin-top:15px;justify-content:flex-start}
+  .shell .db-heading .db-actions>button,.shell .db-heading .db-actions>a{min-height:40px;font-size:11px;padding:10px 13px}
+  .db-dashboard-period{gap:12px;margin-top:21px}
+  .db-dashboard-period .db-period-controls{width:100%}
+  .db-dashboard-period .seg{width:100%}
+  .db-dashboard-period .seg button{flex:1}
+  .db-dashboard-period .db-date-controls{width:100%;gap:8px;justify-content:space-between}
+  .shell .db-dashboard-period .db-navigation button{font-size:10px;padding:9px 8px;min-height:40px}
+  .shell .db-dashboard-period .db-date-controls input[type=date]{width:147px;font-size:14px;min-height:40px}
+  .db-list-heading{padding:19px 18px}
+  .db-appointment-row{grid-template-columns:minmax(0,1fr) auto;gap:11px 14px;padding:19px 18px}
+  .db-list-time{grid-column:1;grid-row:1}
+  .db-list-client{grid-column:1;grid-row:2}
+  .db-list-staff{grid-column:1;grid-row:3}
+  .db-appointment-row>.pill{grid-column:2;grid-row:1;justify-self:end}
+  .db-appointment-row>button{grid-column:2;grid-row:3;justify-self:end}
+  .db-calendar-aside{gap:13px}
+  .db-up-next{grid-column:2;grid-row:2;padding:14px 13px}
+  .shell .db-up-next h2{font-size:12px;margin-bottom:5px}
+  .shell .db-up-next>span{font-size:9px;margin-bottom:6px}
+  .shell .db-up-next p{font-size:10px;line-height:1.6;margin-top:5px}
+  .shell .db-up-next button{font-size:10px;min-height:33px;padding:7px 8px;margin-top:9px}
+  .db-calendar-page .db-date-controls{justify-content:space-between}
+  .db-calendar-page .db-date-controls input[type=date]{width:140px;font-size:14px}
+  .db-calendar-page .db-toolbar button{font-size:10px;padding:9px 8px}
+}
+
+/* Align day headings to the actual diary columns; retain readable small labels. */
+.db-calendar-page .db-diary .jb-week-heading{padding:7px 0 8px;gap:0}
+.shell .db-calendar-page .db-diary .jb-week-heading>button{margin:0 3px}
+.shell .workspace-header .tiny,.shell .sidebar .jb-wordmark small,.shell .sidebar .salon-switch label{color:#60758a}
+.shell .db-heading>div>p,.shell .db-metric-label,.shell .db-metric-note,.shell .db-list-heading p,.shell .db-list-note,.shell .db-list-staff,.shell .db-list-time span,.shell .db-list-client span{color:#536b80}
+.shell .db-calendar-aside .jb-mini-grid>span,.shell .db-filter-panel .jb-calendar-staff legend,.shell .db-filter-panel .field,.shell .db-filter-panel>p{color:#536b80}
+.shell .db-calendar-aside .jb-mini-title button{color:#536b80}
+.shell .db-calendar-footer,.shell .db-calendar-footer>a,.shell .db-diary .jb-timezone,.shell .db-diary .jb-time-ruler>span,.shell .db-diary .dg-times span{color:#5b7186}
+.shell .db-appointments .empty p{color:#5b7186}
+.shell .db-up-next>span,.shell .db-up-next p{color:#416c65}
+.shell .side-nav a,.shell .jb-more-settings summary,.shell .jb-personalise{color:#60768a}
+.shell .side-nav a.active{color:var(--workspace-accent,#235789)}
+.shell .db-dashboard-period .seg button,.shell .db-toolbar .seg button{color:#536b80}
+.shell .db-toolbar .seg button.active{color:#fff}
+.shell .db-heading .db-actions>details>summary{color:#536b80}
+.shell .db-calendar-aside .jb-mini-grid>button.is-out{color:#60768a}
+.shell .sidebar .salon-switch{background:color-mix(in srgb,var(--workspace-accent,#235789) 4%,white)}
+.shell .sidebar .bottom .pill{background:color-mix(in srgb,var(--workspace-accent,#235789) 5%,white)}
+.shell .db-calendar-page .db-diary .jb-grid-event.is-short{padding:3px 5px;line-height:1.15}
+.shell .db-calendar-page .db-diary .jb-grid-event.is-short strong{font-size:10px;line-height:12px}
+.shell .db-calendar-page .db-diary .jb-grid-event.is-short small{font-size:9px;line-height:11px;margin-top:1px}
+.shell .db-calendar-page .db-diary .jb-grid-event.is-short small~small{display:none}
