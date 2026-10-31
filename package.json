@@ -10,7 +10,11 @@
     "test": "node --test tests/*.test.mjs",
     "regression": "node scripts/regression.mjs",
     "regression:browser": "playwright test",
-    "performance": "node scripts/performance.mjs"
+    "performance": "node scripts/performance.mjs",
+    "test:booking-db:init": "node scripts/jovabook-test-db.mjs init",
+    "test:booking-db:status": "node scripts/jovabook-test-db.mjs status",
+    "test:booking-db:verify": "node scripts/jovabook-test-db.mjs verify",
+    "test:booking-db:guards": "node --test tests/jovabook-test-db.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
