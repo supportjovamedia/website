@@ -2,7 +2,7 @@
 import subprocess,time,json,re,base64
 from playwright.sync_api import sync_playwright
 srv=subprocess.Popen(['node','/home/claude/website/booking-demo/server.mjs'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1.5)
-B='http://localhost:4317';SB='https://emyjuccsfnxqrsztpzly.supabase.co'
+B='http://localhost:4317';SB='https://rffsulstatmwzvrdgvec.supabase.co'
 res=[];errs=[];log=[]
 def chk(n,ok,i=''):
     res.append(ok);print(('PASS ' if ok else 'FAIL ')+n+('' if ok else ' | '+str(i)[:200]))
@@ -125,9 +125,9 @@ with sync_playwright() as p:
     pg.click('button:has-text("Log out")');pg.wait_for_timeout(400)
     # second browser (new device): log in, local state empty
     pg2=ctx.browser.new_context(viewport={'width':1200,'height':900});pg2.route(SB+'/**',handler);q=pg2.new_page();q.on('pageerror',lambda e:errs.append(str(e)))
-    q.goto(B+'/#login');q.fill('[name=email]','rae.remote@gmail.com');q.fill('[name=password]','Remote123');q.click('button.primary:has-text("Log in")');q.wait_for_url('**#dashboard',timeout=5000);q.wait_for_selector('h3:has-text("Your booking link")')
+    q.goto(B+'/#login');q.fill('[name=email]','rae.remote@gmail.com');q.fill('[name=password]','Remote123');q.click('button.primary:has-text("Log in")');q.wait_for_url('**#calendar',timeout=5000);q.wait_for_selector('.workspace-header')
     chk('login on a new device works',q.locator('.workspace-header:has-text("Remote Salon")').count()==1)
-    chk('new device shows real trial state','Trial' in q.inner_text('body') or 'trial' in q.inner_text('body'))
+    q.goto(B+'/#billing');q.wait_for_timeout(600);chk('new device shows real trial state','rial' in q.inner_text('body'))
     q.click('button:has-text("Log out")')
     q.goto(B+'/#login');q.fill('[name=email]','rae.remote@gmail.com');q.fill('[name=password]','Wrong123');q.click('button.primary:has-text("Log in")');q.wait_for_selector('.error:not(:empty)',timeout=4000)
     chk('wrong password rejected','do not match' in q.inner_text('.error'))
@@ -140,12 +140,12 @@ with sync_playwright() as p:
     q.fill('[name=password]','Brandnew9');q.fill('[name=confirm]','Brandnew9');q.click('button.primary');q.wait_for_url('**#login',timeout=5000)
     chk('password changed on server',DB['users']['rae.remote@gmail.com']['pw']=='Brandnew9')
     # demo account still works offline
-    q.fill('[name=email]','demo@jovamedia.com');q.fill('[name=password]','Salon2026');q.click('button.primary:has-text("Log in")');q.wait_for_url('**#dashboard',timeout=5000)
+    q.fill('[name=email]','demo@jovamedia.com');q.fill('[name=password]','Salon2026');q.click('button.primary:has-text("Log in")');q.wait_for_url('**#calendar',timeout=5000)
     chk('demo account still logs in',True)
     # ---- diary tables ----
     chk('seeded set-up reached the tables with the salon id',len([r for r in DB['t']['services'] if r['salon_id']==DB['salons'][0]['id']])==3 and len(DB['t']['staff'])==1 and all(r['salon_id']==DB['salons'][0]['id'] for t in DB['t'].values() for r in t))
     chk('salon settings saved (seeded flag + hours)',DB['salons'][0]['settings'].get('seeded') is True and 'hours' in DB['salons'][0]['settings'])
-    q.goto(B+'/#login');q.fill('[name=email]','rae.remote@gmail.com');q.fill('[name=password]','Brandnew9');q.click('button.primary:has-text("Log in")');q.wait_for_url('**#dashboard',timeout=5000)
+    q.goto(B+'/#login');q.fill('[name=email]','rae.remote@gmail.com');q.fill('[name=password]','Brandnew9');q.click('button.primary:has-text("Log in")');q.wait_for_url('**#calendar',timeout=5000)
     q.goto(B+'/#services');q.wait_for_selector('text=Lash lift',timeout=4000)
     chk('services page loads from the database',q.locator('text=Brow shape').count()>=1)
     q.click('[data-action=add-service]');q.fill('.modal [name=name]','Gel removal');q.fill('.modal [name=price]','12');q.fill('.modal [name=duration]','30');q.check('.modal [name=staffIds]');q.click('.modal button.primary');q.wait_for_timeout(1500)
