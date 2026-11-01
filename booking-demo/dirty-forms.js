@@ -1,7 +1,7 @@
 /* Consistent, local-only unsaved indicators for owner settings and editor forms. */
 (() => {
  'use strict';
- const types=new Set(['settings','service','category','customer','workspace-appearance','ws-business-hours','ws-staff-hours','ws-booking-page','deposit','manual-booking','edit-booking','reschedule','portal','onboard-business','onboard-owner','owner-series','sr-settings','sb-provider-change','sb-plan-change']);
+ const types=new Set(['settings','service','category','customer','workspace-appearance','ws-business-hours','ws-staff-hours','ws-booking-page','deposit','manual-booking','edit-booking','reschedule','portal','onboard-business','onboard-owner','owner-series','sb-provider-change','sb-plan-change']);
  const records=new WeakMap();let queued=false;
  function serialize(elements){return JSON.stringify(Array.from(elements).filter(e=>e.name&&!['button','submit','reset','file','image'].includes(e.type)).map(e=>[e.name,e.type||e.tagName,e.type==='checkbox'||e.type==='radio'?!!e.checked:e.multiple?Array.from(e.selectedOptions||[],option=>option.value):String(e.value??'')]));}
  function signature(form){return serialize(form.elements);}

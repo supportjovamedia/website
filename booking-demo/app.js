@@ -816,7 +816,7 @@ document.addEventListener('click',e=>{if(e.target.classList.contains('modal-back
 })();
 function syncPublicLocation(){const params=new URL(location.href).searchParams,demo=params.get('demo')==='jova-demo'||params.get('salon')==='jova-demo',slug=demo?null:params.get('salon');if(demo!==demoBooking||slug!==requestedSalon){requestParams=params;demoBooking=demo;requestedSalon=slug;PUB=null;draft={};$('#app').replaceChildren();if(demoBooking){if(!state.salons.some(JovaDemoData.isBuiltIn))state.salons.push(JovaDemoData.build());state.active='drink';}}}
 const ownerHasChanges=()=>!!document.querySelector('.shell')&&(JovaDirtyForms.hasChanges(document)||businessWebsite.isDirty()||staffEditor.isDirty());
-const editorBusy=()=>businessSettingsSaving&&businessSettingsSaveOwner===businessOwner()||businessWebsite.isBusy();
+const editorBusy=()=>businessSettingsSaving&&businessSettingsSaveOwner===businessOwner()||businessWebsite.isBusy()||!!document.querySelector('form[data-owner][aria-busy="true"]');
 function keepUnsavedChanges(){const request=pendingLeave;if(!request)return;pendingLeave=null;if(request.created)closeModal();else document.querySelector('[data-unsaved-warning]')?.remove();if(request.focus?.isConnected)request.focus.focus({preventScroll:true});}
 function discardUnsavedChanges(){const request=pendingLeave;if(!request)return;pendingLeave=null;if(request.owner!==businessOwner()){closeModal();return;}if(request.scope==='page'){JovaDirtyForms.discard(document);businessWebsite.discard();}else JovaDirtyForms.discard(document.getElementById('modal-root'));if(request.created)closeModal();else document.querySelector('[data-unsaved-warning]')?.remove();request.proceed();}
 function requestUnsavedLeave(proceed,scope='page'){

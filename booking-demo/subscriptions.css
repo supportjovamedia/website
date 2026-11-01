@@ -60,3 +60,5 @@
 .sb-page .sb-plan-card>.sb-limit-note{margin:0;line-height:1.65}
 .sb-page .sb-plan-card>.sb-actions{margin-top:auto}
 @media(min-width:701px) and (max-width:1000px){.sb-locked-main .sb-plan-grid{grid-template-columns:minmax(0,1fr)}}
+
+@media(min-width:1001px){.sb-page .sb-plan-features>li{box-sizing:border-box;min-height:64px}}
