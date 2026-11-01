@@ -4,6 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import Stripe from 'stripe';
 import {createJovaBookBillingHandlers} from '../../lib/jovabook-billing.mjs';
+import {MONTHLY_COMMISSION_TERMS_VERSION} from '../../lib/jovabook-monthly-commission.mjs';
 
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const owner='10000000-0000-4000-8000-000000000001',salon='20000000-0000-4000-8000-000000000001';
@@ -44,6 +45,8 @@ test('billing HTTP handlers use actual isolated SQL and mocked provider transpor
   for(const file of files)await db.exec(await readFile(new URL('../supabase/'+file,import.meta.url),'utf8'));
   await q("insert into salons(id,owner_id,name,slug,owner_name,email,status) values($1,$2,'Local fixture','fixture','Owner','owner@example.test','setup')",[salon,owner]);
   await q("update jovabook_private.billing_config set enabled=true,provider_configured=true,worker_hash=encode(sha256(convert_to($1,'UTF8')),'hex'),lifecycle_hash=encode(sha256(convert_to($2,'UTF8')),'hex')",[env.JOVABOOK_BILLING_WORKER_TOKEN,env.JOVABOOK_LIFECYCLE_WORKER_TOKEN]);
+  const checkoutEnv={...env,JOVABOOK_MONTHLY_COMMISSION_ENABLED:'true',JOVABOOK_MONTHLY_COMMISSION_INVOICING_ENABLED:'true',JOVABOOK_COMMISSION_SUPERVISOR_ENABLED:'true',JOVABOOK_COMMISSION_WORKER_TOKEN:'d'.repeat(64),JOVABOOK_COMMISSION_HTTP_TOKEN:'e'.repeat(64)};
+  await q("update jovabook_private.commission_config set enabled=true,invoice_enabled=true,enabled_at=now(),worker_hash=encode(sha256(convert_to($1,'UTF8')),'hex')",[checkoutEnv.JOVABOOK_COMMISSION_WORKER_TOKEN]);
   const send=async(url,options)=>{
    const u=new URL(url);assert.equal(u.origin,'https://fictional.example.test','No real network or production project is contacted.');
    if(u.pathname==='/auth/v1/user')return Response.json(options.headers.Authorization==='Bearer owner'?{id:owner,email:'owner@example.test'}:{},{status:options.headers.Authorization==='Bearer owner'?200:401});
@@ -53,10 +56,15 @@ test('billing HTTP handlers use actual isolated SQL and mocked provider transpor
     await q("select set_config('request.jwt.claim.sub',$1,false)",[owner]);await db.exec('set role authenticated');
     try{value=(await q('select owner_account_access() data')).rows[0].data;}finally{await db.exec('reset role');}
    }else if(fn==='booking_billing_worker')value=(await q('select booking_billing_worker($1,$2,$3) data',[body.p_token,body.p_action,JSON.stringify(body.p_payload)])).rows[0].data;
+   else if(fn==='booking_commission_worker')value=(await q('select booking_commission_worker($1,$2,$3) data',[body.p_token,body.p_action,JSON.stringify(body.p_payload)])).rows[0].data;
    else assert.fail('Unexpected RPC '+fn);
    return Response.json(value);
   };
   const handlers=createJovaBookBillingHandlers({env,send,stripe});
+  // This suite isolates billing reconciliation. Only Checkout opts in to the
+  // configured commission fixture; commission collection has its own suite.
+  const configuredCheckout=createJovaBookBillingHandlers({env:checkoutEnv,send,stripe}).checkout;
+  handlers.checkout=async original=>configuredCheckout(new Request(original,{body:JSON.stringify({...await original.json(),terms_version:MONTHLY_COMMISSION_TERMS_VERSION})}));
   const state=async()=> (await q('select * from jovabook_private.billing_accounts where salon_id=$1',[salon])).rows[0];
   const webhook=async(type,id='evt_local')=>{const body=JSON.stringify({id,livemode:false,type,data:{object:{customer:'cus_owner'}}}),sig=sdk.webhooks.generateTestHeaderString({payload:body,secret:env.JOVABOOK_STRIPE_WEBHOOK_SECRET});return handlers.webhook(new Request('https://book.jovamedia.com/api/jovabook/billing/webhook',{method:'POST',headers:{'stripe-signature':sig},body}));};
   const paid=plan=>{
@@ -78,6 +86,8 @@ test('billing HTTP handlers use actual isolated SQL and mocked provider transpor
    const wrong=createJovaBookBillingHandlers({env,send,stripe:{...stripe,accounts:{retrieveCurrent:async()=>({id:'acct_anotherbusiness',charges_enabled:true})}}});assert.equal((await wrong.checkout(request({plan:'standard',request_id:requestId}))).status,503);assert.equal((await wrong.status(request({}))).status,503);assert.equal(calls.length,0);assert.equal((await state()).ever_paid,false);
   });
   await t.test('unknown Checkout timeout retains one action and uses the same provider key; expired idempotency is not blindly retried',async()=>{
+   const before=(await q("select booking_commission_worker($1,'summary',$2) data",[checkoutEnv.JOVABOOK_COMMISSION_WORKER_TOKEN,JSON.stringify({salon})])).rows[0].data;
+   assert.equal(before.available,false,'New account has no paid period or statement before its first Checkout.');
    throwCreate=true;assert.equal((await handlers.checkout(request({plan:'standard',request_id:requestId}))).status,503);throwCreate=false;
    assert.equal(calls.filter(x=>x[0]==='checkout').length,1);
    assert.equal((await handlers.checkout(request({plan:'premium',request_id:'30000000-0000-4000-8000-000000000009'}))).status,503);

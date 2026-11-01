@@ -16,6 +16,7 @@ export default function sitemap() {
     "/contact",
     "/get-a-quote",
     "/pricing",
+    "/jovabook",
     "/privacy-policy",
     "/terms",
   ];
