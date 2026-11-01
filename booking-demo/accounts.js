@@ -322,7 +322,7 @@
       catch{return current(expected)?{ok:false,network:true,message:NET}:stale();}finally{clearTimeout(timer);}
     }
     async function integrationCall(action,body={}) {
-      if(!['integrations/status','integrations/connect','integrations/disconnect','recovery/preview','recovery/send'].includes(action))return {ok:false,message:'This connection action is unavailable.'};
+      if(!['integrations/status','integrations/connect','integrations/configure','integrations/oauth/start','integrations/oauth/complete','integrations/disconnect','recovery/preview','recovery/send'].includes(action))return {ok:false,message:'This connection action is unavailable.'};
       const sid=body.salon_id;if(!writeScope(sid))return scopeFailure();const t=await token();if(!t)return authFailure();if(!writeScope(sid))return scopeFailure();const expected=stamp(),ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),20000);
       try{const response=await fetch('/api/jovabook/'+action,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)});let data=null;try{data=await response.json();}catch{}if(!current(expected)||!writeScope(sid))return stale();if(data?.salon_id&&data.salon_id!==sid)return scopeFailure();return {ok:response.ok&&data?.ok===true,status:response.status,data,message:typeof data?.message==='string'?data.message:'We could not verify this connection request. Try again.'};}
       catch{return current(expected)&&writeScope(sid)?{ok:false,network:true,message:NET}:stale();}finally{clearTimeout(timer);}

@@ -1,6 +1,6 @@
 # Business integrations and slot recovery
 
-This backend is BYO credentials first. It does not implement OAuth, guest deposit Checkout, payment capture, payment webhooks or PayPal refunds. The existing JovaMedia subscription billing key is never used. No business credentials belong in salon settings, browser storage, logs or HTTP responses.
+The connection area supports guided API credentials and gated Stripe/Mailchimp provider sign-in. Hosted sign-in stays unavailable until the platform applications and dedicated server credentials are configured. This release does not activate guest deposit Checkout, payment capture, payment webhooks or PayPal refunds. The existing JovaMedia subscription billing key is never used. No business credentials belong in salon settings, browser storage, logs or HTTP responses.
 
 All operational switches are disabled by default. Tests use two fictional businesses, disposable local SQL and injected HTTP only. No provider account, email, payment or real customer data is required for tests.
 
@@ -37,7 +37,7 @@ All safe provider results include `state`, `account_verified`, `checkout_ready`,
 
 Provider states: `not_connected`, `credentials_verified`, `setup_required`, `ready`, `unavailable`. Account IDs and app IDs are safe identity summaries, never evidence that customer checkout is available. A provider timeout cannot turn an existing connection into a fake success.
 
-One-click Stripe Connect needs JovaBook platform registration and OAuth client/callback configuration. PayPal partner onboarding requires approved platform partner credentials and server merchant verification. Twilio Connect also requires a registered Connect application; Account OAuth supports client credentials rather than a user authorization-code flow. Those are separate future work, with no placeholder OAuth buttons in this release. Squarespace remains an ordinary copyable tenant booking iframe/link, not an authenticated integration.
+Stripe provider sign-in uses the existing-account Connect OAuth flow only when separately configured. Stripe recommends Accounts v2 onboarding for new Connect platforms; choosing that broader new-account onboarding model remains a separate platform decision. PayPal partner onboarding requires approved platform partner credentials and server merchant verification. Twilio Connect requires a registered Connect application; Account OAuth supports client credentials rather than a user authorization-code flow. PayPal and Twilio continue with honest guided API verification in this release. Squarespace remains an ordinary copyable tenant booking iframe/link, not an authenticated integration.
 
 ## Recovery eligibility and consent
 
@@ -87,3 +87,35 @@ No operational credentials, switch changes, emails or paid resources were used t
 - [Mailchimp API keys](https://mailchimp.com/developer/marketing/api-concepts/authentication/api-keys), [sending domains](https://mailchimp.com/developer/marketing/api/verified-domains/list), [segments](https://mailchimp.com/developer/marketing/concepts/audiences/segments/), [campaign send](https://mailchimp.com/developer/marketing/api/campaigns/create-action-send).
 - [Twilio key permissions](https://www.twilio.com/docs/iam/api-keys), [restricted keys](https://www.twilio.com/docs/iam/api-keys/restricted-api-keys), [Account OAuth](https://www.twilio.com/docs/iam/oauth-apps/account-oauth-apps).
 - [The SMS Works API reference](https://api.thesmsworks.co.uk/docs/api-reference.html).
+
+
+## Hosted Stripe and Mailchimp connection flow
+
+Required migration: `20261101204030_business_integration_oauth.sql`. It creates a private, RLS-enabled authorization-state table and a dedicated hashed-worker gateway. No public client can read the table. The gateway accepts only the existing 64-character integration worker credential, checked with its SHA-256 hash.
+
+Provider sign-in is enabled only by these server-only values:
+
+- Stripe: `JOVABOOK_STRIPE_CONNECT_ENABLED=true`, `JOVABOOK_STRIPE_CONNECT_CLIENT_ID`, `JOVABOOK_STRIPE_CONNECT_SECRET_KEY`. The dedicated Connect credential must differ from `JOVABOOK_STRIPE_SECRET_KEY`, the SaaS billing credential. The provider account owner's explicit authorization is still required. Live/test grants must match the configured Connect credential mode.
+- Mailchimp: `JOVABOOK_MAILCHIMP_OAUTH_ENABLED=true`, `JOVABOOK_MAILCHIMP_CLIENT_ID`, `JOVABOOK_MAILCHIMP_CLIENT_SECRET`. Register the application first. Sender and audience setup follows account authorization.
+
+Register each exact redirect URI with its provider:
+
+- `https://book.jovamedia.com/api/jovabook/integrations/oauth/callback?provider=stripe`
+- `https://book.jovamedia.com/api/jovabook/integrations/oauth/callback?provider=mailchimp`
+
+Endpoints:
+
+| Endpoint | Method | Purpose |
+| --- | --- | --- |
+| `integrations/oauth/start` | POST | Verified active owner starts a flow for their exact business/provider and current revision. Returns a fixed-host authorization URL and sets a Secure, HttpOnly, SameSite=Lax browser verifier. |
+| `integrations/oauth/callback` | GET | Claims state once, exchanges one provider code, validates provider identity/mode, then stages encrypted credentials. It never saves the connection directly. |
+| `integrations/oauth/complete` | POST | The currently authenticated original owner, exact business, state and matching browser verifier must finalize. SQL rechecks owner, paid feature entitlement and the starting credential revision. |
+| `integrations/configure` | POST | Completes a connected Mailchimp account with audience, sender and optional marketing permission. It preserves the encrypted server token and independently verifies the selected audience/domain. |
+
+State and a separate browser verifier each use 32 random bytes. Only SHA-256 hashes are stored. State expires after ten minutes, each owner may start at most five flows per ten minutes, and the SQL row lock prevents concurrent callback exchanges. Claimed codes are never retried because Stripe documents that code reuse may revoke a connection. A failed, expired, declined, replayed or stale flow preserves the existing connection. Pending staged credentials expire and are removed during subsequent flow cleanup. Starting a new flow does not silently authorize another owner after an account switch.
+
+Stripe account identity is read through the dedicated Connect credential plus the provider-bound `Stripe-Account` header. Stripe access/refresh tokens returned by the legacy endpoint are not retained. Mailchimp access tokens are encrypted under the existing business/provider AES-GCM envelope. Metadata must supply an allowlisted `usN` datacenter and its exact Mailchimp API host; no provider-returned arbitrary endpoint is fetched. Credentials and provider errors never appear in response URLs, logs or frontend storage.
+
+A successful account authorization continues to report `checkout_ready=false`. Mailchimp authorization reports `audience_and_sender_required` until the owner finishes its separate non-secret setup. Recovery sending remains controlled by the existing independent operational switches. No payment, payout or message is initiated by connecting.
+
+Verification: `node --test tests/jovabook-integration-oauth.test.mjs` exercises the real disposable PGlite SQL, injected provider HTTPS, origin/owner isolation, browser verifier, callback replay/races, expiry, metadata-host rejection, changed credential revisions, and downgrade before completion. These are isolated fixtures, not evidence of a production provider authorization round trip.
