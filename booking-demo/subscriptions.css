@@ -1,0 +1,53 @@
+/* Billing recovery stays deliberately separate from the private workspace. */
+.sb-locked-shell{min-height:100dvh;background:var(--theme-page,#f4f4f4);color:var(--theme-body,#26394b);font-family:Outfit,system-ui,sans-serif}
+.sb-locked-header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px clamp(18px,5vw,72px);border-bottom:1px solid var(--theme-line,#dbe2e8);background:var(--theme-panel,#fff)}
+.sb-locked-header .brand{font-size:24px;text-decoration:none;color:inherit}
+.sb-locked-header nav{display:flex;align-items:center;flex-wrap:wrap;gap:20px;font-size:13px}
+.sb-locked-header nav a{color:inherit;text-decoration:none}
+.sb-locked-header button{font:inherit;background:transparent;border:1px solid var(--theme-control-line,#b8c5cf);border-radius:10px;padding:10px 14px;color:inherit}
+.sb-locked-main{max-width:1240px;margin:auto;padding:40px clamp(18px,5vw,60px) 64px}
+.sb-access-notice{background:var(--theme-panel,#fff);border:1px solid var(--theme-line,#dbe2e8);border-left:4px solid var(--theme-primary,#235789);border-radius:14px;padding:24px;margin:24px 0}
+.sb-access-notice h2{font-size:21px;line-height:1.3;margin:0 0 10px;color:inherit}
+.sb-access-notice p{max-width:74ch;line-height:1.65;font-size:14px;margin:8px 0}
+.sb-popular{display:inline-flex;align-items:center;align-self:flex-start;background:var(--theme-soft,#e2ecf5);color:var(--theme-heading,#193c5b);padding:6px 10px;border-radius:7px;font-size:11px;font-weight:550}
+.sb-locked-main .sb-header{display:flex;align-items:start;justify-content:space-between;gap:18px;margin-bottom:24px}
+.sb-locked-main .sb-header h1{font-size:clamp(32px,4vw,48px);font-weight:400;letter-spacing:-1.3px;margin:0 0 12px}
+.sb-locked-main .sb-header p{font-size:14px;margin:8px 0}
+.sb-locked-main .sb-current{display:flex;justify-content:space-between;gap:20px;background:var(--theme-panel,#fff);border:1px solid var(--theme-line,#dbe2e8);border-radius:14px;padding:24px}
+.sb-locked-main .sb-plan-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:24px 0}
+.sb-locked-main .sb-plan-card{display:flex;flex-direction:column;align-items:start;gap:14px;background:var(--theme-panel,#fff);border:1px solid var(--theme-line,#dbe2e8);border-radius:16px;padding:24px;min-width:0}
+.sb-locked-main .sb-plan-card h2{font-size:23px;font-weight:450;margin:0}
+.sb-locked-main .sb-plan-price strong{font-size:34px;font-weight:450}
+.sb-locked-main .sb-plan-features{padding-left:18px;line-height:1.8;font-size:13px}
+.sb-locked-main .sb-actions{margin-top:auto}
+.sb-locked-main :is(button,.btn){max-width:100%;white-space:normal;min-height:42px;border-radius:10px;font-size:13px}
+.sb-locked-main .primary{background:var(--theme-primary,#235789);color:var(--theme-on-primary,#fff)}
+.sb-locked-main .sb-feature-note,.sb-locked-main .sb-billing-note{font-size:13px;line-height:1.7}
+@media(max-width:700px){.sb-locked-header{align-items:start;flex-direction:column;gap:16px}.sb-locked-header nav{gap:16px}.sb-locked-main{padding-top:26px}.sb-locked-main .sb-plan-grid{grid-template-columns:minmax(0,1fr)}.sb-locked-main .sb-current{flex-direction:column}.sb-locked-main .sb-header{flex-wrap:wrap}.sb-access-notice{padding:20px}}
+.sb-provider-review{padding:4px 0 18px}
+.sb-provider-review h3{font-size:24px;font-weight:500;margin:0 0 12px;color:inherit}
+.sb-provider-review p{font-size:14px;line-height:1.7;margin:12px 0;color:inherit}
+.sb-provider-review .sb-plan-price{display:flex;align-items:baseline;gap:6px}
+.sb-provider-review .sb-plan-price strong{font-size:34px;font-weight:500}
+[data-form=sb-provider-change] .sb-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:16px}
+[data-form=sb-provider-change] .sb-actions button{min-height:44px;white-space:normal}
+.sb-change-summary:is([data-provider-schedule],[data-provider-cancellation]){display:flex;justify-content:space-between;align-items:center;gap:24px;margin:22px 0}
+.sb-change-summary:is([data-provider-schedule],[data-provider-cancellation]) h2{font-size:21px;line-height:1.35;margin:12px 0}
+.sb-change-summary:is([data-provider-schedule],[data-provider-cancellation]) p{line-height:1.65;margin:8px 0}
+@media(max-width:700px){.sb-change-summary:is([data-provider-schedule],[data-provider-cancellation]){flex-direction:column;align-items:stretch;gap:16px}[data-form=sb-provider-change] .sb-actions{justify-content:stretch}[data-form=sb-provider-change] .sb-actions button{flex:1 1 140px}}
+.sb-plan-commission{font-size:13px;line-height:1.6;margin:0;color:var(--theme-body,inherit);max-width:30ch}
+.sb-fees-note{padding:24px;margin:24px 0;border:1px solid var(--theme-line,#dbe2e8);border-radius:16px;background:var(--theme-panel,#fff)}
+.sb-fees-note h2{font-size:19px;line-height:1.4;margin:0 0 12px;font-weight:500;color:inherit}
+.sb-fees-note p{font-size:13px;line-height:1.75;max-width:90ch;margin:10px 0;color:inherit}
+.sb-fee-review{padding-top:14px;border-top:1px solid var(--theme-line,#dbe2e8)}
+.sb-fee-status{font-size:12px!important;line-height:1.65;color:var(--theme-muted,inherit)}
+@media(max-width:700px){.sb-fees-note{padding:20px}.sb-plan-commission{max-width:none}}
+.sb-estimate{margin:24px 0;padding:24px;border:1px solid var(--theme-line,#dbe2e8);border-radius:18px;background:var(--theme-panel,#fff);color:var(--theme-body,inherit)}
+.sb-estimate-heading{display:flex;align-items:start;justify-content:space-between;gap:20px;margin-bottom:18px}
+.sb-estimate-heading h2{font-size:22px;font-weight:500;margin:0 0 10px;color:inherit}
+.sb-estimate-heading p{font-size:13px;line-height:1.65;margin:0;color:inherit}
+.sb-estimate-lines{margin:0}.sb-estimate-lines>div{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:13px 0;border-top:1px solid var(--theme-line,#dbe2e8)}
+.sb-estimate-lines dt{font-size:13px;line-height:1.6}.sb-estimate-lines dd{margin:0;font-size:16px;font-weight:500;text-align:right;white-space:nowrap}
+.sb-estimate-lines .sb-estimate-total{margin-top:8px;padding-top:19px}.sb-estimate-total dd{font-size:24px}.sb-estimate-total dt{font-size:15px;font-weight:500}
+.sb-estimate-updated,.sb-estimate-help,.sb-invoiced-balance{font-size:12px;line-height:1.7;margin:14px 0 0;color:var(--theme-muted,inherit)}
+@media(max-width:700px){.sb-estimate{padding:20px}.sb-estimate-heading{flex-direction:column;gap:12px}.sb-estimate-lines>div{gap:12px}.sb-estimate-lines dd{font-size:14px}.sb-estimate-total dd{font-size:20px}}

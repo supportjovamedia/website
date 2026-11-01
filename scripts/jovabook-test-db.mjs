@@ -19,7 +19,13 @@ export const BASE_DIR=path.join(REPO_ROOT,'.jovabook-test');
 export const DATA_DIR=path.join(BASE_DIR,'data');
 const MARKER_FILE=path.join(BASE_DIR,'marker.json'),LOCK_FILE=path.join(BASE_DIR,'cli.lock');
 const FORMAT='jovabook-isolated-local-test-v1',FIXTURES='fictional-example-test-v1';
-const SOURCE_FILES=['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql','migrations/20261031161318_jovabook_email_delivery.sql'];
+export const MANIFEST_VERSION=2,BOOTSTRAP_VERSION=2;
+export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql',
+ 'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
+ 'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
+ 'migrations/20261101005929_jovabook_customer_portal.sql','migrations/20261101013754_jovabook_monthly_commission.sql',
+ 'migrations/20261101014425_jovabook_booking_horizon.sql','migrations/20261101023215_jovabook_website_image_scope_fix.sql']);
+export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
 const SALONS=['20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002'];
 const HELP=`JovaBook isolated local SQL test database
@@ -45,7 +51,8 @@ export function parseArguments(args){
 
 export function assertLocalEnvironment(env=process.env){
  const forbidden=/(?:^|_)(?:DATABASE_(?:URL|URI|HOST|PORT|USER|PASSWORD|PATH)|DIRECT_URL|DB_(?:URL|URI|HOST|PORT|USER|PASSWORD|PATH)|SUPABASE(?:_.*)?)$|^(?:POSTGRES(?:QL)?_.*|PGLITE_.*|PG(?:HOST|HOSTADDR|PORT|USER|PASSWORD|DATABASE|SERVICE|SERVICEFILE|PASSFILE|OPTIONS|SSLMODE)|RESEND_API_KEY|JOVABOOK_EMAIL_WORKER_TOKEN|SMTP_.*|SENDGRID_API_KEY|MAILGUN_API_KEY)$/i;
- const names=Object.keys(env).filter(name=>env[name]&&forbidden.test(name));
+ const providers=/^(?:STRIPE_.*|JOVABOOK_(?:EMAIL|SMS|BILLING|CUSTOMER|COMMISSION|MONTHLY_COMMISSION|LIFECYCLE)_.*)$/i;
+ const names=Object.keys(env).filter(name=>env[name]&&(forbidden.test(name)||providers.test(name)));
  if(names.length)throw Error('Refusing database or delivery configuration in the environment: '+names.sort().join(', ')+'. Run this CLI in a clean local shell; values are never printed.');
  if(env.NODE_ENV==='production'||['VERCEL','NETLIFY','AWS_LAMBDA_FUNCTION_NAME','K_SERVICE','FUNCTIONS_WORKER_RUNTIME'].some(name=>env[name]))throw Error('This embedded test CLI must not run in a production or hosted application runtime.');
 }
@@ -126,17 +133,44 @@ export function prepareSchemaSql(source){
  return splitSqlStatements(source).filter(statement=>{const head=withoutLeadingComments(statement),extension=head.match(/^create\s+extension\s+(?:if\s+not\s+exists\s+)?(?:"([^"]+)"|([\w]+))/i);if(!extension)return true;if((extension[1]||extension[2]).toLowerCase()==='pgcrypto')return false;throw Error('Unsupported extension in local test schema.');}).join('\n');
 }
 
-async function sources(){const entries=await Promise.all(SOURCE_FILES.map(async name=>{const raw=await fs.readFile(path.join(REPO_ROOT,'booking-demo','supabase',name),'utf8');return {name,sql:prepareSchemaSql(raw),sha256:createHash('sha256').update(raw).digest('hex')};}));return {entries,hashes:Object.fromEntries(entries.map(entry=>[entry.name,entry.sha256]))};}
+export function validateSourceInventory(migrations){
+ const unknown=migrations.filter(name=>!SOURCE_FILES.includes(name)&&!OMITTED_SOURCE_FILES.includes(name));
+ if(unknown.length)throw Error('Unreviewed local schema migrations: '+unknown.sort().join(', ')+'. Update the offline manifest explicitly before using this database.');
+}
+export async function sources(){
+ const directory=path.join(REPO_ROOT,'booking-demo','supabase');
+ const migrations=(await fs.readdir(path.join(directory,'migrations'))).filter(name=>name.endsWith('.sql')).map(name=>'migrations/'+name);
+ validateSourceInventory(migrations);
+ const entries=await Promise.all(SOURCE_FILES.map(async name=>{const raw=await fs.readFile(path.join(directory,name),'utf8');return {name,sql:prepareSchemaSql(raw),sha256:createHash('sha256').update(raw).digest('hex')};}));
+ const hashes=Object.fromEntries(entries.map(entry=>[entry.name,entry.sha256])),order=entries.map(entry=>entry.name);
+ const digest=createHash('sha256').update(JSON.stringify({version:MANIFEST_VERSION,bootstrap:BOOTSTRAP_VERSION,fixtures:FIXTURES,order,hashes,omitted:OMITTED_SOURCE_FILES})).digest('hex');
+ return {entries,hashes,order,digest};
+}
+export function assessManifest(meta,source){
+ const hashes=meta?.source_hashes&&typeof meta.source_hashes==='object'?meta.source_hashes:{};
+ const added=source.order.filter(name=>!Object.hasOwn(hashes,name)),removed=Object.keys(hashes).filter(name=>!Object.hasOwn(source.hashes,name));
+ const changed=source.order.filter(name=>Object.hasOwn(hashes,name)&&hashes[name]!==source.hashes[name]);
+ const versionMismatch=meta?.manifest_version!==MANIFEST_VERSION;
+ const orderMismatch=JSON.stringify(meta?.source_order)!==JSON.stringify(source.order);
+ const omissionsMismatch=JSON.stringify(meta?.omitted_sources)!==JSON.stringify(OMITTED_SOURCE_FILES);
+ const digestMismatch=meta?.manifest_digest!==source.digest;
+ return {current:!versionMismatch&&!orderMismatch&&!omissionsMismatch&&!digestMismatch&&!added.length&&!removed.length&&!changed.length,versionMismatch,orderMismatch,omissionsMismatch,digestMismatch,added,removed,changed};
+}
 async function metadata(db){const exists=(await db.query("select to_regclass('jovabook_test.metadata')::text name")).rows[0].name;if(!exists)return null;return (await db.query('select * from jovabook_test.metadata where singleton')).rows[0]||null;}
-async function assertOwnedDatabase(db,{allowEmpty=false}={}){const meta=await metadata(db);if(meta){if(meta.format!==FORMAT||meta.fixtures!==FIXTURES)throw Error('Unexpected internal database marker. Refusing this database.');return meta;}const known=(await db.query("select to_regclass('public.salons')::text name")).rows[0].name;if(allowEmpty&&!known)return null;throw Error('Missing internal test-only database marker. Existing data will not be changed.');}
-async function bootstrap(db,source){
+async function assertOwnedDatabase(db,{allowEmpty=false}={}){const meta=await metadata(db);if(meta){if(meta.format!==FORMAT||meta.fixtures!==FIXTURES)throw Error('Unexpected internal database marker. Refusing this database.');return meta;}const tables=(await db.query("select c.oid from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind in('r','p','v','m','f') and n.nspname not like 'pg_%' and n.nspname<>'information_schema'")).rows;if(allowEmpty&&!tables.length)return null;throw Error('Missing internal test-only database marker. Existing data will not be changed.');}
+export async function bootstrap(db,source){
  await db.exec(`create schema if not exists jovabook_test;revoke all on schema jovabook_test from public;
- create table jovabook_test.metadata(singleton boolean primary key default true check(singleton),format text not null,fixtures text not null,source_hashes jsonb not null,initialized_at timestamptz);
- create schema auth;create table auth.users(id uuid primary key);
+ create table jovabook_test.metadata(singleton boolean primary key default true check(singleton),format text not null,fixtures text not null,source_hashes jsonb not null,manifest_version int not null,manifest_digest text not null,source_order jsonb not null,omitted_sources jsonb not null,initialized_at timestamptz);`);
+ await db.query('insert into jovabook_test.metadata(format,fixtures,source_hashes,manifest_version,manifest_digest,source_order,omitted_sources) values($1,$2,$3,$4,$5,$6,$7)',[FORMAT,FIXTURES,JSON.stringify(source.hashes),MANIFEST_VERSION,source.digest,JSON.stringify(source.order),JSON.stringify(OMITTED_SOURCE_FILES)]);
+ await db.exec(`create schema auth;create table auth.users(id uuid primary key,email text not null,email_confirmed_at timestamptz);
  do $$begin if not exists(select 1 from pg_roles where rolname='anon') then create role anon;end if;if not exists(select 1 from pg_roles where rolname='authenticated') then create role authenticated;end if;if not exists(select 1 from pg_roles where rolname='service_role') then create role service_role;end if;end$$;
  create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
- grant usage on schema public,auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
- await db.query('insert into jovabook_test.metadata(format,fixtures,source_hashes) values($1,$2,$3)',[FORMAT,FIXTURES,JSON.stringify(source.hashes)]);
+ grant usage on schema public,auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;
+ create schema storage;
+ create table storage.buckets(id text primary key,name text not null,public boolean not null default false,file_size_limit bigint,allowed_mime_types text[]);
+ create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text not null references storage.buckets(id),name text not null,owner uuid,owner_id text,unique(bucket_id,name));
+ alter table storage.objects enable row level security;
+ grant usage on schema storage to authenticated;grant select,insert,update,delete on storage.objects to authenticated;`);
  await db.exec(source.entries[0].sql);
  // Match the hosted table privileges before the later migrations revoke sensitive writes.
  await db.exec('grant select,insert,update,delete on all tables in schema public to authenticated;grant select on all tables in schema public to anon;');
@@ -144,7 +178,7 @@ async function bootstrap(db,source){
  await db.exec(`update jovabook_private.email_config set enabled=false,worker_token_hash=null,webhook_secret=null,webhook_id=null,sender='bookings@example.test',public_url='https://booking.example.test';`);
  for(let index=0;index<2;index++){
   const number=index+1,email='owner-'+number+'@example.test',client='client-'+number+'@example.test';
-  await db.query('insert into auth.users(id) values($1)',[OWNERS[index]]);
+  await db.query('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now())',[OWNERS[index],email]);
   await db.query(`insert into public.salons(id,owner_id,name,slug,owner_name,email,email_norm,address,phone,settings,status) values($1,$2,$3,$4,$5,$6,$6,'Fictional test address','00000000000',$7,'active')`,[SALONS[index],OWNERS[index],'Fictional Business '+number,'fictional-business-'+number,'Test Owner '+number,email,JSON.stringify({seeded:true,hours:{start:'09:00',end:'18:00',days:[0,1,2,3,4,5,6]},buffer:0,notice:0,workspace:{}})]);
   await db.query("insert into public.categories(salon_id,id,name) values($1,'consultations','Consultations')",[SALONS[index]]);
   await db.query("insert into public.staff(salon_id,id,name,role) values($1,'owner','Test calendar','Owner')",[SALONS[index]]);
@@ -157,19 +191,35 @@ async function bootstrap(db,source){
  await db.exec('update jovabook_test.metadata set initialized_at=now() where singleton;');
 }
 
+export async function assertSyntheticDatabase(db){
+ const tests=[['public.salons','email'],['public.customers','email'],['public.bookings','email'],['jovabook_private.email_queue','recipient']];
+ for(const [table,column] of tests){const exists=(await db.query('select to_regclass($1)::text name',[table])).rows[0].name;if(!exists)continue;const invalid=(await db.query(`select count(*)::int count from ${table} where ${column} is null or ${column} !~ '^[^@]+@example[.]test$'`)).rows[0].count;if(invalid)throw Error('Non-fixture recipient data detected. Only synthetic @example.test addresses are allowed.');}
+ const authEmail=(await db.query("select exists(select 1 from information_schema.columns where table_schema='auth' and table_name='users' and column_name='email') yes")).rows[0].yes;
+ if(authEmail){if((await db.query("select count(*)::int n from auth.users where email is null or email !~ '^[^@]+@example[.]test$'")).rows[0].n)throw Error('Non-fixture Auth identities detected. Refusing this database.');}
+ else if((await db.query("select to_regclass('auth.users')::text name")).rows[0].name){if((await db.query('select count(*)::int n from auth.users where not(id=any($1::uuid[]))',[OWNERS])).rows[0].n)throw Error('Unexpected identities in a legacy test Auth stub. Refusing reset.');}
+}
 async function assertOfflineState(db){
  const config=(await db.query('select enabled,worker_token_hash,webhook_secret,webhook_id from jovabook_private.email_config where singleton')).rows[0];
  if(!config||config.enabled||config.worker_token_hash!==null||config.webhook_secret!==null||config.webhook_id!==null)throw Error('Unsafe test delivery configuration. Refusing further operations; this CLI requires delivery disabled and no worker/webhook credentials.');
  const forbidden=(await db.query("select extname from pg_extension where extname in ('pg_net','pg_cron','http','dblink','postgres_fdw')")).rows;
  if(forbidden.length)throw Error('Unexpected network or scheduling extension in test database.');
- const synthetic=(await db.query("select (select count(*) from public.salons where email !~ '^[^@]+@example[.]test$')+(select count(*) from public.customers where email !~ '^[^@]+@example[.]test$')+(select count(*) from public.bookings where email !~ '^[^@]+@example[.]test$')+(select count(*) from jovabook_private.email_queue where recipient !~ '^[^@]+@example[.]test$') invalid")).rows[0];
- if(Number(synthetic.invalid)!==0)throw Error('Non-fixture recipient data detected. Only synthetic @example.test addresses are allowed.');
+ const controls=[['sms_config',['enabled','provider_configured'],['worker_token_hash']],['billing_config',['enabled','provider_configured','deletion_enabled'],['worker_hash','lifecycle_hash']],['customer_config',['recovery_enabled','payments_enabled'],['worker_hash']],['commission_config',['enabled','invoice_enabled'],['worker_hash']]];
+ for(const [table,flags,secrets] of controls){if(!(await db.query('select to_regclass($1)::text name',['jovabook_private.'+table])).rows[0].name)continue;const config=(await db.query('select * from jovabook_private.'+table+' where singleton')).rows[0];if(!config||flags.some(key=>config[key]!==false)||secrets.some(key=>config[key]!==null))throw Error('Unsafe test provider configuration in '+table+'. Provider/deletion controls must stay disabled with no worker credentials.');}
+ await assertSyntheticDatabase(db);
 }
 
-async function status(db,source){const meta=await assertOwnedDatabase(db);if(!meta.initialized_at)throw Error('Initialization did not complete. Use reset --confirm=test-only to rebuild these local fixtures.');await assertOfflineState(db);const counts=(await db.query("select (select count(*)::int from salons) businesses,(select count(*)::int from customers) clients,(select count(*)::int from bookings) bookings,(select count(*)::int from jovabook_private.email_queue) queued_records")).rows[0];const sourceDrift=Object.keys(meta.source_hashes).length!==Object.keys(source.hashes).length||Object.entries(source.hashes).some(([name,hash])=>meta.source_hashes[name]!==hash);return {database:'isolated local PGlite',storage:DATA_DIR,initialized:true,initializedAt:meta.initialized_at,fixtures:FIXTURES,sourceDrift,emailDeliveryEnabled:false,workerKeyConfigured:false,network:'disabled',authServer:false,...counts};}
+export async function status(db,source){
+ const meta=await assertOwnedDatabase(db),manifest=assessManifest(meta,source),providerStateVerified=!!meta.initialized_at&&manifest.current;
+ if(providerStateVerified)await assertOfflineState(db);else await assertSyntheticDatabase(db);
+ const counts={};for(const [key,table] of [['businesses','public.salons'],['clients','public.customers'],['bookings','public.bookings'],['queued_records','jovabook_private.email_queue']])counts[key]=(await db.query('select to_regclass($1)::text name',[table])).rows[0].name?(await db.query('select count(*)::int n from '+table)).rows[0].n:0;
+ let fixtureTrialsActive=false;if(providerStateVerified)fixtureTrialsActive=Number((await db.query('select count(*)::int n from public.salons where id=any($1::uuid[]) and jovabook_private.billing_open(id)',[SALONS])).rows[0].n)===2;
+ const disabled=providerStateVerified?false:null;
+ return {database:'isolated local PGlite',storage:DATA_DIR,initialized:!!meta.initialized_at,initializedAt:meta.initialized_at,fixtures:FIXTURES,sourceDrift:!manifest.current,manifestVersion:meta.manifest_version??null,expectedManifestVersion:MANIFEST_VERSION,manifest,loadedSources:meta.source_order||Object.keys(meta.source_hashes),expectedSources:source.order,omittedSources:OMITTED_SOURCE_FILES,fixtureTrialsActive,ready:providerStateVerified&&fixtureTrialsActive,requiresReset:!providerStateVerified||!fixtureTrialsActive,resetCommand:'node scripts/jovabook-test-db.mjs reset --confirm=test-only',providerStateVerified,emailDeliveryEnabled:disabled,smsDeliveryEnabled:disabled,billingProviderEnabled:disabled,customerPaymentsEnabled:disabled,customerRecoveryEnabled:disabled,commissionInvoicingEnabled:disabled,deletionEnabled:disabled,workerKeyConfigured:disabled,network:'disabled',authServer:false,storageServer:false,...counts};
+}
 
-async function verify(db,source){
- const summary=await status(db,source);if(summary.sourceDrift)throw Error('Schema sources changed. Rebuild the marked local fixtures with reset --confirm=test-only.');const checks=[];let savepoint=0;
+export async function verify(db,source){
+ const meta=await assertOwnedDatabase(db);if(!meta.initialized_at||!assessManifest(meta,source).current)throw Error('Schema/bootstrap manifest is stale or incomplete. Rebuild only the marked local fixtures with reset --confirm=test-only.');
+ const summary=await status(db,source);if(!summary.fixtureTrialsActive)throw Error('The synthetic business trials expired. Rebuild only the local fixtures with reset --confirm=test-only.');const checks=[];let savepoint=0;
  const assert=(condition,message)=>{if(!condition)throw Error('Verification failed: '+message);};
  async function denied(sql,args=[]){const point='denied_'+(++savepoint);await db.exec('savepoint '+point);let rejected=false;try{await db.query(sql,args);}catch(error){if(!['42501','23514'].includes(error.code))throw error;rejected=true;}finally{await db.exec('rollback to savepoint '+point+';release savepoint '+point);}assert(rejected,'cross-tenant or privileged SQL was accepted');}
  await db.exec('begin');
@@ -183,14 +233,24 @@ async function verify(db,source){
    const removed=(await db.query('delete from public.customers where salon_id=$1 returning id',[SALONS[1-index]])).rows;assert(removed.length===0,'cross-tenant delete');
    await denied("update public.email_log set status='Delivered'");
    await denied('select * from jovabook_private.email_queue');
+   await denied("insert into storage.objects(bucket_id,name,owner_id) values('jovabook-website-images',$1,$2)",[SALONS[1-index]+'/30000000-0000-4000-8000-000000000001.jpg',OWNERS[index]]);
    await denied("select public.request_plan_change('standard',$1)",[SALONS[1-index]]);
-   checks.push('Owner '+(index+1)+': own reads, cross-business writes denied, email log read-only, private queue denied');
+   const imageName=SALONS[index]+'/30000000-0000-4000-8000-000000000001.jpg';await db.query("insert into storage.objects(bucket_id,name,owner_id) values('jovabook-website-images',$1,$2)",[imageName,OWNERS[index]]);
+   assert((await db.query('select name from storage.objects')).rows.every(row=>row.name.startsWith(SALONS[index]+'/')),'Storage listing tenant boundary');
+   assert((await db.query("update storage.objects set name=$1 where name=$2 returning id",[SALONS[index]+'/30000000-0000-4000-8000-000000000002.jpg',imageName])).rows.length===0,'Storage overwrite denied');
+   assert((await db.query('delete from storage.objects where name=$1 returning id',[imageName])).rows.length===0,'Storage deletion denied');
+   const access=(await db.query('select public.owner_account_access() data')).rows[0].data;assert(access.business.id===SALONS[index]&&access.access==='active','owner billing metadata isolation');
+   const sms=(await db.query('select public.sms_reminder_info() data')).rows[0].data;assert(sms.enabled===false,'SMS stays disabled');
+   checks.push('Owner '+(index+1)+': own reads, cross-business writes denied, read-only email log, private queues denied, isolated immutable Storage images, verified billing metadata');
   }
   await db.exec('reset role;set local role anon');
   assert(Number((await db.query('select count(*) count from public.customers')).rows[0].count)===0,'anonymous client rows');
   assert(Number((await db.query('select count(*) count from public.bookings')).rows[0].count)===0,'anonymous booking rows');
   const publicView=(await db.query("select public.public_salon('fictional-business-1') info")).rows[0].info;
   assert(publicView?.slug==='fictional-business-1'&&!JSON.stringify(publicView).includes('client-1@example.test')&&!JSON.stringify(publicView).includes('Test Client 1'),'public booking data privacy');
+  assert(publicView.booking_window?.days===75&&publicView.booking_window.today&&publicView.booking_window.max_date,'authoritative75-day public window');
+  const far=(await db.query("select public.create_booking('fictional-business-1','consultation','owner',($1::date+1)::text,'11:00','Synthetic probe','probe@example.test','','','Card') data",[publicView.booking_window.max_date])).rows[0].data;assert(far?.ok===false&&far.code==='booking_horizon','online day76 rejected');
+  await denied("select public.customer_portal_register('fictional-business-1','Anonymous','Probe','07700 900123')");
   await denied('select public.email_delivery_info()');
   checks.push('Anonymous: no client/booking table access; public booking details omit client identity');
   await db.exec('reset role');await assertOfflineState(db);checks.push('Delivery disabled, no worker/webhook credentials, no transport extensions, synthetic recipients only');
@@ -208,10 +268,10 @@ export async function runCli(args=process.argv.slice(2),env=process.env){
  return withLock(async()=>{
   const {PGlite}=require('@electric-sql/pglite');const db=new PGlite(DATA_DIR);
   try{
-   if(command==='init'){const existing=await assertOwnedDatabase(db,{allowEmpty:true});if(!existing)await bootstrap(db,source);else if(!existing.initialized_at)throw Error('Incomplete local initialization. Run reset --confirm=test-only.');}
+   if(command==='init'){const existing=await assertOwnedDatabase(db,{allowEmpty:true});if(!existing)await bootstrap(db,source);else if(!existing.initialized_at||!assessManifest(existing,source).current)throw Error('Existing local schema/bootstrap manifest is stale or incomplete. Run reset --confirm=test-only; init never silently upgrades or erases fixtures.');}
    else if(command==='reset'){
-    await assertPathSafety();await assertOwnedDatabase(db,{allowEmpty:true});
-    await db.exec('reset role;drop schema if exists jovabook_private cascade;drop schema if exists jovabook_test cascade;drop schema if exists public cascade;drop schema if exists auth cascade;create schema public;');
+    await assertPathSafety();await assertOwnedDatabase(db,{allowEmpty:true});await assertSyntheticDatabase(db);
+    await db.exec('reset role;drop schema if exists jovabook_private cascade;drop schema if exists jovabook_test cascade;drop schema if exists storage cascade;drop schema if exists public cascade;drop schema if exists auth cascade;create schema public;');
     await bootstrap(db,source);
    }
    const result=command==='verify'?await verify(db,source):await status(db,source);

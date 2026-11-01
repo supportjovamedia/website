@@ -216,16 +216,21 @@
     const cfg = window.JOVA_SUPABASE, AUTH = 'jovabook-auth';
     const DEMO = normEmail('demo@jovamedia.com');
     const load = () => { try { return JSON.parse(localStorage.getItem(AUTH) || 'null'); } catch (e) { return null; } };
-    let generation=0,refreshFlight=null,refreshFailure=null,verifiedSalon=null;
+    let generation=0,refreshFlight=null,refreshFailure=null,verifiedSalon=null,verifiedAccess=null;
+    const SIGNUP_DRAFT='jovabook-owner-signup-draft-v1';
+    const EXISTING='jovabook-existing-business-v1';let pendingBusinessOwner=null;
+    try{pendingBusinessOwner=JSON.parse(sessionStorage.getItem(EXISTING)||'null');}catch{}
+    const clearExisting=()=>{pendingBusinessOwner=null;try{sessionStorage.removeItem(EXISTING);}catch{}};
+    const existingBusinessContext=()=>{if(!pendingBusinessOwner?.id||pendingBusinessOwner.id!==load()?.user?.id)return null;let draft={};try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null');if(saved?.email?.toLowerCase()===pendingBusinessOwner.email?.toLowerCase())draft={name:typeof saved.name==='string'?saved.name.slice(0,60):'',slug:typeof saved.slug==='string'?saved.slug.slice(0,30):''};}catch{}return {owner:pendingBusinessOwner.owner,email:pendingBusinessOwner.email,...draft};};
     const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
     const stamp=()=>({raw:rawSession(),generation});
     const current=expected=>expected.generation===generation&&expected.raw===rawSession();
-    const keep = s => {if(!s||load()?.user?.id!==s.user?.id)verifiedSalon=null;generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} };
-    const intent=()=>{generation++;refreshFlight=null;return stamp();};
+    const keep = s => {if(!s||load()?.user?.id!==s.user?.id){verifiedSalon=null;verifiedAccess=null;clearExisting();}generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} };
+    const intent=()=>{clearExisting();generation++;refreshFlight=null;return stamp();};
     const stale=()=>({ok:false,stale:true,status:0,message:'Your session changed. Open this page again.'});
     const authFailure=()=>refreshFailure&&current(refreshFailure.expected)?refreshFailure.result:load()?stale():{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'};
-    const writeScope=(salonId)=>!!salonId&&!!verifiedSalon?.ownerId&&verifiedSalon.id===salonId&&verifiedSalon.ownerId===load()?.user?.id;
-    const scopeFailure=()=>({...stale(),invalidTenant:true,message:'Your business changed. Refresh before saving.'});
+    const writeScope=(salonId)=>!!salonId&&!!load()?.user?.id&&!!verifiedAccess?.data&&verifiedAccess.ownerId===load().user.id&&['active','setup'].includes(verifiedAccess.data.access)&&!!verifiedSalon?.ownerId&&verifiedSalon.id===salonId&&verifiedSalon.ownerId===load()?.user?.id;
+    const scopeFailure=()=>!load()?.user?.id?{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'}:({...stale(),invalidTenant:true,message:'Your business changed. Refresh before saving.'});
     const websiteBucket='jovabook-website-images',websiteImageLimit=5*1024*1024;
     const websiteUuid='[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
     const websiteId=value=>typeof value==='string'&&new RegExp('^'+websiteUuid+'$').test(value);
@@ -311,6 +316,24 @@
       if(row&&row.owner_id===load()?.user?.id){verifiedSalon={id:row.id,ownerId:row.owner_id};return row;}
       return null;
     }
+    async function billingCall(action,body={}) {
+      const t=await token();if(!t)return authFailure();const expected=stamp(),ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
+      try{const response=await fetch('/api/jovabook/billing/'+action,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)});let data=null;try{data=await response.json();}catch{}if(!current(expected))return stale();return {ok:response.ok&&data?.ok===true,status:response.status,data,auth:response.status===401,message:data?.message||'We could not verify your subscription. Try again.'};}
+      catch{return current(expected)?{ok:false,network:true,message:NET}:stale();}finally{clearTimeout(timer);}
+    }
+    async function ownerAccess() {
+      const ownerId=load()?.user?.id,result=await billingCall('status');if(result.stale)return result;
+      const data=result.data,business=data?.business;
+      if(result.ok&&data?.no_business===true&&data.access==='no_business'&&business===null){verifiedAccess=null;verifiedSalon=null;if(!ownerId||ownerId!==load()?.user?.id)return stale();return {ok:false,noBusiness:true,data,message:'No business is linked to this account. Log in to create one.'};}
+      if(!result.ok||!['active','billing_only','setup','deleting'].includes(data?.access)||!websiteId(business?.id)||!['essential','standard','premium'].includes(business?.plan)||typeof business?.name!=='string'||typeof business?.slug!=='string'||!data.lifecycle||typeof data.billing?.connected!=='boolean'||typeof data.billing?.canCheckout!=='boolean'){
+        verifiedAccess=null;verifiedSalon=null;return {...result,ok:false,message:result.message||'We could not verify your subscription. Try again.'};
+      }
+      if(ownerId!==load()?.user?.id)return stale();
+      clearExisting();
+      verifiedAccess={ownerId,data};verifiedSalon=['active','setup'].includes(data.access)?{id:business.id,ownerId}:null;
+      return {ok:true,data};
+    }
+    async function verifiedBusinessIdentity(){const t=await token();if(!t)return authFailure();const result=await call('/auth/v1/user',{method:'GET',token:t,owner:true});if(result.stale)return result;const user=result.data;if(!result.ok||!user?.id||user.id!==load()?.user?.id||typeof user.email!=='string'||!Number.isFinite(Date.parse(user.email_confirmed_at||'')))return {ok:false,message:'Verify your email, then log in before creating a business.'};const metadata=user.user_metadata||{},name=metadata.owner_name||metadata.full_name||[metadata.first_name,metadata.last_name].filter(v=>typeof v==='string').join(' ');return {ok:true,profile:{id:user.id,email:user.email,owner:String(name||'Owner').trim().slice(0,80)||'Owner'}};}
     const isDemo = email => normEmail(email) === DEMO;
     const RECOVERY='jovabook-recovery-v1';
     const recoveryRaw=()=>{try{return sessionStorage.getItem(RECOVERY);}catch{return null;}};
@@ -345,18 +368,20 @@
         if (!r.ok) return { ok: false, reason: 'network' };
         return r.data === true ? { ok: true } : { ok: false, reason: 'taken' };
       },
-      async register({ name, slug, owner, email, password }) {
-        const expected=intent();
-        const r = await call('/functions/v1/signup', { body: { name, slug, owner, email, password, device_id: deviceId() } });
-        if(!current(expected))return stale();
-        if (r.network || !r.data) return { ok: false, field: '', message: NET };
-        if (!r.data.ok) return { ok: false, field: r.data.field || '', message: r.data.message || 'We couldn’t create your account.' };
-        const s = await signInPassword(email, password,expected);
-        if(s.stale)return s;
-        if (!s.ok) return { ok: false, field: '', message: 'Your account was created. Log in to continue.' };
-        if(!current(s.authStamp))return stale();
-        verifiedSalon={id:r.data.salon_id,ownerId:load()?.user?.id};
-        return { ok: true, account: { salonId: r.data.salon_id } };
+      async register({name,slug,owner,email,password}) {
+        const expected=intent(),n=String(name||'').trim(),s=String(slug||'').trim().toLowerCase(),o=String(owner||'').trim(),e=String(email||'').trim();
+        if(!n||n.length>60)return {ok:false,field:'name',message:'Enter a business name up to 60 characters.'};
+        if(s.length<3||s.length>30||!ADDRESS_RULE.test(s)||RESERVED.includes(s))return {ok:false,field:'slug',message:'Choose an address with 3 to 30 letters, numbers or hyphens.'};
+        if(!o||o.length>80)return {ok:false,field:'owner',message:'Enter your name, up to 80 characters.'};
+        if(!EMAIL_RULE.test(e)||e.length>254)return {ok:false,field:'email',message:'Enter a valid email address.'};
+        if(passwordIssues(password).length||String(password||'').length>72)return {ok:false,field:'password',message:'Use 8 to 72 characters, a capital letter and a number.'};
+        const origin=String(location.origin||''),local=/^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::[0-9]+)?$/.test(origin),redirect=(local?origin:'https://book.jovamedia.com')+'/?portal=owner#login';
+        const r=await call('/auth/v1/signup?redirect_to='+encodeURIComponent(redirect),{body:{email:e,password,data:{owner_name:o}}});if(!current(expected))return stale();
+        if(r.network)return {ok:false,field:'',message:NET};
+        if(!r.ok||!r.data){const duplicate=/already|registered|exists/i.test(String(r.data?.msg||r.data?.message||''));return {ok:false,field:duplicate?'email':'',message:duplicate?'This email may already have an account. Log in with that account to create your business.':r.status===429?'Too many attempts. Wait a little before trying again.':'We could not request email verification. Please try again.'};}
+        // Signup responses never establish an owner session or create a business.
+        try{localStorage.setItem(SIGNUP_DRAFT,JSON.stringify({name:n,slug:s,owner:o,email:e}));}catch{}
+        return {ok:true,verificationRequired:true};
       },
       async login(email, password) {
         if (isDemo(email)) {const expected=intent(),result=await local.login(email,password);if(!current(expected))return stale();if(result.ok)keep(null);return result;}
@@ -364,11 +389,12 @@
         if(r.stale)return r;
         if (r.network) return { ok: false, message: NET };
         if (r.status === 429) return { ok: false, locked: true, message: 'Too many attempts. Wait a minute, then try again.' };
-        if (!r.ok) return { ok: false, message: 'That email and password do not match.' };
-        const row = await mySalon();
+        if (!r.ok) return {ok:false,message:/email_not_confirmed|email.*not confirmed/i.test(String(r.data?.error_code||r.data?.code||r.data?.msg||r.data?.message||''))?'Verify your email from the link you received, then log in.':'That email and password do not match.'};
+        const access = await ownerAccess();
         if(!current(r.authStamp))return stale();
-        if (!row) { keep(null); return { ok: false, message: 'That email and password do not match.' }; }
-        return { ok: true, account: { salonId: row.id }, salon: row };
+        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok)return identity;if(!current(r.authStamp))return stale();pendingBusinessOwner=identity.profile;try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
+        if (!access.ok)return access;
+        return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id}};
       },
       async requestReset(email) {
         if (isDemo(email)) return local.requestReset(email);
@@ -378,7 +404,9 @@
         if(!r.ok)return {ok:false,message:'The password reset email could not be requested. Try again shortly.'};
         return { ok: true, sent: true };   // normal success stays the same whether or not the account exists
       },
+      consumeOwnerConfirmationCallback(hash){if(new URLSearchParams(location.search||'').get('portal')!=='owner')return {handled:false};const params=new URLSearchParams(String(hash||'').replace(/^#/,''));if(params.get('type')!=='signup'&&!params.has('error')&&!params.has('error_code'))return {handled:false};return {handled:true,notice:params.has('error')||params.has('error_code')?'Your verification link could not be confirmed. Log in to continue, or request a new verification link.':'Your verification link has been opened. Log in to continue and confirm your business details.'};},
       consumeRecoveryCallback(hash) {
+        if(new URLSearchParams(location.search||'').get('portal')==='customer')return {handled:false};
         const params=new URLSearchParams(String(hash||'').replace(/^#/,''));
         if(params.has('error')){clearRecovery();return {handled:true,...expiredRecovery()};}
         if(params.get('type')!=='recovery')return {handled:false};
@@ -467,6 +495,8 @@
         return r.ok && r.data ? r.data : null;
       },
       async loadDiary() {
+        const access=await ownerAccess();if(!access.ok)return access;
+        const onboarding=access.data.access==='setup'||(access.data.access==='active'&&access.data.business.status==='setup');if(access.data.access!=='active'||onboarding)return {ok:true,access:access.data,billingOnly:!onboarding,setup:onboarding};
         const t = await token(); if (!t) return authFailure();
         const expected=stamp();
         const get = q => call('/rest/v1/' + q + '&limit=5000', { method: 'GET', token: t,owner:true });
@@ -477,7 +507,7 @@
         if(!salonResult.ok||!Array.isArray(salonResult.data))return {...salonResult,auth:salonResult.status===401};
         if(salonResult.data.length!==1)return {ok:false,invalidTenant:salonResult.data.length>1,message:'Your business could not be loaded. Log in again.'};
         const selected=salonResult.data[0],owner=load()?.user?.id;
-        if(!owner||selected.owner_id!==owner)return {ok:false,invalidTenant:true,message:'Your business could not be loaded. Log in again.'};
+        if(!owner||selected.owner_id!==owner||selected.id!==access.data.business.id)return {ok:false,invalidTenant:true,message:'Your business could not be loaded. Log in again.'};
         const res=[salonResult,...await Promise.all(names.map((n,i)=>get(n+'?select=*&salon_id=eq.'+encodeURIComponent(selected.id)+'&order='+orders[i])))];
         if(!current(expected)||res.some(r=>r.stale))return stale();
         if(res.slice(1).some(r=>r.ok&&Array.isArray(r.data)&&r.data.some(row=>row.salon_id!==selected.id)))return {ok:false,invalidTenant:true,message:'Your business records could not be verified. Refresh and try again.'};
@@ -486,8 +516,11 @@
         if (core.some(r => !r.ok || !Array.isArray(r.data))) return { ok: false, network: core.some(r => r.network), auth: core.some(r => r.status === 401) };
         const emailActivityUnavailable=!res[emailIndex].ok || !Array.isArray(res[emailIndex].data);
         const rows = {}; names.forEach((n, i) => { rows[n] = n==='email_log'&&emailActivityUnavailable?[]:res[i + 1].data; });
+        const checked=await ownerAccess();if(!checked.ok)return checked;
+        if(checked.data.access!=='active')return {ok:true,access:checked.data,billingOnly:checked.data.access!=='setup',setup:checked.data.access==='setup'};
+        if(!current(expected)||checked.data.business.id!==selected.id)return stale();
         verifiedSalon={id:selected.id,ownerId:selected.owner_id};
-        return { ok: true, salon: res[0].data[0] || null, rows, emailActivityUnavailable };
+        return { ok: true, salon: res[0].data[0] || null, rows, emailActivityUnavailable,access:checked.data };
       },
       async upsertRows(table, rows) {
         if (table === 'email_log') return {ok:false, status:403, message:'Email delivery records are read-only.'};
@@ -524,9 +557,18 @@
         if (r.network) return { ok: false, network: true, message: NET };
         return { ok: r.ok, data: r.data, message: r.ok ? '' : 'Something went wrong. Please try again.' };
       },
+      ownerAccess,
+      existingBusinessContext,
+      async createBusinessForExistingUser({name,slug}){const context=existingBusinessContext();if(!context)return {ok:false,message:'Log in again before creating your business.'};const identity=load()?.user?.id,n=String(name||'').trim(),s=String(slug||'').trim().toLowerCase();if(!n||n.length>60)return {ok:false,field:'name',message:'Enter a business name up to 60 characters.'};if(s.length<3||s.length>30||!ADDRESS_RULE.test(s)||RESERVED.includes(s))return {ok:false,field:'slug',message:'Choose an available address with 3 to 30 letters, numbers or hyphens.'};const access=await ownerAccess();if(identity!==load()?.user?.id)return stale();if(!access.noBusiness)return {ok:false,message:access.ok?'This account already has a business. Log in to open it.':access.message};const verified=await verifiedBusinessIdentity();if(!verified.ok)return verified;if(identity!==load()?.user?.id||verified.profile.id!==identity)return stale();const t=await token();if(!t)return authFailure();const result=await rpc('create_business_for_existing_user',{p_name:n,p_slug:s,p_owner:verified.profile.owner},t);if(result.stale||identity!==load()?.user?.id)return stale();if(!result.ok||result.data?.ok!==true||!websiteId(result.data.salon_id))return {ok:false,field:result.data?.field||'',message:result.data?.message||'We could not create your business. Try again.'};const checked=await ownerAccess();if(identity!==load()?.user?.id)return stale();if(!checked.ok||checked.data.business.id!==result.data.salon_id)return {ok:false,message:'Your business was created. Log in to verify its subscription and continue.'};try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}return {ok:true,account:{salonId:result.data.salon_id},access:checked.data,profile:{owner:verified.profile.owner,email:verified.profile.email}};},
+      billingCheckout(plan,salonId,requestId,termsVersion){return billingCall('checkout',{salon_id:salonId,plan,request_id:requestId,...(termsVersion?{terms_version:termsVersion}:{})});},
+      billingChange(plan,salonId,requestId,termsVersion){return billingCall('change',{salon_id:salonId,plan,request_id:requestId,...(termsVersion?{terms_version:termsVersion}:{})});},
+      billingCancelChange(salonId,requestId){return billingCall('cancel-change',{salon_id:salonId,request_id:requestId});},
+      billingCancel(salonId,requestId){return billingCall('cancel',{salon_id:salonId,request_id:requestId});},
+      accessSnapshot(){return verifiedAccess?.ownerId===load()?.user?.id?verifiedAccess.data:null;},
+      canWrite(salonId){return writeScope(salonId);},
       sessionIdentity() { return load()?.user?.id || null; },
       hasSession() { return !!load(); },
-      async logout() { const t = load() && load().access_token; keep(null); if (t) call('/auth/v1/logout', { token: t }); },
+      async logout() { const t = load() && load().access_token; keep(null); if (t) call('/auth/v1/logout?scope=local', { token: t }); },
       markTrialUsed() {}
     });
   }
