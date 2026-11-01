@@ -10,12 +10,15 @@
   const safeColor = c => /^#[0-9a-f]{6}$/i.test(c||'') ? c : '#235789';
   const dayText = date => new Date(date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
 
-  function mini({date,today,offset=0,action='calendar-date',disabledBefore=''}) {
+  function mini({date,today,offset=0,action='calendar-date',disabledBefore='',disabledAfter=''}) {
     const anchor=new Date(date+'T12:00:00');
-    const first=new Date(anchor.getFullYear(),anchor.getMonth()+offset,1,12);
+    let first=new Date(anchor.getFullYear(),anchor.getMonth()+offset,1,12);
+    const minimum=disabledBefore?new Date(disabledBefore.slice(0,7)+'-01T12:00:00'):null,maximum=disabledAfter?new Date(disabledAfter.slice(0,7)+'-01T12:00:00'):null;
+    if(minimum&&first<minimum)first=minimum;if(maximum&&first>maximum)first=maximum;
+    const previousBlocked=minimum&&first<=minimum,nextBlocked=maximum&&first>=maximum;
     const start=plus(key(first),-((first.getDay()+6)%7));
     const count=Math.ceil((((first.getDay()+6)%7)+new Date(first.getFullYear(),first.getMonth()+1,0).getDate())/7)*7;
-    return `<div class="jb-mini"><div class="jb-mini-title"><b>${first.toLocaleDateString('en-GB',{month:'long',year:'numeric'})}</b><div><button type="button" data-action="${action==='public-date'?'public-month-prev':'mini-month-prev'}" aria-label="Previous month">Prev</button><button type="button" data-action="${action==='public-date'?'public-month-next':'mini-month-next'}" aria-label="Next month">Next</button></div></div><div class="jb-mini-grid">${names.map(n=>`<span class="jb-mini-label">${n[0]}</span>`).join('')}${Array.from({length:count},(_,i)=>{const d=plus(start,i),dt=new Date(d+'T12:00:00'),outside=dt.getMonth()!==first.getMonth();return `<button type="button" class="${outside?'is-out ':''}${d===today?'is-today ':''}${d===date?'is-selected':''}" data-action="${action}" data-date="${d}" aria-label="${esc(dayText(d))}" aria-pressed="${d===date}" ${disabledBefore&&d<disabledBefore?'disabled':''}>${dt.getDate()}</button>`;}).join('')}</div></div>`;
+    return `<div class="jb-mini"><div class="jb-mini-title"><b>${first.toLocaleDateString('en-GB',{month:'long',year:'numeric'})}</b><div><button type="button" data-action="${action==='public-date'?'public-month-prev':'mini-month-prev'}" aria-label="Previous month" ${previousBlocked?'disabled':''}>Prev</button><button type="button" data-action="${action==='public-date'?'public-month-next':'mini-month-next'}" aria-label="Next month" ${nextBlocked?'disabled':''}>Next</button></div></div><div class="jb-mini-grid">${names.map(n=>`<span class="jb-mini-label">${n[0]}</span>`).join('')}${Array.from({length:count},(_,i)=>{const d=plus(start,i),dt=new Date(d+'T12:00:00'),outside=dt.getMonth()!==first.getMonth();return `<button type="button" class="${outside?'is-out ':''}${d===today?'is-today ':''}${d===date?'is-selected':''}" data-action="${action}" data-date="${d}" aria-label="${esc(dayText(d))}" aria-pressed="${d===date}" ${(disabledBefore&&d<disabledBefore)||(disabledAfter&&d>disabledAfter)?'disabled':''}>${dt.getDate()}</button>`;}).join('')}</div></div>`;
   }
 
   // Divide overlapping bookings into lanes, including overlaps across staff.

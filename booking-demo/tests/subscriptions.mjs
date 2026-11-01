@@ -14,11 +14,14 @@ function harness(overrides={}){
 }
 const choose=(tools,target)=>tools.click('sb-review-plan',{dataset:{plan:target}});
 async function loaded(h){h.tools.pages.billing();await settle();return h.tools.pages.billing();}
-test('loads once and shows honest guide prices, current roster and common core tools',async()=>{
+test('loads once and shows fixed monthly prices, current roster and common core tools',async()=>{
  const h=harness(),html=await loaded(h);h.tools.pages.billing();assert.deepEqual(h.seen.loads,['salon-a']);assert.deepEqual(Array.from(h.tools.routes),['billing']);
- for(const text of ['Essential','Standard','Premium','£20.00','£50.00','£100.00','Guide price','Clients and services','Insights','Billing is not connected'])assert(html.includes(text));
+ for(const text of ['Essential','Standard','Premium','£20.00','£50.00','£100.00','Most popular','Clients and services','Insights','Billing is not connected'])assert(html.includes(text));
+ assert.equal((html.match(/Most popular/g)||[]).length,1);assert(html.includes('aria-label="Standard plan"><span class="sb-popular">Most popular</span>'));
  assert.match(html,/1 of 1/);assert.match(html,/Trial ends/);assert(!/SMS|AI booking|4242|bank account|Simulate first/.test(html));
 });
+test('plan cards disclose monthly commission on full service price with Premium zero',async()=>{const h=harness(),html=await loaded(h);for(const [name,bps] of [['Essential',100],['Standard',100],['Premium',0]]){const begin=html.indexOf('aria-label="'+name+' plan"'),end=html.indexOf('</section>',begin),card=html.slice(begin,end);assert(card.includes('data-commission-bps="'+bps+'"'));assert(card.includes((bps/100)+'% booking commission on the full service price'));}for(const copy of ['full service price','Unbilled commission carries forward','Premium has 0% booking commission','Monthly commission billing setup is pending'])assert(html.includes(copy));assert.equal((html.match(/Most popular/g)||[]).length,1);});
+test('manual review states monthly commission basis without claiming billing is live',async()=>{for(const [plan,rate] of [['standard',1],['premium',0]]){const h=harness();await loaded(h);choose(h.tools,plan);const html=h.seen.modals.at(-1).html;assert(html.includes(rate+'% booking commission on the full service price'));assert(html.includes('full service price'));assert(html.includes('Unbilled commission carries forward'));assert(!html.includes('cash payments')&&!html.includes('refunded too')); assert(html.includes('setup is pending'));}});
 test('a live plan request needs review and does not change the current plan or entitlements',async()=>{
  const h=harness();await loaded(h);choose(h.tools,'standard');assert.equal(h.seen.requests.length,0);assert.match(h.seen.modals[0].html,/No payment is taken/);assert.match(h.seen.modals[0].html,/5 staff members/);
  const f=form();assert.equal(h.tools.submit('sb-plan-change',f),true);await settle();assert.deepEqual(h.seen.requests,[{target:'standard',sid:'salon-a'}]);assert.equal(h.state.subscription.plan,'Essential');

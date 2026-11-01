@@ -22,7 +22,7 @@ The same commands work in PowerShell and on Linux. Storage is fixed to:
 
 There is no URL or configurable path. Running the command from another working directory does not change its database location. The database files persist between CLI runs. They are outside `booking-demo`, the directory used for static publishing, and must remain excluded from Git and deployment packages.
 
-`init` creates the marked database and fictional fixtures once. Running it again reports the existing database. `status` reports initialization, fixture counts, migration-source drift and disabled delivery. `verify` runs database checks in a transaction and rolls back its probes, leaving the fixture records intact.
+`init` creates the marked database and fictional fixtures once. Running it again reports the existing database only when its source manifest is current. `status` reports initialization, fixture counts, source drift and provider safety. `verify` runs database checks in a transaction and rolls back its probes, leaving the fixture records intact. An older, incomplete or changed manifest requires the explicit reset below. No automatic schema upgrade or fixture erasure occurs.
 
 To rebuild only these local fixtures:
 
@@ -41,8 +41,15 @@ The CLI applies the actual repository SQL in this order:
 2. `booking-demo/supabase/migration_owner_experience.sql`
 3. `booking-demo/supabase/migration_subscription_requests.sql`
 4. `booking-demo/supabase/migrations/20261031161318_jovabook_email_delivery.sql`
+5. `booking-demo/supabase/migrations/20261031225418_jovabook_website_images.sql`
+6. `booking-demo/supabase/migrations/20261031232653_jovabook_sms_reminders.sql`
+7. `booking-demo/supabase/migrations/20261101003559_jovabook_billing_access.sql`
+8. `booking-demo/supabase/migrations/20261101005929_jovabook_customer_portal.sql`
+9. `booking-demo/supabase/migrations/20261101013754_jovabook_monthly_commission.sql`
+10. `booking-demo/supabase/migrations/20261101014425_jovabook_booking_horizon.sql`
+11. `booking-demo/supabase/migrations/20261101023215_jovabook_website_image_scope_fix.sql`
 
-The local bootstrap supplies mock `auth.users`, `auth.uid()` and the `anon`, `authenticated` and `service_role` database roles needed to exercise the policies. The owner and anonymous checks switch PostgreSQL roles and a transaction-local identity claim. They do not create real Supabase users or login credentials.
+The local bootstrap supplies mock `auth.users` with synthetic email and confirmation fields, `auth.uid()` and the `anon`, `authenticated` and `service_role` database roles needed to exercise the policies. SQL-only `storage.buckets` and `storage.objects` stubs exercise the actual image policies. There is no Storage HTTP service or upload endpoint. The owner and anonymous checks switch PostgreSQL roles and a transaction-local identity claim. They do not create real Supabase users or login credentials.
 
 The fixture set contains two fictional businesses, each with one category, service, calendar, synthetic client and future booking. All owner, client and queue-recipient addresses end in `@example.test`. No production records, passwords, SMTP credentials or customer data are copied.
 
@@ -53,13 +60,15 @@ The booking trigger creates ordinary SQL email-event and queue records for the s
 - The sender is `bookings@example.test` and booking links use `https://booking.example.test`.
 - No worker, scheduler, SMTP server or delivery provider is connected.
 
+SMS, billing, customer recovery/payments, lifecycle deletion and monthly commission collection remain disabled in their private configurations. Worker and lifecycle secrets remain null. The real billing trigger creates synthetic 72-hour trials. Once these expire, verification requires an explicit local reset rather than silently extending access.
+
 `pg_cron`, `pg_net`, the hosted email scheduler migration and transport extensions are omitted. They are not available in this embedded engine. An optional `CREATE EXTENSION pgcrypto` statement is removed when reading schema sources because PGlite already provides the PostgreSQL primitives used by these schemas. The SQL splitter preserves quoted strings, comments and function bodies. Other extensions or transport SQL are refused.
 
-Source hashes are stored inside the database. After schema files change, `verify` asks for an explicit local reset so it does not silently claim that an older database represents the current source.
+Manifest version 2 stores ordered source names, raw SQL hashes, bootstrap version, fixture version, explicit omissions and a combined digest inside the database. Unknown migration files are refused until reviewed and explicitly included or omitted. The only omitted migration is `20261031162535_jovabook_email_scheduler.sql`, which requires hosted transport. After schema or bootstrap changes, `verify` asks for an explicit local reset. `status` reports `ready`, `requiresReset`, `sourceDrift` and `providerStateVerified`; stale databases do not report their unverified provider settings as disabled.
 
 ## Safety boundaries
 
-The CLI refuses database URLs, alternate paths and unknown options. It does not read `.env` files. Nonempty database, Supabase and email-provider environment settings cause a refusal that names the variable without printing its value. Production or hosted application runtimes are also refused. Use a separate clean shell rather than repurposing a production environment.
+The CLI refuses database URLs, alternate paths and unknown options. It does not read `.env` files. Nonempty database, Supabase, Stripe and delivery/billing/customer/commission-provider environment settings cause a refusal that names the variable without printing its value. Production or hosted application runtimes are also refused. Use a separate clean shell rather than repurposing a production environment.
 
 Before opening or resetting storage, the CLI validates the fixed local path, its repository-bound `marker.json`, regular files and the absence of symbolic links or Windows junctions anywhere inside the storage tree. It also checks an internal test-only database marker. Unexpected or missing markers are refused. Do not copy production data or another database into this directory.
 
@@ -79,6 +88,10 @@ The persistent database checks verify that:
 - Email activity is read-only for the owner, and the private email queue is inaccessible.
 - Anonymous users cannot read client or booking tables.
 - Public booking information omits client identity.
+- Image insertion and listing use only the current owner's salon prefix, including the real salon `name` column; cross-tenant image changes and overwrites remain denied.
+- Billing access metadata remains tenant-bound and public SMS availability remains disabled.
+- The public booking window ends at day 75 and a forged day-76 booking is rejected.
+- Anonymous customer membership registration is denied.
 - Delivery remains disabled, transport extensions are absent, and recipients remain synthetic.
 
 These are SQL and row-level-security checks. This database does **not** run Supabase Auth/GoTrue, PostgREST, Edge Functions, the live email provider, scheduled jobs or a local HTTP Auth API. Passing these checks does not prove an end-to-end live account or email-delivery flow.

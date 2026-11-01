@@ -46,6 +46,19 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: jovabook-billing-customer-proof
+          path: |
+            output/billing-access-after/
+            output/billing-plans-after/
+            output/jovabook-customer-portal/
+            output/customer-portal-host-after/
+            output/existing-business-after/
+            output/jovabook-booking-horizon/
+          if-no-files-found: ignore
+          retention-days: 7
   live-regression:
     if: >-
       github.event_name == 'deployment_status' &&
