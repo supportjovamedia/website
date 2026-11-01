@@ -19,8 +19,13 @@ export default function DaybreakPreview({ onReady }) {
   const media = matchMedia('(prefers-reduced-motion: reduce)');
   let disposed = false, visible = false, ready = false, measuredSize = '';
   let layers = [];
+  const clearLayers = () => {
+   layers.forEach(({ animation }) => animation.cancel());
+   layers = [];
+  };
 
   const sync = () => {
+   if (disposed || !element.isConnected) return;
    const playing = ready && visible && !document.hidden && !media.matches;
    element.classList.toggle('paused', !playing);
    const times = new Map(tracks.map(track => [track, Number(track.getAnimations()[0]?.currentTime) || 0]));
@@ -34,7 +39,7 @@ export default function DaybreakPreview({ onReady }) {
   const addLayer = (target, track, start, end, from, to) => {
    // The duplicate copy only enters at the end of the loop. Its hero has not
    // started scrolling yet, so its normal CSS transform is already correct.
-   if (start >= 1 || end <= start) return;
+   if (!target?.isConnected || !Number.isFinite(start) || !Number.isFinite(end) || start >= 1 || end <= start) return;
    const animation = target.animate([
     { offset: 0, transform: from },
     { offset: start, transform: from },
@@ -46,13 +51,16 @@ export default function DaybreakPreview({ onReady }) {
   };
 
   const measure = (force = false) => {
-   if (!ready || disposed) return;
+   if (!ready || disposed || !element.isConnected) return;
    const size = tracks.map(track => `${track.parentElement.clientWidth}:${track.parentElement.clientHeight}`).join('|');
    if (!force && size === measuredSize) return;
-   measuredSize = size;
    const groups = tracks.map(track => ({ track, copies: [...track.children] }));
+   if (groups.some(({ copies }) => !copies.length)) { clearLayers(); measuredSize = ''; return; }
    groups.forEach(({ copies }) => copies.forEach(copy => { copy.style.height = 'auto'; }));
    const distances = groups.map(({ copies }) => Math.ceil(copies[0].getBoundingClientRect().height));
+   // A route transition can hide the hero before its effect is cleaned up.
+   if (distances.some(distance => !Number.isFinite(distance) || distance <= 0)) { clearLayers(); measuredSize = ''; return; }
+   measuredSize = size;
    groups.forEach(({ track, copies }, index) => {
     copies.forEach(copy => { copy.style.height = `${distances[index]}px`; });
     track.style.setProperty('--loop-end', `${-distances[index]}px`);
@@ -61,8 +69,7 @@ export default function DaybreakPreview({ onReady }) {
     const hero = copy.querySelector('.coffeeHero');
     return { track, hero, height: hero.offsetHeight, top: copy.offsetTop + hero.offsetTop, distance: distances[index] };
    }));
-   layers.forEach(({ animation }) => animation.cancel());
-   layers = [];
+   clearLayers();
    geometry.forEach(({ track, hero, height, top, distance }) => {
     const start = Math.min(1, .1 + .8 * top / distance);
     const end = Math.min(1, .1 + .8 * (top + height) / distance);
@@ -92,7 +99,7 @@ export default function DaybreakPreview({ onReady }) {
    document.fonts.ready, document.fonts.load('750 24px Outfit'), document.fonts.load('600 24px Geist'),
    ...images.map(image => image.decode().catch(() => {})),
   ]).then(() => {
-   if (disposed || images.some(image => !image.naturalWidth)) return;
+   if (disposed || !element.isConnected || images.some(image => !image.naturalWidth)) return;
    ready = true;
    measure(true);
    element.classList.add('ready');
@@ -103,7 +110,7 @@ export default function DaybreakPreview({ onReady }) {
    disposed = true;
    resize.disconnect();
    intersection.disconnect();
-   layers.forEach(({ animation }) => animation.cancel());
+   clearLayers();
    document.removeEventListener('visibilitychange', sync);
    media.removeEventListener('change', sync);
   };

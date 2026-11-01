@@ -50,3 +50,6 @@ if (!process.env.REGRESSION_URL) {
   run(['scripts/audit-function-traces.mjs', '.next-regression']);
 }
 run(['node_modules/@playwright/test/cli.js', 'test']);
+
+// The gallery proof owns a fresh local production server after Playwright closes its server.
+if (!process.env.REGRESSION_URL) run(['scripts/check-six-design-gallery.mjs']);
