@@ -127,16 +127,16 @@ export function ProcessStory({ paused }) {
   </section>;
 }
 
-export function FaqStory({ paused, items = questions, contactHref = "/contact", contactLabel = "Contact Us" }) {
+export function FaqStory({ paused, items = questions, contactHref = "/contact", contactLabel = "Contact Us", introduction = "About your website, the scope and what happens next.", showArtwork = true }) {
   const root = useRef(null);
   useStoryMotion(root, paused, true);
   return <section id="faq" className={s.faq} ref={root} aria-labelledby="faq-title" data-site-faq>
     <div className={s.faqIntro}>
 
       <h2 id="faq-title" className={s.heading}>Good questions.<br />Clear answers.</h2>
-      <p className={s.introCopy}>About your website, the scope and what happens next.</p>
+      <p className={s.introCopy}>{introduction}</p>
       <Link href={contactHref} className={s.contact}>{contactLabel}</Link>
-      <div className={s.questionArt} aria-hidden="true"><span>?</span><i /></div>
+      {showArtwork && <div className={s.questionArt} aria-hidden="true"><span>?</span><i /></div>}
     </div>
     <ol className={s.answers} data-story-track>
       {items.map(([question, answer]) => <li className={s.answer} key={question} data-story-card>
