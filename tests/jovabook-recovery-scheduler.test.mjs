@@ -20,7 +20,8 @@ function validate(sql){
  const urls=[...sql.matchAll(/https:\/\/[^'\s]+/g)].map(x=>x[0]);assert.deepEqual(urls,['https://www.jovamedia.com/api/jovabook/recovery/worker']);
  const timeout=Number(sql.match(/timeout_milliseconds\s*:=\s*(\d+)/)?.[1]),budget=Number(route.match(/maxDuration\s*=\s*(\d+)/)?.[1])*1000;
  assert.equal(timeout,330000);assert(timeout>=budget+30000&&timeout<600000);
- assert.match(sql,/cron\.schedule_in_database\([\s\S]*?job_name:='jovabook-slot-recovery'[\s\S]*?schedule:='\* \* \* \* \*'[\s\S]*?command:='select jovabook_private\.invoke_recovery_worker\(\);'[\s\S]*?database:=current_database\(\),username:=current_user,active:=false/);
+ assert.match(sql,/cron\.schedule_in_database\([\s\S]*?job_name:='jovabook-slot-recovery'[\s\S]*?schedule:='\* \* \* \* \*'[\s\S]*?command:='select jovabook_private\.invoke_recovery_worker\(\);'[\s\S]*?database:=current_database\(\),active:=false/);
+ assert.doesNotMatch(sql,/username\s*:=/,'Managed pg_cron rejects explicit roles for non-superusers, including the current role');
  assert.equal([...clean.matchAll(/\bnet\.http_post\s*\(/g)].length,1);assert.equal([...clean.matchAll(/\bcron\.schedule_in_database\s*\(/g)].length,1);
  assert.doesNotMatch(clean,/\bcron\.(?:alter_job|schedule|unschedule)\s*\(|\bactive\s*(?::=|=)\s*true/i);
  assert.doesNotMatch(clean,/\b(?:raise\s+(?:notice|debug|warning|log)|create_secret|update_secret|alter\s+system)\b/i);
@@ -28,7 +29,7 @@ function validate(sql){
  assert.doesNotMatch(clean,/update\s+jovabook_private\.integration_config|set\s+enabled\s*=\s*true/i);
 }
 test('scheduler source is private, guarded, fixed-target, finite-timeout and inactive',()=>{validate(source);assert.throws(()=>prepareSchemaSql(source),/Network, scheduling/);});
-test('source validator rejects activation, unsafe destinations, short timeouts, exposed permissions and secrets',()=>{for(const changed of [source.replace('active:=false','active:=true'),source.replace('https://www.jovamedia.com','https://evil.example.test'),source.replace('timeout_milliseconds:=330000','timeout_milliseconds:=55000'),source.replace('revoke all on function','grant execute on function'),source.replace('config.enabled and config.recovery_enabled','config.enabled'),source+"\nraise notice 'debug';",source+"\nselect '"+'a'.repeat(64)+"';"])assert.throws(()=>validate(changed));});
+test('source validator rejects activation, unsafe destinations, short timeouts, exposed permissions and secrets',()=>{for(const changed of [source.replace('active:=false','active:=true'),source.replace('database:=current_database(),active:=false','database:=current_database(),username:=current_user,active:=false'),source.replace('https://www.jovamedia.com','https://evil.example.test'),source.replace('timeout_milliseconds:=330000','timeout_milliseconds:=55000'),source.replace('revoke all on function','grant execute on function'),source.replace('config.enabled and config.recovery_enabled','config.enabled'),source+"\nraise notice 'debug';",source+"\nselect '"+'a'.repeat(64)+"';"])assert.throws(()=>validate(changed));});
 
 async function fixture(){const db=new PGlite();await db.exec(`
  create role anon;create role authenticated;create schema jovabook_private;
@@ -39,7 +40,7 @@ async function fixture(){const db=new PGlite();await db.exec(`
  create schema net;create table net.fixture_calls(id bigint generated always as identity,url text,body jsonb,headers jsonb,timeout_ms int);
  create function net.http_post(url text,body jsonb default '{}',params jsonb default '{}',headers jsonb default '{}',timeout_milliseconds int default 5000) returns bigint language plpgsql as $$declare result bigint;begin insert into net.fixture_calls(url,body,headers,timeout_ms) values(url,body,headers,timeout_milliseconds) returning id into result;return result;end$$;
  create schema cron;create table cron.job(jobid bigint generated always as identity,jobname text,schedule text,command text,database text,username text,active boolean);
- create function cron.schedule_in_database(job_name text,schedule text,command text,database text,username text default null,active boolean default true) returns bigint language plpgsql as $$declare result bigint;begin insert into cron.job(jobname,schedule,command,database,username,active) values(job_name,schedule,command,database,username,active) returning jobid into result;return result;end$$;
+ create function cron.schedule_in_database(job_name text,schedule text,command text,database text,username text default null,active boolean default true) returns bigint language plpgsql as $$declare result bigint;begin if username is not null then raise exception 'must be superuser to create a job for another role';end if;insert into cron.job(jobname,schedule,command,database,username,active) values(job_name,schedule,command,database,coalesce(username,current_user),active) returning jobid into result;return result;end$$;
  `);return db;}
 const withoutExtensions=source.replace(/^create extension if not exists (?:pg_cron|pg_net);\r?$/gm,'');
 test('local SQL stubs prove inactive creation, both flag guards, unavailable credentials and revoked execution',async t=>{
