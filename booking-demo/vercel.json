@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/api/jovabook/:path*",
+      "destination": "https://www.jovamedia.com/api/jovabook/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
