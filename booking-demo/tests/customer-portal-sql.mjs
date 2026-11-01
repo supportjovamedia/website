@@ -21,7 +21,11 @@ test('customer portal uses verified tenant identities and server cancellation/re
    await q("insert into services(salon_id,id,name,price,duration,staff_ids) values($1,'service','Consultation',25,30,array['staff'])",[id]);
   }
   const make=async(id,when,email='client@example.test',business=sid,status='confirmed',deposit=0)=>{await q(`insert into bookings(salon_id,id,service_id,service_name,price,duration,date,time,staff_id,name,email,status,deposit,notes) values($1,$2,'service','Consultation',25,30,($3::timestamptz at time zone 'Europe/London')::date,to_char($3::timestamptz at time zone 'Europe/London','HH24:MI'),'staff','Client',$4,'confirmed',$5,'OWNER PRIVATE NOTE')`,[business,id,when,email,deposit]);if(status!=='confirmed')await q('update bookings set status=$1 where salon_id=$2 and id=$3',[status,business,id]);};
-  const future=new Date(Math.floor((Date.now()+72*3600000)/1800000)*1800000),near=new Date(Math.floor((Date.now()+2*3600000)/1800000)*1800000);
+  // Keep every 30-minute fixture inside one working day regardless of the CI clock.
+  // Near stays inside the cancellation cutoff; future and its offsets stay beyond it.
+  const {future,near}=(await q(`select
+   (((now() at time zone 'Europe/London')::date+3)+time '12:00') at time zone 'Europe/London' as future,
+   date_trunc('hour',now())+interval '2 hours' as near`)).rows[0];
   const b='bk_'+'a'.repeat(32),short='bk_'+'b'.repeat(32),foreign='bk_'+'c'.repeat(32),elsewhere='bk_'+'d'.repeat(32),noshow='bk_'+'e'.repeat(32);
   await make(b,future,undefined,undefined,undefined,10);await make(short,near);await make(foreign,new Date(+future+3600000),'somebody@example.test');await make(elsewhere,future,undefined,other);await make(noshow,new Date(+future+7200000),undefined,undefined,'no-show',10);
   await t.test('unverified registration cannot create membership or claim bookings',async()=>{await as(unverified);await assert.rejects(q("select customer_portal_register('business-a','First','Last','07700 900123')"),/Verify your email/);await assert.rejects(q("select customer_portal_bookings('business-a')"),/verify your email/);});
