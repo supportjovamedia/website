@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {createJovaBookBillingHandlers} from '../lib/jovabook-billing.mjs';
 import {MONTHLY_COMMISSION_TERMS_VERSION} from '../lib/jovabook-monthly-commission.mjs';
+import {createLocalLedger} from '../scripts/jovabook-stripe-test.mjs';
 
 function fixture({override={},summary={available:true,billing_ready:true,supervisor_ready:false},proof={},recovery=false}={}){
  const salon=randomUUID(),owner=randomUUID(),writes=[],env={JOVABOOK_BILLING_ENABLED:'true',JOVABOOK_BILLING_APPROVED:'true',JOVABOOK_STRIPE_SECRET_KEY:'sk_test_Fictional',JOVABOOK_STRIPE_ACCOUNT_ID:'acct_Fictional',JOVABOOK_STRIPE_MODE:'test',JOVABOOK_STRIPE_PRICE_ESSENTIAL:'price_Essential',JOVABOOK_STRIPE_PRICE_STANDARD:'price_Standard',JOVABOOK_STRIPE_PRICE_PREMIUM:'price_Premium',JOVABOOK_BILLING_WORKER_TOKEN:'a'.repeat(64),JOVABOOK_COMMISSION_WORKER_TOKEN:'b'.repeat(64),JOVABOOK_COMMISSION_HTTP_TOKEN:'c'.repeat(64),JOVABOOK_MONTHLY_COMMISSION_ENABLED:'true',JOVABOOK_MONTHLY_COMMISSION_INVOICING_ENABLED:'true',JOVABOOK_COMMISSION_SUPERVISOR_ENABLED:'true',JOVABOOK_ANNUAL_COMMISSION_INVOICING_ENABLED:'false',JOVABOOK_SUPABASE_URL:'https://fixture.invalid',JOVABOOK_SUPABASE_PUBLISHABLE_KEY:'fictional',...override};
@@ -32,4 +33,14 @@ test('existing invoice recovery stays available when commission setup is unavail
 });
 test('zero-commission Premium monthly checkout does not depend on commission collection',async()=>{
  const f=fixture({override:{JOVABOOK_MONTHLY_COMMISSION_INVOICING_ENABLED:'false',JOVABOOK_COMMISSION_SUPERVISOR_ENABLED:'false'}}),response=await f.checkout('premium');assert.equal(response.status,200);assert.equal((await response.json()).kind,'checkout');assert.deepEqual(f.writes,['customer','checkout']);
+});
+test('new unpaid SQL account reports configured commission readiness without inventing a financial statement',async()=>{
+ const local=await createLocalLedger(randomUUID());let creates=0;
+ try{
+  Object.assign(local.env,{JOVABOOK_STRIPE_SECRET_KEY:'sk_test_Fictional',JOVABOOK_STRIPE_ACCOUNT_ID:'acct_Fictional',JOVABOOK_STRIPE_PRICE_ESSENTIAL:'price_Essential',JOVABOOK_STRIPE_PRICE_STANDARD:'price_Standard',JOVABOOK_STRIPE_PRICE_PREMIUM:'price_Premium',JOVABOOK_MONTHLY_COMMISSION_INVOICING_ENABLED:'true',JOVABOOK_COMMISSION_SUPERVISOR_ENABLED:'true',JOVABOOK_COMMISSION_HTTP_TOKEN:'f'.repeat(64)});
+  await local.q('update jovabook_private.commission_config set invoice_enabled=true');
+  const stripe={accounts:{retrieveCurrent:async()=>({id:'acct_Fictional',charges_enabled:true})},customers:{create:async()=>{creates++;}},checkout:{sessions:{create:async()=>{creates++;}}}};
+  const handlers=createJovaBookBillingHandlers({env:local.env,send:local.send,stripe,now:local.now}),response=await handlers.status(local.request({salon_id:local.salon}));
+  assert.equal(response.status,200);const result=await response.json();assert.equal(result.billing.connected,true);assert.equal(result.billing.monthly_commission_ready,true);assert.equal(result.billing.commission_summary.available,false);assert.equal(result.billing.paid_until,null);assert.equal(result.billing.annual_supported,false);assert.equal(creates,0);
+ }finally{await local.close();}
 });
