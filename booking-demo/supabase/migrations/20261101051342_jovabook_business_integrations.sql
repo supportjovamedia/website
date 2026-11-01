@@ -68,6 +68,13 @@ language sql stable security definer set search_path='' as $$
  and (not p_write or jovabook_private.billing_open(s.id)))
 $$;
 revoke all on function jovabook_private.integration_owner(uuid,uuid,boolean) from public,anon,authenticated;
+create function jovabook_private.integration_connect_allowed(p_salon uuid,p_provider text) returns boolean
+language sql stable security definer set search_path='' as $$
+ select jovabook_private.billing_open(p_salon) and
+ (p_provider in('stripe','paypal') or p_provider in('mailchimp','sms_works','twilio') and exists(
+  select 1 from jovabook_private.billing_accounts where salon_id=p_salon and ever_paid and paid_plan in('standard','premium')))
+$$;
+revoke all on function jovabook_private.integration_connect_allowed(uuid,text) from public,anon,authenticated;
 
 -- Only actual completed visits in the preceding 75 local calendar days qualify.
 -- No booking/contact address is treated as marketing permission here.
@@ -119,7 +126,7 @@ begin
  select * into cfg from jovabook_private.integration_config where singleton;
  if cfg.worker_hash is null or p_token is null or length(p_token)<>64 or cfg.worker_hash<>encode(sha256(convert_to(p_token,'UTF8')),'hex') then raise exception 'Invalid integration worker.' using errcode='42501';end if;
  if p_action='health' then return jsonb_build_object('enabled',cfg.enabled and cfg.recovery_enabled);end if;
- if p_action in('list','status','connect','disconnect','recovery_context','preview','enqueue') then
+ if p_action in('list','status','connect_scope','connect','disconnect','recovery_context','preview','enqueue') then
   s:=(p_payload->>'salon_id')::uuid;u:=(p_payload->>'user_id')::uuid;
   if not jovabook_private.integration_owner(s,u,p_action not in('list','status','disconnect')) then raise exception 'Business access denied.' using errcode='42501';end if;
   perform pg_advisory_xact_lock(hashtext('jovabook-owner:'||s::text));
@@ -140,12 +147,14 @@ begin
     'needs_attention',(select count(*) from jovabook_private.recovery_dispatches where salon_id=s and v_provider='mailchimp' and reconcile_connection is not null and stage='needs_attention'));
   end if;
   if not cfg.enabled then raise exception 'Integrations are not enabled.' using errcode='42501';end if;
+  if p_action='connect_scope' then return jsonb_build_object('eligible',jovabook_private.integration_connect_allowed(s,p_payload->>'provider'));end if;
   if p_action='list' then return (select coalesce(jsonb_agg(to_jsonb(c)),'[]') from jovabook_private.business_integrations c where salon_id=s);end if;
   if p_action='status' then return jsonb_build_object('integrations',(select coalesce(jsonb_agg(to_jsonb(c)),'[]') from jovabook_private.business_integrations c where salon_id=s),
    'recovery_enabled',cfg.recovery_enabled,'recovery_eligible',exists(select 1 from jovabook_private.billing_accounts a where a.salon_id=s and a.ever_paid and a.paid_plan in('standard','premium') and jovabook_private.billing_open(s)),
    'actions',(select coalesce(jsonb_agg(to_jsonb(x)),'[]') from (select id,booking_id,stage,created_at,updated_at from jovabook_private.recovery_dispatches where salon_id=s order by created_at desc limit 20) x));end if;
   if p_action='connect' then
    v_provider:=p_payload->>'provider';
+   if not jovabook_private.integration_connect_allowed(s,v_provider) then return jsonb_build_object('eligible',false);end if;
    select * into conn from jovabook_private.business_integrations where salon_id=s and provider=v_provider;
    if conn.revision is distinct from (p_payload->>'expected_revision')::uuid then raise exception 'Connection changed.';end if;
    -- Replace only after server verification. Revisions invalidate outstanding previews.
