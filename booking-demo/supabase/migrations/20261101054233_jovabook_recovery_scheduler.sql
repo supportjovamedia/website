@@ -43,11 +43,12 @@ begin
  if exists(select 1 from cron.job where jobname='jovabook-slot-recovery') then
   raise exception 'Recovery scheduler already exists. Review it before applying this migration.';
  end if;
- -- This privileged API creates the row inactive from its first committed state.
+ -- Leave username at its default: managed pg_cron rejects explicit roles, even
+ -- the current role, without superuser. The job starts inactive atomically.
  v_job:=cron.schedule_in_database(
   job_name:='jovabook-slot-recovery',schedule:='* * * * *',
   command:='select jovabook_private.invoke_recovery_worker();',
-  database:=current_database(),username:=current_user,active:=false
+  database:=current_database(),active:=false
  );
  if not exists(select 1 from cron.job where jobid=v_job and active=false) then
   raise exception 'Recovery scheduler could not be installed inactive.';
