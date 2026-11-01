@@ -75,35 +75,7 @@ Private SQL configuration defaults `enabled=false`, `invoice_enabled=false`, wit
 
 The guarded server endpoint is POST `/api/jovabook/billing/commission-worker`, bearer `JOVABOOK_COMMISSION_HTTP_TOKEN`, body `{salon:<exact UUID>}`. A trusted renewal hook may supply `{invoice:<verified invoice ID>}`. The worker validates that provider invoice before attaching anything. A daily trusted scheduler must enumerate eligible businesses server-side and invoke the per-business refresh; it is not a browser action. The signed billing webhook integrates invoice-created/finalized/paid/failed/voided, credit-note and subscription changes. Registration must include those event types before production use.
 
-**Daily activation remains uninstalled.** After staged provider/schema checks and a separately reviewed enablement, an operator can use Supabase Cron plus pg_net to run the following private enumeration once daily. Store the matching HTTP token in Vault under `jovabook_commission_http_token` through the secret-management UI, never in repository SQL, job text or logs. Review pg_net queue permissions first, since it temporarily stores request headers. This is an activation template, not a statement that a schedule exists:
-
-```sql
-select cron.schedule(
- 'jovabook-commission-daily',
- '15 2 * * *',
- $job$
- select net.http_post(
-   url:='https://book.jovamedia.com/api/jovabook/billing/commission-worker',
-   headers:=jsonb_build_object(
-     'Content-Type','application/json',
-     'Authorization','Bearer '||(select decrypted_secret
-       from vault.decrypted_secrets
-       where name='jovabook_commission_http_token')
-   ),
-   body:=jsonb_build_object('salon',a.salon_id),
-   timeout_milliseconds:=30000
- )
- from jovabook_private.billing_accounts a
- join jovabook_private.commission_config c on c.singleton
- where c.enabled and c.enabled_at is not null
-   and a.customer_id is not null and a.subscription_id is not null
-   and a.deletion_state is null
-   and a.commission_terms_version='2026-11-01-appointment-v1';
- $job$
-);
-```
-
-Confirm the job is present/active and inspect HTTP result codes without printing headers. Verify that each eligible business receives a fresh summary within 24 hours. Disable the job while financial flags are off or if canonical provider reconciliation fails. [Supabase's scheduling guidance](https://supabase.com/docs/guides/functions/schedule-functions) documents the Cron/Vault/pg_net pattern and its secret-queue implications. No extension, Vault secret, live job or HTTP request was created by this source work.
+**Daily activation remains uninstalled.** The supported scheduled entrypoint is now the [commission supervisor](COMMISSION-SUPERVISOR.md). Its core migration creates a network-free private due queue and fixed per-tick route. A separate managed scheduler migration, omitted from the strict offline manifest, creates one named inactive cron job when Cron is available. It discovers one eligible business without a supplied salon UUID, refreshes the actual provider-backed statement and monthly fees, and records durable success or retry. Do not install the earlier manual per-business enumeration template. Provider, SQL, HTTP-secret, environment and cron gates all need verified setup before activation. No live job, Vault secret or HTTP request was created by this source work.
 
 Required restricted-key capabilities for these concrete source calls:
 
@@ -147,3 +119,7 @@ No live Stripe round trip, real card, production invoice, customer fixture or re
 Official references: [subscription invoice lifecycle](https://docs.stripe.com/billing/invoices/subscription), [invoice items](https://docs.stripe.com/api/invoiceitems/create), [invoice line periods](https://docs.stripe.com/api/invoice-line-item/object), [credit-note adjustments and customer balance](https://docs.stripe.com/api/credit_notes/create).
 
 Restoring the exact instant of a previously voided or credited occurrence is deliberately held for financial review. The original price and settlement evidence remain immutable; automatic invoicing, the estimate and retention purge are blocked for that business. This release does not automatically create another fee or reverse an already issued credit for a reopened occurrence. An explicit reviewed resolution is required before activation with such records.
+
+## Annual subscription extension
+
+The separate [annual billing extension](ANNUAL-BILLING.md) adds prepaid GBP192/480/960 yearly subscriptions with a 20% subscription discount. Commission stays monthly. After its migration, the scheduler predicate above includes both approved terms versions. Annual commission uses its own verified subscription-linked monthly invoice, including final-month settlement at a cancelled year end. Other manual invoices remain excluded from automatic collection. Annual invoicing requires two additional switches and defaults off. The earlier monthly ended-subscription carry policy remains unchanged for monthly subscriptions. No hosted activation is claimed by this documentation.

@@ -25,8 +25,11 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
  'migrations/20261101005929_jovabook_customer_portal.sql','migrations/20261101013754_jovabook_monthly_commission.sql',
  'migrations/20261101014425_jovabook_booking_horizon.sql','migrations/20261101023215_jovabook_website_image_scope_fix.sql',
- 'migrations/20261101045624_jovabook_premium_website.sql']);
-export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql']);
+ 'migrations/20261101045624_jovabook_premium_website.sql',
+ 'migrations/20261101051342_jovabook_business_integrations.sql','migrations/20261101051423_jovabook_annual_billing.sql',
+ 'migrations/20261101054615_jovabook_commission_supervisor.sql']);
+export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
+ 'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
 const SALONS=['20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002'];
 const HELP=`JovaBook isolated local SQL test database
@@ -52,7 +55,7 @@ export function parseArguments(args){
 
 export function assertLocalEnvironment(env=process.env){
  const forbidden=/(?:^|_)(?:DATABASE_(?:URL|URI|HOST|PORT|USER|PASSWORD|PATH)|DIRECT_URL|DB_(?:URL|URI|HOST|PORT|USER|PASSWORD|PATH)|SUPABASE(?:_.*)?)$|^(?:POSTGRES(?:QL)?_.*|PGLITE_.*|PG(?:HOST|HOSTADDR|PORT|USER|PASSWORD|DATABASE|SERVICE|SERVICEFILE|PASSFILE|OPTIONS|SSLMODE)|RESEND_API_KEY|JOVABOOK_EMAIL_WORKER_TOKEN|SMTP_.*|SENDGRID_API_KEY|MAILGUN_API_KEY)$/i;
- const providers=/^(?:STRIPE_.*|JOVABOOK_(?:EMAIL|SMS|BILLING|CUSTOMER|COMMISSION|MONTHLY_COMMISSION|LIFECYCLE)_.*)$/i;
+ const providers=/^(?:STRIPE_.*|SMS_WORKS_JWT|TWILIO_.*|MAILCHIMP_.*|PAYPAL_.*|JOVABOOK_(?:EMAIL|SMS|BILLING|CUSTOMER|COMMISSION|MONTHLY_COMMISSION|LIFECYCLE|INTEGRATIONS|RECOVERY|ANNUAL)_.*)$/i;
  const names=Object.keys(env).filter(name=>env[name]&&(forbidden.test(name)||providers.test(name)));
  if(names.length)throw Error('Refusing database or delivery configuration in the environment: '+names.sort().join(', ')+'. Run this CLI in a clean local shell; values are never printed.');
  if(env.NODE_ENV==='production'||['VERCEL','NETLIFY','AWS_LAMBDA_FUNCTION_NAME','K_SERVICE','FUNCTIONS_WORKER_RUNTIME'].some(name=>env[name]))throw Error('This embedded test CLI must not run in a production or hosted application runtime.');
@@ -204,7 +207,7 @@ async function assertOfflineState(db){
  if(!config||config.enabled||config.worker_token_hash!==null||config.webhook_secret!==null||config.webhook_id!==null)throw Error('Unsafe test delivery configuration. Refusing further operations; this CLI requires delivery disabled and no worker/webhook credentials.');
  const forbidden=(await db.query("select extname from pg_extension where extname in ('pg_net','pg_cron','http','dblink','postgres_fdw')")).rows;
  if(forbidden.length)throw Error('Unexpected network or scheduling extension in test database.');
- const controls=[['sms_config',['enabled','provider_configured'],['worker_token_hash']],['billing_config',['enabled','provider_configured','deletion_enabled'],['worker_hash','lifecycle_hash']],['customer_config',['recovery_enabled','payments_enabled'],['worker_hash']],['commission_config',['enabled','invoice_enabled'],['worker_hash']]];
+ const controls=[['sms_config',['enabled','provider_configured'],['worker_token_hash']],['billing_config',['enabled','provider_configured','deletion_enabled'],['worker_hash','lifecycle_hash']],['customer_config',['recovery_enabled','payments_enabled'],['worker_hash']],['commission_config',['enabled','invoice_enabled','annual_invoice_enabled','supervisor_enabled','supervisor_operational_ready'],['worker_hash','supervisor_http_hash']],['integration_config',['enabled','recovery_enabled'],['worker_hash']]];
  for(const [table,flags,secrets] of controls){if(!(await db.query('select to_regclass($1)::text name',['jovabook_private.'+table])).rows[0].name)continue;const config=(await db.query('select * from jovabook_private.'+table+' where singleton')).rows[0];if(!config||flags.some(key=>config[key]!==false)||secrets.some(key=>config[key]!==null))throw Error('Unsafe test provider configuration in '+table+'. Provider/deletion controls must stay disabled with no worker credentials.');}
  await assertSyntheticDatabase(db);
 }
@@ -215,7 +218,7 @@ export async function status(db,source){
  const counts={};for(const [key,table] of [['businesses','public.salons'],['clients','public.customers'],['bookings','public.bookings'],['queued_records','jovabook_private.email_queue']])counts[key]=(await db.query('select to_regclass($1)::text name',[table])).rows[0].name?(await db.query('select count(*)::int n from '+table)).rows[0].n:0;
  let fixtureTrialsActive=false;if(providerStateVerified)fixtureTrialsActive=Number((await db.query('select count(*)::int n from public.salons where id=any($1::uuid[]) and jovabook_private.billing_open(id)',[SALONS])).rows[0].n)===2;
  const disabled=providerStateVerified?false:null;
- return {database:'isolated local PGlite',storage:DATA_DIR,initialized:!!meta.initialized_at,initializedAt:meta.initialized_at,fixtures:FIXTURES,sourceDrift:!manifest.current,manifestVersion:meta.manifest_version??null,expectedManifestVersion:MANIFEST_VERSION,manifest,loadedSources:meta.source_order||Object.keys(meta.source_hashes),expectedSources:source.order,omittedSources:OMITTED_SOURCE_FILES,fixtureTrialsActive,ready:providerStateVerified&&fixtureTrialsActive,requiresReset:!providerStateVerified||!fixtureTrialsActive,resetCommand:'node scripts/jovabook-test-db.mjs reset --confirm=test-only',providerStateVerified,emailDeliveryEnabled:disabled,smsDeliveryEnabled:disabled,billingProviderEnabled:disabled,customerPaymentsEnabled:disabled,customerRecoveryEnabled:disabled,commissionInvoicingEnabled:disabled,deletionEnabled:disabled,workerKeyConfigured:disabled,network:'disabled',authServer:false,storageServer:false,...counts};
+ return {database:'isolated local PGlite',storage:DATA_DIR,initialized:!!meta.initialized_at,initializedAt:meta.initialized_at,fixtures:FIXTURES,sourceDrift:!manifest.current,manifestVersion:meta.manifest_version??null,expectedManifestVersion:MANIFEST_VERSION,manifest,loadedSources:meta.source_order||Object.keys(meta.source_hashes),expectedSources:source.order,omittedSources:OMITTED_SOURCE_FILES,fixtureTrialsActive,ready:providerStateVerified&&fixtureTrialsActive,requiresReset:!providerStateVerified||!fixtureTrialsActive,resetCommand:'node scripts/jovabook-test-db.mjs reset --confirm=test-only',providerStateVerified,emailDeliveryEnabled:disabled,smsDeliveryEnabled:disabled,billingProviderEnabled:disabled,customerPaymentsEnabled:disabled,customerRecoveryEnabled:disabled,commissionInvoicingEnabled:disabled,annualCommissionInvoicingEnabled:disabled,integrationsEnabled:disabled,slotRecoveryEnabled:disabled,deletionEnabled:disabled,workerKeyConfigured:disabled,network:'disabled',authServer:false,storageServer:false,...counts};
 }
 
 export async function verify(db,source){

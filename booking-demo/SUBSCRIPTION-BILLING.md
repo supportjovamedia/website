@@ -157,3 +157,7 @@ Current official references used for the implementation:
 - [Supabase Auth deletion and user data](https://supabase.com/docs/guides/auth/managing-user-data)
 - [Storage ownership](https://supabase.com/docs/guides/storage/security/ownership)
 - [Storage metadata is read-only; use its API](https://supabase.com/docs/guides/storage/schema/design)
+
+## Annual billing revision
+
+The separately reviewed [annual billing extension](ANNUAL-BILLING.md) adds a `cadence` request field and protected access metadata, 20% discounted yearly subscriptions paid upfront, and independent monthly appointment commission. Any cadence change is scheduled at the current paid renewal. The extension requires six fixed server allowlisted prices, annual-specific terms and additional disabled-by-default collection gates. It does not create live prices or enable charges by deployment alone. See that document for exact API, migration, statement, permissions and activation contracts.
