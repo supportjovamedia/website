@@ -65,6 +65,7 @@
 .sb-cadence-options{display:inline-flex;padding:5px;gap:4px;border:1px solid var(--theme-line,#dbe2e8);border-radius:18px;background:var(--theme-soft,#eee)}
 .sb-page .sb-cadence-options button{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;min-width:158px;padding:10px 18px;border:0;border-radius:13px;font:inherit;font-size:14px;background:transparent;color:var(--theme-body,#222);box-shadow:none}
 .sb-page .sb-cadence-options button[aria-pressed=true]{background:var(--theme-primary,#235789);color:var(--theme-on-primary,#fff)}
+html[data-workspace-theme] .shell .sb-cadence-options button[aria-pressed=true]{color:var(--theme-on-primary,#fff)!important}
 .sb-cadence-options button span{font-size:11px;font-weight:550;white-space:nowrap}
 .sb-cadence p{font-size:12px;line-height:1.7;max-width:65ch;margin:0;color:var(--theme-muted,#646464)}
 .sb-cadence .sb-cadence-unavailable{color:var(--theme-body,#222)}
