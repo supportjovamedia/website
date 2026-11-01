@@ -16,10 +16,7 @@ import useCardRail from "./useCardRail";
 import RailPagination from "./RailPagination";
 import MotionRegion from "./MotionRegion";
 
-const rows = [
-  [["qaiser-watches", "Qaiser Watches"], ["monolith", "Monolith"], ["elise", "Elise"], ["stem-club", "Stem Club"], ["sumera-current", "Sumera’s"], ["tamarind", "Tamarind"], ["bare-form", "Bare Form"], ["margin", "Margin"]],
-  [["casa-lenta", "Casa Lenta"], ["al-eiman", "Al Eiman"], ["fern-stone", "Fern & Stone"], ["nera", "Nera"], ["reform", "Reform"], ["sable", "Sable"], ["alma", "Alma"]],
-];
+const designs = [["qaiser-watches", "Qaiser Watches"], ["monolith", "Monolith"], ["elise", "Elise"], ["stem-club", "Stem Club"], ["sumera-current", "Sumera’s"], ["tamarind", "Tamarind"]];
 const services = [
   { name: "Website Design", image: "websites", alt: "Fern & Field garden website design displayed on a graphite MacBook", caption: "Fern & Field · Website design concept", intro: "A great first impression. A clear next step.", copy: "A website that feels like your business and makes it easy for the right people to get in touch.", points: ["Designed around your business", "Thoughtful on every screen", "Your feedback at each stage", "A clear path to enquiry"], href: "/websites" },
   { name: "Social Media Marketing", image: "marketing", alt: "Bun & Butter social campaign with bakery posts and a smartphone", caption: "Bun & Butter · Social campaign concept", intro: "Good design. Out in the world.", copy: "Bring your message to the places your customers spend time, with content that gives them a reason to take the next step.", points: ["Social content with a clear purpose", "Campaign and landing page design", "Consistent creative", "Measurement that helps you improve"], href: "/services/social-management" },
@@ -65,33 +62,12 @@ export default function StudioHome() {
     return () => { resize.disconnect(); cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", measure); };
   }, [pinned]);
   useEffect(() => {
-    const media = matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
-    let frame = 0;
-    const paint = () => {
-      frame = 0;
-      if (media.matches || !desktop.matches) {
-        gallery.current.style.setProperty("--gallery-pan", "0px");
-        return;
-      }
-      const rect = gallery.current.getBoundingClientRect();
-      gallery.current.style.setProperty("--gallery-pan", `${Math.max(-220, Math.min(220, -rect.top * .12))}px`);
-    };
-    const request = () => { if (!frame) frame = requestAnimationFrame(paint); };
-    const setup = () => {
-      removeEventListener("scroll", request);
-      if (desktop.matches && !media.matches) addEventListener("scroll", request, { passive: true });
-      request();
-    };
-    addEventListener("resize", request);
-    media.addEventListener("change", setup);
-    desktop.addEventListener("change", setup);
+    const element = gallery.current;
     const visibility = new IntersectionObserver(entries => {
-      gallery.current.dataset.inView = String(entries[0].isIntersecting);
+      element.dataset.inView = String(entries[0].isIntersecting);
     });
-    visibility.observe(gallery.current);
-    setup();
-    return () => { visibility.disconnect(); cancelAnimationFrame(frame); removeEventListener("scroll", request); removeEventListener("resize", request); media.removeEventListener("change", setup); desktop.removeEventListener("change", setup); };
+    visibility.observe(element);
+    return () => visibility.disconnect();
   }, []);
   function jump(index) {
     if (pinned) {
@@ -107,12 +83,11 @@ export default function StudioHome() {
     <main>
       <DaybreakHero />
       <section className={s.gallery} ref={gallery} aria-label="Website design previews">
-        {rows.map((row, index) => <div key={index} className={s.galleryWindow} data-direction={index % 2 ? "right" : "left"}>
-          <div className={s.pan}><div className={s.track}>{[...row, ...row].map(([image, name], item) => <figure key={`${image}-${item}`} className={s.preview} aria-hidden={item >= row.length ? "true" : undefined}>
-            <div className={s.browserBar}><span aria-hidden="true">● ● ●</span><span>{name}</span></div>
-            <Image src={`/studio-2026/${image}.webp`} alt={item >= row.length ? "" : `${name} website preview`} width={1672} height={941} sizes="(max-width: 600px) 70vw, 30vw" draggable={false} fetchPriority="low" />
-          </figure>)}</div></div>
-        </div>)}
+        <div className={s.galleryWindow}>
+          <div className={s.track}>{[...designs, ...designs].map(([image, name], item) => <figure key={`${image}-${item}`} className={s.preview} aria-hidden={item >= designs.length ? "true" : undefined}>
+            <Image src={`/studio-2026/${image}.webp`} alt={item >= designs.length ? "" : `${name} website preview`} width={1672} height={941} sizes="(max-width: 600px) 72vw, 30vw" draggable={false} fetchPriority="low" />
+          </figure>)}</div>
+        </div>
       </section>
       <section className={s.benefits} aria-labelledby="benefits-title">
         <div className={s.sectionIntro} data-site-reveal><h2 id="benefits-title">Small business websites.<br />Built around you.</h2><p>Make your services easy to understand, show your work and give customers a clear way to enquire or book. We design and build websites for small businesses across the UK.</p></div>

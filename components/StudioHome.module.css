@@ -9,18 +9,14 @@
 .primary:active,.secondary:active,.lightButton:active,.darkOutline:active{transform:scale(.98)}
 .primary:focus-visible,.secondary:focus-visible,.lightButton:focus-visible,.darkOutline:focus-visible,.underlined:focus-visible{outline:3px solid #0071e3;outline-offset:5px}
 .underlined{display:inline-flex;align-items:center;padding-bottom:3px;border-bottom:1px solid #888;font-size:14px;line-height:1.8;color:#0c2948}
-.gallery{--gallery-pan:0px;padding:24px 0;background:#f7f7f4;overflow:hidden}
-.galleryWindow{position:relative;left:-6%;width:112%;margin:0 0 17px;overflow:hidden}
-.galleryWindow:last-child{margin-bottom:0}
-.pan{transform:translate3d(calc(-1 * var(--gallery-pan)),0,0)}
-.galleryWindow[data-direction=right] .pan{transform:translate3d(calc(var(--gallery-pan) - 140px),0,0)}
+.gallery{padding:24px 0;background:#f7f7f4;overflow:hidden}
+.galleryWindow{position:relative;left:-6%;width:112%;margin:0;overflow:hidden}
 .track{display:flex;gap:18px;width:max-content;animation:galleryDrift 55s linear infinite;animation-play-state:paused}
 .gallery[data-in-view=true] .track{animation-play-state:running}
-.galleryWindow[data-direction=right] .track{animation-direction:reverse}
 .preview{flex-shrink:0;width:clamp(280px,30vw,900px);margin:0;background:#fff;border:1px solid #e5e5e5;border-radius:10px;overflow:hidden}
 .preview img{display:block;width:100%;height:auto;aspect-ratio:1672/941;object-fit:contain}
-.browserBar{display:flex;align-items:center;gap:16px;padding:9px 12px;font-size:8px;line-height:1.2;color:#555;background:#fff}
-.browserBar>span:first-child{color:#c6c6c6;letter-spacing:2px;font-size:7px}
+
+
 @keyframes galleryDrift{to{transform:translateX(calc(-50% - 9px))}}
 .benefits{padding:58px 0 46px;background:#f4f6f8}
 .sectionIntro{max-width:850px;margin:auto;padding-inline:24px;text-align:center}
@@ -71,9 +67,8 @@
 .finalCta{margin:28px 4vw;border-radius:20px;padding:75px 30px;text-align:center;background:#0c2948;color:#fff}
 .finalCta h2{font-size:clamp(40px,5vw,86px);line-height:1.1;margin:0 0 36px;text-wrap:balance}
 @media(hover:hover){.primary:hover,.lightButton:hover{background:#0077ed;border-color:#0077ed}.secondary:hover{background:#f3f3f3}.darkOutline:hover{background:#ffffff12}.serviceArrow:hover{background:#f3f7fa}}
-@media(min-width:1800px){.galleryWindow{margin-bottom:24px}.track{gap:24px}.browserBar{font-size:11px;padding:12px 16px}.browserBar>span:first-child{font-size:9px}.sectionIntro>p{font-size:20px;max-width:800px}@keyframes galleryDrift{to{transform:translateX(calc(-50% - 12px))}}}
+@media(min-width:1800px){.track{gap:24px}.sectionIntro>p{font-size:20px;max-width:800px}@keyframes galleryDrift{to{transform:translateX(calc(-50% - 12px))}}}
 @media(max-width:900px){
- .pan,.galleryWindow[data-direction=right] .pan{transform:none}
  .benefits{padding:40px 0 26px}
  .benefitGrid{position:relative;display:flex;align-items:stretch;gap:16px;padding:0 20px 8px;max-width:none;margin-top:30px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:20px;scrollbar-width:none;overscroll-behavior-x:contain}
  .benefitGrid::-webkit-scrollbar{display:none}
@@ -95,7 +90,7 @@
 }
 @media(max-width:750px){.experience{padding:42px 22px}.experienceInner{grid-template-columns:1fr;gap:32px;text-align:center}.experienceInner h2{font-size:38px}.experienceInner p{font-size:15px;margin-inline:auto}}
 @media(max-width:600px){
- .gallery{padding:12px 0 20px}.preview{width:72vw;min-width:220px;border-radius:7px}.galleryWindow{margin-bottom:11px}.track{gap:11px}.browserBar{padding:7px 9px;font-size:7px}.browserBar>span:first-child{font-size:5px;letter-spacing:1px}
+ .gallery{padding:12px 0 20px}.preview{width:72vw;min-width:220px;border-radius:7px}.track{gap:11px}
  @keyframes galleryDrift{to{transform:translateX(calc(-50% - 5.5px))}}
  .sectionIntro h2{font-size:clamp(31px,8.8vw,37px)}.sectionIntro>p{font-size:15px;max-width:35ch}
  .storyHeading h2{font-size:30px;max-width:18ch;margin-bottom:20px}
@@ -108,7 +103,7 @@
  .moreServices{padding:20px 20px 42px}
  .finalCta{padding:42px 22px;margin:24px 14px;border-radius:16px}.finalCta h2{font-size:clamp(31px,8.7vw,36px);margin-bottom:28px}.lightButton,.darkOutline{padding:14px 20px}
 }
-@media(prefers-reduced-motion:reduce){.track{animation:none}.galleryWindow{left:0;width:100%;overflow-x:auto}.pan,.galleryWindow[data-direction=right] .pan{transform:none}.primary,.secondary,.lightButton,.darkOutline,.chapters button,.serviceArrow,.benefitPhoto{transition:none}.primary:active,.secondary:active,.lightButton:active,.darkOutline:active,.benefitGrid article[data-active=true] .benefitPhoto{transform:none}}
+@media(prefers-reduced-motion:reduce){.track{animation:none}.preview[aria-hidden=true]{display:none}.galleryWindow{left:0;width:100%;overflow-x:auto}.primary,.secondary,.lightButton,.darkOutline,.chapters button,.serviceArrow,.benefitPhoto{transition:none}.primary:active,.secondary:active,.lightButton:active,.darkOutline:active,.benefitGrid article[data-active=true] .benefitPhoto{transform:none}}
 
 /* Desktop retains its scroll chapters; the phone keeps native swipe cards. */
 @media(min-width:901px){
