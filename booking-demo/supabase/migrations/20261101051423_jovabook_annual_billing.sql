@@ -186,7 +186,8 @@ declare proof jsonb;v_result jsonb;sid uuid;account jovabook_private.billing_acc
  end if;
  v_result:=jovabook_private.commission_worker_monthly(p_token,p_action,p_payload);
  if p_action='context' then return v_result||jsonb_build_object('annual_invoice_enabled',(select annual_invoice_enabled from jovabook_private.commission_config where singleton));
- elsif p_action='summary' then return v_result||jsonb_build_object('annual_billing_ready',(select enabled and invoice_enabled and annual_invoice_enabled from jovabook_private.commission_config where singleton));
+ elsif p_action='summary' then return v_result||jsonb_build_object('annual_billing_ready',(select enabled and invoice_enabled and annual_invoice_enabled from jovabook_private.commission_config where singleton),
+  'supervisor_ready',(select coalesce((to_jsonb(c)->>'supervisor_enabled')::boolean and (to_jsonb(c)->>'supervisor_operational_ready')::boolean and (to_jsonb(c)->>'supervisor_http_hash')~'^[0-9a-f]{64}$' and (to_jsonb(c)->>'supervisor_http_hash')<>c.worker_hash and p_payload->>'http_hash' is not distinct from to_jsonb(c)->>'supervisor_http_hash',false) from jovabook_private.commission_config c where singleton));
  elsif p_action='history' and v_result is not null then
   if v_cadence not in('monthly','annual') or coalesce(p_payload->>'next_cadence','monthly') not in('monthly','annual') then raise exception 'Unverified commission subscription frequency.';end if;
   if v_cadence='annual' and (account.commission_terms_version is distinct from '2026-11-01-annual-monthly-v2' or (p_payload->>'subscription_period_end')::timestamptz is null or (p_payload->>'subscription_anchor')::timestamptz is null or (p_payload->>'period_end')::timestamptz>(p_payload->>'subscription_period_end')::timestamptz) then raise exception 'Annual monthly-commission consent or anniversary is missing.';end if;
