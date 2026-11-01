@@ -1,0 +1,24 @@
+/* Owner integrations use existing workspace surfaces and native form controls. */
+.bi-page{max-width:1080px;margin:0 auto;color:var(--theme-body,#373737)}
+.bi-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:32px}
+.bi-heading h1{margin:0 0 12px;font-size:36px;font-weight:500}.bi-heading p{margin:0;color:var(--theme-muted,#606060)}
+.bi-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.bi-card{display:flex;flex-direction:column;padding:28px;border:1px solid var(--theme-line,#ddd);border-radius:16px;background:var(--theme-panel,#fff);min-width:0}
+.bi-card-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.bi-card h2{font-size:20px;font-weight:600;margin:0}.bi-status{font-size:11px;padding:6px 10px;background:var(--theme-inset,#eee);border-radius:20px;color:var(--theme-body,#373737)}
+.bi-card p{font-size:14px;line-height:1.65;margin:0 0 12px}.bi-card .bi-help,.bi-help{font-size:12px;line-height:1.7;color:var(--theme-muted,#606060)}
+.bi-card .bi-actions{margin-top:auto;padding-top:12px}.bi-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:24px}
+.bi-actions button,.bi-actions a{min-height:42px}.bi-card button:disabled{opacity:.55;cursor:not-allowed}
+.bi-notice{padding:20px 24px;border:1px solid var(--theme-line,#ddd);border-radius:12px;margin:0 0 24px;background:var(--theme-inset,#eee);font-size:14px;line-height:1.7}
+.bi-notice h2{font-size:18px;margin:0 0 8px}.bi-notice p{margin:0 0 14px}.bi-error{color:#b42318;font-size:13px;line-height:1.6}
+.bi-dialog{max-width:100%;color:var(--theme-body,#373737)}.bi-dialog fieldset{padding:0;border:0;margin:20px 0;min-width:0}.bi-dialog legend{font-size:14px;font-weight:600;color:var(--theme-body,#373737)}
+.bi-dialog .field{margin-bottom:16px}.bi-dialog input,.bi-dialog select{max-width:100%}
+.bi-slot{padding:18px 20px;background:var(--theme-inset,#eee);border-radius:12px;margin-bottom:24px}.bi-slot h3{font-size:18px;margin:0 0 10px}.bi-slot p{font-size:13px;margin:6px 0;line-height:1.6}
+.bi-select-all{display:flex;align-items:center;gap:10px;font-size:13px;padding:12px 0}
+.bi-recipients{max-height:240px;overflow:auto;border:1px solid var(--theme-line,#ddd);border-radius:10px}
+.bi-recipients label{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid var(--theme-line,#ddd);cursor:pointer}.bi-recipients label:last-child{border:0}
+.bi-recipients input{margin-top:3px;flex:none}.bi-recipients span{min-width:0}.bi-recipients b{display:block;font-size:13px;font-weight:500;color:var(--theme-body,#373737)}.bi-recipients small{display:block;font-size:11px;margin-top:5px;line-height:1.5;color:var(--theme-muted,#606060);overflow-wrap:anywhere}
+.bi-offer{padding-top:20px}.bi-offer>label:first-child{display:flex;align-items:center;gap:10px;font-size:13px}.bi-offer .field{max-width:150px;margin-top:16px}
+.bi-message{padding:20px;border:1px solid var(--theme-line,#ddd);border-radius:12px}.bi-message h3{font-size:13px;margin:0 0 16px}.bi-message b{font-size:14px;font-weight:500}.bi-message p{white-space:pre-line;font-size:13px;line-height:1.8;overflow-wrap:anywhere;margin:12px 0 0}
+.nf-recovery-action{display:flex;justify-content:flex-end;padding:0 16px 14px;background:var(--theme-inset,#eee)}.nf-recovery-action button{font-size:11px;min-height:34px;padding:7px 12px}
+@media(max-width:700px){.bi-cards{grid-template-columns:1fr}.bi-heading{flex-direction:column;gap:16px;margin-bottom:24px}.bi-card{padding:22px}.bi-dialog .bi-actions{gap:8px}.bi-actions button{flex-grow:1}.bi-recipients{max-height:210px}.bi-slot{padding:16px}.bi-message{padding:16px}}

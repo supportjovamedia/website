@@ -82,6 +82,8 @@ jobs:
       - run: node booking-demo/tests/essential-package-browser.mjs
       - run: node booking-demo/tests/premium-insights-browser.mjs
       - run: node booking-demo/tests/premium-website-browser.mjs
+      - run: node booking-demo/tests/annual-subscriptions-browser.mjs
+      - run: node booking-demo/tests/business-integrations-browser.mjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
@@ -96,6 +98,8 @@ jobs:
             output/jovabook-essential-package/
             booking-demo/test-results/premium-insights/
             booking-demo/test-results/premium-website/
+            booking-demo/test-results/annual-subscriptions/
+            booking-demo/test-results/business-integrations/after/
           if-no-files-found: ignore
           retention-days: 7
   live-regression:
