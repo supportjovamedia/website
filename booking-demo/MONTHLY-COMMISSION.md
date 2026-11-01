@@ -98,7 +98,7 @@ select cron.schedule(
  where c.enabled and c.enabled_at is not null
    and a.customer_id is not null and a.subscription_id is not null
    and a.deletion_state is null
-   and a.commission_terms_version='2026-11-01-appointment-v1';
+   and jovabook_private.commission_terms_current(a.commission_terms_version);
  $job$
 );
 ```
@@ -147,3 +147,7 @@ No live Stripe round trip, real card, production invoice, customer fixture or re
 Official references: [subscription invoice lifecycle](https://docs.stripe.com/billing/invoices/subscription), [invoice items](https://docs.stripe.com/api/invoiceitems/create), [invoice line periods](https://docs.stripe.com/api/invoice-line-item/object), [credit-note adjustments and customer balance](https://docs.stripe.com/api/credit_notes/create).
 
 Restoring the exact instant of a previously voided or credited occurrence is deliberately held for financial review. The original price and settlement evidence remain immutable; automatic invoicing, the estimate and retention purge are blocked for that business. This release does not automatically create another fee or reverse an already issued credit for a reopened occurrence. An explicit reviewed resolution is required before activation with such records.
+
+## Annual subscription extension
+
+The separate [annual billing extension](ANNUAL-BILLING.md) adds prepaid GBP192/480/960 yearly subscriptions with a 20% subscription discount. Commission stays monthly. After its migration, the scheduler predicate above includes both approved terms versions. Annual commission uses its own verified subscription-linked monthly invoice, including final-month settlement at a cancelled year end. Other manual invoices remain excluded from automatic collection. Annual invoicing requires two additional switches and defaults off. The earlier monthly ended-subscription carry policy remains unchanged for monthly subscriptions. No hosted activation is claimed by this documentation.
