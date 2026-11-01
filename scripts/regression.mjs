@@ -21,7 +21,11 @@ run(['--test',
   'booking-demo/tests/category-colours.mjs',
   'booking-demo/tests/essential-package.mjs', 'booking-demo/tests/business-website.mjs',
   'booking-demo/tests/website-images.mjs', 'booking-demo/tests/website-images-sql.mjs',
+  'booking-demo/tests/sms-reminders.mjs', 'booking-demo/tests/sms-provider.mjs',
+  'booking-demo/tests/sms-reminders-sql.mjs',
 ]);
+// The SMS UI runs against its own intercepted server and cannot contact a provider.
+run(['booking-demo/tests/sms-reminders-browser.mjs']);
 if (!process.env.REGRESSION_URL) {
   run(['node_modules/next/dist/bin/next', 'build'], { JOVA_BUILD_DIR: '.next-regression' });
   run(['scripts/audit-function-traces.mjs', '.next-regression']);
