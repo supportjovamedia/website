@@ -25,6 +25,7 @@ create table jovabook_private.recovery_dispatches(
  context jsonb not null,recipients jsonb not null,include_offer boolean not null,discount_percent int not null check(discount_percent between 0 and 100),
  stage text not null default 'queued' check(stage in('queued','preparing','creating_segment','segment_saved','creating_campaign','campaign_saved','sending','unknown','sent','cancelled','needs_attention')),
  segment_id bigint,campaign_id text,lease uuid,lease_until timestamptz,
+ reconcile_connection jsonb,disconnected_at timestamptz,
  created_at timestamptz not null default now(),updated_at timestamptz not null default now(),
  unique(salon_id,request_id),unique(salon_id,booking_id)
 );
@@ -32,6 +33,33 @@ do $$declare t text;begin foreach t in array array['integration_config','busines
  execute format('alter table jovabook_private.%I enable row level security',t);
  execute format('revoke all on jovabook_private.%I from public,anon,authenticated',t);
 end loop;end$$;
+
+-- A started provider request cannot be revoked by a later local disconnect.
+-- Retain its encrypted credential only until that campaign is reconciled.
+create function jovabook_private.recovery_unresolved(p_salon uuid) returns boolean
+language sql volatile security definer set search_path='' as $$
+ select exists(select 1 from jovabook_private.recovery_dispatches where salon_id=p_salon
+  and reconcile_connection is not null and stage in('sending','unknown','needs_attention'))
+$$;
+revoke all on function jovabook_private.recovery_unresolved(uuid) from public,anon,authenticated;
+do $$declare source text;begin
+ source:=pg_get_functiondef('jovabook_private.billing_customer_pending(uuid)'::regprocedure);
+ execute replace(source,'jovabook_private.billing_customer_pending(','jovabook_private.billing_customer_pending_before_recovery(');
+end$$;
+create or replace function jovabook_private.billing_customer_pending(p_salon uuid) returns boolean
+language sql volatile security definer set search_path='' as $$
+ select jovabook_private.billing_customer_pending_before_recovery(p_salon) or jovabook_private.recovery_unresolved(p_salon)
+$$;
+revoke all on function jovabook_private.billing_customer_pending_before_recovery(uuid),jovabook_private.billing_customer_pending(uuid) from public,anon,authenticated;
+create function jovabook_private.recovery_delete_guard() returns trigger
+language plpgsql security definer set search_path='' as $$
+begin
+ perform pg_advisory_xact_lock(hashtext('jovabook-owner:'||old.id::text));
+ if jovabook_private.recovery_unresolved(old.id) then raise exception 'A recovery email is still being reconciled. Business cleanup is unavailable.' using errcode='23514';end if;
+ return old;
+end$$;
+revoke all on function jovabook_private.recovery_delete_guard() from public,anon,authenticated;
+create trigger recovery_delete_guard before delete on public.salons for each row execute function jovabook_private.recovery_delete_guard();
 
 create function jovabook_private.integration_owner(p_salon uuid,p_user uuid,p_write boolean default false) returns boolean
 language sql stable security definer set search_path='' as $$
@@ -100,11 +128,16 @@ begin
    v_provider:=p_payload->>'provider';
    select * into conn from jovabook_private.business_integrations where salon_id=s and provider=v_provider;
    if conn.revision is distinct from (p_payload->>'expected_revision')::uuid then raise exception 'Connection changed.';end if;
-   update jovabook_private.recovery_dispatches set stage=case when stage in('sending','unknown') then 'needs_attention' else 'cancelled' end,lease=null,lease_until=null,updated_at=now()
-    where salon_id=s and v_provider='mailchimp' and stage not in('sent','cancelled','needs_attention');
+   -- Sending is the point of no return. Do not invalidate its lease or claim
+   -- cancellation: the provider request may begin immediately after commit.
+   update jovabook_private.recovery_dispatches set disconnected_at=coalesce(disconnected_at,now()),updated_at=now()
+    where salon_id=s and v_provider='mailchimp' and reconcile_connection is not null and stage in('sending','unknown','needs_attention');
+   update jovabook_private.recovery_dispatches set stage='cancelled',lease=null,lease_until=null,disconnected_at=now(),updated_at=now()
+    where salon_id=s and v_provider='mailchimp' and reconcile_connection is null and stage not in('sent','cancelled','needs_attention');
    delete from jovabook_private.business_integrations where salon_id=s and business_integrations.provider=v_provider;
    delete from jovabook_private.recovery_previews where salon_id=s and v_provider='mailchimp';
-   return jsonb_build_object('ok',true);
+   return jsonb_build_object('ok',true,'in_flight',(select count(*) from jovabook_private.recovery_dispatches where salon_id=s and v_provider='mailchimp' and reconcile_connection is not null and stage in('sending','unknown')),
+    'needs_attention',(select count(*) from jovabook_private.recovery_dispatches where salon_id=s and v_provider='mailchimp' and reconcile_connection is not null and stage='needs_attention'));
   end if;
   if not cfg.enabled then raise exception 'Integrations are not enabled.' using errcode='42501';end if;
   if p_action='list' then return (select coalesce(jsonb_agg(to_jsonb(c)),'[]') from jovabook_private.business_integrations c where salon_id=s);end if;
@@ -154,6 +187,10 @@ begin
    select * into job from jovabook_private.recovery_dispatches where id=candidate.id for update skip locked;
    if job.id is null or job.stage in('sent','cancelled','needs_attention') or job.lease_until>now() then continue;end if;
    select * into conn from jovabook_private.business_integrations where salon_id=job.salon_id and provider='mailchimp' and revision=job.revision;
+   if job.reconcile_connection is not null and job.stage in('sending','unknown') then
+    -- This retired snapshot can only enter the GET-only reconciliation branch.
+    conn:=jsonb_populate_record(null::jovabook_private.business_integrations,job.reconcile_connection);
+   end if;
    if conn.salon_id is null then update jovabook_private.recovery_dispatches set stage='needs_attention' where id=job.id;continue;end if;
    next_stage:=case when job.stage='queued' then 'preparing' when job.campaign_id is not null then 'unknown' else 'needs_attention' end;
    update jovabook_private.recovery_dispatches set stage=next_stage,lease=gen_random_uuid(),lease_until=now()+interval '10 minutes',updated_at=now() where id=job.id returning * into job;
@@ -170,18 +207,25 @@ begin
    update jovabook_private.recovery_dispatches set stage=case when campaign_id is not null then 'unknown' else 'needs_attention' end,lease=null,lease_until=now()+interval '1 minute',updated_at=now() where id=job.id;return 'true';
   end if;
   if p_action='prepare' then
+   if job.reconcile_connection is not null then raise exception 'Started recovery requires reconciliation.';end if;
    current_context:=jovabook_private.recovery_context(s,job.user_id,job.booking_id);
    if not cfg.enabled or not cfg.recovery_enabled or job.created_at<now()-interval '15 minutes' or current_context is null or current_context->>'fingerprint'<>job.fingerprint or exists(select 1 from jsonb_array_elements(job.recipients) x where not current_context->'candidates' @> jsonb_build_array(x)) then
     update jovabook_private.recovery_dispatches set stage='cancelled',lease=null,lease_until=null,updated_at=now() where id=job.id;return 'false';
    end if;return 'true';
   end if;
   next_stage:=p_payload->>'stage';
+  if next_stage='cancelled' and job.reconcile_connection is not null then raise exception 'A started recovery cannot be cancelled locally.';end if;
   if next_stage not in('sent','needs_attention','cancelled') and (not cfg.enabled or not cfg.recovery_enabled or not exists(select 1 from jovabook_private.business_integrations where salon_id=s and provider='mailchimp' and revision=job.revision)) then raise exception 'Connection changed.';end if;
   if not (next_stage in('needs_attention','cancelled') or (job.stage,next_stage) in(('preparing','creating_segment'),('creating_segment','segment_saved'),('segment_saved','creating_campaign'),('creating_campaign','campaign_saved'),('campaign_saved','sending'),('sending','sent'),('unknown','sent'))) then raise exception 'Invalid recovery transition.';end if;
-  if next_stage='sending' and (not cfg.enabled or not cfg.recovery_enabled or jovabook_private.recovery_context(s,job.user_id,job.booking_id)->>'fingerprint' is distinct from job.fingerprint) then raise exception 'Recovery no longer available.';end if;
+  if next_stage='sending' then
+   if not cfg.enabled or not cfg.recovery_enabled or jovabook_private.recovery_context(s,job.user_id,job.booking_id)->>'fingerprint' is distinct from job.fingerprint then raise exception 'Recovery no longer available.';end if;
+   select * into conn from jovabook_private.business_integrations where salon_id=s and provider='mailchimp' and revision=job.revision;
+   if conn.salon_id is null then raise exception 'Connection changed.';end if;
+  end if;
   update jovabook_private.recovery_dispatches set stage=next_stage,
    segment_id=case when next_stage='segment_saved' then (p_payload->>'segment_id')::bigint else segment_id end,
    campaign_id=case when next_stage='campaign_saved' then p_payload->>'campaign_id' else campaign_id end,
+   reconcile_connection=case when next_stage='sending' then to_jsonb(conn) when next_stage='sent' then null else reconcile_connection end,
    lease_until=case when next_stage in('sent','needs_attention','cancelled') then null else lease_until end,updated_at=now() where id=job.id;
   return 'true';
  end if;
