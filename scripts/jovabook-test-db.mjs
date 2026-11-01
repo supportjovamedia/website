@@ -24,7 +24,8 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
  'migrations/20261101005929_jovabook_customer_portal.sql','migrations/20261101013754_jovabook_monthly_commission.sql',
- 'migrations/20261101014425_jovabook_booking_horizon.sql','migrations/20261101023215_jovabook_website_image_scope_fix.sql']);
+ 'migrations/20261101014425_jovabook_booking_horizon.sql','migrations/20261101023215_jovabook_website_image_scope_fix.sql',
+ 'migrations/20261101045624_jovabook_premium_website.sql']);
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
 const SALONS=['20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002'];

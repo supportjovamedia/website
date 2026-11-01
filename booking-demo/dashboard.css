@@ -242,6 +242,9 @@
 .shell .db-dashboard-period .seg button.active{background:#fff;color:var(--workspace-accent,#235789);box-shadow:0 2px 6px #557da715}
 .shell .db-dashboard-period .db-navigation button{font-size:11px;min-height:38px;padding:9px 12px;border-color:#dce5f0;border-radius:7px;background:#f8faff;color:#526e88}
 .shell .db-dashboard-period .db-date-controls input{background:#f8faff;border-color:#dce5f0}
+.shell .db-dashboard-period .db-date-controls input[type=month]{width:170px;min-width:0;min-height:38px;padding:8px 9px;border:1px solid #dce5f0;border-radius:7px;color:#3a5364;font-size:12px;font-family:inherit}
+.db-dashboard-period .db-period-error{flex-basis:100%;margin:0;color:var(--theme-error-text,#b43e3e);font-size:12px;line-height:1.5}
+.db-dashboard-period input[aria-invalid=true]{outline:2px solid var(--theme-error-text,#b43e3e);outline-offset:2px}
 .db-calendar-page>.db-heading{margin-bottom:22px}
 .db-list-heading{padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #edf1f7}
 .shell .db-list-heading h2{font-size:17px;letter-spacing:-.3px;margin:0;color:#314b61}
@@ -284,6 +287,10 @@
   .db-dashboard-period .db-date-controls{width:100%;gap:8px;justify-content:space-between}
   .shell .db-dashboard-period .db-navigation button{font-size:10px;padding:9px 8px;min-height:40px}
   .shell .db-dashboard-period .db-date-controls input[type=date]{width:147px;font-size:14px;min-height:40px}
+  .db-dashboard-period .db-date-controls>label{width:100%;justify-content:space-between;font-size:12px}
+  .shell .db-dashboard-period .db-date-controls input:is([type=date],[type=month]){width:min(220px,70%);font-size:16px;min-height:44px}
+  .db-dashboard-period .db-navigation{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%;gap:7px}
+  .shell .db-dashboard-period .db-navigation button{font-size:11px;min-height:44px;padding:10px 6px}
   .db-list-heading{padding:19px 18px}
   .db-appointment-row{grid-template-columns:minmax(0,1fr) auto;gap:11px 14px;padding:19px 18px}
   .db-list-time{grid-column:1;grid-row:1}
@@ -324,3 +331,18 @@
 .shell .db-calendar-page .db-diary .jb-grid-event.is-short strong{font-size:10px;line-height:12px}
 .shell .db-calendar-page .db-diary .jb-grid-event.is-short small{font-size:9px;line-height:11px;margin-top:1px}
 .shell .db-calendar-page .db-diary .jb-grid-event.is-short small~small{display:none}
+
+/* Essential keeps paid features discoverable with an accessible plan explanation. */
+.shell .side-nav a.jb-tier-link{position:relative;color:var(--theme-muted,#65717d)!important}
+html[data-workspace-theme] .shell .side-nav a.jb-tier-link{color:var(--theme-muted,#65717d)!important}
+.jb-tier-lock{display:inline-flex;align-items:center;justify-content:center;width:14px;height:16px;flex:0 0 14px;margin-left:auto}
+.jb-tier-lock svg{display:block;width:14px;height:16px}
+.jb-tier-tooltip{display:none;position:absolute;left:0;bottom:calc(100% + 5px);width:max-content;max-width:230px;padding:9px 11px;z-index:90;background:var(--theme-panel,#fff);color:var(--theme-body,#243247);border:1px solid var(--theme-line,#dce3e8);border-radius:8px;font-size:12px;line-height:1.5;font-weight:400;white-space:normal;box-shadow:0 4px 14px #00000012}
+.jb-tier-link:hover .jb-tier-tooltip,.jb-tier-link:focus-visible .jb-tier-tooltip{display:block}
+.jb-tier-upgrade p{line-height:1.7;max-width:600px}
+.jb-tier-upgrade .row{margin-top:20px;flex-wrap:wrap}
+.jb-calendar-owner{min-width:0}
+.shell .jb-calendar-locked{display:inline-flex;align-items:center;gap:12px;min-height:42px;max-width:100%;padding:10px 14px;border:1px solid var(--theme-line,#dce3e8);border-radius:9px;background:var(--theme-panel,#fff);color:var(--theme-muted,#65717d);font-size:12px;cursor:help}
+.jb-calendar-locked>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jb-calendar-locked:focus-visible{outline:2px solid var(--theme-focus,#235789);outline-offset:3px}
+@media(max-width:800px){.jb-tier-tooltip{max-width:min(230px,calc(100vw - 48px))}.shell .jb-calendar-locked{font-size:13px;min-height:44px}}

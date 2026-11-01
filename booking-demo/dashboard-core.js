@@ -27,12 +27,26 @@
       label = format(date, {month:'long',year:'numeric'});
       shortLabel = format(date, {month:'short',year:'numeric'});
     } else {
-      label = format(first, {day:'numeric',month:'long',...(first.getUTCFullYear() !== last.getUTCFullYear() ? {year:'numeric'} : {})}) +
-        ' to ' + format(last, {day:'numeric',month:'long',year:'numeric'});
+      label = format(first, {weekday:'long',day:'numeric',month:'long',...(first.getUTCFullYear() !== last.getUTCFullYear() ? {year:'numeric'} : {})}) +
+        ' to ' + format(last, {weekday:'long',day:'numeric',month:'long',year:'numeric'});
       shortLabel = format(first, {day:'numeric',month:'short'}) + ' to ' + format(last, {day:'numeric',month:'short'});
     }
     return {start:key(first),end:key(last),days,label,shortLabel,view:selected};
   }
+  function normalizeAnchor(value, view = 'day') {
+    const input = view === 'month' && /^\d{4}-\d{2}$/.test(String(value || '')) ? value + '-01' : value;
+    return range(input, view).start;
+  }
+  function shift(anchor, view, direction) {
+    if (direction !== -1 && direction !== 1) throw new RangeError('Choose the previous or next period.');
+    const first = parse(normalizeAnchor(anchor, view));
+    if (view === 'month') first.setUTCMonth(first.getUTCMonth() + direction, 1);
+    else first.setUTCDate(first.getUTCDate() + direction * (view === 'week' ? 7 : 1));
+    const next = key(first);
+    if (!parse(next)) throw new RangeError('Choose a valid calendar date.');
+    return next;
+  }
+  const inRange = (period, date) => !!parse(date) && date >= period.start && date <= period.end;
   const pence = value => {const number = Number(value); return Number.isFinite(number) && number >= 0 ? Math.round(number * 100) : 0;};
   function summary(salon, {date, view = 'day', staffIds = null} = {}) {
     const period = range(date, view);
@@ -40,7 +54,7 @@
     const selected = staffIds === null ? null : new Set((Array.isArray(staffIds) ? staffIds : []).filter(id => roster.has(id)));
     let booked = 0, confirmed = 0, completed = 0, cancelled = 0, noShow = 0, completedPence = 0, scheduledPence = 0;
     for (const booking of Array.isArray(salon?.bookings) ? salon.bookings : []) {
-      if (!booking || !parse(booking.date) || booking.date < period.start || booking.date > period.end || (selected && !selected.has(booking.staffId))) continue;
+      if (!booking || !inRange(period, booking.date) || (selected && !selected.has(booking.staffId))) continue;
       const status = String(booking.status || '').toLowerCase().replace(/[_ ]/g, '-');
       if (status === 'cancelled') {cancelled++; continue;}
       if (status === 'no-show') {noShow++; continue;}
@@ -51,5 +65,5 @@
     }
     return {range:period,booked,confirmed,completed,cancelled,noShow,completedValue:completedPence / 100,scheduledValue:scheduledPence / 100};
   }
-  if (typeof window !== 'undefined') window.JovaDashboard = {range,summary};
+  if (typeof window !== 'undefined') window.JovaDashboard = {range,summary,normalizeAnchor,shift,inRange};
 })();

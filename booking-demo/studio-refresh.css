@@ -227,11 +227,11 @@ body:has(.shell){--panel-inset:24px;--control-height:44px;--control-inline:14px}
 .st-business-hours-heading h2{margin:0 0 6px;font-size:26px;font-weight:500;letter-spacing:-.6px}
 .st-business-hours-heading p{margin:0;color:var(--theme-muted,var(--muted));font-size:14px}
 .st-business-settings .ws-simple-hours{margin:0;max-width:none}
-.st-business-settings form[data-form=ws-business-hours]>.ws-details{padding:0;border:1px solid var(--theme-line,var(--line));border-radius:14px;min-width:0}
-.st-business-settings form[data-form=ws-business-hours]>.ws-details>summary{padding:14px 16px;min-height:50px;margin:0}
-.st-business-settings form[data-form=ws-business-hours]>.ws-details>summary:focus-visible{outline-offset:-4px}
-.st-business-settings form[data-form=ws-business-hours]>.ws-details>.ws-two{margin:0;padding:0 16px 12px}
-.st-business-settings form[data-form=ws-business-hours]>.ws-details>.ws-help{margin:0!important;padding:0 16px 16px}
+.st-business-settings .bs-hours-fields>.ws-details{padding:0;border:1px solid var(--theme-line,var(--line));border-radius:14px;min-width:0}
+.st-business-settings .bs-hours-fields>.ws-details>summary{padding:14px 16px;min-height:50px;margin:0}
+.st-business-settings .bs-hours-fields>.ws-details>summary:focus-visible{outline-offset:-4px}
+.st-business-settings .bs-hours-fields>.ws-details>.ws-two{margin:0;padding:0 16px 12px}
+.st-business-settings .bs-hours-fields>.ws-details>.ws-help{margin:0!important;padding:0 16px 16px}
 @media(max-width:800px){.st-business-hours{margin-top:25px;scroll-margin-top:90px}.st-business-hours-heading h2{font-size:23px}.st-business-utilities{grid-template-columns:minmax(0,1fr)}}
 .shell .sm-sidebar-title{padding:8px 12px 16px}
 .shell .sm-categories>button{padding:11px 12px}
@@ -293,3 +293,11 @@ body:has(.shell) #modal-root .modal-head button{width:36px;height:36px;min-heigh
 .booking-flow .jb-public-date-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
 @media(max-width:800px){.booking-flow .jb-public-date-layout{grid-template-columns:1fr}.booking-flow .booking-layout>.card{padding:24px}}
 @media(max-width:600px){.book-header{padding-inline:18px}.booking-flow{padding:24px 18px 48px}.booking-progress ol{gap:8px}.booking-progress li{font-size:11px;padding-bottom:10px}.booking-back-row{margin-bottom:16px}.booking-flow .booking-layout>.card{padding:20px}.booking-flow .form-footer>span:empty{display:none}}
+
+.bs-fields,.bs-hours-fields{border:0;padding:0;margin:0;min-width:0}
+.bs-save-bar{position:sticky;bottom:16px;z-index:5;padding:16px 24px;margin-top:24px;background:var(--theme-panel,#fff);border:1px solid var(--theme-line,#ddd);border-radius:18px;box-shadow:0 4px 18px #0000000a}
+.bs-staff-help{margin:18px 0 0;color:var(--theme-muted,#666);font-size:13px;line-height:1.6}
+.bs-staff-help a{text-underline-offset:3px}
+.df-leave-warning{padding:18px;margin-top:20px;background:var(--theme-inset,#f3f3f3);border:1px solid var(--theme-line,#ddd);border-radius:14px}
+.df-leave-warning p{margin:0 0 14px;line-height:1.6}.df-leave-warning .row{gap:10px;flex-wrap:wrap}
+@media(max-width:800px){.bs-save-bar{bottom:10px;padding:14px 16px}.bs-save-bar .df-save-status{font-size:12px}}
