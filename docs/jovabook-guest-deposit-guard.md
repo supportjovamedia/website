@@ -1,0 +1,19 @@
+# Guest deposits: fail-closed guard
+
+Apply additive migration `20261101123635_jovabook_guest_deposit_guard.sql` after the current schema. This source change does not apply it to any hosted database, contact a provider or alter business settings.
+
+The legacy guest RPC derives a deposit from editable salon payment settings and inserts a confirmed booking plus a public payment record without verifying capture. Disposable full-schema reproduction produced a confirmed £10-deposit booking, one extra client, one public payment and two mail records, while the private verified-capture ledger remained empty. Public payment rows are not capture evidence.
+
+Until genuine hosted guest capture is implemented, any enabled positive effective deposit blocks a new online booking. The effective amount uses the server's tenant-scoped service price and configured deposit, independent of Card, PayPal, null or untrusted method values. The response is `ok:false`, code `online_deposit_unavailable`, asking the customer to contact the business. The rejection inserts no client, booking, payment, notification, SMS request or commission event. Required deposits are not silently waived.
+
+Payment-disabled bookings, configured zero deposits and free services with a zero effective deposit retain the existing booking flow. Malformed enabled-payment settings fail closed with a contact-business message. Owner/manual scheduling remains separate. Business contact handling outside online booking remains the owner's responsibility.
+
+The migration copies the current canonical booking implementation into a private, execution-revoked helper, then uses CREATE OR REPLACE on the existing public signature. Its OID, owner, ACL and default argument remain intact. Allowed requests delegate through the preserved billing, horizon and slot wrappers. The owner advisory lock and row-share locks protect the checked tenant, payment settings and service price through that delegation. Both row locks use NOWAIT: conflicting legacy updates return a clear `booking_busy` retry response before writes, avoiding a wait behind their different lock order; missing or changed scopes do not delegate to a newly created tenant or service.
+
+The existing SMS wrapper calls the same canonical public function for new requests. Previously committed request IDs still return their exact cached result without creating another booking or charge. This does not certify historical deposits as captured. No historical booking, payment, mail or SMS result is deleted, rewritten or marked paid by this guard.
+
+Before hosted rollout, inspect the current function definition for drift, apply through the reviewed migration workflow, and check public OID/ACL plus private helper revocation. Keep provider delivery and financial switches unchanged. The offline manifest includes this migration; existing marked synthetic databases will report source drift and require their normal explicit test-only reset. Never reset a hosted database for this check.
+
+Validation: `node --test tests/jovabook-guest-deposit-guard.test.mjs tests/jovabook-test-db.test.mjs`. The first test deliberately reproduces the old defect before installing the guard in a disposable PGlite fixture. It then checks direct and SMS rejection, no-write snapshots, free/zero/disabled paths, tenant boundaries, historic retry preservation, OID/ACL and existing booking constraints. These are SQL-only tests, not hosted Auth, real payment, transport or multi-connection PostgreSQL concurrency proof.
+
+There is no activation flag for guest deposit capture in this change. Removing this guard requires a separately reviewed flow with server-verified provider capture, durable request identity, slot reservation, webhook reconciliation and refund handling. An integration account marked verified or a browser-selected payment method is insufficient.
