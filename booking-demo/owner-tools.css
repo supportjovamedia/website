@@ -82,3 +82,82 @@
 .shell .ot-insights .ot-empty p{font-size:12px;color:#8c7869}
 @media(max-width:1150px){.shell .ot-insights .ot-columns{grid-template-columns:minmax(0,1fr)}.shell .ot-insights .ot-service-ranking{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;row-gap:22px}.shell .ot-insights .ot-metric strong{font-size:37px}}
 @media(max-width:600px){.shell .ot-insights .ot-heading h1{font-size:32px}.shell .ot-insights .ot-filters{padding:18px;gap:13px}.shell .ot-insights .ot-filters button{width:100%}.shell .ot-insights .ot-metrics{gap:11px}.shell .ot-insights .ot-metric{padding:20px 17px;border-radius:21px;min-height:149px}.shell .ot-insights .ot-metric strong{font-size:31px;letter-spacing:-.9px;margin-top:14px}.shell .ot-insights .ot-metric>span{font-size:12px}.shell .ot-insights .ot-metric small{font-size:10px}.shell .ot-insights .ot-panel{padding:23px 18px 20px;border-radius:22px}.shell .ot-insights .ot-panel h2{font-size:21px}.shell .ot-insights .ot-panel-heading{align-items:flex-start}.ot-chart-key{margin-top:7px;font-size:9px}.shell .ot-insights .ot-service-ranking{grid-template-columns:1fr}.ot-volume-figure figcaption{display:grid;gap:8px}.shell .ot-insights .ot-statuses{gap:13px 20px}.shell .ot-insights .ot-statuses>div{font-size:11px}}
+
+/* One compact repeat-visit panel, using the active workspace palette. */
+.shell .ot-insights .ot-client-visits{margin-top:21px}
+.ot-client-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+.ot-client-columns>div{min-width:0}
+.shell .ot-insights .ot-client-columns h3{font-size:16px;font-weight:500;line-height:1.4;margin:0;color:var(--theme-heading,#38271f)}
+.ot-client-bar{height:12px;background:var(--theme-primary,#934b34);border-radius:6px;overflow:hidden;margin:24px 0 18px}
+.ot-client-bar>span{display:block;height:100%;background:var(--theme-soft,#ead5d0)}
+.ot-client-counts{display:flex;gap:28px;margin:0 0 20px}
+.ot-client-counts>div{flex:1;min-width:0}
+.ot-client-counts dt{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--theme-muted,#786c65)}
+.ot-client-counts dd{font-size:25px;line-height:1.25;font-variant-numeric:tabular-nums;margin:9px 0 0;color:var(--theme-heading,#38271f)}
+.ot-client-dot{display:block;flex:none;width:8px;height:8px;border-radius:50%;background:var(--theme-primary,#934b34)}
+.ot-client-dot-first{background:var(--theme-soft,#ead5d0);border:1px solid var(--theme-control-line,#c9b3a6)}
+.shell .ot-insights .ot-client-note,.shell .ot-insights .ot-client-footnote{font-size:12px;line-height:1.7;color:var(--theme-muted,#786c65);margin:12px 0 0}
+.ot-client-next{border-left:1px solid var(--theme-line,#e9e1da);padding-left:40px}
+.ot-client-next-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.ot-client-next-heading>strong{font-size:25px;line-height:1.25;font-weight:500;font-variant-numeric:tabular-nums;color:var(--theme-heading,#38271f)}
+.ot-client-followup{list-style:none;margin:18px 0 0;padding:0}
+.ot-client-followup li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;border-top:1px solid var(--theme-line,#e9e1da)}
+.ot-client-followup li>div{min-width:0}
+.shell .ot-insights button.ot-client-link{display:block;text-align:left;max-width:100%;padding:0;min-height:28px;background:transparent;border:0;border-radius:0;color:var(--theme-heading,#38271f);font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}
+.ot-client-link:focus-visible{outline:2px solid var(--theme-focus,#235789);outline-offset:4px}
+.ot-client-followup li>div>span{display:block;font-size:11px;line-height:1.6;color:var(--theme-muted,#786c65);margin-top:4px}
+.ot-client-record-hint{flex:none;font-size:11px;color:var(--theme-muted,#786c65)}
+.shell .ot-insights .ot-client-empty{font-size:13px;line-height:1.7;color:var(--theme-body,#49362c);margin:20px 0}
+.shell .ot-insights .ot-client-footnote{margin-top:24px;padding-top:17px;border-top:1px solid var(--theme-line,#e9e1da);font-size:11px}
+@media(max-width:760px){.ot-client-columns{grid-template-columns:minmax(0,1fr);gap:26px}.ot-client-next{padding:24px 0 0;border-left:0;border-top:1px solid var(--theme-line,#e9e1da)}.ot-client-record-hint{display:none}.shell .ot-insights button.ot-client-link{min-height:36px}}
+
+/* One Premium comparison, derived from completed bookings. Standard content above is unchanged. */
+.shell .ot-insights .ot-compare{margin-top:21px;color:var(--theme-body,#49362c);overflow:hidden}
+.ot-compare-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:24px}
+.ot-premium-badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:7px;background:var(--theme-soft,#ead5d0);color:var(--theme-primary,#934b34);font-size:10px;line-height:1.3;font-weight:600;margin-bottom:12px}
+.shell .ot-insights .ot-compare h2{color:var(--theme-heading,#38271f);margin:0 0 7px}
+.shell .ot-insights .ot-compare-heading p,.shell .ot-insights .ot-compare-locked p{font-size:12px;color:var(--theme-muted,#786c65);line-height:1.7;margin:0}
+.ot-compare-toggle{display:flex;flex:none;padding:4px;gap:4px;border-radius:11px;background:var(--theme-inset,#f8f5f1);border:1px solid var(--theme-line,#e9e1da);margin-top:9px}
+.shell .ot-insights .ot-compare-toggle button{min-height:38px;padding:9px 13px;border:0;border-radius:7px;font:inherit;font-size:11px;font-weight:500;background:transparent;color:var(--theme-body,#49362c);white-space:normal;line-height:1.45}
+.shell .ot-insights .ot-compare-toggle button[aria-pressed=true]{background:var(--theme-primary,#934b34);color:var(--theme-on-primary,#fff);box-shadow:0 2px 4px #00000008}
+html[data-workspace-theme] .shell .ot-insights .ot-compare-toggle button[aria-pressed=true]{color:var(--theme-on-primary,#fff)!important}
+.shell .ot-insights .ot-compare-toggle button:hover:not(:disabled):not([aria-pressed=true]){background:var(--theme-soft,#ead5d0)}
+.ot-compare-toggle button:focus-visible,.ot-compare-upgrade:focus-visible,.ot-compare-chart-scroll:focus-visible{outline:2px solid var(--theme-focus,#235789);outline-offset:4px}
+.ot-compare-toggle button:disabled{opacity:.5;cursor:not-allowed}
+.ot-compare-legend{display:flex;align-items:center;flex-wrap:wrap;gap:11px 26px;color:var(--theme-muted,#786c65);font-size:11px;line-height:1.65}
+.ot-compare-legend>span{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ot-compare-legend b{font-weight:500;color:var(--theme-heading,#38271f)}
+.ot-compare-legend i{display:block;width:19px;height:3px;background:var(--theme-primary,#934b34);border-radius:3px}
+.ot-compare-legend>span:nth-child(2) i{height:0;background:none;border-top:2px dashed var(--theme-muted,#786c65);border-radius:0}
+.shell .ot-insights .ot-compare-window{font-size:11px;line-height:1.7;color:var(--theme-muted,#786c65);margin:12px 0 20px}
+.ot-compare-figure{margin:0;min-width:0}.ot-compare-chart-scroll{overflow-x:auto;max-width:100%;overscroll-behavior-x:contain}
+.ot-compare-chart{display:block;width:100%;min-width:var(--ot-compare-min,620px);height:auto;font-family:inherit;overflow:visible}
+.ot-compare-grid line{stroke:var(--theme-line,#e9e1da);stroke-width:1}.ot-compare-grid text,.ot-compare-date{fill:var(--theme-muted,#786c65);font-size:12px}
+.ot-compare-area{fill:var(--theme-soft,#ead5d0);opacity:.28}
+.ot-compare-current-line{fill:none;stroke:var(--theme-primary,#934b34);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:ot-compare-enter .18s ease-out}
+.ot-compare-previous-line{fill:none;stroke:var(--theme-muted,#786c65);stroke-width:2;stroke-dasharray:6 5;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.ot-compare-current-point{fill:var(--theme-panel,#fff);stroke:var(--theme-primary,#934b34);stroke-width:2;vector-effect:non-scaling-stroke;outline:none}
+.ot-compare-previous-point{fill:var(--theme-panel,#fff);stroke:var(--theme-muted,#786c65);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.ot-compare-hit:focus-within .ot-compare-current-point,.ot-compare-hit:hover .ot-compare-current-point{fill:var(--theme-primary,#934b34);stroke-width:4}
+.ot-compare-tooltip{visibility:hidden;pointer-events:none}.ot-compare-tooltip rect{fill:var(--theme-panel,#fff);stroke:var(--theme-control-line,#c9b3a6);stroke-width:1;filter:drop-shadow(0 3px 5px #00000009)}
+.ot-compare-tooltip text{font-size:12px;fill:var(--theme-heading,#38271f)}
+.ot-compare-hit:focus-within .ot-compare-tooltip,.ot-compare-hit:hover .ot-compare-tooltip{visibility:visible}
+.ot-compare-figure figcaption{font-size:10px;line-height:1.7;color:var(--theme-muted,#786c65);margin-top:9px}
+.ot-compare-changes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:23px 0 0;border-top:1px solid var(--theme-line,#e9e1da);padding-top:21px;gap:24px}
+.ot-compare-changes>div{min-width:0}.ot-compare-changes>div+div{padding-left:24px;border-left:1px solid var(--theme-line,#e9e1da)}
+.ot-compare-changes dt{font-size:12px;color:var(--theme-muted,#786c65);line-height:1.6}
+.ot-compare-changes dd{font-size:28px;color:var(--theme-heading,#38271f);font-weight:450;letter-spacing:-.6px;line-height:1.25;margin:10px 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.shell .ot-insights .ot-compare-changes p{font-size:11px;line-height:1.65;color:var(--theme-body,#49362c);margin:0 0 5px}
+.ot-compare-changes small{font-size:10px;color:var(--theme-muted,#786c65);line-height:1.7}
+.shell .ot-insights .ot-compare-service{display:flex;align-items:baseline;gap:8px 14px;flex-wrap:wrap;border-top:1px solid var(--theme-line,#e9e1da);padding:18px 0 0;margin:22px 0 0;font-size:12px;line-height:1.65;color:var(--theme-body,#49362c)}
+.ot-compare-service>span{color:var(--theme-muted,#786c65);font-size:11px}.ot-compare-service b{font-weight:500;color:var(--theme-heading,#38271f);overflow-wrap:anywhere}.ot-compare-service strong{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--theme-primary,#934b34)}
+.ot-compare-service small{flex-basis:100%;color:var(--theme-muted,#786c65);font-size:10px}
+.shell .ot-insights .ot-compare-note,.shell .ot-insights .ot-compare-no-records{color:var(--theme-muted,#786c65);font-size:11px;line-height:1.75;margin:18px 0 0}
+.ot-compare-future{padding:25px 0 10px}.shell .ot-insights .ot-compare-future h3{font-size:18px;font-weight:450;color:var(--theme-heading,#38271f);margin:0 0 10px}.shell .ot-insights .ot-compare-future p{font-size:12px;line-height:1.8;max-width:600px;color:var(--theme-muted,#786c65)}
+.ot-compare-locked{display:grid;grid-template-columns:minmax(0,1fr) 210px;align-items:center;gap:40px}.ot-compare-locked>div:first-child{max-width:590px}
+.ot-compare-upgrade{display:inline-flex;font-size:12px;font-weight:500;color:var(--theme-primary,#934b34);margin-top:17px;text-decoration:underline;text-underline-offset:4px;min-height:28px;align-items:center}
+.ot-compare-lock-art{padding:22px 20px;border:1px solid var(--theme-line,#e9e1da);border-radius:14px;background:var(--theme-inset,#f8f5f1);color:var(--theme-muted,#786c65);font-size:10px;text-align:center}
+.ot-compare-lock-art svg{width:150px;max-width:100%;height:auto;display:block;margin-bottom:10px}.ot-compare-lock-art path{stroke:var(--theme-primary,#934b34);stroke-width:2.5;opacity:.5}.ot-compare-lock-art path+path{stroke:var(--theme-muted,#786c65);stroke-dasharray:5 5;opacity:.6}
+@keyframes ot-compare-enter{from{opacity:.25}to{opacity:1}}
+@media(max-width:900px){.ot-compare-heading{flex-direction:column;gap:17px}.ot-compare-toggle{margin:0}.ot-compare-changes{gap:15px}.ot-compare-changes>div+div{padding-left:15px}}
+@media(max-width:600px){.ot-compare-heading{margin-bottom:21px}.ot-compare-toggle{width:100%;gap:3px}.shell .ot-insights .ot-compare-toggle button{flex:1;min-height:44px;padding:8px 9px;font-size:11px}.ot-compare-legend{gap:9px;align-items:flex-start;flex-direction:column}.ot-compare-changes{grid-template-columns:1fr;gap:17px;padding-top:18px;margin-top:18px}.ot-compare-changes>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;align-items:baseline}.ot-compare-changes>div+div{padding:17px 0 0;border-left:0;border-top:1px solid var(--theme-line,#e9e1da)}.ot-compare-changes dd{font-size:25px;margin:0;grid-column:2;grid-row:1 / span 2;text-align:right}.ot-compare-changes p{grid-column:1}.ot-compare-changes small{grid-column:1 / -1}.ot-compare-locked{grid-template-columns:1fr;gap:20px}.ot-compare-lock-art{display:none}.ot-compare-upgrade{min-height:44px}.ot-compare-service{gap:7px 10px}}
+@media(prefers-reduced-motion:reduce){.ot-compare-current-line{animation:none}}

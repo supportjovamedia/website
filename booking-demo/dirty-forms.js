@@ -1,7 +1,7 @@
 /* Consistent, local-only unsaved indicators for owner settings and editor forms. */
 (() => {
  'use strict';
- const types=new Set(['settings','service','category','customer','workspace-appearance','ws-business-hours','ws-staff-hours','ws-booking-page','deposit']);
+ const types=new Set(['settings','service','category','customer','workspace-appearance','ws-business-hours','ws-staff-hours','ws-booking-page','deposit','manual-booking','edit-booking','reschedule','portal','onboard-business','onboard-owner','owner-series','sr-settings','sb-provider-change','sb-plan-change']);
  const records=new WeakMap();let queued=false;
  function serialize(elements){return JSON.stringify(Array.from(elements).filter(e=>e.name&&!['button','submit','reset','file','image'].includes(e.type)).map(e=>[e.name,e.type||e.tagName,e.type==='checkbox'||e.type==='radio'?!!e.checked:e.multiple?Array.from(e.selectedOptions||[],option=>option.value):String(e.value??'')]));}
  function signature(form){return serialize(form.elements);}
@@ -22,6 +22,8 @@
  function saved(form){const record=records.get(form);if(!record)return;record.baseline=signature(form);update(form);}
  function dirty(form){const record=records.get(form);return !!record&&signature(form)!==record.baseline;}
  function start(){scan();const observer=new MutationObserver(schedule);for(const id of ['app','modal-root']){const root=document.getElementById(id);if(root)observer.observe(root,{childList:true,subtree:true});}}
- window.JovaDirtyForms={saved,isDirty:dirty,scan,serialize};
+ const hasChanges=(root=document)=>Array.from(root.querySelectorAll('form[data-form]')).some(form=>dirty(form)||form.dataset.dirty==='true');
+ function discard(root=document){root.querySelectorAll('form[data-form]').forEach(form=>{saved(form);form.dataset.dirty='false';});}
+ window.JovaDirtyForms={saved,isDirty:dirty,scan,serialize,hasChanges,discard};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();

@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const context = {window:{}};
 vm.runInNewContext(await readFile(new URL('../dashboard-core.js',import.meta.url),'utf8'),context);
-const {range,summary} = context.window.JovaDashboard;
+const {range,summary,normalizeAnchor,shift,inRange} = context.window.JovaDashboard;
 const plain = value => JSON.parse(JSON.stringify(value));
 test('day, Monday-based week and calendar month include correct boundaries',()=>{
  assert.deepEqual(plain(range('2026-12-31','day').days),['2026-12-31']);
@@ -18,6 +18,38 @@ test('date arithmetic is continuous through both UK DST changes',()=>{
  const spring=range('2026-03-29','week');assert.equal(spring.start,'2026-03-23');assert.equal(spring.end,'2026-03-29');assert.equal(new Set(spring.days).size,7);
  const autumn=range('2026-10-25','week');assert.equal(autumn.start,'2026-10-19');assert.equal(autumn.end,'2026-10-25');assert.equal(new Set(autumn.days).size,7);
  assert.equal(range('2026-03-29','month').days.length,31);assert.equal(range('2026-10-25','month').days.length,31);
+});
+
+test('period pickers normalize weeks to Monday and accept actual calendar month values only',()=>{
+ assert.equal(normalizeAnchor('2027-01-03','week'),'2026-12-28');
+ assert.equal(normalizeAnchor('2026-11-04','week'),'2026-11-02');
+ assert.equal(normalizeAnchor('2024-02','month'),'2024-02-01');
+ assert.equal(normalizeAnchor('2024-02-29','day'),'2024-02-29');
+ for(const invalid of ['','2026-13','2026-00','2026-02-29','2026-03-32'])assert.throws(()=>normalizeAnchor(invalid,'month'),/valid calendar date/);
+ assert.throws(()=>normalizeAnchor('2026-11-04','custom'),/day, week or month/);
+ const label=range('2027-01-03','week').label;assert(label.includes('Monday')&&label.includes('Sunday')&&label.includes('2026')&&label.includes('2027'));
+});
+
+test('previous and next periods preserve calendar boundaries across leap years, year changes and DST',()=>{
+ assert.equal(shift('2024-01-31','month',1),'2024-02-01');
+ assert.equal(range(shift('2024-01-31','month',1),'month').end,'2024-02-29');
+ assert.equal(shift('2026-03-31','month',-1),'2026-02-01');
+ assert.equal(shift('2026-12-31','month',1),'2027-01-01');
+ assert.equal(shift('2027-01-31','month',-1),'2026-12-01');
+ assert.equal(shift('2024-02-28','day',1),'2024-02-29');
+ assert.equal(shift('2024-03-01','day',-1),'2024-02-29');
+ assert.equal(shift('2026-03-29','day',1),'2026-03-30');
+ assert.equal(shift('2026-10-25','day',1),'2026-10-26');
+ assert.equal(shift('2026-03-29','week',1),'2026-03-30');
+ assert.equal(shift('2026-10-25','week',1),'2026-10-26');
+ assert.equal(shift('2027-01-03','week',1),'2027-01-04');
+ assert.throws(()=>shift('2026-11-04','week',0),/previous or next/);
+});
+
+test('list membership uses the same validated inclusive period as the metrics',()=>{
+ const period=range('2026-10-20','month');
+ for(const date of [period.start,period.end])assert(inRange(period,date));
+ for(const date of ['2026-09-30','2026-11-01','2026-10-20garbage','2026-10-00','2026-10-32',null])assert.equal(inRange(period,date),false);
 });
 const fixture=()=>({staff:[{id:'a',active:true},{id:'b',active:false}],services:[{id:'cut',price:999}],bookings:[
  {id:'one',date:'2026-10-31',time:'09:00',staffId:'a',serviceId:'cut',status:'confirmed',price:25,deposit:10},
