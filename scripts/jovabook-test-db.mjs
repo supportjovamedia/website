@@ -19,7 +19,7 @@ export const BASE_DIR=path.join(REPO_ROOT,'.jovabook-test');
 export const DATA_DIR=path.join(BASE_DIR,'data');
 const MARKER_FILE=path.join(BASE_DIR,'marker.json'),LOCK_FILE=path.join(BASE_DIR,'cli.lock');
 const FORMAT='jovabook-isolated-local-test-v1',FIXTURES='fictional-example-test-v1';
-export const MANIFEST_VERSION=12,BOOTSTRAP_VERSION=2;
+export const MANIFEST_VERSION=13,BOOTSTRAP_VERSION=2;
 export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql',
  'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
@@ -43,7 +43,8 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261102180000_contact_phone_validation.sql',
  'migrations/20261102190000_booking_origin_upsert.sql',
  'migrations/20261102191000_manual_booking_email_audience.sql',
- 'migrations/20261102200423_public_deposit_percentage.sql']);
+ 'migrations/20261102200423_public_deposit_percentage.sql',
+ 'migrations/20261102210740_card_required_trials.sql']);
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
  'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
@@ -200,6 +201,9 @@ export async function bootstrap(db,source){
   const number=index+1,email='owner-'+number+'@example.test',client='client-'+number+'@example.test';
   await db.query('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now())',[OWNERS[index],email]);
   await db.query(`insert into public.salons(id,owner_id,name,slug,owner_name,email,email_norm,address,phone,settings,status) values($1,$2,$3,$4,$5,$6,$6,'Fictional test address','00000000000',$7,'active')`,[SALONS[index],OWNERS[index],'Fictional Business '+number,'fictional-business-'+number,'Test Owner '+number,email,JSON.stringify({seeded:true,hours:{start:'09:00',end:'18:00',days:[0,1,2,3,4,5,6]},buffer:0,notice:0,workspace:{}})]);
+  // These local-only legacy fixtures keep existing diary/RLS probes usable. New card trials have a dedicated suite.
+  await db.query("update jovabook_private.billing_accounts set card_trial_required=false,trial_started_at=now(),trial_ends_at=now()+interval '72 hours' where salon_id=$1",[SALONS[index]]);
+  await db.query("update public.salons set status='trialing',trial_ends_at=now()+interval '72 hours' where id=$1",[SALONS[index]]);
   await db.query("insert into public.categories(salon_id,id,name) values($1,'consultations','Consultations')",[SALONS[index]]);
   await db.query("insert into public.staff(salon_id,id,name,role) values($1,'owner','Test calendar','Owner')",[SALONS[index]]);
   await db.query("insert into public.services(salon_id,id,name,price,duration,category_id,staff_ids) values($1,'consultation','Test consultation',25,30,'consultations',array['owner'])",[SALONS[index]]);
