@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import s from "./ScrollStories.module.css";
 import MotionRegion from "./MotionRegion";
 
@@ -129,6 +129,7 @@ export function ProcessStory({ paused }) {
 
 export function FaqStory({ paused, items = questions, contactHref = "/contact", contactLabel = "Contact Us", introduction = "About your website, the scope and what happens next.", showArtwork = true }) {
   const root = useRef(null);
+  const groupName = useId();
   useStoryMotion(root, paused, true);
   return <section id="faq" className={s.faq} ref={root} aria-labelledby="faq-title" data-site-faq>
     <div className={s.faqIntro}>
@@ -141,7 +142,7 @@ export function FaqStory({ paused, items = questions, contactHref = "/contact", 
     <ol className={s.answers} data-story-track>
       {items.map(([question, answer]) => <li className={s.answer} key={question} data-story-card>
         <span className={s.marker} data-story-marker aria-hidden="true">?</span>
-        <details className={s.bubble}><summary><h3>{question}</h3></summary><div className={s.answerContent}><p>{answer}</p></div></details>
+        <details name={groupName} className={s.bubble}><summary><h3>{question}</h3></summary><div className={s.answerContent}><p>{answer}</p></div></details>
       </li>)}
     </ol>
   </section>;

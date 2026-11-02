@@ -1,0 +1,14 @@
+.section{background:#f3f4f6;padding:55px 4.5% 65px}
+.inner{max-width:1420px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.card{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);min-height:270px;border-radius:24px;overflow:hidden;background:#fff;transition:background .2s}
+.card:hover{background:#fafbfc}
+.photo{position:relative;min-width:0;min-height:270px}
+.photo img{object-fit:cover}
+.copy{padding:28px 24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-width:0}
+.copy h3{font-size:clamp(23px,2.1vw,30px)!important;line-height:1.16!important;letter-spacing:-.045em!important;font-weight:600!important;margin:0 0 17px!important;color:#15232d}
+.copy p{font-size:15px!important;line-height:1.75!important;margin:0!important;color:#53657b;max-width:29ch;text-wrap:pretty}
+@media(min-width:651px) and (max-width:1100px){.grid{grid-template-columns:1fr;max-width:850px;margin:auto}.card{grid-template-columns:.85fr 1.15fr;min-height:255px}.photo{min-height:255px}.copy h3{font-size:29px!important}}
+@media(max-width:650px){.section{padding:38px 4% 45px}.grid{grid-template-columns:1fr;gap:18px}.card{grid-template-columns:42% 58%;min-height:215px;border-radius:20px}.photo{min-height:215px}.copy{padding:24px 17px}.copy h3{font-size:23px!important;margin-bottom:13px!important}.copy p{font-size:13px!important;line-height:1.7!important}}
+@media(max-width:360px){.copy{padding-inline:12px}.copy h3{font-size:21px!important}.copy p{font-size:12px!important}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}}

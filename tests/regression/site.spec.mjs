@@ -238,6 +238,11 @@ test('homepage FAQ cards are shared by contact and service pages, with readable 
       await card.locator('summary').press('Enter');
       await expect(card).not.toHaveAttribute('open');
     }
+    await cards.nth(0).locator('summary').click();
+    await cards.nth(1).locator('summary').click();
+    await expect(cards.nth(0)).not.toHaveAttribute('open');
+    await expect(faq.locator('details[open]')).toHaveCount(1);
+    await cards.nth(1).locator('summary').press('Enter');
     await noOverflow(page);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect.poll(() => cards.first().evaluate(el => getComputedStyle(el).transform)).toBe('none');

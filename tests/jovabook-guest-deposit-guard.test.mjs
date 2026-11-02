@@ -37,7 +37,7 @@ test('guest deposit guard rejects unverified charges atomically while preserving
    ...(opts.sms?[opts.consent!==false,opts.request||'30000000-0000-4000-8000-000000000001']:[])]);
  let legacySms,legacySmsBody;
  try{
-  const full=await sources(),entries=full.entries.filter(x=>x.name!==migration);
+  const full=await sources(),entries=full.entries.filter(x=>x.name!==migration&&!x.name.includes('jovabook_hosted_deposits')&&!x.name.includes('jovabook_deposit_attention'));
   // This deliberately old-schema fixture is never advertised as a current CLI DB.
   await bootstrap(db,{...full,entries,order:entries.map(x=>x.name),digest:'baseline-reproduction-only'});
   date=await value('select (current_date+15)::text data');

@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
-import s from "./jovabook.module.css";
+import s from "./story.module.css";
 
-export default function ProductScreen({name,alt,label,width,height,priority=false,className,caption=true}) {
+export default function ProductScreen({name,alt,label,width,height,priority=false,className,caption=true,previewName,previewWidth,previewHeight,sizes="(max-width: 800px) 100vw, 55vw"}) {
   const dialog = useRef(null);
   const titleId = useId();
   const [open,setOpen] = useState(false);
   const src = `/jovabook/${name}.webp`;
+  const preview = previewName ? `/jovabook/${previewName}.webp` : src;
   useEffect(() => {
     if (!open) return;
     const previous = document.documentElement.style.overflow;
@@ -25,7 +26,7 @@ export default function ProductScreen({name,alt,label,width,height,priority=fals
   }
   return <>
     <button className={`${s.screenOpen} ${caption ? s.screenWithCaption : ""}`} type="button" onClick={show} aria-label={`View ${label} full size`}>
-      <span className={s.screenImage}><Image className={className} src={src} alt={alt} width={width} height={height} unoptimized priority={priority} /></span>
+      <span className={s.screenImage}><Image className={className} src={preview} alt={alt} width={previewWidth || width} height={previewHeight || height} sizes={sizes} priority={priority} /></span>
       {caption && <span className={s.screenCaption}>View {label} full size<span aria-hidden="true">+</span></span>}
     </button>
     <dialog ref={dialog} className={s.screenDialog} style={{"--screen-width":name === "booking-mobile" ? "440px" : "1520px","--screen-detail-width":name === "booking-mobile" ? "375px" : "1440px"}} aria-labelledby={titleId} onKeyDown={keepFocus} onClose={() => setOpen(false)} onClick={event => { if (event.target === event.currentTarget) dialog.current.close(); }}>

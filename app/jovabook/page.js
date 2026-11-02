@@ -1,16 +1,18 @@
-import Link from "next/link";
 import EssentialOffer from "./EssentialOffer";
 import BookingPreview from "./BookingPreview";
-import ProductDetails from "./ProductDetails";
+import BusinessTypes from "./BusinessTypes";
+import BookingPartner from "./BookingPartner";
+import ProductStory from "./ProductStory";
+import StoryMotion from "./StoryMotion";
 import { FaqStory } from "@/components/ScrollStories";
 import { jovabookMetadata, jovabookStructuredData } from "./search-data.mjs";
-import s from "./jovabook.module.css";
+import s from "./story.module.css";
 
 export const metadata = jovabookMetadata();
 const faqs = [
   {
-    "question": "What can I use JovaBook for?",
-    "answer": "JovaBook is online booking software for salons and other service businesses that book clients into timed appointments. Add the services you offer, their prices and durations, and the hours clients can book."
+    "question": "Why should I use JovaBook?",
+    "answer": "JovaBook gives clients a way to book online while you manage your diary, services and client records in one workspace. Essential also includes a business website, so clients can learn about your business and find your booking link."
   },
   {
     "question": "How do clients book with my business?",
@@ -30,50 +32,49 @@ const faqs = [
   },
   {
     "question": "How do annual billing and commission work?",
-    "answer": "Annual subscriptions are paid upfront and cost 20% less than 12 monthly subscription payments. Essential and Standard also charge 1% of the full service price in the billing period when an appointment takes place. This commission is invoiced monthly, including on annual subscriptions. Premium has 0% booking commission."
+    "answer": "Annual subscriptions are paid upfront and cost 20% less than 12 monthly subscription payments. Essential and Standard also charge 1% of the full service price in the billing period when an appointment takes place. This commission is invoiced monthly, including on annual subscriptions. Premium has 0% booking commission. Payment-processing fees, where applicable, are separate."
   },
   {
     "question": "What happens after the 3-day trial?",
     "answer": "Your workspace trial starts when you register, including setup time. It does not automatically create a paid subscription. If you choose to subscribe, review the charge, billing frequency and terms in Stripe before confirming."
   },
   {
-    "question": "Can I collect deposits online?",
-    "answer": "Online deposit collection is not available yet. Connecting a payment-provider account does not currently enable checkout. You can use JovaBook to take bookings while collecting payment separately."
+    "question": "Can clients book through Instagram, and can I take deposits?",
+    "answer": "You can share your JovaBook booking link in your Instagram bio or messages. Clients follow that link to book on your page. A native Instagram Book Now integration is not available. Online deposit collection is also not available yet; connecting a payment-provider account does not currently enable customer checkout."
   }
 ];
-const signup = "https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup";
+const signup = "#plans";
 
 export default function JovaBookPage() {
   return <main className={s.page}>
-    <section className={s.hero} data-website-intro aria-labelledby="jovabook-title">
-      <div className={s.heroInner}>
-        <div className={s.heroCopy}>
-          <p className={s.productName}><span className={s.bookMark} aria-hidden="true"><i /><i /></span>Meet JovaBook</p>
-          <h1 id="jovabook-title">Online booking<br /><span>for your business.</span></h1>
-          <p className={s.lead}>Let clients choose a service and a time. Keep bookings, client details and your business website together in JovaBook.</p>
-          <div className={s.actions}><a className={s.primaryButton} href={signup}>Try JovaBook for free</a><a className={s.watchLink} href="#demo"><span className={s.playIcon} aria-hidden="true" />Watch the demo</a></div>
-          <p className={s.startingPrice}>Essential from £20/month + 1% booking commission.</p>
+    <StoryMotion>
+      <section className={s.hero} aria-labelledby="jovabook-title">
+        <div className={s.heroInner}>
+          <div className={s.heroCopy}>
+
+            <h1 id="jovabook-title">Online booking<br />software <span>for your business.</span></h1>
+            <div className={s.yellowRule} />
+            <p className={s.lead}>Let clients choose a service and a time. Keep your bookings, client details and business website together, so you can get on with the day.</p>
+            <div className={s.actions}><a className={s.primaryButton} href={signup}>Try JovaBook for free</a><a className={s.watchLink} href="#demo"><span className={s.playIcon} aria-hidden="true" />Watch the demo</a></div>
+          </div>
+          <BookingPreview />
         </div>
-        <BookingPreview />
-      </div>
-    </section>
-    <ProductDetails />
-    <section id="demo" className={s.demo} aria-labelledby="demo-title">
-      <div className={s.container}>
-        <div className={s.demoPanel}>
-          <div className={s.demoCopy}><span className={s.demoLabel}>A closer look</span><h2 id="demo-title">A booking.<br />A calmer day.</h2><p>See how JovaBook brings your bookings, calendar and clients together.</p><p className={s.demoDuration}><span className={s.playIcon} aria-hidden="true" />39 seconds with JovaBook</p></div>
-          <figure className={s.videoFigure}><div className={s.videoFrame}><video className={s.video} controls playsInline preload="none" poster="/jovabook/demo-poster.webp" aria-label="JovaBook product film" aria-describedby="demo-caption"><source src="/jovabook/demo.mp4" type="video/mp4" />Your browser does not support video. <a href="/jovabook/demo.mp4">Watch the JovaBook product film</a>.</video></div><figcaption id="demo-caption">See JovaBook in action.</figcaption></figure>
-        </div>
-        <div className={s.emailNote}><span className={s.emailIcon} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m3 6 9 7 9-7" /></svg></span><p><strong>A little nudge before the appointment.</strong> Booking emails and reminders are included when email delivery is activated. Check their delivery status in your workspace.</p></div>
-      </div>
-    </section>
-    <section className={s.costs} aria-labelledby="costs-title"><div className={s.container}><div className={s.costsPanel}>
-      <div><span className={s.costBadge}>No guesswork</span><h2 id="costs-title">Clear costs.<br />Before you commit.</h2><Link className={s.textLink} href="/contact">Talk through the costs with us</Link></div>
-      <div className={s.costDetails}><div className={s.costExample}><p>For an eligible £50 appointment</p><div><strong>£50</strong><span>service price</span><b aria-hidden="true">×</b><strong>1%</strong><span>commission</span><b aria-hidden="true">=</b><strong>50p</strong><span>booking commission</span></div></div><p>On Essential and Standard, 1% booking commission uses the full service price when an appointment takes place. Commission is billed monthly, including on annual subscriptions. Payment-processing fees are separate.</p><p>Premium removes JovaBook booking commission. Compare the subscription and staff allowances below to choose the plan that fits your team and appointment value.</p><p>Your 3-day workspace trial starts at registration, including setup. It does not automatically create a paid subscription. Review the charge, billing frequency and terms in Stripe before confirming.</p></div>
-    </div></div></section>
-    <section id="plans" className={s.plans} aria-labelledby="plans-title"><div className={s.container}><header className={s.sectionIntro}><h2 id="plans-title">One owner today.<br />Room for your next chapter.</h2><p>Start on your own. Add room for a team when you need it.</p><p className={s.planAvailability}>Essential is available now. Talk to us about Standard and Premium before choosing a team plan.</p></header><EssentialOffer /></div></section>
-    <div className={s.sharedFaq}><FaqStory items={faqs.map(({question,answer}) => [question,answer])} introduction="About bookings, plans and getting started." contactLabel="Ask the JovaMedia team" showArtwork={false} /></div>
-    <section className={s.finalCta} aria-labelledby="start-title"><div className={s.container}><h2 id="start-title">More time for<br />what you do best.</h2><p>Give clients a booking link. Keep your diary, client records and business website in one workspace.</p><a className={s.primaryButton} href={signup}>Try JovaBook for free</a><p className={s.finalTerms}>Essential: £20/month + 1% booking commission.<br />3-day workspace trial starts at registration, including setup.</p></div></section>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jovabookStructuredData({faqs,video:{duration:"PT39S",uploadDate:"2026-11-01T00:00:00+00:00"}})).replace(/</g,"\\u003c")}} />
+      </section>
+      <section id="demo" className={s.demo} aria-labelledby="demo-title"><div className={s.container}>
+        <header className={s.sectionHeading}><h2 id="demo-title">Everything your salon needs to take bookings and grow.</h2><p>Take a closer look at the tools inside JovaBook, one by one.</p><p>The film also previews text reminders and slot recovery, which are being prepared for team plans.</p></header>
+        <div className={s.videoStage} data-card-group><figure className={s.videoFigure} data-story-card><video className={s.video} controls playsInline preload="none" poster="/jovabook/demo-poster.webp" aria-label="JovaBook product film"><source src="/jovabook/demo.mp4" type="video/mp4" />Your browser does not support video. <a href="/jovabook/demo.mp4">Watch the JovaBook product film</a>.</video></figure></div>
+      </div></section>
+      <BookingPartner />
+      <ProductStory />
+      <BusinessTypes />
+      <section id="plans" className={s.plans} aria-labelledby="plans-title"><div className={s.container}>
+        <header className={s.sectionHeading}><h2 id="plans-title">Find the right plan for your business.</h2><p>Start with the tools for your own diary. Choose more room when you need a team.</p></header>
+        <EssentialOffer />
+
+      </div></section>
+      <div className={s.sharedFaq}><FaqStory items={faqs.map(({question,answer}) => [question,answer])} introduction="About bookings, your website, plans and getting started." contactLabel="Ask the JovaMedia team" showArtwork={false} /></div>
+      <section className={s.finalCta} aria-labelledby="start-title"><div className={s.container}><div><h2 id="start-title">Start taking bookings with JovaBook.</h2><p>Create your booking page, add your services and choose your working hours. Try the workspace for free.</p></div><div className={s.finalAction}><a className={s.primaryButton} href={signup}>Try JovaBook for free</a></div></div></section>
+    </StoryMotion>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jovabookStructuredData({faqs,video:{duration:"PT1M42S",uploadDate:"2026-11-01T00:00:00+00:00"}})).replace(/</g,"\\u003c")}} />
   </main>;
 }

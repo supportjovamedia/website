@@ -1,6 +1,6 @@
 import Image from "next/image";
 import ProductScreen from "./ProductScreen";
-import s from "./jovabook.module.css";
+import s from "./story.module.css";
 
 export default function BookingPreview() {
   return <div className={s.previewWrap}>
