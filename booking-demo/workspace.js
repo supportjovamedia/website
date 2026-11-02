@@ -51,7 +51,7 @@
    url.hash='book/service';
    return url.href;
   }
-  const embed = () => `<iframe src="${link()}" title="Book online" width="100%" height="760" style="border:0" loading="lazy"></iframe>`;
+  const embed = () => {const url=new URL(link());if(/\/book$/.test(url.pathname))url.hash='';return `<iframe src="${url.href}" title="Book online" width="100%" height="760" style="display:block;width:100%;min-height:760px;border:0" loading="eager"></iframe>`;};
   function preview(b,color) {
    const s=salon();
    const services=s.services.filter(v=>activeStaff().some(m=>(v.staffIds||[]).includes(m.id)));

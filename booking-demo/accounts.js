@@ -221,7 +221,7 @@
     const EXISTING='jovabook-existing-business-v1';let pendingBusinessOwner=null;
     try{pendingBusinessOwner=JSON.parse(sessionStorage.getItem(EXISTING)||'null');}catch{}
     const clearExisting=()=>{pendingBusinessOwner=null;try{sessionStorage.removeItem(EXISTING);}catch{}};
-    const existingBusinessContext=()=>{if(!pendingBusinessOwner?.id||pendingBusinessOwner.id!==load()?.user?.id)return null;let draft={};try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null');if(saved?.email?.toLowerCase()===pendingBusinessOwner.email?.toLowerCase())draft={name:typeof saved.name==='string'?saved.name.slice(0,60):'',slug:typeof saved.slug==='string'?saved.slug.slice(0,30):''};}catch{}return {owner:pendingBusinessOwner.owner,email:pendingBusinessOwner.email,...draft};};
+    const existingBusinessContext=()=>{if(!pendingBusinessOwner?.id||pendingBusinessOwner.id!==load()?.user?.id)return null;let draft={};try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null');if(saved?.email?.toLowerCase()===pendingBusinessOwner.email?.toLowerCase())draft={name:typeof saved.name==='string'?saved.name.slice(0,60):'',slug:typeof saved.slug==='string'?saved.slug.slice(0,30):''};}catch{}return {owner:pendingBusinessOwner.owner,email:pendingBusinessOwner.email,creationError:pendingBusinessOwner.creationError||'',...draft};};
     const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
     const stamp=()=>({raw:rawSession(),generation});
     const current=expected=>expected.generation===generation&&expected.raw===rawSession();
@@ -399,7 +399,7 @@
         if (!r.ok) return {ok:false,message:/email_not_confirmed|email.*not confirmed/i.test(String(r.data?.error_code||r.data?.code||r.data?.msg||r.data?.message||''))?'Verify your email from the link you received, then log in.':'That email and password do not match.'};
         const access = await ownerAccess();
         if(!current(r.authStamp))return stale();
-        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok)return identity;if(!current(r.authStamp))return stale();pendingBusinessOwner=identity.profile;try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
+        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok)return identity;if(!current(r.authStamp))return stale();pendingBusinessOwner=identity.profile;try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}const profile=existingBusinessContext();if(profile?.name?.trim()&&profile?.slug?.trim()){const created=await this.createBusinessForExistingUser(profile);if(created.ok)return {...created,salon:{id:created.account.salonId}};if(created.stale)return created;if(pendingBusinessOwner)pendingBusinessOwner.creationError=created.message||'We could not create your business. Try again.';}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
         if (!access.ok){if(access.wrongPortal){keep(null);clearExisting();}return access;}
         return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id}};
       },
@@ -411,7 +411,7 @@
         if(!r.ok)return {ok:false,message:'The password reset email could not be requested. Try again shortly.'};
         return { ok: true, sent: true };   // normal success stays the same whether or not the account exists
       },
-      consumeOwnerConfirmationCallback(hash){if(new URLSearchParams(location.search||'').get('portal')!=='owner')return {handled:false};const params=new URLSearchParams(String(hash||'').replace(/^#/,''));if(params.get('type')!=='signup'&&!params.has('error')&&!params.has('error_code'))return {handled:false};return {handled:true,notice:params.has('error')||params.has('error_code')?'Your verification link could not be confirmed. Log in to continue, or request a new verification link.':'Your verification link has been opened. Log in to continue and confirm your business details.'};},
+      consumeOwnerConfirmationCallback(hash){if(new URLSearchParams(location.search||'').get('portal')!=='owner')return {handled:false};const params=new URLSearchParams(String(hash||'').replace(/^#/,''));if(params.get('type')!=='signup'&&!params.has('error')&&!params.has('error_code'))return {handled:false};return {handled:true,notice:params.has('error')||params.has('error_code')?'Your verification link could not be confirmed. Log in to continue, or request a new verification link.':'Your verification link has been opened. Log in to continue setting up your business.'};},
       consumeRecoveryCallback(hash) {
         if(['customer','operator'].includes(new URLSearchParams(location.search||'').get('portal')))return {handled:false};
         const params=new URLSearchParams(String(hash||'').replace(/^#/,''));

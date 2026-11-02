@@ -11,14 +11,15 @@ function visit(path, {owner = false, auth = false, blockedStorage = false, hostn
   vm.runInNewContext(source, {window, sessionStorage:storage(owner?'1':null), localStorage:storage(auth?'opaque-session':null), URL, URLSearchParams});
   return redirects;
 }
-test('anonymous public home has one canonical marketing destination',()=>{
-  for(const path of ['/', '/index.html', '/#home', '/#'])assert.deepEqual(visit(path),['https://www.jovamedia.com/jovabook']);
+test('business login home stays in the app and legacy pricing has one destination',()=>{
+  for(const path of ['/', '/index.html', '/#home', '/#'])assert.deepEqual(visit(path),[]);
   assert.deepEqual(visit('/#plans'),['https://www.jovamedia.com/jovabook#plans']);
-  assert.deepEqual(visit('/?portal=owner#home'),['https://www.jovamedia.com/jovabook']);
-  assert.deepEqual(visit('/?utm_source=instagram&utm_campaign=launch'),['https://www.jovamedia.com/jovabook?utm_source=instagram&utm_campaign=launch']);
+  assert.deepEqual(visit('/?portal=owner#home'),[]);
+  assert.deepEqual(visit('/?utm_source=instagram&utm_campaign=launch'),[]);
 });
 test('owner, customer, tenant and recovery links never redirect',()=>{
   for(const path of ['/#login','/?plan=essential&cadence=annual#signup','/#dashboard','/?salon=studio#book/service','/?demo=jova-demo#home','/?salon=studio#website','/?portal=customer#customer/login','/?portal=customer#home','/?portal=owner&portal=customer#home','/#access_token=opaque&type=recovery','/?code=opaque','/?unknown=value'])assert.deepEqual(visit(path),[],path);
-  for(const options of [{owner:true},{auth:true},{blockedStorage:true},{hostname:'localhost'}])assert.deepEqual(visit('/',options),[]);
+  for(const options of [{owner:true},{auth:true},{blockedStorage:true}])assert.deepEqual(visit('/',options),[]);
+  assert.deepEqual(visit('/',{hostname:'localhost'}),[]);
   assert.deepEqual(visit('/api/jovabook/integrations/status'),[]);
 });

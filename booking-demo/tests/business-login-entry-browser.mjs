@@ -1,0 +1,17 @@
+/** Actual login entry and tenant/callback preservation. Local fixture only. */
+import {readFile} from 'node:fs/promises';const fixtureURL=new URL('./public-experience-browser.mjs',import.meta.url);let source=(await readFile(fixtureURL,'utf8')).replaceAll('\r\n','\n');const boundary=source.indexOf('try{await mkdir(out,');if(boundary<0)throw Error('Public fixture boundary changed');source=source.slice(0,boundary).replaceAll('import.meta.url',JSON.stringify(fixtureURL.href)).replace("pathname==='/'||rewrite.test(pathname)","pathname==='/'||rewrite.test(pathname)||cfg.rewrites.some(rule=>rule.source===pathname&&rule.destination==='/index.html')");
+const checks=String.raw`
+try{
+ assert(cfg.rewrites.some(rule=>rule.source==='/login'&&rule.destination==='/index.html'),'Deployed Vercel config must rewrite /login to the app');browser=await chromium.launch({headless:true,channel:'chrome'});const {context,page}=await make(390);
+ try{
+  for(const address of [base+'/',base+'/login',base+'/index.html',base+'/#home']){await page.goto(address);await expect(page.locator('[data-form=login]')).toBeVisible();await expect(page.getByRole('heading',{name:'Log in',exact:true})).toBeVisible();await expect(page.locator('.land-hero,.land-cta,.land-price')).toHaveCount(0);await page.reload();await expect(page.locator('[data-form=login]')).toBeVisible();}
+  const destinations=await page.evaluate(()=>Object.fromEntries(['','/login','#plans'].map(key=>[key,JovaPublicEntry.destination({hostname:'book.jovamedia.com',pathname:key==='/login'?'/login':'/',search:'',hash:key==='#plans'?'#plans':''})])));assert.equal(destinations[''],null);assert.equal(destinations['/login'],null);assert.equal(destinations['#plans'],'https://www.jovamedia.com/jovabook#plans');console.log('PASS root and direct /login plus refresh show business login, no obsolete hero; Vercel alias and pricing-only redirect');
+  await page.goto(base+'/'+slug+'/account/login');await expect(page.getByRole('heading',{name:'Welcome back',exact:true})).toBeVisible();await expect(page.locator('[data-cp-form=login]')).toBeVisible();await expect(page.locator('[data-form=login]')).toHaveCount(0);await page.reload();await expect(page.locator('[data-cp-form=login]')).toBeVisible();
+  await page.goto(base+'/'+slug+'/book/time');await expect(page.getByRole('heading',{name:'Choose a time',exact:true})).toBeVisible();await page.reload();await expect(page.getByRole('heading',{name:'Choose a time',exact:true})).toBeVisible();
+  await page.goto(base+'/'+slug+'/account/login'+jwt('signup'));await expect(page.getByRole('heading',{name:'My bookings',exact:true})).toBeVisible();assert(!page.url().includes('access_token'));console.log('PASS tenant customer login, direct booking deep link and verified customer callback preserved');
+  await page.goto(base+'/?portal=owner#access_token=untrusted&refresh_token=discard&type=signup');await expect(page.locator('[data-form=login]')).toBeVisible();assert(!page.url().includes('access_token'));assert.equal(await page.evaluate(()=>localStorage.getItem('jovabook-auth')),null);console.log('PASS owner confirmation stays on verified-login path, untrusted callback grants no session');
+  assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);console.log('PASS no external traffic, Auth writes or messages');
+ }finally{await context.close();}
+}finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
+`;
+await import('data:text/javascript;base64,'+Buffer.from(source+'\n'+checks).toString('base64'));

@@ -7,9 +7,9 @@ const source=await readFile(new URL('../notifications.js',import.meta.url),'utf8
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const event=(id,kind='confirmed',overrides={})=>({id,kind,at:'2026-10-31T10:00:00Z',booking:{id:'b1',name:'Alex <Client>',serviceName:'Brow & tint',date:'2026-11-03',time:'10:00'},...overrides});
 function harness({storage=new Map(),owner='owner-one',state={id:'salon-one',emails:[],bookings:[{id:'b1'}]}}={}){
- let identity=owner,dialog=false;const seen={modals:[],toasts:[],opened:[],renders:0,closed:0};
- const ctx=vm.createContext({window:{},Date,localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value)},document:{querySelector:()=>dialog?{}:null}});vm.runInContext(source,ctx);
- const api={salon:()=>state,esc:escape,humanDate:date=>'3 Nov 2026',modal:(title,html)=>{dialog=true;seen.modals.push({title,html});},closeModal:()=>{dialog=false;seen.closed++;},render:()=>seen.renders++,toast:text=>seen.toasts.push(text),openBooking:id=>seen.opened.push(id),ownerIdentity:()=>identity};
+ let identity=owner,dialog=false;const seen={modals:[],toasts:[],opened:[],recoveries:[],renders:0,closed:0};
+ const ctx=vm.createContext({window:{JovaSchedule:{onlineBookingWindow:()=>({valid:true,today:'2026-11-02',minutes:600})}},Date,localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value)},document:{querySelector:()=>dialog?{}:null}});vm.runInContext(source,ctx);
+ const api={salon:()=>state,esc:escape,humanDate:date=>'3 Nov 2026',modal:(title,html)=>{dialog=true;seen.modals.push({title,html});},closeModal:()=>{dialog=false;seen.closed++;},render:()=>seen.renders++,toast:text=>seen.toasts.push(text),planFor:()=>({name:state.plan||'Essential'}),openRecovery:id=>seen.recoveries.push(id),openBooking:id=>seen.opened.push(id),ownerIdentity:()=>identity};
  return {tools:ctx.window.JovaNotifications.create(api),api,state,seen,storage,setOwner:value=>identity=value};
 }
 test('empty activity is honest and does not infer notifications from booking status',()=>{
@@ -56,3 +56,6 @@ test('corrupt local read state recovers and unrelated hooks return false',()=>{
  const {tools,state,storage}=harness();state.emails=[event('e1')];storage.set('jovabook-notification-reads-v1:owner-one:salon-one','{invalid');
  assert.match(tools.header(),/Notifications, 1 unread/);assert.equal(tools.click('unrelated',{}),false);assert.equal(tools.change({}),false);assert.equal(tools.submit('unrelated',{}),false);
 });
+
+test('Essential recovery is visibly locked and forged clicks cannot open recovery',()=>{const {tools,state,seen}=harness();state.emails=[event('cancel','cancelled')];state.bookings=[{id:'b1',date:'2026-11-03',time:'10:00',status:'cancelled'}];const html=tools.pages.activity();assert.match(html,/Available on Standard and Premium/);assert.match(html,/disabled aria-disabled="true"/);tools.click('notif-recover',{dataset:{event:'cancel'}});assert.equal(seen.recoveries.length,0);assert.equal(seen.modals.length,0);});
+test('paid recovery is enabled only for an actual future cancellation and rechecks at click',()=>{for(const plan of ['Standard','Premium']){const {tools,state,seen}=harness();state.plan=plan;state.emails=[event('cancel','cancelled')];state.bookings=[{id:'b1',date:'2026-11-03',time:'10:00',status:'cancelled'}];assert(!tools.pages.activity().includes('disabled aria-disabled="true"'));tools.click('notif-recover',{dataset:{event:'cancel'}});assert.deepEqual(seen.recoveries,['b1']);state.bookings[0].status='confirmed';tools.click('notif-recover',{dataset:{event:'cancel'}});assert.equal(seen.recoveries.length,1);assert.match(tools.pages.activity(),/Only future cancelled appointments/);state.bookings[0].status='cancelled';state.bookings[0].date='2026-11-01';assert.match(tools.pages.activity(),/disabled aria-disabled="true"/);}});

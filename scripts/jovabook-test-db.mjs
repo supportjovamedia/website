@@ -19,7 +19,7 @@ export const BASE_DIR=path.join(REPO_ROOT,'.jovabook-test');
 export const DATA_DIR=path.join(BASE_DIR,'data');
 const MARKER_FILE=path.join(BASE_DIR,'marker.json'),LOCK_FILE=path.join(BASE_DIR,'cli.lock');
 const FORMAT='jovabook-isolated-local-test-v1',FIXTURES='fictional-example-test-v1';
-export const MANIFEST_VERSION=10,BOOTSTRAP_VERSION=2;
+export const MANIFEST_VERSION=11,BOOTSTRAP_VERSION=2;
 export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql',
  'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
@@ -40,7 +40,9 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261102160000_jovabook_online_origin.sql',
  'migrations/20261102161000_operator_commission_review.sql',
  'migrations/20261102161500_commission_pattern_alerts.sql',
- 'migrations/20261102180000_contact_phone_validation.sql']);
+ 'migrations/20261102180000_contact_phone_validation.sql',
+ 'migrations/20261102190000_booking_origin_upsert.sql',
+ 'migrations/20261102191000_manual_booking_email_audience.sql']);
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
  'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
