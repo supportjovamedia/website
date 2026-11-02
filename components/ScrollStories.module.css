@@ -79,3 +79,8 @@
 @keyframes processDraw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
 @media(max-width:700px){.process .steps{gap:26px 16px}.process .stepBody{padding:24px 15px}.processProgress{margin:24px auto 30px}}
 @media(prefers-reduced-motion:reduce){.processProgress>span{transform:scaleX(1)}.process .step:nth-child(n){transform:none}.process .stepIcon path,.process .step[data-mobile-visible=true] .stepIcon path{animation:none;stroke-dashoffset:0}}
+
+/* Connectors stop outside the question markers, including their active scale. */
+.faq .marker{z-index:2;box-shadow:0 0 0 5px #fafaf8}
+.faq .bubble:after{left:-25px;width:17px}
+@media(max-width:700px){.faq .bubble:after{left:-18px;width:10px}}

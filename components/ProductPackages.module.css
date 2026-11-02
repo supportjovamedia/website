@@ -68,3 +68,6 @@
 @media(prefers-reduced-motion:reduce){.card,.button,.categoryNav button{transition:none}.button:active,.categoryNav button:active{transform:none}}
 
 .packages{scroll-margin-top:100px}
+
+.bookingOffer{padding:10px 0 25px;text-align:left;border-radius:12px;background:#fff}.bookingOffer table{margin-inline:auto}.bookingOffer>div{padding-inline:15px}.categoryNav{position:relative}
+@media(max-width:480px){.categoryNav button{padding-inline:16px;font-size:13px}.bookingOffer>div{padding-inline:4px}}

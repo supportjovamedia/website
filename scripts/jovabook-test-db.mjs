@@ -19,7 +19,7 @@ export const BASE_DIR=path.join(REPO_ROOT,'.jovabook-test');
 export const DATA_DIR=path.join(BASE_DIR,'data');
 const MARKER_FILE=path.join(BASE_DIR,'marker.json'),LOCK_FILE=path.join(BASE_DIR,'cli.lock');
 const FORMAT='jovabook-isolated-local-test-v1',FIXTURES='fictional-example-test-v1';
-export const MANIFEST_VERSION=3,BOOTSTRAP_VERSION=2;
+export const MANIFEST_VERSION=5,BOOTSTRAP_VERSION=2;
 export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql',
  'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
@@ -29,9 +29,11 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261101051342_jovabook_business_integrations.sql','migrations/20261101051423_jovabook_annual_billing.sql',
  'migrations/20261101054615_jovabook_commission_supervisor.sql',
  'migrations/20261101123635_jovabook_guest_deposit_guard.sql',
- 'migrations/20261101204030_business_integration_oauth.sql']);
+ 'migrations/20261101204030_business_integration_oauth.sql',
+ 'migrations/20261102012254_jovabook_hosted_deposits.sql',
+ 'migrations/20261102092614_jovabook_deposit_attention.sql']);
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
- 'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql']);
+ 'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
 const SALONS=['20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002'];
 const HELP=`JovaBook isolated local SQL test database
@@ -209,7 +211,7 @@ async function assertOfflineState(db){
  if(!config||config.enabled||config.worker_token_hash!==null||config.webhook_secret!==null||config.webhook_id!==null)throw Error('Unsafe test delivery configuration. Refusing further operations; this CLI requires delivery disabled and no worker/webhook credentials.');
  const forbidden=(await db.query("select extname from pg_extension where extname in ('pg_net','pg_cron','http','dblink','postgres_fdw')")).rows;
  if(forbidden.length)throw Error('Unexpected network or scheduling extension in test database.');
- const controls=[['sms_config',['enabled','provider_configured'],['worker_token_hash']],['billing_config',['enabled','provider_configured','deletion_enabled'],['worker_hash','lifecycle_hash']],['customer_config',['recovery_enabled','payments_enabled'],['worker_hash']],['commission_config',['enabled','invoice_enabled','annual_invoice_enabled','supervisor_enabled','supervisor_operational_ready'],['worker_hash','supervisor_http_hash']],['integration_config',['enabled','recovery_enabled'],['worker_hash']]];
+ const controls=[['sms_config',['enabled','provider_configured'],['worker_token_hash']],['billing_config',['enabled','provider_configured','deletion_enabled'],['worker_hash','lifecycle_hash']],['customer_config',['recovery_enabled','payments_enabled','scheduler_enabled'],['worker_hash','scheduler_hash']],['commission_config',['enabled','invoice_enabled','annual_invoice_enabled','supervisor_enabled','supervisor_operational_ready'],['worker_hash','supervisor_http_hash']],['integration_config',['enabled','recovery_enabled'],['worker_hash']]];
  for(const [table,flags,secrets] of controls){if(!(await db.query('select to_regclass($1)::text name',['jovabook_private.'+table])).rows[0].name)continue;const config=(await db.query('select * from jovabook_private.'+table+' where singleton')).rows[0];if(!config||flags.some(key=>config[key]!==false)||secrets.some(key=>config[key]!==null))throw Error('Unsafe test provider configuration in '+table+'. Provider/deletion controls must stay disabled with no worker credentials.');}
  await assertSyntheticDatabase(db);
 }
