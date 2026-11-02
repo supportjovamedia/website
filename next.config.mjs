@@ -1,4 +1,5 @@
 import { serviceRedirects } from "./lib/service-redirects.mjs";
+import { businessHostRewrites } from "./lib/jovabook-public-address.mjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -13,6 +14,9 @@ const nextConfig = {
     return [{ source: "/insights", destination: "/blog", permanent: true }, { source: "/insights/:slug([a-z0-9-]+)", destination: "/blog/:slug", permanent: true }, { source: "/insights/:slug([a-z0-9-]+)/:path*", destination: "/blog/:slug/:path*", permanent: true }, { source: "/services/salon-website-design", destination: "/websites/salon-website-design", permanent: true }, { source: "/services/web-design", destination: "/websites", permanent: true }, { source: "/previews/aleiman", destination: "/previews/aleiman/index.html", permanent: false }, { source: "/terms-of-service", destination: "/terms", permanent: true }, ...Object.entries(serviceRedirects).map(([source, target]) => ({ source: `/services/${source}`, destination: target === "web-design" ? "/websites" : `/services/${target}`, permanent: true }))];
   },
   devIndicators: false,
+  async rewrites() {
+    return {beforeFiles: businessHostRewrites(), afterFiles: [], fallback: []};
+  },
   async headers() {
     const previewHeaders = process.env.VERCEL_ENV === "preview"
       ? [
