@@ -9,7 +9,7 @@ test('JovaBook plan choice, real themes and FAQ work without a scroll stopper',a
  const cta=page.locator('main').getByRole('link',{name:'Try JovaBook for free',exact:true}).first();await expect(cta).toHaveAttribute('href','#plans');await expect(page.locator('[data-jovabook-story]')).toHaveAttribute('data-motion',/active|reduced|static/);await cta.click();await expect(page).toHaveURL(/#plans$/);await expect(page.locator('#plans-title')).toBeFocused();await expect.poll(()=>page.locator('#plans').evaluate(el=>{const top=el.getBoundingClientRect().top;return top>=80&&top<=240;})).toBe(true);
  await page.getByRole('button',{name:'Yearly Save 20%',exact:true}).click();const plans=page.getByRole('region',{name:'JovaBook plans',exact:true});
  for(const total of ['£192 billed yearly','£480 billed yearly','£960 billed yearly'])await expect(plans).toContainText(total);
- await expect(plans.getByRole('link',{name:'Try JovaBook for free',exact:true})).toHaveAttribute('href',/cadence=annual/);
+ await expect(plans.getByRole('link',{name:'Try JovaBook for free',exact:true}).first()).toHaveAttribute('href',/cadence=annual/);
  const themes=page.getByRole('group',{name:'Preview workspace colours',exact:true});
  for(const name of ['Jova Blue','Rose Studio','Midnight Glass','Forest','Warm Studio','Amethyst']){
   const button=themes.getByRole('button',{name,exact:true});await button.click();await expect(button).toHaveAttribute('aria-pressed','true');const image=page.getByRole('img',{name:`Actual JovaBook dashboard in the ${name} workspace theme`,exact:true});await expect(image).toBeVisible();await expect.poll(()=>image.evaluate(i=>i.naturalWidth>=i.getBoundingClientRect().width)).toBe(true);
