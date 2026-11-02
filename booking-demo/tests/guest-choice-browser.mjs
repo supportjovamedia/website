@@ -4,9 +4,11 @@ import http from 'node:http';
 import path from 'node:path';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
+import {createRequire} from 'node:module';
 import {chromium,expect} from '@playwright/test';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),errors=[],external=[],calls=[];
-const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname,file=path.resolve(root,pathname==='/'?'index.html':'.'+decodeURIComponent(pathname));assert(file.startsWith(root+path.sep));res.writeHead(200,{'Content-Type':({'.js':'text/javascript','.css':'text/css','.html':'text/html','.ttf':'font/ttf'})[path.extname(file)]||'application/octet-stream'});res.end(await readFile(file));}catch{res.writeHead(404);res.end();}});
+const {pathToRegexp}=createRequire(import.meta.url)('next/dist/compiled/path-to-regexp'),rewrite=pathToRegexp(JSON.parse(await readFile(path.join(root,'vercel.json'),'utf8')).rewrites.find(r=>r.destination==='/index.html').source);
+const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname,file=path.resolve(root,pathname==='/'||rewrite.test(pathname)?'index.html':'.'+decodeURIComponent(pathname));assert(file.startsWith(root+path.sep));const bytes=await readFile(file);res.writeHead(200,{'Content-Type':({'.js':'text/javascript','.css':'text/css','.html':'text/html','.ttf':'font/ttf'})[path.extname(file)]||'application/octet-stream'});res.end(bytes);}catch{res.writeHead(404);res.end();}});
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base='http://127.0.0.1:'+server.address().port;
 const today='2026-11-02',date='2026-11-12',owner={access_token:'fixture-owner-token',refresh_token:'fixture-owner-refresh',expires_at:Date.now()/1000+3600,user:{id:'30000000-0000-4000-8000-000000000001'}};
 const salon={id:'20000000-0000-4000-8000-000000000001',slug:'choice-studio',name:'Fictional Choice Studio',settings:{timezone:'Europe/London',hours:{start:'09:00',end:'18:00',days:[0,1,2,3,4,5,6]}},staff:[{id:'staff',name:'Fictional Professional',active:true}],services:[{id:'visit',name:'Fictional visit',duration:30,price:25,staffIds:['staff']}],categories:[],busy:[],payments:{enabled:false,deposit:0},booking_window:{today,max_date:'2027-01-16',days:75,timezone:'Europe/London',server_now:today+'T12:00:00Z'}};
@@ -37,8 +39,8 @@ try{
   const {context,page}=await create(width);try{
    const time=await choose(page),summary=await page.locator('.booking-layout>aside').innerText(),bookingUrl=page.url();await noOverflow(page);await expect(page.locator('input[type=password]')).toHaveCount(0);
    for(const [label,route] of [['Log in','login'],['Create account','register']]){
-    const link=page.getByRole('link',{name:label,exact:true}),url=new URL(await link.getAttribute('href'));
-    assert.equal(url.searchParams.get('salon'),salon.slug);assert.equal(url.searchParams.get('portal'),'customer');assert.equal(url.hash,'#customer/'+route);await expect(link).toHaveAttribute('target','_blank');await expect(link).toHaveAttribute('rel',/noopener/);
+    const link=page.locator('.booking-layout>section').getByRole('link',{name:label,exact:true}),url=new URL(await link.getAttribute('href'));
+    assert.equal(url.pathname,'/'+salon.slug+'/account/'+route);assert.equal(url.search,'');assert.equal(url.hash,'');await expect(link).toHaveAttribute('target','_blank');await expect(link).toHaveAttribute('rel',/noopener/);
     const popupPromise=context.waitForEvent('page');await link.click();const popup=await popupPromise;popup.on('pageerror',error=>errors.push(String(error)));await popup.waitForLoadState();await expect(popup.locator('[data-cp-form='+route+']')).toBeVisible();assert.equal(await popup.evaluate(()=>window.opener),null);assert.equal(page.url(),bookingUrl);assert.equal(await page.locator('.booking-layout>aside').innerText(),summary);assert.equal(await popup.evaluate(()=>localStorage.getItem('jovabook-auth')),JSON.stringify(owner));await popup.close();
    }
    await page.getByRole('link',{name:'Back to date and time',exact:true}).click();await expect(page.locator('[data-change=booking-date]')).toHaveValue(date);await expect(page.locator('[data-action=select-time][data-time="'+time+'"]')).toHaveAttribute('aria-pressed','true');await page.getByRole('link',{name:'Continue',exact:true}).click();await page.getByRole('link',{name:'Continue as guest',exact:true}).click();
