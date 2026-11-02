@@ -48,7 +48,7 @@
    const base=typeof api.bookingLink==='function'?api.bookingLink(s):api.bookingLink;
    const url=new URL(base||`${location.pathname}?salon=${encodeURIComponent(s.slug)}#book/service`,location.origin);
    if(serviceId) url.searchParams.set('service',serviceId);
-   url.hash='book/service';
+   url.hash=/\/book$/.test(url.pathname)?'':'book/service';
    return url.href;
   }
   const embed = () => {const url=new URL(link());if(/\/book$/.test(url.pathname))url.hash='';return `<iframe src="${url.href}" title="Book online" width="100%" height="760" style="display:block;width:100%;min-height:760px;border:0" loading="eager"></iframe>`;};
