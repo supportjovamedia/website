@@ -36,7 +36,7 @@ const faqs = [
   },
   {
     "question": "What happens after the 3-day trial?",
-    "answer": "Your workspace trial starts when you register, including setup time. It does not automatically create a paid subscription. If you choose to subscribe, review the charge, billing frequency and terms in Stripe before confirming."
+    "answer": "Choose your plan and enter your card securely with Stripe to start a three-day free trial. There is no subscription charge today. Your chosen monthly or annual subscription starts automatically after the trial unless you cancel beforehand. Essential is £20/month, Standard £50/month and Premium £100/month. Annual subscriptions are paid upfront at the displayed discounted yearly price."
   },
   {
     "question": "Can clients book through Instagram, and can I take deposits?",
