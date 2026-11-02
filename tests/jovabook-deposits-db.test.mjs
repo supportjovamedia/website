@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {PGlite} from '@electric-sql/pglite';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
 import {sources,bootstrap} from '../scripts/jovabook-test-db.mjs';
 const salon='20000000-0000-4000-8000-000000000001',other='20000000-0000-4000-8000-000000000002',owner='10000000-0000-4000-8000-000000000001';
 const token='a'.repeat(64),verifier='b'.repeat(64),network='c'.repeat(64),account='acct_Fictional';
@@ -16,6 +18,21 @@ test('direct deposits reserve privately, verify payment, isolate tenants and ref
   await q("insert into jovabook_private.business_integrations(salon_id,provider,encrypted,summary) values($1,'stripe','{\"v\":1}',jsonb_build_object('connection_method','provider_login','account_id',$2::text))",[salon,account]);
   await worker('owner_verify',{salon_id:salon,user_id:owner,account_id:account,ready:true});
   await worker('owner_save',{salon_id:salon,user_id:owner,deposit_percent:40});
+  await t.test('anonymous public deposit rule matches the saved percentage and browser calculation',async()=>{
+   const browser={window:{}};vm.runInNewContext(await readFile(new URL('../booking-demo/deposits.js',import.meta.url),'utf8'),browser);
+   for(const [percent,price,pence] of [[100,1,100],[1,1,0],[1,30,30],[20,50,1000],[0,50,0]]){
+    await worker('owner_save',{salon_id:salon,user_id:owner,deposit_percent:percent});
+    await db.exec('set role anon');const data=await value("select public_salon('fictional-business-1') value");await db.exec('reset role');
+    assert.equal(data.payments.deposit_percent,percent);assert.equal(data.payments.enabled,percent>0);
+    assert.equal(Math.round(browser.window.JovaDeposits.amount(data,{price})*100),pence);
+    assert.equal(await value('select jovabook_private.online_deposit_pence($1,$2) value',[salon,price]),pence);
+    assert.deepEqual(Object.keys(data.payments).sort(),['deposit','deposit_percent','enabled']);assert.equal(data.deposit_checkout_available,true);
+   }
+   await q("update salons set payments='{\"enabled\":true,\"deposit\":5}'::jsonb where id=$1",[salon]);
+   const legacy=await value("select public_salon('fictional-business-1') value");assert.equal(legacy.payments.deposit_percent,undefined);assert.equal(browser.window.JovaDeposits.amount(legacy,{price:50}),5);
+   assert.equal(await value("select public_salon('missing-business') value"),null);
+   await worker('owner_save',{salon_id:salon,user_id:owner,deposit_percent:40});
+  });
   await t.test('untrusted callers and foreign owners cannot change payment settings',async()=>{
    await assert.rejects(worker('owner_status',{salon_id:salon,user_id:owner},'wrong'),/Invalid deposit worker/);
    await assert.rejects(worker('owner_save',{salon_id:other,user_id:owner,deposit_percent:40}),/Business access denied/);
