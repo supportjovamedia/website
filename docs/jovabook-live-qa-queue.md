@@ -43,3 +43,9 @@ Current operator identity: support.jovamedia@gmail.com. Access remains denied un
 - [ ] Feature branch and PR, focused tests and production build.
 - [ ] Merge authorised by standing user instruction, verify marketing and booking deployments.
 - [ ] Keep Gmail, YouTube and necessary verification tabs; close obsolete test/research tabs.
+
+## Integrated release additions, 2 November
+
+Customer portal audit passed 18 browser cases and 9 host cases. Light operator overview/history passed 1440/390/360px interaction checks. Navigation freeze was reproduced before the fix; day/week/month, keyboard and touch calendar checks passed. Guest/account choice passed and legacy affected flows were updated. Clean links passed helper and full-app asset/tenant isolation checks. Trial history passed purge/alias/revocation tests. Deposit readiness is diagnostic only; activation proof remains incomplete.
+
+SMS Works confirmed the free credit allocation by email on 2 November. User explicitly requested no credit usage and deferred SMS delivery testing. Sending stays off; no paid top-ups or message sends are authorised in this release.

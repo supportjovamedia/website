@@ -19,7 +19,7 @@ URL: https://book.jovamedia.com/operator.html
 
 Only the confirmed Auth email support.jovamedia@gmail.com is authorised by the private operators table. There is no metadata flag, public grant-role RPC or shared hardcoded password. New account creation still requires email verification; an arbitrary signup cannot grant operator access. The operator must create their own password.
 
-Features: dark overview with per-plan account counts, business signup history, recorded owner sign-ins today, read/unread notifications, and a searchable business directory, plan/cadence, trial expiry, access state, paid-until date, scheduled cancellation state, setup counts, signup dates, public website link, support notes and recorded support views/actions. Owners continue cancelling subscriptions in their own Subscription page. This release gives operators no Stripe mutation, refund, impersonation or deletion action.
+Features: light overview with per-plan account counts, business signup history, recorded owner sign-ins today, read/unread notifications, and a searchable business directory, plan/cadence, trial expiry, access state, paid-until date, scheduled cancellation state, setup counts, signup dates, public website link, support notes and recorded support views/actions. Owners continue cancelling subscriptions in their own Subscription page. This release gives operators no Stripe mutation, refund, impersonation or deletion action.
 
 Operator sessions use a separate sessionStorage key. Logging out does not remove owner/customer sessions. Each directory, detail and note request rechecks the verified allowlist. No owner contact details, customer records, bank/card details, provider credentials, private customer notes or passwords are returned.
 
@@ -34,3 +34,7 @@ Browser interaction tests use intercepted fictional APIs, with all unexpected ou
 Live payment collection and real password changes are not part of these tests. The selected operator account must be created/verified by its owner before live operator sign-in can be checked.
 
 Dashboard counts come from hosted business/billing rows. Owner sign-ins today count recorded Auth last-sign-in timestamps against the UK day boundary, not users currently online. Notifications cover recent signups, failed subscription payments and trials ending soon; their read state is private per operator.
+
+Trial history retains the existing salted trial-used marker after business deletion. The operator list exposes a separate opaque reference, trial-used date and known deletion marker only, without the deleted business name, contact details, Auth ID or customer records. Historical unknown deletion state is labelled accurately. Automatic deletion is not activated by this release.
+
+Clean public links use one path segment, such as /qx-store#website and /qx-store#book/service. Existing query links and Auth callbacks remain supported. Custom business subdomains are a separate domain configuration task.
