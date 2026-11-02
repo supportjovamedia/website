@@ -88,14 +88,14 @@
   root.addEventListener('submit',submit);root.addEventListener('click',click);
   return {render,consumeCallback,destroy(){destroyed=true;screen++;generation++;verified=null;view={};root.removeEventListener('input',input);root.removeEventListener('submit',submit);root.removeEventListener('click',click);root.replaceChildren();}};
  }
- async function publicStatus(slug){
+ async function publicStatus(slug,includeProfile=false){
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug||''))return false;
   const key='jovabook-customer-auth-v1:'+slug,cfg=window.JOVA_SUPABASE||{},base=String(cfg.url||'').replace(/\/$/,''),read=()=>{try{return sessionStorage.getItem(key);}catch{return null;}},original=read();
   let saved;try{saved=JSON.parse(original);}catch{return false;}
   if(!base||!cfg.key||!saved?.access_token||!saved.user?.id||!Number.isFinite(Number(saved.expires_at))||saved.expires_at*1000<=Date.now())return false;
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
   const get=async(path,body)=>{const response=await fetch(base+path,{method:body?'POST':'GET',signal:controller.signal,headers:{apikey:cfg.key,Authorization:'Bearer '+saved.access_token,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});if(!response.ok)return null;return response.json();};
-  try{const user=await get('/auth/v1/user');if(user?.id!==saved.user.id||!user.email_confirmed_at||read()!==original)return false;const identity=await get('/rest/v1/rpc/portal_identity',{p_claim:null});if(identity?.ok!==true||identity.role!=='customer'||read()!==original)return false;const member=await get('/rest/v1/rpc/customer_portal_profile',{p_slug:slug});return member?.ok===true&&member.member===true&&read()===original&&saved.expires_at*1000>Date.now();}catch{return false;}finally{clearTimeout(timer);}
+  try{const user=await get('/auth/v1/user');if(user?.id!==saved.user.id||!user.email_confirmed_at||read()!==original)return false;const identity=await get('/rest/v1/rpc/portal_identity',{p_claim:null});if(identity?.ok!==true||identity.role!=='customer'||read()!==original)return false;const member=await get('/rest/v1/rpc/customer_portal_profile',{p_slug:slug});if(member?.ok!==true||member.member!==true||read()!==original||saved.expires_at*1000<=Date.now())return false;if(!includeProfile)return true;const result=await get('/rest/v1/rpc/customer_portal_bookings',{p_slug:slug});if(result?.ok!==true||result.business?.slug!==slug||String(result.customer?.email||'').toLowerCase()!==String(user.email||'').toLowerCase()||read()!==original||saved.expires_at*1000<=Date.now())return false;const p=result.customer,m=user.user_metadata||{};return {id:user.id,email:user.email,name:[p.first_name||m.first_name,p.last_name||m.last_name].filter(Boolean).join(' ').trim(),phone:String(p.phone??m.phone??'')};}catch{return false;}finally{clearTimeout(timer);}
  }
  window.JovaCustomerPortal={create,passwordIssues,safePaymentURL,publicStatus};
 })();
