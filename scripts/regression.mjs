@@ -16,6 +16,8 @@ run(['--test',
   'tests/social-preview.test.mjs',
   'tests/jovabook-public-entry.test.mjs', 'tests/jovabook-public-links.test.mjs', 'tests/jovabook-deposit-readiness.test.mjs',
   'booking-demo/tests/trial-history-sql.mjs',
+  'booking-demo/tests/operator-billing-sql.mjs',
+  'booking-demo/tests/customer-phone-optional-sql.mjs',
   'tests/jovabook-test-db.test.mjs', 'tests/jovabook-integrations.test.mjs', 'tests/jovabook-integration-oauth.test.mjs', 'tests/jovabook-recovery-scheduler.test.mjs',
   'tests/jovabook-guest-deposit-guard.test.mjs', 'tests/jovabook-stripe-test.test.mjs',
   'tests/jovabook-deposits.test.mjs', 'tests/jovabook-deposits-db.test.mjs',
@@ -51,7 +53,7 @@ run(['booking-demo/tests/sms-reminders-browser.mjs']);
 // These proofs each start their own local server, including on clean Linux CI.
 for (const script of ['billing-access-browser','billing-plans-browser',
   'customer-portal-browser','customer-portal-integration-browser','operator-browser','existing-business-browser',
-  'booking-horizon-browser','navigation-calendar-browser','guest-choice-browser','public-links-browser']) {
+  'booking-horizon-browser','navigation-calendar-browser','guest-choice-browser','public-links-browser','public-experience-browser']) {
   run(['booking-demo/tests/' + script + '.mjs']);
 }
 if (!process.env.REGRESSION_URL) {

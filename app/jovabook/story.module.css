@@ -92,3 +92,42 @@
 .finalCta{background:#235789;margin:0}
 .page.page .finalCta p{color:#fff;font-size:15px}
 @media(max-width:800px){.page.page .finalCta p{font-size:14px}}
+
+/* Keep the desktop comparison; present complete plans on smaller screens. */
+.mobilePlanCards{display:none}
+@media(max-width:800px){
+ .desktopPlanComparison{display:none}
+ .mobilePlanCards{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;max-width:520px;margin:auto}
+ .mobilePlan{min-width:0;overflow:hidden;background:#fff;border:1px solid #cad5df;border-radius:16px;text-align:center}
+ .mobileRecommendedPlan{border-color:#6e94b4;box-shadow:0 8px 24px #173a5310}
+ .mobilePlanHeading{position:relative;padding:28px 22px 25px;background:#f8fafb;border-bottom:1px solid #dfe7ed}
+ .mobileRecommendedPlan .mobilePlanHeading{background:#e5eff6;padding-top:49px}
+ .page.page .mobilePlan h3{font-size:28px;line-height:1.3;font-weight:650;margin:0 0 10px;text-align:center}
+ .mobilePlanHeading .popularLabel{top:15px;font-size:11px}
+ .page.page .mobilePlan .tablePlanDescription{font-size:14px;margin:0 0 18px;min-height:0}
+ .mobilePlan .tablePrice strong{font-size:42px}
+ .mobilePlan .tablePrice>span{font-size:13px}
+ .page.page .mobilePlan .tableBilled{font-size:13px;margin:8px 0 13px}
+ .page.page .mobilePlan .tableCommission{font-size:14px;min-height:0;margin:0 0 20px}
+ .mobilePlanHeading>a{font-size:13px;min-height:46px;max-width:100%;white-space:normal;box-shadow:none}
+ .mobilePlanFeatures{margin:0;padding:5px 24px 13px}
+ .mobilePlanFeatures>div{padding:14px 0;border-bottom:1px solid #e3e9ee}
+ .mobilePlanFeatures>div:last-child{border-bottom:0}
+ .mobilePlanFeatures dt{font-size:13px;color:#506678;line-height:1.6}
+ .mobilePlanFeatures dd{display:flex;align-items:center;justify-content:center;gap:7px;min-height:23px;margin:5px 0 0;font-size:14px;color:#203f58;font-weight:600}
+ .mobilePlanFeatures dd>svg{color:#245889}
+ .page.page :is(h1,h2,h3,h4,p){text-align:center}
+ .page.page :is(h1,h2,h3,h4){margin-inline:auto}
+ .page.page p{margin-inline:auto}
+ .heroCopy,.featureCopy,.includedWebsite .featureCopy,.setupCopy,.workspaceCardCopy{text-align:center}
+ .page.page .featureCopy h2{margin-inline:auto}
+ .featureCopy .eyebrow,.actions,.setupSwitches,.themeChoices{justify-content:center}
+ .featurePoints{justify-items:center}
+ .featurePoints li{justify-content:center;text-align:center}
+ .tierLabel{align-self:center;margin-inline:auto}
+ .page.page .includedWebsite .featureCopy{max-width:600px}
+ .finalCta>.container{gap:23px}
+ .sharedFaq summary{text-align:center}
+}
+@media(max-width:350px){.mobilePlanHeading{padding-inline:17px}.mobilePlanFeatures{padding-inline:18px}.comparisonOffer .cadence button{padding-inline:13px;font-size:13px}.comparisonOffer .cadence button>span{font-size:10px}}
+@media(max-width:800px){.page.page .sharedFaq summary h3,.page.page .sharedFaq p{text-align:center}.page.page .sharedFaq summary h3{flex:1;margin-inline:auto}.page.page .sharedFaq summary{gap:12px}}

@@ -48,6 +48,19 @@ The CLI applies the actual repository SQL in this order:
 9. `booking-demo/supabase/migrations/20261101013754_jovabook_monthly_commission.sql`
 10. `booking-demo/supabase/migrations/20261101014425_jovabook_booking_horizon.sql`
 11. `booking-demo/supabase/migrations/20261101023215_jovabook_website_image_scope_fix.sql`
+12. `booking-demo/supabase/migrations/20261101045624_jovabook_premium_website.sql`
+13. `booking-demo/supabase/migrations/20261101051342_jovabook_business_integrations.sql`
+14. `booking-demo/supabase/migrations/20261101051423_jovabook_annual_billing.sql`
+15. `booking-demo/supabase/migrations/20261101054615_jovabook_commission_supervisor.sql`
+16. `booking-demo/supabase/migrations/20261101123635_jovabook_guest_deposit_guard.sql`
+17. `booking-demo/supabase/migrations/20261101204030_business_integration_oauth.sql`
+18. `booking-demo/supabase/migrations/20261102012254_jovabook_hosted_deposits.sql`
+19. `booking-demo/supabase/migrations/20261102092614_jovabook_deposit_attention.sql`
+20. `booking-demo/supabase/migrations/20261102125334_portal_access_backoffice.sql`
+21. `booking-demo/supabase/migrations/20261102131757_operator_dashboard.sql`
+22. `booking-demo/supabase/migrations/20261102134215_trial_history.sql`
+23. `booking-demo/supabase/migrations/20261102152132_operator_billing_records.sql`
+24. `booking-demo/supabase/migrations/20261102153041_customer_phone_optional.sql`
 
 The local bootstrap supplies mock `auth.users` with synthetic email and confirmation fields, `auth.uid()` and the `anon`, `authenticated` and `service_role` database roles needed to exercise the policies. SQL-only `storage.buckets` and `storage.objects` stubs exercise the actual image policies. There is no Storage HTTP service or upload endpoint. The owner and anonymous checks switch PostgreSQL roles and a transaction-local identity claim. They do not create real Supabase users or login credentials.
 
@@ -64,7 +77,7 @@ SMS, billing, customer recovery/payments, lifecycle deletion and monthly commiss
 
 `pg_cron`, `pg_net`, the hosted email scheduler migration and transport extensions are omitted. They are not available in this embedded engine. An optional `CREATE EXTENSION pgcrypto` statement is removed when reading schema sources because PGlite already provides the PostgreSQL primitives used by these schemas. The SQL splitter preserves quoted strings, comments and function bodies. Other extensions or transport SQL are refused.
 
-Manifest version 2 stores ordered source names, raw SQL hashes, bootstrap version, fixture version, explicit omissions and a combined digest inside the database. Unknown migration files are refused until reviewed and explicitly included or omitted. The only omitted migration is `20261031162535_jovabook_email_scheduler.sql`, which requires hosted transport. After schema or bootstrap changes, `verify` asks for an explicit local reset. `status` reports `ready`, `requiresReset`, `sourceDrift` and `providerStateVerified`; stale databases do not report their unverified provider settings as disabled.
+Manifest version 10 stores ordered source names, raw SQL hashes, bootstrap version, fixture version, explicit omissions and a combined digest inside the database. Unknown migration files are refused until reviewed and explicitly included or omitted. Omitted hosted scheduler migrations are `20261031162535_jovabook_email_scheduler.sql`, `20261101054233_jovabook_recovery_scheduler.sql`, `20261101055544_jovabook_commission_scheduler.sql`, `20261102014242_jovabook_customer_payment_scheduler.sql`. They require hosted scheduling or network transport. After schema or bootstrap changes, `verify` asks for an explicit local reset. `status` reports `ready`, `requiresReset`, `sourceDrift` and `providerStateVerified`; stale databases do not report their unverified provider settings as disabled.
 
 ## Safety boundaries
 
