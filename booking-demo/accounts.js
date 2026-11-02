@@ -330,6 +330,7 @@
     async function ownerAccess() {
       const ownerId=load()?.user?.id,result=await billingCall('status');if(result.stale)return result;
       const data=result.data,business=data?.business;
+      if(data?.access==='wrong_portal'){verifiedAccess=null;verifiedSalon=null;return {ok:false,wrongPortal:true,message:data.message||'Use the correct login for this account.'};}
       if(result.ok&&data?.no_business===true&&data.access==='no_business'&&business===null){verifiedAccess=null;verifiedSalon=null;if(!ownerId||ownerId!==load()?.user?.id)return stale();return {ok:false,noBusiness:true,data,message:'No business is linked to this account. Log in to create one.'};}
       if(!result.ok||!['active','billing_only','setup','deleting'].includes(data?.access)||!websiteId(business?.id)||!['essential','standard','premium'].includes(business?.plan)||typeof business?.name!=='string'||typeof business?.slug!=='string'||!data.lifecycle||typeof data.billing?.connected!=='boolean'||typeof data.billing?.canCheckout!=='boolean'){
         verifiedAccess=null;verifiedSalon=null;return {...result,ok:false,message:result.message||'We could not verify your subscription. Try again.'};
@@ -399,7 +400,7 @@
         const access = await ownerAccess();
         if(!current(r.authStamp))return stale();
         if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok)return identity;if(!current(r.authStamp))return stale();pendingBusinessOwner=identity.profile;try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
-        if (!access.ok)return access;
+        if (!access.ok){if(access.wrongPortal){keep(null);clearExisting();}return access;}
         return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id}};
       },
       async requestReset(email) {
@@ -412,7 +413,7 @@
       },
       consumeOwnerConfirmationCallback(hash){if(new URLSearchParams(location.search||'').get('portal')!=='owner')return {handled:false};const params=new URLSearchParams(String(hash||'').replace(/^#/,''));if(params.get('type')!=='signup'&&!params.has('error')&&!params.has('error_code'))return {handled:false};return {handled:true,notice:params.has('error')||params.has('error_code')?'Your verification link could not be confirmed. Log in to continue, or request a new verification link.':'Your verification link has been opened. Log in to continue and confirm your business details.'};},
       consumeRecoveryCallback(hash) {
-        if(new URLSearchParams(location.search||'').get('portal')==='customer')return {handled:false};
+        if(['customer','operator'].includes(new URLSearchParams(location.search||'').get('portal')))return {handled:false};
         const params=new URLSearchParams(String(hash||'').replace(/^#/,''));
         if(params.has('error')){clearRecovery();return {handled:true,...expiredRecovery()};}
         if(params.get('type')!=='recovery')return {handled:false};

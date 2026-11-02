@@ -4,27 +4,31 @@ Updated 2 November 2026. New requests append to this queue. A code change is not
 
 ## Current batch
 
-- [ ] Hero trial CTA lands on plans on desktop and mobile, including while images initialise.
-- [ ] Branded confirmation and recovery emails, saved to hosted Auth and visually checked.
-- [ ] Business signup: verified email, carried-over business details, no ambiguous repeated creation prompt.
-- [ ] Setup waits for persistence; delayed and failed saves cannot show false completion or a spurious error.
-- [ ] Short trial summary, expandable billing detail, direct workspace entry, clear Stripe card entry path.
-- [ ] QX Store live trial and public website personalised and checked. No real charge or customer messages.
-- [ ] Concise subscription commission summary: Essential/Standard 1%, Premium 0%, appointment-date recognition, billing and invoices.
+- [x] Hero trial CTA lands on plans on desktop and mobile, including while images initialise.
+- [x] Branded confirmation and recovery emails, saved to hosted Auth and visually checked.
+- [x] Business signup: verified email, carried-over business details, no ambiguous repeated creation prompt.
+- [x] Setup waits for persistence; delayed and failed saves cannot show false completion or a spurious error.
+- [x] Short trial summary, expandable billing detail, direct workspace entry, clear Stripe card entry path.
+- [x] QX Store live trial and public website personalised and checked. No real charge or customer messages.
+- [x] Concise subscription commission summary: Essential/Standard 1%, Premium 0%, appointment-date recognition, billing and invoices.
+
+Initial batch shipped in PR #114, merge ed88e87. Marketing and booking production deployments verified. QX website text was saved; photo upload still needs its own check.
 
 ## Next batch, access separation and fresh businesses
 
-- [ ] New businesses start with an owner and no sample categories/services/clients/bookings. Demo fixtures remain in demo only.
+- [x] New businesses start with an owner and no sample categories/services/clients/bookings. Demo fixtures remain in demo only.
 - [ ] Reproduce navigation freeze after editing, including unsaved-change confirmations and sidebar focus.
 - [ ] Customer and business login separation enforced by server-owned roles, including existing identities, tenant boundaries and recovery flows. Never trust editable user metadata for roles.
 - [ ] Booking clearly offers guest booking or customer account, preserving the selected business.
 - [ ] Day/week slot clicks open new booking at selected date/time; month click opens day and contextual action offers booking. Keyboard and touch alternatives remain available.
 - [ ] Review cleaner business URLs and wildcard routing. Preserve existing links, tenant isolation, email callback URLs and canonical URLs.
 
+Current operator identity: support.jovamedia@gmail.com. Access remains denied until this email is registered and verified.
+
 ## Back office
 
 - [ ] Restricted JovaMedia operator access tied to explicitly authorised identity, not a public signup role.
-- [ ] Business directory, subscription/trial status, minimal support details, and recorded support actions.
+- [ ] Business directory, subscription/trial status, plan counts, signup dates/history, owner sign-ins today, private read/unread notifications, support notes and recorded support actions.
 - [ ] Owners retain subscription cancellation in their own workspace. Support cancellation requires explicit confirmation and an audit entry. No card, bank, provider-secret or customer-password exposure.
 - [ ] Verify cross-role, cross-business, logged-out and revoked-access cases before release. Do not claim GDPR compliance from a visual audit.
 
@@ -39,3 +43,9 @@ Updated 2 November 2026. New requests append to this queue. A code change is not
 - [ ] Feature branch and PR, focused tests and production build.
 - [ ] Merge authorised by standing user instruction, verify marketing and booking deployments.
 - [ ] Keep Gmail, YouTube and necessary verification tabs; close obsolete test/research tabs.
+
+## Integrated release additions, 2 November
+
+Customer portal audit passed 18 browser cases and 9 host cases. Light operator overview/history passed 1440/390/360px interaction checks. Navigation freeze was reproduced before the fix; day/week/month, keyboard and touch calendar checks passed. Guest/account choice passed and legacy affected flows were updated. Clean links passed helper and full-app asset/tenant isolation checks. Trial history passed purge/alias/revocation tests. Deposit readiness is diagnostic only; activation proof remains incomplete.
+
+SMS Works confirmed the free credit allocation by email on 2 November. User explicitly requested no credit usage and deferred SMS delivery testing. Sending stays off; no paid top-ups or message sends are authorised in this release.

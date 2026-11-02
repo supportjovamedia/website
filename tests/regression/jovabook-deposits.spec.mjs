@@ -33,6 +33,12 @@ test('guest deposit checkout and verified return work without calling the unpaid
  const dateInput=page.locator('[data-change="booking-date"]');await dateInput.fill(date);await dateInput.dispatchEvent('change');
  await page.locator('[data-action="select-time"]').first().click();
  await page.getByRole('link',{name:/continue/i}).click();
+ await expect(page.getByRole('heading',{name:'How would you like to book?',exact:true})).toBeVisible();
+ await expect(page.locator('[data-form="customer-details"]')).toHaveCount(0);
+ const guestChoice=page.getByRole('link',{name:'Continue as guest',exact:true});
+ await expect(guestChoice).toHaveAttribute('href','#book/details');
+ await guestChoice.click();
+ await expect(page.getByRole('heading',{name:'Your details',exact:true})).toBeVisible();
  await page.locator('[data-form="customer-details"] [name="name"]').fill('Synthetic Guest');
  await page.locator('[data-form="customer-details"] [name="email"]').fill('guest@example.test');
  await page.locator('[data-form="customer-details"] input[type="checkbox"]').check();
