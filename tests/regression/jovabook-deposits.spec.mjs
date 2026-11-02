@@ -1,5 +1,22 @@
 import {test,expect} from '@playwright/test';
-const base='http://127.0.0.1:4338';
+import http from 'node:http';
+import path from 'node:path';
+import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../../booking-demo/',import.meta.url));
+let base,server;
+test.beforeAll(async()=>{
+ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.woff2':'font/woff2','.ttf':'font/ttf','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml'};
+ server=http.createServer(async(req,res)=>{try{
+  const pathname=new URL(req.url,'http://localhost').pathname;
+  const file=path.resolve(root,pathname==='/'?'index.html':'.'+decodeURIComponent(pathname));
+  if(!file.startsWith(path.resolve(root)+path.sep)){res.writeHead(403);res.end();return;}
+  const bytes=await readFile(file);res.writeHead(200,{'Content-Type':mime[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});res.end(bytes);
+ }catch{res.writeHead(404);res.end();}});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ base='http://127.0.0.1:'+server.address().port;
+});
+test.afterAll(async()=>{if(server)await new Promise(resolve=>server.close(resolve));});
 const id='30000000-0000-4000-8000-000000000001';
 const sid='20000000-0000-4000-8000-000000000001';
 const date=new Date(Date.now()+86400000).toISOString().slice(0,10);
