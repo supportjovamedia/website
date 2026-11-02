@@ -32,6 +32,12 @@ export default function Page() {
           We aim to keep website information current, but service descriptions,
           availability and pricing guidance may change.
         </p>
+        <h2>JovaBook booking commission</h2>
+        <p>Billing policy version: 2026-11-02-online-origin-v3. These rules apply after acceptance and do not rewrite historical charges or settled invoices.</p>
+        <p>Phone bookings and walk-ins entered by staff are commission-free. Customer-created online bookings carry a 1% fee on Essential and Standard, or 0% on Premium. The fee uses the original service price confirmed online, including bookings paid entirely at the business with no deposit. Later staff discounts do not reduce that original fee.</p>
+        <p>The fee is recorded when booked and becomes billable after the appointment, subject to applicable trial exemptions and cancellation review. Commission is invoiced monthly between billing dates, separately from payment-processing fees. Annual subscriptions are paid upfront; commission remains monthly. Unbilled amounts carry forward.</p>
+        <p>Rescheduling or linking a replacement appointment preserves its online origin and produces one fee. Deleting a diary entry does not delete its financial history. Genuine cancellations and no-shows can receive a waiver or credit after review. Reports and possible replacements are reviewed using booking history; a matching record alone does not prove misuse or create an extra charge.</p>
+        <p>Customers can dispute an incorrect cancellation or no-show report with the business or support.jovamedia@gmail.com, quoting their booking reference. Businesses can request a correction or credit through the same support address. The customer's cancellation window and deposit refund rules remain separate from commission review.</p>
         <h2>Contact</h2>
         <p>Questions about these terms can be sent to support.jovamedia@gmail.com.</p>
       </section>

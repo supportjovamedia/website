@@ -36,7 +36,11 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261102131757_operator_dashboard.sql',
  'migrations/20261102134215_trial_history.sql',
  'migrations/20261102152132_operator_billing_records.sql',
- 'migrations/20261102153041_customer_phone_optional.sql']);
+ 'migrations/20261102153041_customer_phone_optional.sql',
+ 'migrations/20261102160000_jovabook_online_origin.sql',
+ 'migrations/20261102161000_operator_commission_review.sql',
+ 'migrations/20261102161500_commission_pattern_alerts.sql',
+ 'migrations/20261102180000_contact_phone_validation.sql']);
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
  'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
