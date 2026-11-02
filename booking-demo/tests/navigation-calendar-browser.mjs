@@ -5,7 +5,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readFile} from 'node:fs/promises';
 import {chromium,expect} from '@playwright/test';
-const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),external=[],errors=[];
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),external=[],errors=[],delayedFocus=process.env.MODAL_FOCUS_RACE!=='0';
 const server=http.createServer(async(req,res)=>{try{const url=new URL(req.url,'http://localhost'),file=path.resolve(root,url.pathname==='/'?'index.html':'.'+decodeURIComponent(url.pathname));assert(file.startsWith(root+path.sep));res.writeHead(200,{'Content-Type':({'.js':'text/javascript','.css':'text/css','.html':'text/html','.ttf':'font/ttf'})[path.extname(file)]||'application/octet-stream'});res.end(await readFile(file));}catch{res.writeHead(404);res.end();}});
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base='http://127.0.0.1:'+server.address().port;
@@ -13,6 +13,14 @@ let browser;
 try{
  browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'chrome'}:{})});
  const context=await browser.newContext({viewport:{width:1440,height:1000}});
+ // Delayed initial focus models a busy browser task queue deterministically.
+ if(delayedFocus)await context.addInitScript(()=>{
+  const schedule=window.setTimeout.bind(window);window.__dialogFocusScheduled=0;window.__dialogFocusCompleted=0;
+  window.setTimeout=(callback,delay,...args)=>{
+   if(delay!==0||typeof callback!=='function'||!String(callback).includes('focus'))return schedule(callback,delay,...args);
+   const sequence=++window.__dialogFocusScheduled;return schedule(()=>{callback(...args);window.__dialogFocusCompleted=sequence;},120);
+  };
+ });
  await context.route('**/*',route=>{if(new URL(route.request().url()).origin===base)return route.continue();external.push(route.request().url());return route.abort();});
  const page=await context.newPage();page.setDefaultTimeout(5000);page.on('pageerror',error=>errors.push(String(error)));
  await page.goto(base+'/#login');await page.locator('[name=email]').fill('demo@jovamedia.com');await page.locator('[name=password]').fill('Salon2026');await page.locator('[data-form=login] button.primary').click();await expect(page).toHaveURL(/#dashboard$/);
@@ -46,7 +54,9 @@ try{
   assert.deepEqual(await snapshot(),before,'Cancelling new booking must not change business data');
   // Genuine draft guards, focus restoration and sidebar navigation still work.
   await page.locator('.dg-col [data-action=calendar-slot][data-staff="'+picked.staff+'"][data-time="'+picked.time+'"]').click();
-  const form=page.locator('[data-form=manual-booking]');await form.locator('[name=name]').fill('Keep this draft');await page.keyboard.press('Escape');
+  const form=page.locator('[data-form=manual-booking]');await form.locator('[name=name]').fill('Keep this draft');
+  if(delayedFocus){const scheduled=await page.evaluate(()=>window.__dialogFocusScheduled);await expect.poll(()=>page.evaluate(()=>window.__dialogFocusCompleted)).toBeGreaterThanOrEqual(scheduled);}
+  await expect(form.locator('[name=name]')).toBeFocused();await page.keyboard.press('Escape');
   await expect(page.locator('[data-unsaved-warning]')).toBeVisible();await page.getByRole('button',{name:'Keep editing',exact:true}).click();await expect(form.locator('[name=name]')).toHaveValue('Keep this draft');await expect(form.locator('[name=name]')).toBeFocused();
   await page.goto(base+'/#services');await expect(page.locator('[data-unsaved-warning]')).toBeVisible();await expect(page).toHaveURL(/#calendar$/);
   await page.getByRole('button',{name:'Discard changes',exact:true}).click();await expect(page).toHaveURL(/#services$/);assert.deepEqual(await snapshot(),before);

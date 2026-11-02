@@ -664,7 +664,11 @@ function render(){if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingL
  if(parts[0]==='website')document.title=s.name+' · Book online';
  if($('#chat-log'))$('#chat-log').scrollTop=$('#chat-log').scrollHeight;
 }
-function modal(title,content,size=''){closeModal();$('#modal-root').innerHTML=`<div class="modal-backdrop"><section class="modal ${size}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="modal-head"><h2>${title}</h2><button aria-label="Close dialog" data-action="close-modal">×</button></div>${content}</section></div>`;setTimeout(()=>$('.modal input, .modal select, .modal button, .modal a')?.focus(),0);}
+function modal(title,content,size=''){
+ closeModal();$('#modal-root').innerHTML=`<div class="modal-backdrop"><section class="modal ${size}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="modal-head"><h2>${title}</h2><button aria-label="Close dialog" data-action="close-modal">×</button></div>${content}</section></div>`;
+ const dialog=$('#modal-root .modal');
+ setTimeout(()=>{if(dialog.isConnected&&!dialog.contains(document.activeElement))dialog.querySelector('input,select,button,a')?.focus();},0);
+}
 function closeModal(){pendingLeave=null;const choosingTheme=$('#modal-root').querySelector('[data-form=workspace-appearance]');$('#modal-root').innerHTML='';if(choosingTheme)JovaWorkspaceThemes.apply(JovaWorkspaceThemes.resolve(salon().workspace?.appearance));}
 let toastTimer;
 function toast(text){clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').classList.add('show');toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3500);}
@@ -860,7 +864,7 @@ function requestUnsavedLeave(proceed,scope='page'){
  if(pendingLeave)return;
  const focus=document.activeElement,existing=document.querySelector('#modal-root .modal'),content='<div class="df-leave-warning" data-unsaved-warning><p>You have unsaved changes. Keep editing to save them, or discard them before leaving.</p><div class="row"><button type="button" data-action="unsaved-keep">Keep editing</button><button type="button" class="danger" data-action="unsaved-discard">Discard changes</button></div></div>';
  if(existing)existing.insertAdjacentHTML('beforeend',content);else modal('Unsaved changes',content);
- pendingLeave={owner:businessOwner(),focus,created:!existing,scope,proceed};requestAnimationFrame(()=>document.querySelector('[data-action=unsaved-keep]')?.focus());
+ const request={owner:businessOwner(),focus,created:!existing,scope,proceed};pendingLeave=request;requestAnimationFrame(()=>{if(pendingLeave===request)document.querySelector('[data-action=unsaved-keep]')?.focus();});
 }
 function installUnsavedGuards(){
  document.addEventListener('click',event=>{
