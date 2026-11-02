@@ -19,9 +19,9 @@ URL: https://book.jovamedia.com/operator.html
 
 Only the confirmed Auth email support.jovamedia@gmail.com is authorised by the private operators table. There is no metadata flag, public grant-role RPC or shared hardcoded password. New account creation still requires email verification; an arbitrary signup cannot grant operator access. The operator must create their own password.
 
-Features: searchable business directory, plan/cadence, trial expiry, access state, paid-until date, scheduled cancellation state, setup counts, business contact details, public website link, support notes and recorded support views/actions. Owners continue cancelling subscriptions in their own Subscription page. This release gives operators no Stripe mutation, refund, impersonation or deletion action.
+Features: dark overview with per-plan account counts, business signup history, recorded owner sign-ins today, read/unread notifications, and a searchable business directory, plan/cadence, trial expiry, access state, paid-until date, scheduled cancellation state, setup counts, signup dates, public website link, support notes and recorded support views/actions. Owners continue cancelling subscriptions in their own Subscription page. This release gives operators no Stripe mutation, refund, impersonation or deletion action.
 
-Operator sessions use a separate sessionStorage key. Logging out does not remove owner/customer sessions. Each directory, detail and note request rechecks the verified allowlist. No bank/card details, provider credentials, private customer notes or passwords are returned.
+Operator sessions use a separate sessionStorage key. Logging out does not remove owner/customer sessions. Each directory, detail and note request rechecks the verified allowlist. No owner contact details, customer records, bank/card details, provider credentials, private customer notes or passwords are returned.
 
 Notes use an idempotent request ID so a lost response can be retried without creating duplicate notes. Unsaved notes prompt before leaving. Revoking the allowlist entry or removing email verification blocks subsequent requests even with an existing access token.
 
@@ -32,3 +32,5 @@ The full offline migration chain runs in isolated PGlite. SQL tests exercise cro
 Browser interaction tests use intercepted fictional APIs, with all unexpected outbound requests rejected. Operator tests cover login denial, search/clear, detail, note validation, unsaved-note prompts, lost-response retry, escaped note content, logout and 1440/390/360px layouts. Customer tests cover login, profile, booking isolation, cancellation, recovery, payment page safety and owner-session isolation.
 
 Live payment collection and real password changes are not part of these tests. The selected operator account must be created/verified by its owner before live operator sign-in can be checked.
+
+Dashboard counts come from hosted business/billing rows. Owner sign-ins today count recorded Auth last-sign-in timestamps against the UK day boundary, not users currently online. Notifications cover recent signups, failed subscription payments and trials ending soon; their read state is private per operator.

@@ -28,7 +28,7 @@ Current operator identity: support.jovamedia@gmail.com. Access remains denied un
 ## Back office
 
 - [ ] Restricted JovaMedia operator access tied to explicitly authorised identity, not a public signup role.
-- [ ] Business directory, subscription/trial status, minimal support details, and recorded support actions.
+- [ ] Business directory, subscription/trial status, plan counts, signup dates/history, owner sign-ins today, private read/unread notifications, support notes and recorded support actions.
 - [ ] Owners retain subscription cancellation in their own workspace. Support cancellation requires explicit confirmation and an audit entry. No card, bank, provider-secret or customer-password exposure.
 - [ ] Verify cross-role, cross-business, logged-out and revoked-access cases before release. Do not claim GDPR compliance from a visual audit.
 
