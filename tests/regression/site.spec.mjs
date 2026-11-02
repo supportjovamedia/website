@@ -164,6 +164,7 @@ test('all published sitemap routes remain available', async ({ request, baseURL 
 
 test('pricing retains every inclusion and aligns desktop comparison rows', async ({ page }, testInfo) => {
   await page.goto('/pricing');
+  await page.getByRole('navigation', { name: 'Product categories', exact: true }).getByRole('button', { name: 'Websites', exact: true }).click();
   const cards = page.locator('article').filter({ has: page.getByRole('heading', { name: /Landing Page|Business Website|Website with Booking System/, exact: true }) });
   await expect(cards).toHaveCount(3);
   for (const [index, [id, name, amount]] of products.entries()) {
@@ -199,6 +200,7 @@ test('pricing retains every inclusion and aligns desktop comparison rows', async
 test('each product quote button selects the correct product and keeps phone optional', async ({ page }) => {
   for (const [id, name, amount] of products) {
     await page.goto('/pricing');
+    await page.getByRole('navigation', { name: 'Product categories', exact: true }).getByRole('button', { name: 'Websites', exact: true }).click();
     await page.getByRole('link', { name: `Get a Quote for ${name}`, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/get-a-quote\\?product=${id}$`));
     const selected = page.getByRole('region', { name: 'Selected product' });
