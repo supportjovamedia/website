@@ -346,3 +346,5 @@ html[data-workspace-theme] .shell .side-nav a.jb-tier-link{color:var(--theme-mut
 .jb-calendar-locked>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jb-calendar-locked:focus-visible{outline:2px solid var(--theme-focus,#235789);outline-offset:3px}
 @media(max-width:800px){.jb-tier-tooltip{max-width:min(230px,calc(100vw - 48px))}.shell .jb-calendar-locked{font-size:13px;min-height:44px}}
+
+.jb-calendar-owner{position:relative}.jb-calendar-owner:hover .jb-tier-tooltip,.jb-calendar-owner:focus-within .jb-tier-tooltip{display:block}.jb-calendar-locked:disabled{cursor:default;opacity:1}

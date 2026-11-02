@@ -55,7 +55,7 @@ export default function JovaBookPage() {
             <h1 id="jovabook-title">Online booking<br />software <span>for your business.</span></h1>
             <div className={s.yellowRule} />
             <p className={s.lead}>Let clients choose a service and a time. Keep your bookings, client details and business website together, so you can get on with the day.</p>
-            <div className={s.actions}><a className={s.primaryButton} href={signup}>Try JovaBook for free</a><a className={s.watchLink} href="#demo"><span className={s.playIcon} aria-hidden="true" />Watch the demo</a></div>
+            <div className={s.actions}><a className={s.primaryButton} href={signup}>Try JovaBook for free</a><a className={s.watchLink} href="https://book.jovamedia.com/login">Log in</a></div>
           </div>
           <BookingPreview />
         </div>

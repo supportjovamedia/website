@@ -29,6 +29,14 @@
     let hash=2166136261;for(const char of String(id)){hash^=char.codePointAt(0);hash=Math.imul(hash,16777619)>>>0;}hash=(hash^(hash>>>16))>>>0;
     return choices[hash%choices.length].value;
   }
+  function usedBy(salon,value,excludeId=''){const colour=safeColor(value);return colour?(salon?.categories||[]).find(item=>String(item.id)!==String(excludeId)&&category(salon,item.id)===colour)||null:null;}
+  function nextAvailable(salon,excludeId=''){
+    const used=new Set((salon?.categories||[]).filter(item=>String(item.id)!==String(excludeId)).map(item=>category(salon,item.id)));
+    for(const choice of choices)if(!used.has(choice.value))return choice.value;
+    // Odd step visits the full 24-bit colour space, without an eight-category limit.
+    for(let i=0;i<0x1000000;i++){const value='#'+((0xa3c7ed+i*0x9e3779)%0x1000000).toString(16).padStart(6,'0');if(!used.has(value))return value;}
+    return null;
+  }
   function colour(booking,salon){
     const service=(salon?.services||[]).find(item=>item.id===booking?.serviceId);
     const fill=category(salon,service?.categoryId),rgb=fill.slice(1).match(/../g).map(value=>parseInt(value,16));
@@ -39,5 +47,5 @@
     return {fill,ink,edge};
   }
   const style=(booking,salon)=>{const c=colour(booking,salon);return `--event-fill:${c.fill};--event-ink:${c.ink};--event-edge:${c.edge}`;};
-  window.JovaBookingPalette={choices,safeColor,clean,workspace,category,colour,style};
+  window.JovaBookingPalette={choices,safeColor,clean,workspace,category,usedBy,nextAvailable,colour,style};
 })();
