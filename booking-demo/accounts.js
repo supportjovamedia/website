@@ -497,6 +497,20 @@
         const r=await rpc('public_sms_reminder_info',{p_slug:slug}),d=r.data;
         return r.ok&&d&&typeof d.available==='boolean'&&d.consent_required===true&&d.reminder_hours===24?{ok:true,data:{available:d.available,consent_required:true,reminder_hours:24}}:{ok:false,data:{available:false}};
       },
+      async commissionAllowance() {
+        const t = await token();
+        if (!t) return null;
+        const r = await rpc('owner_commission_allowance', {}, t);
+        return r.ok && r.data && r.data.ok === true ? r.data : null;
+      },
+      async disputeCommission(booking, reason) {
+        const t = await token();
+        if (!t) return { ok: false, message: 'Log in again to send this dispute.' };
+        const r = await rpc('owner_dispute_commission', { p_booking: booking, p_reason: reason }, t);
+        if (r.ok && r.data && r.data.ok === true) return { ok: true };
+        const text = r.data && typeof r.data.message === 'string' && r.data.message.length < 160 ? r.data.message : '';
+        return { ok: false, message: r.network ? NET : text || 'We could not send this dispute. Please try again.' };
+      },
       async ownerCapabilities() {
         const t = await token();
         if (!t) return null;

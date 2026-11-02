@@ -44,7 +44,7 @@ run(['--test',
   'booking-demo/tests/monthly-commission-backend.mjs', 'booking-demo/tests/monthly-commission-sql.mjs',
   'booking-demo/tests/portal-access-sql.mjs', 'tests/jovabook-portal-billing.test.mjs',
   'booking-demo/tests/customer-portal.mjs', 'booking-demo/tests/customer-portal-sql.mjs',
-  'booking-demo/tests/commission.mjs', 'tests/jovabook-customer.test.mjs',
+  'booking-demo/tests/commission.mjs', 'booking-demo/tests/commission-automatic-outcomes-sql.mjs', 'tests/jovabook-customer.test.mjs',
   'booking-demo/tests/booking-horizon.mjs', 'booking-demo/tests/booking-horizon-sql.mjs',
 ]);
 // The SMS UI runs against its own intercepted server and cannot contact a provider.
