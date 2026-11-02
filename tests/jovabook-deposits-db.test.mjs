@@ -132,6 +132,32 @@ test('direct deposits reserve privately, verify payment, isolate tenants and ref
    const result=await value("select cancel_booking('fictional-business-1',$1) value",[h.booking_id]);assert.equal(result.ok,false);assert.match(result.message,/24 hours/);
    assert.equal(await value('select count(*)::int value from jovabook_private.customer_refunds where booking_id=$1',[h.booking_id]),0);
    const b=await value("select get_booking('fictional-business-1',$1) value",[h.booking_id]);assert.equal(b.can_cancel,false);
+   await q("select set_config('request.jwt.claim.sub',$1,false)",[owner]);await db.exec('set role authenticated');
+   await q("update bookings set status='cancelled' where salon_id=$1 and id=$2",[salon,h.booking_id]);
+   await db.exec('reset role');await q("select set_config('request.jwt.claim.sub','',false)");
+   assert.equal(await value('select count(*)::int value from jovabook_private.customer_refunds where booking_id=$1',[h.booking_id]),1);
+   assert.equal(await value('select status value from jovabook_private.customer_refunds where booking_id=$1',[h.booking_id]),'requested');
+   await assert.rejects(q('delete from bookings where salon_id=$1 and id=$2',[salon,h.booking_id]),/payment record/);
+
+  });
+  await t.test('salon cancellation before cutoff queues one full captured refund and later capture is recovered',async()=>{
+   const h=await begin({time:'11:00',email:'salon-cancel@example.test'});
+   await worker('attach',{id:h.id,account_id:account,provider_id:'cs_test_SalonCancel'});
+   await worker('paid',{id:h.id,account_id:account,provider_id:'cs_test_SalonCancel',payment_intent:'pi_SalonCancel',amount:1000,currency:'gbp',captured_at:Math.floor(Date.now()/1000)});
+   await q("select set_config('request.jwt.claim.sub',$1,false)",['10000000-0000-4000-8000-000000000002']);await db.exec('set role authenticated');
+   assert.equal((await q("update bookings set status='cancelled' where salon_id=$1 and id=$2 returning id",[salon,h.booking_id])).rows.length,0);
+   await db.exec('reset role');await q("select set_config('request.jwt.claim.sub',$1,false)",[owner]);await db.exec('set role authenticated');
+   for(let i=0;i<2;i++)await q("update bookings set status='cancelled' where salon_id=$1 and id=$2",[salon,h.booking_id]);
+   await db.exec('reset role');await q("select set_config('request.jwt.claim.sub','',false)");
+   assert.equal(await value('select count(*)::int value from jovabook_private.customer_refunds where booking_id=$1',[h.booking_id]),1);
+   assert.equal(await value('select amount value from jovabook_private.customer_deposits where booking_id=$1',[h.booking_id]),1000);
+   await q("select set_config('request.jwt.claim.sub',$1,false)",[owner]);
+   await q("insert into bookings(salon_id,id,service_id,service_name,price,duration,date,time,staff_id,name,email,status,source,deposit) values($1,'late-capture-refund','consultation','Consultation',25,30,$2,'18:00','owner','Fixture','late@example.test','confirmed','Manual',10)",[salon,date]);
+   await q("update bookings set status='cancelled' where id='late-capture-refund' and salon_id=$1",[salon]);
+   assert.equal(await value("select count(*)::int value from jovabook_private.customer_refunds where booking_id='late-capture-refund'"),0);
+   await q("insert into jovabook_private.customer_deposits(salon_id,booking_id,payment_intent,account_id,amount,currency,captured_at) values($1,'late-capture-refund','pi_LateOwnerCancel',$2,1000,'gbp',now())",[salon,account]);
+   assert.equal(await value("select count(*)::int value from jovabook_private.customer_refunds where booking_id='late-capture-refund'"),1);
+   await q("select set_config('request.jwt.claim.sub','',false)");
   });
  }finally{await db.close();}
 });
