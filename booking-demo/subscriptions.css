@@ -77,3 +77,12 @@ html[data-workspace-theme] .shell .sb-cadence-options button[aria-pressed=true]{
 @media(min-width:1001px){.sb-page .sb-plan-features>li{box-sizing:border-box;min-height:64px}}
 
 @media(min-width:1001px){.sb-page .sb-plan-card .sb-plan-commission{width:100%;max-width:none;min-height:68px;flex:0 0 68px}}
+
+.sb-commission-rates{display:flex;gap:16px;margin:20px 0;flex-wrap:wrap}
+.sb-commission-rates>div{display:flex;align-items:center;gap:24px;border:1px solid var(--theme-border,#dce2e8);border-radius:12px;padding:16px 20px;min-width:220px;justify-content:space-between}
+.sb-commission-rates span{font-size:14px;color:var(--theme-body,#222)}
+.sb-commission-rates strong{font-size:28px;line-height:1;color:var(--theme-primary,#235789)}
+.sb-fees-note details{margin-top:16px}
+.sb-fees-note summary{cursor:pointer;color:var(--theme-body,#222);font-size:14px;padding:8px 0}
+.sb-fees-note details p{margin-top:12px}
+@media(max-width:500px){.sb-commission-rates{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sb-commission-rates>div{min-width:0;align-items:flex-start;flex-direction:column;gap:14px;padding:14px}.sb-commission-rates span{font-size:13px}}

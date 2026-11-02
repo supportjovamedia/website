@@ -8,6 +8,23 @@ export default function StoryMotion({ children }) {
     let disposed = false, media, context, frame = 0;
     const node = root.current;
     const cleanups = [];
+    // Long smooth jumps can be interrupted by ScrollTrigger refreshing images.
+    // Keep the real anchor destination and land there immediately, including
+    // keyboard focus, rather than leaving visitors halfway through the page.
+    const jumpToSection = event => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = event.target.closest?.('a[href^="#"]');
+      const target = link && document.getElementById(link.hash.slice(1));
+      if (!target || !node.contains(target)) return;
+      event.preventDefault();
+      if (location.hash !== link.hash) history.pushState(null, "", link.hash);
+      target.scrollIntoView({ behavior: "instant", block: "start" });
+      const heading = target.querySelector("h2,h3") || target;
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+    };
+    node.addEventListener("click", jumpToSection);
+    cleanups.push(() => node.removeEventListener("click", jumpToSection));
     async function prepare() {
       const [engine, plugin] = await Promise.all([import("gsap"), import("gsap/ScrollTrigger")]);
       if (disposed) return;

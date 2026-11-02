@@ -6,7 +6,7 @@ test('JovaBook plan choice, real themes and FAQ work without a scroll stopper',a
  await expect(page.getByRole('heading',{name:'Useful controls for your working day.'})).toHaveCount(0);
  await expect(page.getByRole('navigation',{name:'Explore the booking workspace'})).toHaveCount(0);
  await expect(page.getByRole('button',{name:'Pause animation',exact:true})).toHaveCount(0);
- const cta=page.locator('main').getByRole('link',{name:'Try JovaBook for free',exact:true}).first();await expect(cta).toHaveAttribute('href','#plans');await cta.click();await expect(page).toHaveURL(/#plans$/);
+ const cta=page.locator('main').getByRole('link',{name:'Try JovaBook for free',exact:true}).first();await expect(cta).toHaveAttribute('href','#plans');await expect(page.locator('[data-jovabook-story]')).toHaveAttribute('data-motion',/active|reduced|static/);await cta.click();await expect(page).toHaveURL(/#plans$/);await expect(page.locator('#plans-title')).toBeFocused();await expect.poll(()=>page.locator('#plans').evaluate(el=>{const top=el.getBoundingClientRect().top;return top>=80&&top<=240;})).toBe(true);
  await page.getByRole('button',{name:'Yearly Save 20%',exact:true}).click();const plans=page.getByRole('region',{name:'JovaBook plans',exact:true});
  for(const total of ['£192 billed yearly','£480 billed yearly','£960 billed yearly'])await expect(plans).toContainText(total);
  await expect(plans.getByRole('link',{name:'Try JovaBook for free',exact:true})).toHaveAttribute('href',/cadence=annual/);
