@@ -1,6 +1,6 @@
 # JovaBook deposit release
 
-Updated 2 November 2026. Subscription billing and salon deposits are separate systems. Live deposits remain disabled while Stripe blocks the platform's live OAuth client ID.
+Updated 2 November 2026. Subscription billing and salon deposits are separate systems. The production deposit service and automatic refund scheduler are enabled. Each business must connect its own payment-ready Stripe account and choose its deposit percentage.
 
 ## Implemented
 
@@ -31,12 +31,14 @@ Updated 2 November 2026. Subscription billing and salon deposits are separate sy
 - Post-migration live SQL confirmed payments off, scheduler off, cron inactive, separate bound worker secrets, no direct anon/authenticated table SELECT and no anon execution of the private predecessor worker.
 - Security advisors retain expected warnings for intentionally token-gated public worker RPCs and private deny-by-default tables. The existing pg_net-in-public warning remains. Do not describe the advisor report as clean.
 
-## Remaining activation work
+## Production activation, 2 November 2026
 
-1. Stripe must release the live Connect OAuth client ID. Identity and integration review show complete, but the OAuth setting remains disabled. The Countries page explicitly says Stripe is reviewing the platform profile and live Connect is unavailable until review finishes. Irvin received the requested checklist screenshot and escalated to the specialist team by email. Case sco_VYOkDuFtMvI1jJ remains open. The specialists still need to confirm any extra requirements; do not claim this resolved.
-2. Save the released live client ID, enable the intended salon sign-in flow, deploy and verify it with a salon-owned account.
-3. Verify delivered signed webhook processing and authenticated worker invocation on the deployed routes. Then activate matching server/database gates and cron. Do not enable only one layer.
-4. Verify live booking/payment page rendering and Essential subscription checkout after deployment, without an assistant-made real charge.
-5. Finalize PR/merge/deployment evidence and free search-engine submissions for the changed marketing page.
+- Stripe approved live Connect. The production client ID is configured. Live salon sign-in reached Stripe's account selection page; cancelling returned correctly to the same owner workspace. No existing merchant account was connected without an owner choice.
+- PR #115 merged as `927d5b81fbbbbb7bde7fb5aee8d03020ea324a0d`. Booking UI and full functional/performance CI passed. Both the booking site and marketing/API deployment are live.
+- Authenticated production diagnostics verified the correct live Stripe platform, private database worker, separate deposit/refund credentials and webhook signing configuration.
+- Production payment flags, private database collection and scheduler gates are enabled. The every-minute scheduler's first observed run at 14:33 UTC succeeded. Both authenticated workers returned HTTP 200 with empty queues.
+- A locally signed configuration-only webhook returned HTTP 200. A tampered signature returned HTTP 400. This proves signature handling and matching configuration. It is not a real provider-delivered payment event.
+- No real live payment or refund was created, as instructed. The earlier actual sandbox deposit/refund remains the monetary-flow evidence. A salon must complete its own Stripe connection before taking deposits; no live merchant capture or refund is claimed as tested.
+- SMS stays disabled by user instruction. SMS Works shows 50 credits and none were used for this release. Automated account deletion stays disabled.
 
 The full 1:42 product film is retained. Its text-reminder and slot-recovery previews are described as features being prepared for team plans; they are not advertised as operational Essential features.
