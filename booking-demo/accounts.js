@@ -221,7 +221,9 @@
     const EXISTING='jovabook-existing-business-v1';let pendingBusinessOwner=null;
     try{pendingBusinessOwner=JSON.parse(sessionStorage.getItem(EXISTING)||'null');}catch{}
     const clearExisting=()=>{pendingBusinessOwner=null;try{sessionStorage.removeItem(EXISTING);}catch{}};
-    const existingBusinessContext=()=>{if(!pendingBusinessOwner?.id||pendingBusinessOwner.id!==load()?.user?.id)return null;let draft={};try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null');if(saved?.email?.toLowerCase()===pendingBusinessOwner.email?.toLowerCase())draft={name:typeof saved.name==='string'?saved.name.slice(0,60):'',slug:typeof saved.slug==='string'?saved.slug.slice(0,30):''};}catch{}return {owner:pendingBusinessOwner.owner,email:pendingBusinessOwner.email,creationError:pendingBusinessOwner.creationError||'',...draft};};
+    function freshSignupDraft(identity){try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null'),age=Date.now()-saved?.savedAt;if(saved?.userId!==identity?.id||normEmail(saved?.email)!==normEmail(identity?.email)||!Number.isFinite(saved?.savedAt)||age<0||age>48*3600000||typeof saved.name!=='string'||!saved.name.trim()||saved.name.length>60||typeof saved.slug!=='string'||saved.slug.length<3||saved.slug.length>30||!ADDRESS_RULE.test(saved.slug)||RESERVED.includes(saved.slug))return null;return saved;}catch{return null;}}
+    function clearSignupDraftFor(id,email){try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null');if(saved?.userId===id||!saved?.userId&&normEmail(saved?.email)===normEmail(email))localStorage.removeItem(SIGNUP_DRAFT);}catch{}}
+    const existingBusinessContext=()=>{if(!pendingBusinessOwner?.id||pendingBusinessOwner.id!==load()?.user?.id)return null;const draft=freshSignupDraft(pendingBusinessOwner);if(!draft)return null;return {owner:pendingBusinessOwner.owner,email:pendingBusinessOwner.email,creationError:pendingBusinessOwner.creationError||'',name:draft.name,slug:draft.slug};};
     const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
     const stamp=()=>({raw:rawSession(),generation});
     const current=expected=>expected.generation===generation&&expected.raw===rawSession();
@@ -387,7 +389,7 @@
         if(r.network)return {ok:false,field:'',message:NET};
         if(!r.ok||!r.data){const duplicate=/already|registered|exists/i.test(String(r.data?.msg||r.data?.message||''));return {ok:false,field:duplicate?'email':'',message:duplicate?'This email may already have an account. Log in with that account to create your business.':r.status===429?'Too many attempts. Wait a little before trying again.':'We could not request email verification. Please try again.'};}
         // Signup responses never establish an owner session or create a business.
-        try{localStorage.setItem(SIGNUP_DRAFT,JSON.stringify({name:n,slug:s,owner:o,email:e}));}catch{}
+        const signupUser=r.data.user||r.data;try{if(typeof signupUser?.id==='string'&&signupUser.id)localStorage.setItem(SIGNUP_DRAFT,JSON.stringify({name:n,slug:s,owner:o,email:e,userId:signupUser.id,savedAt:Date.now()}));else localStorage.removeItem(SIGNUP_DRAFT);}catch{}
         return {ok:true,verificationRequired:true};
       },
       async login(email, password) {
@@ -399,9 +401,9 @@
         if (!r.ok) return {ok:false,message:/email_not_confirmed|email.*not confirmed/i.test(String(r.data?.error_code||r.data?.code||r.data?.msg||r.data?.message||''))?'Verify your email from the link you received, then log in.':'That email and password do not match.'};
         const access = await ownerAccess();
         if(!current(r.authStamp))return stale();
-        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok)return identity;if(!current(r.authStamp))return stale();pendingBusinessOwner=identity.profile;try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}const profile=existingBusinessContext();if(profile?.name?.trim()&&profile?.slug?.trim()){const created=await this.createBusinessForExistingUser(profile);if(created.ok)return {...created,salon:{id:created.account.salonId}};if(created.stale)return created;if(pendingBusinessOwner)pendingBusinessOwner.creationError=created.message||'We could not create your business. Try again.';}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
+        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok){keep(null);clearExisting();return identity;}if(!current(r.authStamp))return stale();if(!freshSignupDraft(identity.profile)){try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}keep(null);clearExisting();return {ok:false,noBusiness:true,message:'No business is linked to this account. Sign up to create one.'};}pendingBusinessOwner=identity.profile;try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}const profile=existingBusinessContext();if(profile?.name?.trim()&&profile?.slug?.trim()){const created=await this.createBusinessForExistingUser(profile);if(created.ok)return {...created,salon:{id:created.account.salonId}};if(created.stale)return created;if(pendingBusinessOwner)pendingBusinessOwner.creationError=created.message||'We could not create your business. Try again.';}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
         if (!access.ok){if(access.wrongPortal){keep(null);clearExisting();}return access;}
-        return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id}};
+        clearSignupDraftFor(load()?.user?.id,email);return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id}};
       },
       async requestReset(email) {
         if (isDemo(email)) return local.requestReset(email);
