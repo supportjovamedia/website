@@ -176,6 +176,16 @@ test('pricing retains every inclusion and aligns desktop comparison rows', async
     }
     await expect(card.getByRole('link', { name: `Get a Quote for ${name}`, exact: true })).toHaveAttribute('href', `/get-a-quote?product=${id}`);
   }
+  // Desktop cards enter with staggered transforms. Measure their shared grid only
+  // after it is in view and the actual transitions have finished.
+  await page.evaluate(() => document.fonts.ready);
+  if (testInfo.project.name === 'desktop') {
+    await cards.first().scrollIntoViewIfNeeded();
+    if (!await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      for (const card of await cards.all()) await expect(card).toHaveAttribute('data-revealed', 'true');
+    }
+    await cards.evaluateAll(elements => Promise.all(elements.flatMap(el => el.getAnimations({ subtree: true })).map(animation => animation.finished.catch(() => {}))));
+  }
   const geometry = await cards.evaluateAll(elements => elements.map(el => ({
     height: el.getBoundingClientRect().height,
     rows: [...el.querySelectorAll('li')].map(row => ({ y: row.getBoundingClientRect().top, hidden: getComputedStyle(row).display === 'none' })),
