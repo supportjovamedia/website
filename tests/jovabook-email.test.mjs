@@ -59,3 +59,7 @@ test('Setup reports provider permission failure without enabling delivery',async
  const actions=[];const send=async(url,opts)=>{actions.push({url,opts});return Response.json({message:'Forbidden'},{status:403});};
  const r=await createBookingEmailHandlers({env,send}).worker(request({action:'setup'}));assert.equal(r.status,502);assert.equal((await r.json()).provider_status,403);assert(!actions.some(a=>a.url.includes('supabase.co')));
 });
+
+test('Cancellation and no-show notices explain how to dispute without inventing a customer action',()=>{
+ for(const kind of ['cancelled','no-show']){const j=structuredClone(fixture);j.payload.kind=kind;const mail=bookingEmailContent(j,cfg);assert.match(mail.text,/dispute/);assert.match(mail.html,/support.jovamedia@gmail.com/);j.payload.audience='owner';const owner=bookingEmailContent(j,cfg);assert(!owner.text.includes('Taylor cancelled a booking'));if(kind==='no-show')assert.match(owner.subject,/No-show reported/);}
+});

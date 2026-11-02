@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {webcrypto} from 'node:crypto';
-const source=await readFile(new URL('../customer-portal.js',import.meta.url),'utf8');
+const source=(await readFile(new URL('../phone-validation.js',import.meta.url),'utf8'))+'\n'+await readFile(new URL('../customer-portal.js',import.meta.url),'utf8');
 const slug='fictional-studio',authKey='jovabook-customer-auth-v1:'+slug,recoveryKey='jovabook-customer-recovery-v1:'+slug;
 const jwt=(id='customer-a',exp=Date.now()/1000+3600)=>Buffer.from('{}').toString('base64url')+'.'+Buffer.from(JSON.stringify({sub:id,exp})).toString('base64url')+'.mock';
 const session=(expired=false)=>({access_token:'customer-access',refresh_token:'customer-refresh',expires_at:Date.now()/1000+(expired?-1:3600),user:{id:'customer-a'}});

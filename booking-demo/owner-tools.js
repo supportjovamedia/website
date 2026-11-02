@@ -20,7 +20,7 @@
    if(b.date<filter.start||b.date>filter.end||filter.staff!=='all'&&b.staffId!==filter.staff)continue;
    if(!linked){unlinkedVisits++;continue;}
    const previous=selected.get(b.customerId),lastVisit=b.date+'T'+(time||'00:00');
-   if(!previous||lastVisit>previous.lastVisit)selected.set(b.customerId,{id:b.customerId,name:String(clients.get(b.customerId).name||'Unnamed client'),date:b.date,lastVisit});
+   if(!previous||lastVisit>previous.lastVisit)selected.set(b.customerId,{id:b.customerId,name:String(clients.get(b.customerId).name||'Unnamed customer'),date:b.date,lastVisit});
   }
   const returning=[...selected.keys()].filter(id=>prior.has(id)).length;
   return {total:selected.size,firstRecorded:selected.size-returning,returning,unlinkedVisits,withoutNext:[...selected.values()].filter(c=>!upcoming.has(c.id)).sort((a,b)=>b.lastVisit.localeCompare(a.lastVisit)||a.name.localeCompare(b.name)||a.id.localeCompare(b.id))};
@@ -166,15 +166,15 @@
   }
   function seriesModal() {
    if(pending){toast('Your bookings are still saving. Please wait.');return;}
-   if(!supported()){modal('Multiple bookings',`<p>This salon needs the multiple-appointment booking update before a series can be saved. Individual bookings are still available.</p><p class="ot-help">Ask your account administrator to finish the booking setup.</p>`);return;}
-   const list=services();if(!list.length){modal('Multiple bookings','<p>Add a service and assign an active team member before creating multiple bookings.</p><a class="btn" href="#services" data-action="close-modal">Open services</a>');return;}
+   if(!supported()){modal('Multiple sessions',`<p>This salon needs the multiple-session booking update before a series can be saved. Individual bookings are still available.</p><p class="ot-help">Ask your account administrator to finish the booking setup.</p>`);return;}
+   const list=services();if(!list.length){modal('Multiple sessions','<p>Add a service and assign an active team member before creating multiple sessions.</p><a class="btn" href="#services" data-action="close-modal">Open services</a>');return;}
    preview=null;seriesSalonId=salon().id;
    const service=list[0],staff=eligible(service)[0],date=initialDate(service,staff.id),times=available(date,service.id,null,staff.id);
-   modal('Book multiple bookings',`<p>Choose one service and a regular time. Check every date before adding the bookings together.</p><form data-form="owner-series" class="ot-series"><label class="field">Client<select name="customerId"><option value="">New client</option>${options(salon().customers.map(c=>[c.id,c.name+' · '+(c.email||'')]),'')}</select></label><div class="ot-form-grid">${input('Client name','name','','text','required maxlength="100"')}${input('Client email','email','','email','required maxlength="254"')}</div>${input('Phone (optional)','phone','','tel','maxlength="40"')}<label class="field">Service<select name="serviceId">${options(list.map(s=>[s.id,s.name+' · '+money(s.price)+' · '+s.duration+' min']),service.id)}</select></label><div class="ot-form-grid"><label class="field">Team member<select name="staffId">${options(eligible(service).map(m=>[m.id,m.name]),staff.id)}</select></label>${input('First booking','startDate',date,'date',`required min="${today()}"`)}</div><div class="ot-form-grid"><label class="field">Time<select name="time" required>${times.length?options(times.map(time=>[time,time]),times[0]):'<option value="">No times available</option>'}</select></label>${input('Repeat every (weeks)','intervalWeeks',1,'number','required min="1" max="52" step="1"')}${input('Number of bookings','count',2,'number','required min="2" max="12" step="1"')}</div><label class="field">Notes (optional)<textarea name="notes" rows="2" maxlength="500"></textarea></label><div class="error" role="alert"></div><button class="btn" type="submit">Check dates</button><div data-owner-series-preview aria-live="polite" class="ot-series-preview"><p class="ot-help">Nothing is booked until you confirm the checked dates.</p></div></form>`,'large');
+   modal('Book multiple sessions',`<p>Choose one service and a regular time. Check every date before adding the bookings together.</p><form data-form="owner-series" class="ot-series"><label class="field">Customer<select name="customerId"><option value="">New customer</option>${options(salon().customers.map(c=>[c.id,c.name+' · '+(c.email||'')]),'')}</select></label><div class="ot-form-grid">${input('Customer name','name','','text','required maxlength="100"')}${input('Customer email','email','','email','required maxlength="254"')}</div>${input('Phone (optional)','phone','','tel','maxlength="40"')}<label class="field">Service<select name="serviceId">${options(list.map(s=>[s.id,s.name+' · '+money(s.price)+' · '+s.duration+' min']),service.id)}</select></label><div class="ot-form-grid"><label class="field">Team member<select name="staffId">${options(eligible(service).map(m=>[m.id,m.name]),staff.id)}</select></label>${input('First booking','startDate',date,'date',`required min="${today()}"`)}</div><div class="ot-form-grid"><label class="field">Time<select name="time" required>${times.length?options(times.map(time=>[time,time]),times[0]):'<option value="">No times available</option>'}</select></label>${input('Repeat every (weeks)','intervalWeeks',1,'number','required min="1" max="52" step="1"')}${input('Number of sessions','count',2,'number','required min="2" max="12" step="1"')}</div><label class="field">Notes (optional)<textarea name="notes" rows="2" maxlength="500"></textarea></label><div class="error" role="alert"></div><button class="btn" type="submit">Check dates</button><div data-owner-series-preview aria-live="polite" class="ot-series-preview"><p class="ot-help">Nothing is booked until you confirm the checked dates.</p></div></form>`,'large');
   }
   function readSeries(form) {
    const data=new FormData(form),s=salon(),service=services().find(v=>v.id===data.get('serviceId')),staffId=String(data.get('staffId')||''),start=String(data.get('startDate')||''),count=Number(data.get('count')),interval=Number(data.get('intervalWeeks'));
-   if(s.id!==seriesSalonId)throw Error('Your salon changed. Open multiple bookings again.');
+   if(s.id!==seriesSalonId)throw Error('Your salon changed. Open multiple sessions again.');
    if(!service||!eligible(service).some(m=>m.id===staffId))throw Error('Choose a service and a team member who offers it.');
    if(!validDate(start)||start<today())throw Error('Choose a first booking today or later.');
    if(!Number.isInteger(count)||count<2||count>12)throw Error('Choose between 2 and 12 bookings.');
@@ -183,7 +183,7 @@
    if(!request.name||request.name.length>100||request.email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(request.email))throw Error('Enter a client name and valid email address.');
    if(request.phone.length>40||request.notes.length>500)throw Error('Keep the phone number to 40 characters and notes to 500.');
    if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(request.time))throw Error('Choose a time for your bookings.');
-   if(request.customerId&&!s.customers.some(c=>c.id===request.customerId))throw Error('Choose an existing client or select New client.');
+   if(request.customerId&&!s.customers.some(c=>c.id===request.customerId))throw Error('Choose an existing client or select New customer.');
    return request;
   }
   const checkDates=request=>request.dates.map(date=>({date,free:available(date,request.serviceId,null,request.staffId).includes(request.time)}));
@@ -196,7 +196,7 @@
   async function confirmSeries(form) {
    if(pending)return;
    try {
-    if(!supported())throw Error('Multiple bookings are not enabled for this salon yet.');
+    if(!supported())throw Error('Multiple sessions are not enabled for this salon yet.');
     const request=readSeries(form);
     if(!preview||preview.salonId!==salon().id||preview.signature!==JSON.stringify(request))throw Error('Your details changed. Check the dates again before booking.');
     if(!showPreview(form,request,checkDates(request)))throw Error('A date is no longer available. Review the dates and try again.');
@@ -228,7 +228,7 @@
     if(insightsSalonId!==salon().id)resetInsights();
     try {const data=new FormData(form),preset=String(data.get('period')||'month'),range=preset==='custom'?{start:String(data.get('start')||''),end:String(data.get('end')||'')}:periodRange(preset);if(!validDate(range.start)||!validDate(range.end)||range.start>range.end||dateDifference(range.start,range.end)>365)throw Error('Choose a valid date range of up to one year.');const staff=String(data.get('staff')||'all');if(staff!=='all'&&!salon().staff.some(m=>m.id===staff))throw Error('Choose a team member from this salon.');filter={preset:['month','week','last30','custom'].includes(preset)?preset:'month',...range,staff};render();}catch(caught){error(form,caught.message);}return true;
    }
-   if(type==='owner-series') {try {if(pending)return true;if(!supported())throw Error('Multiple bookings are not enabled for this salon yet.');const request=readSeries(form);error(form,'');showPreview(form,request,checkDates(request));}catch(caught){preview=null;error(form,caught.message);}return true;}
+   if(type==='owner-series') {try {if(pending)return true;if(!supported())throw Error('Multiple sessions are not enabled for this salon yet.');const request=readSeries(form);error(form,'');showPreview(form,request,checkDates(request));}catch(caught){preview=null;error(form,caught.message);}return true;}
    return false;
   }
   function change(el) {
