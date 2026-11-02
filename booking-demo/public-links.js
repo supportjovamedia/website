@@ -13,7 +13,7 @@
     const salon = query.get('salon'), demo = query.get('demo');
     const home = pathname === '/' || pathname === '/index.html';
     const parts=pathname.slice(1).split('/'),candidate=parts[0],tail=parts.slice(1).join('/');
-    const routes={'':'website',about:'website/about',contact:'website/contact',book:'book/service','book/service':'book/service','book/time':'book/time','book/choice':'book/choice','book/details':'book/details','book/payment':'book/payment','book/confirmation':'book/confirmation',account:'customer/bookings','account/login':'customer/login','account/register':'customer/register','account/forgot':'customer/forgot','account/reset':'customer/reset','account/bookings':'customer/bookings','account/payments':'customer/payments'};
+    const routes={'':'website',about:'website/about',contact:'website/contact',book:'book/service','book/service':'book/service','book/time':'book/time','book/choice':'book/choice','book/details':'book/details','book/payment':'book/payment','book/confirmation':'book/confirmation',account:'customer/bookings','account/login':'customer/login','account/register':'customer/register','account/forgot':'customer/forgot','account/reset':'customer/reset','account/bookings':'customer/bookings','account/payments':'customer/payments','account/profile':'customer/profile'};
     if(!home&&(!Object.hasOwn(routes,tail)||pathname.endsWith('/')))return empty;
     if (!home && !cleanSlug(candidate)) return empty;
     if (demo !== null && demo !== demoSlug) return empty;
@@ -36,5 +36,5 @@
     url.hash = hash;
     return url.href;
   }
-  window.JovaPublicLinks = Object.freeze({resolve, validSlug, booking:(slug,{step='service',...options}={})=>['service','time','choice','details','payment','confirmation'].includes(step)?build(slug,'book/'+step,options):'', account:(slug,{page='bookings',...options}={})=>['login','register','forgot','reset','bookings','payments'].includes(page)?build(slug,'customer/'+page,options):'', website:(slug, {page = 'home', ...options} = {})=>['home','about','contact'].includes(page) ? build(slug, 'website' + (page === 'home' ? '' : '/' + page), options) : ''});
+  window.JovaPublicLinks = Object.freeze({resolve, validSlug, booking:(slug,{step='service',...options}={})=>['service','time','choice','details','payment','confirmation'].includes(step)?build(slug,'book/'+step,options):'', account:(slug,{page='bookings',...options}={})=>['login','register','forgot','reset','bookings','profile','payments'].includes(page)?build(slug,'customer/'+(page==='payments'?'bookings':page),options):'', website:(slug, {page = 'home', ...options} = {})=>['home','about','contact'].includes(page) ? build(slug, 'website' + (page === 'home' ? '' : '/' + page), options) : ''});
 })();
