@@ -58,3 +58,8 @@
 .nf-recovery-control:hover .nf-recovery-tooltip,.nf-recovery-control:focus .nf-recovery-tooltip,.nf-recovery-control:focus-visible .nf-recovery-tooltip{display:block}
 .nf-recovery-control:focus-visible{outline:2px solid #a58366;outline-offset:3px}
 @media(max-width:600px){.nf-popover .nf-recovery-action{padding:0 18px 12px 61px}.nf-recovery-tooltip{max-width:min(235px,calc(100vw - 98px))}}
+
+/* Recovery belongs to the notification, including its read/unread surface. */
+.nf-list>li:has(>.nf-item)>.nf-recovery-action{background:var(--theme-panel,#fff)}
+.nf-list>li:has(>.nf-item.is-unread)>.nf-recovery-action{background:var(--theme-inset,#f4f8fb)}
+.nf-list>li:has(.nf-recovery-action):hover>.nf-recovery-action{background:var(--theme-inset,#edf4f8)}
