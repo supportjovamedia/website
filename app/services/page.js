@@ -8,7 +8,7 @@ import MotionRegion from "@/components/MotionRegion";
 import PhotoHero from "@/components/PhotoHero";
 import { FaqStory } from "@/components/ScrollStories";
 
-export const metadata = pageMetadata("/services", "Digital Services for UK Small Businesses | JovaMedia", "Explore JovaMedia's branding, social media, copywriting, email marketing, search visibility and systems services. Website design has its own dedicated section.");
+export const metadata = pageMetadata("/services", "Digital Services for UK Small Businesses | JovaMedia", "System modernisation, email marketing and automation, and search and local visibility for UK businesses. Explore JovaMedia's practical business services.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
@@ -16,7 +16,7 @@ export default function Page() {
       <div className="shell">
 
         <h1>Everything you need<br /><em>to grow.</em></h1>
-        <p className="lead">A clearer message, a stronger identity or more connected tools. Choose the support your business needs.</p>
+        <p className="lead">More connected systems, useful email campaigns and better search visibility. Choose the support your business needs.</p>
         <div className="actions"><Link className="btn" href="/contact">Contact Us</Link><Link className="text-link" href="/websites">Looking for a website?</Link></div>
       </div>
     </PhotoHero>
