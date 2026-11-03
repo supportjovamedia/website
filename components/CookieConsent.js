@@ -40,6 +40,7 @@ export default function CookieConsent() {
     if (visible && !dialog.current.open) dialog.current.showModal();
     else if (!visible && dialog.current.open) dialog.current.close();
   }, [visible]);
+  useEffect(()=>{if(consent==='rejected'&&!/(?:^|;\s*)jova-link-statistics=/.test(document.cookie))document.cookie='jova-link-statistics=off; Max-Age=15552000; Path=/; SameSite=Lax; Secure; Domain=.jovamedia.com';},[consent]);
   function configure() {
     setAnalytics(consent === "accepted");
     setConfiguring(true);
@@ -48,6 +49,7 @@ export default function CookieConsent() {
     const wasAccepted = choice() === "accepted";
     try { localStorage.setItem(KEY, JSON.stringify({ choice: next, time: Date.now() })); }
     catch { setStorageError(true); return; }
+    if(next==='rejected')document.cookie='jova-link-statistics=off; Max-Age=15552000; Path=/; SameSite=Lax; Secure; Domain=.jovamedia.com';
     shareFunnelConsent(next);
     window.dispatchEvent(new Event("jova-consent"));
     setEditing(false);
@@ -70,7 +72,7 @@ export default function CookieConsent() {
     </section>, document.body)}
     <dialog ref={dialog} className={styles.panel} aria-labelledby="cookie-title" aria-describedby="cookie-description" data-nosnippet onCancel={event => { event.preventDefault(); setEditing(false); dialog.current.close(); }}>
       <h2 id="cookie-title">{configuring ? "Cookies configuration" : "Cookies Policy"}</h2>
-      <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits, clicks and the consented business registration, trial and subscription-payment journey, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept.</p>
+      <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits, clicks and the consented business registration, trial and subscription-payment journey, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept. Our short links also measure daily estimated reach without analytics cookies. Reject all stops future short-link statistics for this browser; you can also turn them off in our <Link href="/privacy-policy#link-statistics">Privacy Policy</Link>.</p>
       {configuring ? <div className={styles.options}>
         <div className={styles.row}><span>Necessary storage</span><span className={styles.active}>Always active</span></div>
         <div className={styles.row}>
