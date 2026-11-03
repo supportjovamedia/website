@@ -97,3 +97,5 @@ test('only verified salon OAuth connections bind payment readiness, and only whe
   assert.equal(bound.length,expected?1:0);if(expected)assert.deepEqual(bound[0].p_payload,{salon_id:sid,user_id:uid,account_id:account,ready:true});
  }
 });
+
+test('deposit requests retain explicit SMS opt-in and reject non-boolean consent before effects',async()=>{const f=fixture(),r=await f.handlers.start(req('start',{...startBody(),sms_consent:true}));assert.equal(r.status,200);assert.equal(f.db.find(x=>x.p_action==='begin').p_payload.sms_consent,true);const bad=fixture();assert.equal((await bad.handlers.start(req('start',{...startBody(),sms_consent:'true'}))).status,400);assert.equal(bad.db.length,0);assert.equal(bad.calls.length,0);});

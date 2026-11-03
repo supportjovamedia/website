@@ -61,7 +61,7 @@ export default function JovaBookPage() {
         </div>
       </section>
       <section id="demo" className={s.demo} aria-labelledby="demo-title"><div className={s.container}>
-        <header className={s.sectionHeading}><h2 id="demo-title">Everything your business needs to take bookings and grow.</h2><p>Take a closer look at the tools inside JovaBook, one by one.</p><p>The film also previews text reminders and slot recovery, which are being prepared for team plans.</p></header>
+        <header className={s.sectionHeading}><h2 id="demo-title">Everything your business needs to take bookings and grow.</h2><p>Take a closer look at the tools inside JovaBook, one by one.</p></header>
         <div className={s.videoStage} data-card-group><figure className={s.videoFigure} data-story-card><video className={s.video} controls playsInline preload="none" poster="/jovabook/demo-poster.webp" aria-label="JovaBook product film"><source src="/jovabook/demo.mp4" type="video/mp4" />Your browser does not support video. <a href="/jovabook/demo.mp4">Watch the JovaBook product film</a>.</video></figure></div>
       </div></section>
       <BookingPartner />

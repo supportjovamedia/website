@@ -149,3 +149,6 @@
 
 /* Keep readonly embed code readable without mobile input zoom. */
 @media(max-width:600px){.shell .ws-editor-controls .ws-details textarea.ws-code{font-size:16px!important}}
+
+/* Reminder message editor */
+.sr-message{border-top:1px solid var(--border,#dce3e8);margin-top:28px;padding-top:24px}.sr-message h3{font-size:20px;margin:0 0 20px}.sr-message-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.sr-message label{display:block;margin-bottom:10px;font-weight:600}.sr-message textarea{display:block;box-sizing:border-box;width:100%;font:inherit;font-size:16px;line-height:1.6;border:1px solid #afbdc9;border-radius:12px;padding:14px;resize:vertical;min-height:150px}.sr-message #sr-tokens,.sr-counter{font-size:14px;line-height:1.6;color:var(--muted,#536577)}.sr-preview{padding:20px;border-radius:16px;background:var(--surface-soft,#f2f5f7);min-width:0}.sr-preview>span{font-weight:600}.sr-preview p{overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.7}.sr-preview strong{font-size:14px;color:var(--brand,#285b86)}.sr-counter{margin-top:12px}.sr-message .sr-actions{min-height:44px}.sr-message button{min-height:44px}@media(max-width:640px){.sr-message-grid{grid-template-columns:1fr;gap:16px}.sr-message .sr-actions{gap:12px;flex-wrap:wrap}.sr-message button{width:100%}}
