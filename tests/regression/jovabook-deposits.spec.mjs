@@ -23,11 +23,11 @@ const date=new Date(Date.now()+86400000).toISOString().slice(0,10);
 const business={id:sid,name:'Fictional Deposit Studio',slug:'deposit-fixture',address:'Example test address',settings:{hours:{start:'09:00',end:'18:00',days:[0,1,2,3,4,5,6]},buffer:0,notice:0,timezone:'Europe/London'},booking_window:{today:new Date().toISOString().slice(0,10),max_date:new Date(Date.now()+75*86400000).toISOString().slice(0,10),days:75,timezone:'Europe/London',server_now:new Date().toISOString()},services:[{id:'haircut',name:'Haircut',price:50,duration:30,staffIds:['owner']}],categories:[],staff:[{id:'owner',name:'Test Owner',active:true,hours:null}],busy:[],payments:{enabled:true,deposit:0,deposit_percent:20},deposit_checkout_available:true};
 
 test('guest deposit checkout and verified return work without calling the unpaid booking RPC',async({page})=>{
- const errors=[],calls=[];page.on('pageerror',e=>errors.push(e.message));
+ const errors=[],calls=[];let holdStatus=false,releaseStatus;page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*.supabase.co/**',async route=>{const rpc=new URL(route.request().url()).pathname.split('/').at(-1);calls.push(rpc);const data=rpc==='public_salon'?business:rpc==='public_sms_reminder_info'?{available:false,consent_required:true,reminder_hours:24}:null;await route.fulfill({json:data});});
  await page.route('**/api/jovabook/deposits/start',route=>route.fulfill({json:{ok:true,id,stage:'pending',url:'https://checkout.stripe.com/c/pay/fixture'}}));
  await page.route('https://checkout.stripe.com/c/pay/fixture',route=>route.fulfill({contentType:'text/html',body:'<h1>Isolated Stripe checkout fixture</h1>'}));
- await page.route('**/api/jovabook/deposits/status',route=>route.fulfill({json:{ok:true,id,stage:'paid',booking:{id:'bk_'+'a'.repeat(32),serviceName:'Haircut',date,time:'12:00',duration:30,staffId:'owner',status:'confirmed',price:50,deposit:10}}}));
+ await page.route('**/api/jovabook/deposits/status',async route=>{const body=route.request().postDataJSON();expect(body.id).toBe(id);expect(body.verifier).toMatch(/^[a-f0-9]{64}$/);if(holdStatus)await new Promise(resolve=>{releaseStatus=resolve;});await route.fulfill({json:{ok:true,id,stage:'paid',booking:{id:'bk_'+'a'.repeat(32),serviceName:'Haircut',date,time:'12:00',duration:30,staffId:'owner',status:'confirmed',price:50,deposit:10}}});});
  await page.goto(base+'/?salon=deposit-fixture#book/service');
  await page.locator('[data-action="select-service"][data-id="haircut"]').click();
  const dateInput=page.locator('[data-change="booking-date"]');await dateInput.fill(date);await dateInput.dispatchEvent('change');
@@ -49,9 +49,9 @@ test('guest deposit checkout and verified return work without calling the unpaid
  await page.getByRole('button',{name:'Pay £10.00 deposit',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Isolated Stripe checkout fixture'})).toBeVisible();
  await page.goto(base+'/?salon=deposit-fixture#book/deposit');
- await expect(page.getByRole('heading',{name:'Your booking is confirmed',exact:true})).toBeVisible();
- await expect(page.getByText('Deposit paid',{exact:true})).toBeVisible();
- await page.reload();await expect(page.getByRole('heading',{name:'Your booking is confirmed',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'You’re booked in.',exact:true})).toBeVisible();
+ await expect(page.getByText('Total / deposit',{exact:true})).toBeVisible();await expect(page.getByText('£50.00 / £10.00',{exact:true})).toBeVisible();
+ holdStatus=true;await page.reload();await expect.poll(()=>typeof releaseStatus).toBe('function');await expect(page.getByRole('heading',{name:'You’re booked in.',exact:true})).toHaveCount(0);await expect(page.getByRole('heading',{name:'Check your booking',exact:true})).toBeVisible();releaseStatus();await expect(page.getByRole('heading',{name:'You’re booked in.',exact:true})).toBeVisible();
  expect(calls).not.toContain('create_booking');expect(calls).not.toContain('create_booking_with_sms');expect(errors).toEqual([]);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
@@ -66,7 +66,8 @@ test('pending checkout actions fit a narrow screen and cancellation expires only
   await route.fulfill({json:{ok:true,id,stage:expired?'expired':'pending',...(expired?{}:{url:'https://checkout.stripe.com/c/pay/fixture'})}});
  });
  await page.addInitScript(({id})=>sessionStorage.setItem('jovabook-deposit-deposit-fixture',JSON.stringify({id,request_id:id,verifier:'a'.repeat(64)})),{id});
- await page.goto(base+'/?salon=deposit-fixture#book/deposit');
+ await page.goto(base+'/?salon=deposit-fixture#book/confirmation');
+ await expect(page).toHaveURL(/#book\/deposit$/);await expect(page.getByRole('heading',{name:'You’re booked in.',exact:true})).toHaveCount(0);
  await expect(page.getByRole('link',{name:'Continue payment',exact:true})).toBeVisible();
  for(const name of ['Cancel checkout','Check payment'])await expect(page.getByRole('button',{name,exact:true})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

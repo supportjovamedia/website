@@ -80,15 +80,18 @@ test('optional cookie choices leave the page usable and remain editable', async 
   await expect(dialog).toBeHidden();
 });
 
-test('primary navigation keeps five pages and the quote action, with work and contact in the footer', async ({ page }, testInfo) => {
+test('primary navigation consolidates Products and contact while keeping work in the footer', async ({ page }, testInfo) => {
   await page.goto('/websites');
-  const nav = page.getByRole('navigation', { name: testInfo.project.name === 'phone' ? 'Mobile navigation' : 'Primary navigation', exact: true });
-  if (testInfo.project.name === 'phone') await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-  await expect(nav.getByRole('link', { name: 'Our Work', exact: true })).toHaveCount(0);
-  await expect(nav.getByRole('link', { name: 'Contact Us', exact: true })).toHaveCount(0);
-  if (testInfo.project.name === 'phone') await page.getByRole('button', { name: 'Close menu', exact: true }).click();
-  for (const path of ['/work', '/contact']) await expect(page.locator(`footer a[href="${path}"]`)).toHaveCount(1);
-  await expect(page.locator('header a[href="/get-a-quote"]').first()).toHaveAttribute('href', '/get-a-quote');
+  const phone=testInfo.project.name==='phone';
+  const nav=page.getByRole('navigation',{name:phone?'Mobile navigation':'Primary navigation',exact:true});
+  if(phone)await page.getByRole('button',{name:'Open menu',exact:true}).click();
+  await expect(nav.locator('a')).toHaveText(phone?['Home','About','Products','Pricing','JovaBook','Contact us']:['Home','About','Products','Pricing','JovaBook']);
+  await expect(nav.getByRole('link',{name:'Products',exact:true})).toHaveAttribute('href','/products');
+  await expect(nav.getByRole('link',{name:'Products',exact:true})).toHaveAttribute('aria-current','page');
+  await expect(nav.getByRole('link',{name:'Our Work',exact:true})).toHaveCount(0);
+  if(phone){await expect(nav.getByRole('link',{name:'Contact us',exact:true})).toHaveAttribute('href','/contact');await page.getByRole('button',{name:'Close menu',exact:true}).click();}
+  for(const path of ['/work','/contact'])await expect(page.locator(`footer a[href="${path}"]`)).toHaveCount(1);
+  await expect(page.locator('header .desktop-cta')).toHaveAttribute('href','/contact');
 });
 
 test('optional analytics can be accepted and withdrawn through the actual consent controls', async ({ page }) => {
@@ -456,7 +459,7 @@ test('homepage preview motion runs natively, pauses offscreen and respects reduc
   await noOverflow(page);
 });
 
-test('phone navigation slides from the left and services use a separate panel',async({page},testInfo)=>{
+test('phone navigation slides from the left and keeps Products, focus trapping and scroll restoration usable',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='phone','Phone navigation is separate from desktop.');
   await page.goto('/');
   const menu=page.getByRole('navigation',{name:'Mobile navigation',includeHidden:true});
@@ -465,13 +468,14 @@ test('phone navigation slides from the left and services use a separate panel',a
   await expect(menu).toBeVisible();
   await expect(menu).toHaveCSS('background-color','rgb(255, 255, 255)');
   await expect(menu).toHaveCSS('transition-duration','0.4s, 0s');
-  await menu.getByRole('button',{name:'Services',exact:true}).click();
-  await expect(menu.getByRole('link',{name:'Social media management',exact:true})).toBeVisible();
-  await expect(menu.getByRole('link',{name:'Website design',exact:true})).toHaveCount(0);
-  await expect(menu.getByRole('link',{name:'Home',exact:true})).toBeHidden();
-  await expect(menu.getByRole('button',{name:'Back',exact:true})).toBeFocused();
-  await menu.getByRole('button',{name:'Back',exact:true}).click();
-  await expect(menu.getByRole('button',{name:'Services',exact:true})).toBeFocused();
+  const products=menu.getByRole('link',{name:'Products',exact:true});
+  await expect(products).toHaveAttribute('href','/products');
+  await products.focus();await page.keyboard.press('Tab');
+  await expect(menu.getByRole('link',{name:'Pricing',exact:true})).toBeFocused();
+  const contact=menu.getByRole('link',{name:'Contact us',exact:true});
+  await contact.focus();await page.keyboard.press('Tab');
+  await expect(page.getByRole('button',{name:'Close menu',exact:true})).toBeFocused();
+  await page.keyboard.press('Shift+Tab');await expect(contact).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(menu).toBeHidden();
   await expect(page.getByRole('button',{name:'Open menu',exact:true})).toBeFocused();
@@ -485,8 +489,8 @@ test('phone navigation slides from the left and services use a separate panel',a
   await expect(page.locator('header.header')).toHaveAttribute('data-stuck','true');
   await page.getByRole('button',{name:'Open menu',exact:true}).click();
   await expect(menu).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(menu.getByRole('link',{name:'About',exact:true})).toHaveCSS('color','rgb(23, 42, 65)');
-  await expect(menu.getByRole('link',{name:'Get a Quote',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
+  await expect(menu.getByRole('link',{name:'About',exact:true})).toHaveCSS('color','rgb(18, 54, 83)');
+  await expect(menu.getByRole('link',{name:'Contact us',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
   await expect(page.locator('.header .logo-light-surface')).toBeVisible();
   await expect(page.locator('.header .logo-dark-surface')).toBeHidden();
   await menu.getByRole('link',{name:'About',exact:true}).click();

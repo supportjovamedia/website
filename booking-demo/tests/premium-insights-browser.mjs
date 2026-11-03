@@ -30,6 +30,7 @@ await context.route('**/*',async route=>{
  if(p==='/api/jovabook/billing/status'){assert.equal(method,'POST');assert.equal(r.headers().authorization,'Bearer access-'+state.owner);const s=salon();return answer({ok:true,access:'active',reason:'paid',business:{id:s.id,name:s.name,slug:s.slug,plan:s.plan,status:s.status},lifecycle:{trialEndsAt:null,purgeAt:null},billing:{connected:false,canCheckout:false},staff_limit:{essential:1,standard:5,premium:10}[s.plan]});}
  if(p==='/auth/v1/token')return answer(token(state.owner));
  if(p==='/rest/v1/salons')return answer([salon()]);
+ if(p.endsWith('/rpc/owner_refund_activity')){assert.equal(method,'POST');assert.deepEqual(r.postDataJSON(),{});return answer({ok:true,refunds:[]});}
  if(p.endsWith('/rpc/owner_capabilities'))return answer({version:1,plan:state.capabilityPlan,staff_limit:{essential:1,standard:5,premium:10}[state.capabilityPlan],per_day_hours:true,booking_series:true});
  if(p.endsWith('/rpc/email_delivery_info'))return answer({enabled:false,provider:'Resend',reminder_hours:24});
  const table=p.split('/').at(-1);
@@ -96,7 +97,7 @@ try{
   await page.evaluate(auth=>{const key='jovabook-auth',oldValue=localStorage.getItem(key),newValue=JSON.stringify(auth);localStorage.setItem(key,newValue);dispatchEvent(new StorageEvent('storage',{key,oldValue,newValue,storageArea:localStorage,url:location.href}));},token(state.owner));await expect(page.locator('[data-form=login]')).toBeVisible();await expect(page.locator('[data-premium-compare]')).toHaveCount(0);
   await page.locator('[data-form=login] [name=email]').fill('owner@example.test');await page.locator('[data-form=login] [name=password]').fill('Fictional123');await page.locator('[data-form=login] button.primary').click();await expect(page).toHaveURL(/#dashboard$/);await go();await apply();await total('value','£17.00');await total('completed','1');await expect(panel()).toHaveAttribute('data-compare-metric','value');await expect(panel()).not.toContainText('£230.00');
  });
- const allowedPost=new Set(['/api/jovabook/billing/status','/rest/v1/rpc/owner_capabilities','/rest/v1/rpc/email_delivery_info','/auth/v1/token']);
+ const allowedPost=new Set(['/api/jovabook/billing/status','/rest/v1/rpc/owner_capabilities','/rest/v1/rpc/email_delivery_info','/auth/v1/token','/rest/v1/rpc/owner_refund_activity']);
  const writes=report.requests.filter(r=>r.method!=='GET'&&!allowedPost.has(r.path));assert.deepEqual(writes,[]);assert.equal(report.unexpected,undefined);assert.deepEqual(report.pageErrors,[]);assert.deepEqual(report.external,[]);report.status='passed';
 }catch(error){report.status='failed';report.error=String(error.stack||error);console.error(report.error);process.exitCode=1;await page.screenshot({path:path.join(out,'failure.png'),fullPage:true});}
 finally{await writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2));await context.close();await browser.close();await new Promise(resolve=>server.close(resolve));console.log(JSON.stringify({status:report.status,checks:report.checks.length,errors:report.pageErrors,external:report.external,out}));}
