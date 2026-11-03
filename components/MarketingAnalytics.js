@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
-import { browserConsent, campaignAttribution, measurementUrl, publicPage, replaySafeUrl, revokeTracking, trackEvent } from "@/lib/marketing-analytics.mjs";
+import { browserConsent, campaignAttribution, measurementUrl, publicPage, replaySafeUrl, revokeTracking, trackEvent, jovabookClickEvent } from "@/lib/marketing-analytics.mjs";
 import { productionAnalyticsHost } from "@/lib/editorial-routes.mjs";
 
 function subscribe(callback) {
@@ -95,6 +95,8 @@ export default function MarketingAnalytics() {
       trackEvent("ui_click", { element_type: element.tagName === "A" ? "link" : "button" });
       if (element.tagName !== "A") return;
       const url = new URL(element.href, window.location.href);
+      const bookingEvent=jovabookClickEvent(element.href,window.location.href);
+      if (bookingEvent) trackEvent(bookingEvent.name,{...bookingEvent.fields,placement:element.closest(".ws-hero")?"hero":element.closest("#plans,#essential-plan")?"pricing":element.closest("footer,.mp-closing")?"footer":"content"});
       const placement = element.closest("header") ? "header" : element.closest("footer") ? "footer" : element.closest("main")?.querySelector("section")?.contains(element) ? "hero" : "content";
       if (url.origin === window.location.origin && ["/get-a-quote", "/contact"].includes(url.pathname)) trackEvent("cta_click", { destination: url.pathname, placement });
       const channel = url.protocol === "mailto:" ? "email" : url.protocol === "tel:" ? "phone" : ["wa.me", "api.whatsapp.com", "web.whatsapp.com"].includes(url.hostname) ? "whatsapp" : url.origin === window.location.origin && url.pathname === "/contact" ? "contact_page" : url.origin === window.location.origin ? "navigation" : "outbound";

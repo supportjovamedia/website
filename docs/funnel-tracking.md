@@ -62,6 +62,24 @@ Source tests cover consent, internal navigation, malformed labels and contact, c
 
 ## Dashboard setup and verification
 
+### JovaBook launch measurement, 3 November 2026
+
+The public `/jovabook` landing page participates in consent-based GA4 and Clarity measurement. The booking application, customer accounts and back office remain excluded from this marketing integration. Only safe campaign labels are collected; typed form values, emails, card data and authentication URLs are not event parameters.
+
+| Event | Meaning |
+| --- | --- |
+| `jovabook_trial_interest` | Click on a link to the plans section, including the hero trial CTA |
+| `jovabook_plan_selected` | Click to registration after choosing a plan and monthly or annual billing |
+| `jovabook_login_click` | Click to the business login page |
+
+Use **Total users** per event for unique clickers, and **Event count** for all clicks. These are intent signals, not completed registrations, active trials or paying subscribers. Calculate trial-interest rate from unique trial-interest users divided by unique `/jovabook` visitors in the same reporting period. Browser identifiers are not a count of identifiable people; consent refusal, blocking and cross-device use affect coverage.
+
+GA4 property: JovaMedia Website, `558337460`, owned under JovaMedia account `411380827`. Use Reports > Acquisition > Traffic acquisition, with Session source / medium. Filter landing page to `/jovabook` for this campaign. Use Explore for a saved report of Total users, Views and the three click events. Production event receipt and saved report configuration must be recorded separately from local verification.
+
+Use `utm_campaign=jovabook_launch`, `utm_source=nextdoor|instagram|whatsapp`, `utm_medium=social` for posts or `message` for WhatsApp, and a distinct `utm_content` for each post or message version. Never put personal information into tags.
+
+Local production-origin browser checks confirmed one page view and one event per deliberate trial-interest, plan-selection and login click, with all vendor requests intercepted so QA did not add fake visits. Monthly and annual prices and signup destinations passed on both marketing pricing views. Live collection requires the release to be deployed.
+
 GA4 property: measurement ID `G-YGPGYJ9L9B`. GTM container: `GTM-MDZ4RQQQ`. Clarity project: `yvnjaisape`.
 
 Mark `generate_lead` as the enquiry key event. Use `form_id` to separate contact and quote requests. Register event-scoped custom dimensions for `form_id`, `placement`, `destination`, `field_name`, `error_stage`, `campaign_source`, `campaign_medium`, `campaign_campaign`, `campaign_content` and `campaign_term` if they are not already present. Standard acquisition reports also use landing URL UTMs.

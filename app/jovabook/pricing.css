@@ -1,0 +1,56 @@
+/* Compact plan comparison, scoped to the product pricing section. */
+.ws .refined-pricing{padding:68px 24px 50px;scroll-margin-top:115px}
+.ws .refined-pricing>.wrap{width:100%;max-width:1120px;padding:0}
+.ws .refined-pricing .section-head{max-width:740px;margin:0 auto 28px;text-align:center}
+.ws .refined-pricing .section-head h2{font-size:48px;line-height:1.1;letter-spacing:-.05em}
+.ws .refined-pricing .section-head p{font-size:14px;line-height:1.75;max-width:570px;margin:21px auto 0}
+.ws .refined-pricing .cadence{padding:4px;margin:0 auto 32px;border-radius:99px}
+.ws .refined-pricing .cadence button{min-height:42px;padding:10px 20px;font-size:12px}
+.ws .refined-pricing .plan-grid{max-width:1030px;width:100%;margin:0 auto;gap:16px;align-items:stretch}
+.ws .refined-pricing .plan{min-width:0;padding:25px 24px 24px;background:#fff;border:1px solid #dbe5ed;border-radius:14px;box-shadow:none;text-align:left;display:flex;flex-direction:column}
+.ws .refined-pricing .plan.recommended{background:#fffef7;border:1px solid #ecd76e;box-shadow:0 8px 26px #103d6018;transform:none}
+.ws .refined-pricing .plan-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:30px}
+.ws .refined-pricing .plan h3{font-size:23px;font-weight:600;letter-spacing:-.04em;line-height:1.25;margin:0}
+.ws .refined-pricing .plan-popular{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;background:#f1d302;color:#123e65;padding:5px 9px;min-height:25px;border-radius:6px;font-size:10px;font-weight:600;line-height:1.3;letter-spacing:0}
+.ws .refined-pricing .plan-description{font-size:12px;line-height:1.6;color:#4f6a80;margin:8px 0 0;min-height:20px}
+.ws .refined-pricing .plan-price{display:flex;align-items:baseline;gap:6px;margin:23px 0 0;line-height:1}
+.ws .refined-pricing .plan-price strong{font-size:43px;font-weight:600;letter-spacing:-.055em;line-height:1}
+.ws .refined-pricing .plan-price>span{font-size:12px;color:#536e83}
+.ws .refined-pricing .plan-billing{font-size:12px;line-height:1.6;color:#536e83;margin:8px 0 0}
+.ws .refined-pricing .plan-commission{font-size:12px;line-height:1.6;color:#235789;min-height:0;margin:13px 0 0}
+.ws .refined-pricing .plan .button{font-size:13px;font-weight:600;min-height:44px;width:100%;padding:12px 14px;margin:20px 0 0;border-radius:8px;line-height:1.4;gap:0}
+.ws .refined-pricing .plan .button.outline{border:1px solid #a4bdcf;background:#fff;color:#235789}
+.ws .refined-pricing .plan .button.outline:hover{background:#edf4f9;border-color:#235789;transform:none}
+.ws .refined-pricing .plan .button:hover{transform:none}
+.ws .refined-pricing .plan ul{width:100%;display:grid;gap:10px;margin:22px 0 0;padding:19px 0 0;border-top:1px solid #dce5ec;list-style:none;max-width:none;text-align:left}
+.ws .refined-pricing .plan li{display:flex;align-items:start;gap:10px;font-size:12px;line-height:1.65;margin:0;color:#2c536f}
+.ws .refined-pricing .plan li svg{height:15px;width:15px;margin-top:2px;color:#235789;flex-shrink:0}
+.ws .refined-pricing .payment-fees{font-size:12px;margin:25px auto 0;text-align:center;line-height:1.7;color:#e0ebf3}
+@media(min-width:761px) and (max-width:1000px){.ws .refined-pricing .plan{padding:23px 19px}.ws .refined-pricing .plan-grid{gap:12px}.ws .refined-pricing .plan-heading{flex-wrap:wrap;align-content:start;min-height:62px;gap:8px}.ws .refined-pricing .plan h3{font-size:22px;width:100%}.ws .refined-pricing .plan-popular{font-size:10px}.ws .refined-pricing .plan-description{font-size:11px;min-height:36px}.ws .refined-pricing .plan-commission{font-size:11px;min-height:36px}.ws .refined-pricing .plan li{font-size:11px}.ws .refined-pricing .plan .button{font-size:12px}}
+@media(max-width:760px){.ws .refined-pricing{padding:48px 20px 35px}.ws .refined-pricing .section-head h2{font-size:35px;line-height:1.13}.ws .refined-pricing .section-head p{font-size:13px;max-width:315px;margin-top:19px}.ws .refined-pricing .cadence{margin-bottom:26px}.ws .refined-pricing .cadence button{min-height:44px;padding:10px 17px;font-size:12px}.ws .refined-pricing .plan-grid{grid-template-columns:1fr;max-width:365px;gap:18px}.ws .refined-pricing .plan{padding:24px 25px 25px;text-align:center;border-radius:13px}.ws .refined-pricing .plan-heading{justify-content:center;min-height:30px;position:relative;gap:10px}.ws .refined-pricing .plan h3{font-size:24px}.ws .refined-pricing .plan-popular{font-size:10px;padding:5px 8px;min-height:25px}.ws .refined-pricing .plan-description{font-size:13px;min-height:0;margin-top:7px}.ws .refined-pricing .plan-price{justify-content:center;margin-top:20px}.ws .refined-pricing .plan-price strong{font-size:43px}.ws .refined-pricing .plan-price>span{font-size:12px}.ws .refined-pricing .plan-billing{font-size:12px;margin-top:7px}.ws .refined-pricing .plan-commission{font-size:12px;min-height:0;margin-top:11px}.ws .refined-pricing .plan .button{font-size:13px;min-height:46px;margin-top:18px;padding:12px 16px}.ws .refined-pricing .plan ul{max-width:280px;margin:20px auto 0;padding-top:18px;gap:9px}.ws .refined-pricing .plan li{font-size:12px;line-height:1.7;gap:10px}.ws .refined-pricing .payment-fees{font-size:12px;margin-top:24px}}
+@media(prefers-reduced-motion:no-preference){.ws .refined-pricing .plan .button{transition:background .18s ease,border-color .18s ease}}
+.ws .refined-pricing .plans-shared{text-align:center;color:#edf4f9;font-size:14px;line-height:1.7;max-width:650px;margin:0 auto 24px}
+.ws .refined-pricing .plan-scope{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:12px;line-height:1.5;margin:20px 0 0;color:#123e65}
+.ws .refined-pricing .plan ul{margin-top:15px;padding-top:16px;gap:11px}
+.ws .refined-pricing .plan li{align-items:center;justify-content:space-between;gap:8px;font-size:13px;line-height:1.5}
+.ws .refined-pricing .plan-availability{display:inline-flex;align-items:center;flex:none}
+.ws .refined-pricing .plan li svg{margin:0;height:16px;width:16px}
+.ws .refined-pricing .plan li.excluded svg{color:#8495a2}
+.ws .refined-pricing .plan-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:761px) and (max-width:1000px){.ws .refined-pricing .plan li{font-size:12px}.ws .refined-pricing .plan-scope{font-size:11px}}
+@media(max-width:760px){.ws .refined-pricing .plans-shared{font-size:13px;max-width:310px}.ws .refined-pricing .plan-scope{justify-content:center;column-gap:18px;font-size:12px}.ws .refined-pricing .plan li{font-size:13px;text-align:left}.ws .refined-pricing .plan-commission{max-width:250px;margin-inline:auto}}
+.ws .refined-pricing .plan-grid{align-items:start;margin-top:45px}
+.ws .refined-pricing .plan{position:relative;padding-top:30px}
+.ws .refined-pricing .plan.recommended{border:2px solid #f1d302;padding:29px 23px 23px;box-shadow:0 8px 25px #123e651c}
+.ws .refined-pricing .plan-popular{position:absolute;left:50%;top:-23px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;min-height:43px;min-width:190px;padding:9px 20px;background:#f1d302;border:3px solid #f1d302;border-radius:12px;font-size:13px;font-weight:700;color:#123653;box-shadow:0 4px 12px #123e6520}
+.ws .refined-pricing .plan-popular svg{width:23px;height:23px}
+.ws .refined-pricing .plan-heading{min-height:30px;flex-wrap:nowrap}
+.ws .refined-pricing .payment-fees{font-size:14px;line-height:1.8;max-width:730px;margin-top:29px;color:#f1f6fa}
+@media(min-width:761px) and (max-width:1000px){.ws .refined-pricing .plan-popular{min-width:170px;padding:9px 13px;font-size:12px;gap:8px}.ws .refined-pricing .plan.recommended{padding-inline:18px}.ws .refined-pricing .plan-heading{min-height:30px}}
+@media(max-width:760px){.ws .refined-pricing .plan-grid{gap:36px}.ws .refined-pricing .plan.recommended{padding:29px 24px 24px}.ws .refined-pricing .plan-heading{position:static}.ws .refined-pricing .payment-fees{font-size:13px;max-width:340px}.ws .refined-pricing .plan li{font-size:12px}}
+/* Keep inclusions and charges together within each plan. */
+.ws .refined-pricing .plan ul{margin-top:20px}
+.ws .refined-pricing .plan-terms{margin-top:19px;padding-top:16px;border-top:1px solid #dce5ec;width:100%}
+.ws .refined-pricing .plan-terms p{font-size:13px;line-height:1.7;color:#345974;margin:0}
+.ws .refined-pricing .plan-terms p+p{margin-top:8px;color:#526b7e}
+@media(max-width:760px){.ws .refined-pricing .plan ul{margin-top:18px;gap:9px}.ws .refined-pricing .plan-terms{text-align:center;margin-top:17px;padding-top:14px}.ws .refined-pricing .plan-terms p{font-size:13px}}

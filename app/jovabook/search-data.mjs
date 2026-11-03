@@ -2,8 +2,8 @@ const site = "https://www.jovamedia.com";
 export const jovabookUrl = `${site}/jovabook`;
 
 export function jovabookMetadata() {
-  const title = "JovaBook Online Booking & Scheduling Software | JovaMedia";
-  const description = "JovaBook by JovaMedia is scheduling and online booking software for service businesses. Manage appointments, clients and your website. Plans from £20/month.";
+  const title = "Booking System for Service Businesses | JovaBook";
+  const description = "JovaBook by JovaMedia is a booking system for service businesses. Manage appointments, clients and deposits. Plans from £20/month.";
   const image = {
     url: `${site}/jovabook/calendar-desktop.webp`,
     alt: "JovaBook booking calendar showing services and available working hours",
@@ -45,7 +45,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       "@type": "WebPage",
       "@id": `${jovabookUrl}#webpage`,
       url: jovabookUrl,
-      name: "JovaBook online booking software",
+      name: "JovaBook booking system for service businesses",
       description: "JovaBook by JovaMedia is scheduling and online booking software for service businesses, including hair and beauty, healthcare, education, fitness, consulting, and spa and wellness businesses.",
       inLanguage: "en-GB",
       isPartOf: { "@id": `${site}/#website` },
@@ -70,12 +70,14 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
         "Client and service management",
         "Business opening hours",
         "One-page business website",
+        "Email confirmations and appointment reminders",
+        "Booking deposits through a connected Stripe account",
       ],
       offers: [
         {
           "@type": "Offer",
           name: "JovaBook Essential monthly subscription",
-          url: `${jovabookUrl}#essential-plan`,
+          url: `${jovabookUrl}#plans`,
           price: "20.00",
           priceCurrency: "GBP",
           seller: organisation,
@@ -90,7 +92,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
         {
           "@type": "Offer",
           name: "JovaBook Essential annual subscription",
-          url: `${jovabookUrl}#essential-plan`,
+          url: `${jovabookUrl}#plans`,
           price: "192.00",
           priceCurrency: "GBP",
           seller: organisation,
@@ -134,7 +136,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       "@id": `${jovabookUrl}#demo-video`,
       name: "JovaBook product demonstration",
       description: "A demonstration of JovaBook's online booking and business management workspace.",
-      thumbnailUrl: `${site}/jovabook/demo-poster.webp`,
+      thumbnailUrl: `${site}/jovabook/demo-poster-clean.webp`,
       contentUrl: `${site}/jovabook/demo.mp4`,
       uploadDate: video.uploadDate,
       duration: video.duration,

@@ -9,7 +9,7 @@ import { products, productCategories, formatPrice } from "@/lib/products.mjs";
 import { trackEvent } from "@/lib/marketing-analytics.mjs";
 import s from "./ProductPackages.module.css";
 
-const bookingCategories=[{id:"jovabook",name:"JovaBook",description:"Booking software for your business. Choose monthly or save 20% with annual billing."},...productCategories.map(item=>item.id==="subscriptions"?{...item,name:"Webcare"}:item)];
+const bookingCategories=[{id:"jovabook",name:"JovaBook",description:"A booking system for service businesses. Choose monthly or save 20% with annual billing."},...productCategories.map(item=>item.id==="subscriptions"?{...item,name:"Webcare"}:item)];
 
 export default function ProductPackages({ homepage = false, includeJovaBook = false }) {
   const categories=includeJovaBook?bookingCategories:productCategories;

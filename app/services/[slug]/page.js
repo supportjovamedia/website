@@ -18,11 +18,19 @@ const searchTitles = {
   "email-marketing":"Email Marketing & Automation Services UK",
   seo:"SEO & Local Search Services for Small Businesses UK",
 };
+const searchDescriptions = {
+  "system-modernization": "Modernise ageing business software with JovaMedia. Review legacy systems, improve usability and connect tools through a staged plan for your team.",
+  "social-management": "Social media management for UK small businesses. Plan consistent posts, create branded content and keep your channels organised with JovaMedia.",
+  "brand-strategy": "Brand strategy and design for UK small businesses. Shape your visual direction, refresh your identity and create reusable brand assets with JovaMedia.",
+  content: "Website copywriting for UK small businesses. Explain your services clearly, answer customer questions and build a useful enquiry journey with JovaMedia.",
+  "email-marketing": "Email marketing and automation for UK small businesses. Plan welcome emails, newsletters and useful follow-up workflows with JovaMedia.",
+  seo: "SEO and local search support for UK small businesses. Improve business profiles, website content and search foundations with JovaMedia.",
+};
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   if (slug === "web-design") permanentRedirect("/websites");
   const service = services.find((s) => s.slug === slug);
-  return service ? pageMetadata(`/services/${slug}`, searchTitles[slug] || service.name, service.summary) : {};
+  return service ? pageMetadata(`/services/${slug}`, searchTitles[slug] || service.name, searchDescriptions[slug] || service.summary) : {};
 }
 export default async function Page({ params }) {
   const { slug } = await params;

@@ -18,7 +18,7 @@ test.afterEach(async ({ page }) => expect(page.__errors).toEqual([]));
 
 test('the Websites introduction keeps the approved wording and the footer exposes the official social accounts', async ({ page }, testInfo) => {
   await page.goto('/websites');
-  if (testInfo.project.name === 'desktop') await expect(page.getByRole('navigation', { name: 'Primary navigation', exact: true }).locator('a')).toHaveText(['Home', 'About', 'Website', 'Services', 'Pricing', 'JovaBook']);
+  if (testInfo.project.name === 'desktop') await expect(page.getByRole('navigation', { name: 'Primary navigation', exact: true }).locator('a')).toHaveText(['Home', 'About', 'Products', 'Pricing', 'JovaBook']);
   const hero = page.locator('main [data-website-intro]');
   await expect(hero.locator('h1')).toHaveText('Affordable website design in London.');
   await expect(page).toHaveTitle('Affordable Website Design in London | JovaMedia');
@@ -104,27 +104,39 @@ test('website pages reflow, show the right metadata, load photography and preser
   }
 });
 
-test('Websites and Services have separate mobile groups with keyboard return and every type reachable', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'phone', 'Mobile navigation interaction');
+test('Products mobile navigation reaches website packages, services and every website catalogue type', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name!=='phone','Mobile navigation interaction');
   await page.goto('/websites');
-  const open = page.getByRole('button', { name: 'Open menu', exact: true });
-  await open.click();
-  await expect(page.locator('#mobile-menu .mobile-menu-page[data-active="true"]').locator(':scope > a, :scope > button')).toHaveText(['Home', 'About', 'Website', 'Services', 'Pricing', 'JovaBook', 'Get a Quote']);
-  await page.getByRole('button', { name: 'Website', exact: true }).click();
-  const websiteMenu = page.locator('#mobile-websites');
-  await expect(websiteMenu.getByRole('button', { name: 'Back', exact: true })).toBeFocused();
-  for (const item of websiteTypes) {
-    const link = websiteMenu.locator(`a[href="${websitePath(item.slug)}"]`);
-    await link.scrollIntoViewIfNeeded();
-    await expect(link).toBeVisible();
+  await page.getByRole('button',{name:'Open menu',exact:true}).click();
+  const menu=page.getByRole('navigation',{name:'Mobile navigation',exact:true});
+  await expect(menu.locator('a')).toHaveText(['Home','About','Products','Pricing','JovaBook','Contact us']);
+  await menu.getByRole('link',{name:'Products',exact:true}).focus();await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/products$/);
+  await expect(page.locator('#mobile-menu')).toHaveAttribute('aria-hidden','true');
+  await expect(page.locator('#main-content')).toHaveJSProperty('inert',false);
+  const categories=page.getByRole('navigation',{name:'Browse categories',exact:true});
+  await categories.getByRole('button',{name:'Websites',exact:true}).click();
+  const websites=page.locator('#catalogue-websites');
+  await expect(websites).toBeVisible();
+  for(const [index,name] of ['Landing Page','Business Website','Website with Booking System'].entries()){
+    const card=websites.locator('article').nth(index);await card.scrollIntoViewIfNeeded();
+    await expect(card.getByRole('heading',{name,exact:true})).toBeVisible();
+    await expect(card.getByRole('link',{name:'Enquire about this website',exact:true})).toHaveAttribute('href','/get-a-quote?product='+['landing-page','business-website','booking-system'][index]);
   }
-  await websiteMenu.getByRole('button', { name: 'Back', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Website', exact: true })).toBeFocused();
-  await page.getByRole('button', { name: 'Services', exact: true }).click();
-  await expect(page.locator('#mobile-services')).not.toContainText('Website design');
+  await categories.getByRole('button',{name:'Services',exact:true}).click();
+  const services=page.locator('#catalogue-services');await expect(services).toBeVisible();
+  for(const slug of ['system-modernization','email-marketing','seo']){const link=services.locator(`a[href="/services/${slug}"]`);await link.scrollIntoViewIfNeeded();await expect(link).toBeVisible();}
+  await services.locator('a[href="/services/system-modernization"]').focus();await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/services\/system-modernization$/);
+  await page.getByRole('button',{name:'Open menu',exact:true}).click();
+  await expect(page.getByRole('navigation',{name:'Mobile navigation',exact:true}).getByRole('link',{name:'Products',exact:true})).toHaveAttribute('aria-current','page');
   await page.keyboard.press('Escape');
-  await expect(open).toBeFocused();
-  await expect(page.locator('#mobile-menu')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.getByRole('button',{name:'Open menu',exact:true})).toBeFocused();
+  await expect(page.locator('#mobile-menu')).toHaveAttribute('aria-hidden','true');
+  // The old individual website types remain available through their catalogue.
+  await page.goto('/websites');
+  for(const item of websiteTypes){const link=page.locator('main').locator(`a[href="${websitePath(item.slug)}"]`).first();await link.scrollIntoViewIfNeeded();await expect(link).toBeVisible();}
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
 });
 
 test('navigation stays usable at the desktop breakpoint and at 320px', async ({ page }) => {
@@ -135,7 +147,7 @@ test('navigation stays usable at the desktop breakpoint and at 320px', async ({ 
     if (width <= 1100) await expect(page.getByRole('button', { name: 'Open menu', exact: true })).toBeVisible();
     else {
       const nav = page.getByRole('navigation', { name: 'Primary navigation', exact: true });
-      await expect(nav.getByRole('link', { name: 'Website', exact: true })).toBeVisible();
+      await expect(nav.getByRole('link', { name: 'Products', exact: true })).toBeVisible();
       const navBox = await nav.boundingBox();
       const actionBox = await page.locator('.desktop-cta').boundingBox();
       expect(navBox.x + navBox.width).toBeLessThan(actionBox.x);

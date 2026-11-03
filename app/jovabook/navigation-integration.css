@@ -1,0 +1,3 @@
+/* JovaBook uses the same full-width navigation as the rest of JovaMedia. */
+.jova-pages.jovabook-header{background:#fff;color:#123653;--ink:#123653;--blue:#235789}
+.jovabook-header .navigation-slot{padding-top:0}
