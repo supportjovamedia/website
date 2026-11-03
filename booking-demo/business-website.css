@@ -175,3 +175,5 @@ html[data-workspace-theme] .shell .bw-site.bw-site-preview.bw-premium .bw-page-l
 @media(min-width:701px){.bw-template-editorial:not(.bw-site-preview) .bw-premium-hero>.bw-hero-inner{padding-left:max(32px,calc((100vw - 1120px)/2))}}
 
 .ws .bw-template-options :is(legend,b){color:var(--theme-body,#373737)}
+
+.bw-personalise-tabs{margin-inline:auto;width:min(100%,360px);max-width:360px}.ws .bw-personalise-tabs button{min-height:44px;font-size:14px;font-weight:600}
