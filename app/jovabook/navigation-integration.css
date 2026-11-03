@@ -14,8 +14,8 @@
 .jova-pages.jovabook-header .header[data-stuck=true]{background:#c9e4f5;padding-top:8px;padding-bottom:8px;box-shadow:0 3px 16px #123e6510}
 .jova-pages.jovabook-header .header[data-stuck=true] .desktop-nav a{color:#36546b}
 .jova-pages.jovabook-header .header[data-stuck=true] .desktop-nav a.active{color:#235789}
-.jova-pages.jovabook-header .header[data-stuck=true] .logo-light-surface{display:block}
-.jova-pages.jovabook-header .header[data-stuck=true] .logo-dark-surface{display:none}
+.jova-pages.jovabook-header .header[data-stuck=true] .brand-logo img.logo-light-surface{display:block;filter:none}
+.jova-pages.jovabook-header .header[data-stuck=true] .brand-logo img.logo-dark-surface{display:none}
 .jova-pages.jovabook-header .header[data-stuck=true] .menu-toggle span{background:#235789}
 .jova-pages.jovabook-header .header[data-stuck=true] .menu-toggle{border-color:#aac3d6;background:#f4f8fb}
 .jova-pages.jovabook-header .header[data-stuck=true] .mobile-menu{background:#fff;color:#123e65}
