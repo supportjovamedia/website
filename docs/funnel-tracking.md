@@ -97,3 +97,7 @@ Dashboard configuration and live event receipt must be verified separately from 
 - Contact alignment checked at 320, 390, 768 and 1536 CSS pixels; navy text contrast audited across main marketing pages. Production build and 56 focused tests passed.
 - Free Upstash database restored from the 7 October backup and connected only to JovaMedia Production and Preview. PR 58 uses its managed integration credentials. Preview email delivery is disabled by missing production-only email configuration, so the welcome automation receipt still needs a production test after merge.
 - PR 58 requires explicit merge approval. Its Ready Vercel preview does not mean the source changes are live on the production domain.
+
+### Optional owner conversion funnel, 3 November 2026
+
+The separate server-only owner conversion implementation is documented in [jovabook-owner-funnel.md](./jovabook-owner-funnel.md). It remains disabled until its migration, API secret, private worker schedule and reporting configuration are reviewed. It does not broaden the existing public marketing/Clarity allowlist. Clicks, registrations, verified card trials and first positive subscription payments remain separate stages.

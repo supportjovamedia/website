@@ -18,6 +18,8 @@ run(['--test',
   'booking-demo/tests/trial-history-sql.mjs',
   'booking-demo/tests/operator-billing-sql.mjs',
   'booking-demo/tests/customer-phone-optional-sql.mjs',
+  'tests/jovabook-owner-funnel.test.mjs', 'tests/jovabook-owner-funnel-pipeline.test.mjs',
+  'tests/jovabook-owner-funnel-scheduler.test.mjs', 'booking-demo/tests/owner-funnel-sql.mjs',
   'tests/jovabook-test-db.test.mjs', 'tests/jovabook-integrations.test.mjs', 'tests/jovabook-integration-oauth.test.mjs', 'tests/jovabook-recovery-scheduler.test.mjs',
   'tests/jovabook-guest-deposit-guard.test.mjs', 'tests/jovabook-stripe-test.test.mjs',
   'tests/jovabook-deposits.test.mjs', 'tests/jovabook-deposits-db.test.mjs',
@@ -52,7 +54,7 @@ run(['booking-demo/tests/sms-reminders-browser.mjs']);
 run(['booking-demo/tests/operator-links-browser.mjs']);
 // Every external Auth, billing, email and payment request is intercepted.
 // These proofs each start their own local server, including on clean Linux CI.
-for (const script of ['billing-access-browser','billing-plans-browser',
+for (const script of ['owner-funnel-browser','billing-access-browser','billing-plans-browser',
   'customer-portal-browser','customer-portal-integration-browser','operator-browser','existing-business-browser',
   'booking-horizon-browser','navigation-calendar-browser','guest-choice-browser','public-links-browser','public-experience-browser']) {
   run(['booking-demo/tests/' + script + '.mjs']);

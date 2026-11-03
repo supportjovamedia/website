@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import styles from "./CookieConsent.module.css";
-import { CONSENT_KEY, readConsent, revokeTracking } from "@/lib/marketing-analytics.mjs";
+import { shareFunnelConsent } from "@/lib/owner-funnel-client.mjs";
+import { CONSENT_KEY, browserConsent, revokeTracking } from "@/lib/marketing-analytics.mjs";
 const Analytics = dynamic(() => import("@vercel/analytics/react").then(m => m.Analytics), { ssr: false });
 const KEY = CONSENT_KEY;
 function choice() {
   try {
-    return readConsent(localStorage);
+    return browserConsent();
   } catch { return null; }
 }
 function subscribe(callback) {
@@ -47,6 +48,7 @@ export default function CookieConsent() {
     const wasAccepted = choice() === "accepted";
     try { localStorage.setItem(KEY, JSON.stringify({ choice: next, time: Date.now() })); }
     catch { setStorageError(true); return; }
+    shareFunnelConsent(next);
     window.dispatchEvent(new Event("jova-consent"));
     setEditing(false);
     setConfiguring(false);
@@ -68,7 +70,7 @@ export default function CookieConsent() {
     </section>, document.body)}
     <dialog ref={dialog} className={styles.panel} aria-labelledby="cookie-title" aria-describedby="cookie-description" data-nosnippet onCancel={event => { event.preventDefault(); setEditing(false); dialog.current.close(); }}>
       <h2 id="cookie-title">{configuring ? "Cookies configuration" : "Cookies Policy"}</h2>
-      <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits and clicks, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept.</p>
+      <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits, clicks and the consented business registration, trial and subscription-payment journey, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept.</p>
       {configuring ? <div className={styles.options}>
         <div className={styles.row}><span>Necessary storage</span><span className={styles.active}>Always active</span></div>
         <div className={styles.row}>
