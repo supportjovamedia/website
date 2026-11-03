@@ -19,7 +19,7 @@ export const BASE_DIR=path.join(REPO_ROOT,'.jovabook-test');
 export const DATA_DIR=path.join(BASE_DIR,'data');
 const MARKER_FILE=path.join(BASE_DIR,'marker.json'),LOCK_FILE=path.join(BASE_DIR,'cli.lock');
 const FORMAT='jovabook-isolated-local-test-v1',FIXTURES='fictional-example-test-v1';
-export const MANIFEST_VERSION=19,BOOTSTRAP_VERSION=2;
+export const MANIFEST_VERSION=20,BOOTSTRAP_VERSION=2;
 export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql',
  'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
@@ -57,9 +57,10 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261103010540_customer_portal_details.sql',
  'migrations/20261103013239_workspace_branding_sms_reminders.sql',
  'migrations/20261103015311_deposit_sms_consent.sql',
- 'migrations/20261103015918_sms_message_controls.sql']);
+ 'migrations/20261103015918_sms_message_controls.sql',
+ 'migrations/20261103222916_owner_funnel.sql']);
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
- 'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql','migrations/20261102222936_appointment_completion_scheduler.sql','migrations/20261103013242_sms_reminder_scheduler.sql']);
+ 'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql','migrations/20261102222936_appointment_completion_scheduler.sql','migrations/20261103013242_sms_reminder_scheduler.sql','migrations/20261103224835_owner_funnel_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
 const SALONS=['20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002'];
 const HELP=`JovaBook isolated local SQL test database

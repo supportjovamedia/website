@@ -2,6 +2,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { browserConsent, campaignAttribution, measurementUrl, publicPage, replaySafeUrl, revokeTracking, trackEvent, jovabookClickEvent } from "@/lib/marketing-analytics.mjs";
+import { ownerSignupDestination, revokeFunnel } from "@/lib/owner-funnel-client.mjs";
 import { productionAnalyticsHost } from "@/lib/editorial-routes.mjs";
 
 function subscribe(callback) {
@@ -28,6 +29,7 @@ export default function MarketingAnalytics() {
   useEffect(() => {
     const allowed = enabled && productionAnalyticsHost(window.location.hostname) && consent === "accepted" && publicPage(pathname);
     if (!allowed) {
+      if(consent === "rejected") revokeFunnel();
       if (window.__jovaAnalytics) { revokeTracking(); window.location.reload(); }
       return;
     }
@@ -41,7 +43,7 @@ export default function MarketingAnalytics() {
       window.__jovaAnalytics = { ga: /^G-[A-Z0-9]+$/.test(gaId), gaId, clarity: false };
       if (window.__jovaAnalytics.ga) {
         window.gtag("js", new Date());
-        window.gtag("config", gaId, { send_page_view: false, page_location: measurementUrl(window.location.href), page_referrer: document.referrer ? new URL(document.referrer).origin + "/" : "", allow_google_signals: false, allow_ad_personalization_signals: false, cookie_expires: 60 * 60 * 24 * 180, ...(process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true" ? { debug_mode: true } : {}) });
+        window.gtag("config", gaId, { send_page_view: false, page_location: measurementUrl(window.location.href), page_referrer: document.referrer ? new URL(document.referrer).origin + "/" : "", allow_google_signals: false, allow_ad_personalization_signals: false, cookie_domain: "jovamedia.com", cookie_expires: 60 * 60 * 24 * 180, cookie_domain: ".jovamedia.com", ...(process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true" ? { debug_mode: true } : {}) });
         script("jova-ga4", `https://www.googletagmanager.com/gtag/js?id=${gaId}`);
       }
       // GA4 and Clarity are owned by this integration. Do not duplicate them in GTM.
@@ -97,6 +99,7 @@ export default function MarketingAnalytics() {
       const url = new URL(element.href, window.location.href);
       const bookingEvent=jovabookClickEvent(element.href,window.location.href);
       if (bookingEvent) trackEvent(bookingEvent.name,{...bookingEvent.fields,placement:element.closest(".ws-hero")?"hero":element.closest("#plans,#essential-plan")?"pricing":element.closest("footer,.mp-closing")?"footer":"content"});
+      if(bookingEvent?.name==="jovabook_plan_selected"&&!event.defaultPrevented&&event.button===0&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey&&element.target!=="_blank"){event.preventDefault();void ownerSignupDestination(element.href,bookingEvent.fields,gaId).then(destination=>window.location.assign(destination));}
       const placement = element.closest("header") ? "header" : element.closest("footer") ? "footer" : element.closest("main")?.querySelector("section")?.contains(element) ? "hero" : "content";
       if (url.origin === window.location.origin && ["/get-a-quote", "/contact"].includes(url.pathname)) trackEvent("cta_click", { destination: url.pathname, placement });
       const channel = url.protocol === "mailto:" ? "email" : url.protocol === "tel:" ? "phone" : ["wa.me", "api.whatsapp.com", "web.whatsapp.com"].includes(url.hostname) ? "whatsapp" : url.origin === window.location.origin && url.pathname === "/contact" ? "contact_page" : url.origin === window.location.origin ? "navigation" : "outbound";
