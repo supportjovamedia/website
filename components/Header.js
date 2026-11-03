@@ -4,7 +4,7 @@ import Image from "next/image";
 /* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-const links = [["Home","/"],["About","/about"],["Products","/products"],["Pricing","/pricing"],["JovaBook","/jovabook"],["Contact","/contact"]];
+const links = [["Home","/"],["About","/about"],["Products","/products"],["Pricing","/pricing"],["JovaBook","/jovabook"]];
 export default function Header() {
   const pathname = usePathname();
   return <Navigation key={pathname} pathname={pathname} />;
