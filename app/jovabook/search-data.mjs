@@ -3,7 +3,7 @@ export const jovabookUrl = `${site}/jovabook`;
 
 export function jovabookMetadata() {
   const title = "JovaBook Online Booking & Scheduling Software | JovaMedia";
-  const description = "Online booking software for salons and small businesses. Manage bookings, clients and services with a business website. Essential: £20/month plus 1% commission.";
+  const description = "JovaBook by JovaMedia is scheduling and online booking software for service businesses. Manage appointments, clients and your website. Plans from £20/month.";
   const image = {
     url: `${site}/jovabook/calendar-desktop.webp`,
     alt: "JovaBook booking calendar showing services and available working hours",
@@ -36,7 +36,7 @@ export function jovabookMetadata() {
   };
 }
 
-/** Facts shared with visible copy. Reviews and unlaunched plan offers are deliberately absent. */
+/** Facts shared with visible copy. No invented reviews or ratings. */
 export function jovabookStructuredData({ faqs = [], video } = {}) {
   const applicationId = `${jovabookUrl}#software`;
   const organisation = { "@id": `${site}/#organisation` };
@@ -46,7 +46,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       "@id": `${jovabookUrl}#webpage`,
       url: jovabookUrl,
       name: "JovaBook online booking software",
-      description: "Online booking software for salons and small service businesses, with a booking calendar, clients, services and a business website.",
+      description: "JovaBook by JovaMedia is scheduling and online booking software for service businesses, including hair and beauty, healthcare, education, fitness, consulting, and spa and wellness businesses.",
       inLanguage: "en-GB",
       isPartOf: { "@id": `${site}/#website` },
       publisher: organisation,
@@ -58,12 +58,12 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       name: "JovaBook",
       url: jovabookUrl,
       applicationCategory: "BusinessApplication",
-      applicationSubCategory: "Online appointment booking software",
+      applicationSubCategory: "Scheduling and online appointment booking software",
       operatingSystem: "Any operating system with a supported web browser",
       browserRequirements: "Requires JavaScript and an internet connection",
       inLanguage: "en-GB",
       publisher: organisation,
-      description: "Manage online bookings, business opening hours, clients and services. Essential includes a workspace for one owner and a one-page business website.",
+      description: "JovaBook is scheduling and booking software by JovaMedia for service businesses. Manage appointments, business opening hours, clients and services. Essential includes a workspace for one owner and a one-page business website.",
       featureList: [
         "Online booking page",
         "Booking calendar",
@@ -85,7 +85,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
             priceCurrency: "GBP",
             billingDuration: "P1M",
           },
-          description: "£20 per month plus 1% commission on the full service price when appointments take place. Commission is billed monthly. Payment processing fees are separate.",
+          description: "£20 per month plus 1% commission on online customer bookings when appointments take place. Commission is billed monthly. Payment processing fees are separate.",
         },
         {
           "@type": "Offer",
@@ -100,11 +100,21 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
             priceCurrency: "GBP",
             billingDuration: "P1Y",
           },
-          description: "£192 paid upfront for a year, equivalent to £16 per month and 20% less than twelve monthly subscriptions. A separate 1% commission on the full service price when appointments take place is billed monthly. Payment processing fees are separate.",
+          description: "£192 paid upfront for a year, equivalent to £16 per month and 20% less than twelve monthly subscriptions. A separate 1% commission on online customer bookings when appointments take place is billed monthly. Payment processing fees are separate.",
         },
       ],
     },
   ];
+  for (const [name, monthly, annual, commission] of [["Standard", 50, 480, 1], ["Premium", 100, 960, 0]]) {
+    for (const [cadence, price, billingDuration] of [["monthly", monthly, "P1M"], ["annual", annual, "P1Y"]]) {
+      graph[1].offers.push({
+        "@type": "Offer", name: `JovaBook ${name} ${cadence} subscription`,
+        url: `${jovabookUrl}#plans`, price: price.toFixed(2), priceCurrency: "GBP", seller: organisation,
+        priceSpecification: { "@type": "UnitPriceSpecification", price: price.toFixed(2), priceCurrency: "GBP", billingDuration },
+        description: `£${price} billed ${cadence === "annual" ? "yearly, paid upfront with a 20% subscription discount" : "monthly"}. ${commission ? "1% commission on online customer bookings when appointments take place, billed monthly." : "0% booking commission."} Payment processing fees are separate.`,
+      });
+    }
+  }
   const questions = faqs.filter(item => typeof item?.question === "string" && typeof item?.answer === "string");
   if (questions.length) {
     graph.push({

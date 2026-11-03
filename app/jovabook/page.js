@@ -28,11 +28,11 @@ const faqs = [
   },
   {
     "question": "Which plan do I need for my team?",
-    "answer": "Essential is for one owner. Standard supports up to 5 staff and includes Insights. Premium supports up to 10 staff and has 0% booking commission. Talk to us about Standard or Premium before choosing a team plan."
+    "answer": "Essential is for one owner. Standard supports up to 5 staff and includes Insights. Premium supports up to 10 staff and has 0% booking commission. Choose any plan to start a three-day free trial."
   },
   {
     "question": "How do annual billing and commission work?",
-    "answer": "Annual subscriptions are paid upfront and cost 20% less than 12 monthly subscription payments. Essential and Standard also charge 1% of the full service price in the billing period when an appointment takes place. This commission is invoiced monthly, including on annual subscriptions. Premium has 0% booking commission. Payment-processing fees, where applicable, are separate."
+    "answer": "Annual subscriptions are paid upfront and cost 20% less than 12 monthly subscription payments. Essential and Standard charge 1% commission on online customer bookings when appointments take place. Commission is invoiced monthly, including on annual subscriptions. Premium has 0% booking commission. Payment-processing fees are separate."
   },
   {
     "question": "What happens after the 3-day trial?",
@@ -40,7 +40,7 @@ const faqs = [
   },
   {
     "question": "Can clients book through Instagram, and can I take deposits?",
-    "answer": "You can share your JovaBook booking link in your Instagram bio or messages. Clients follow that link to book on your page. A native Instagram Book Now integration is not available. Online deposit collection is also not available yet; connecting a payment-provider account does not currently enable customer checkout."
+    "answer": "Share your JovaBook booking link in your Instagram bio or messages so clients can book on your page. To take online deposits, connect your business's payment-ready Stripe account and choose a business-wide deposit percentage in Payments & deposits. Deposits go to your business's Stripe account. A native Instagram Book Now integration is not available."
   }
 ];
 const signup = "#plans";
@@ -54,14 +54,14 @@ export default function JovaBookPage() {
 
             <h1 id="jovabook-title">Online booking<br />software <span>for your business.</span></h1>
             <div className={s.yellowRule} />
-            <p className={s.lead}>Let clients choose a service and a time. Keep your bookings, client details and business website together, so you can get on with the day.</p>
+            <p className={s.lead}>JovaBook by JovaMedia brings your appointments, client details and business website together. Let clients choose a service and a time, so you can get on with the day.</p>
             <div className={s.actions}><a className={s.primaryButton} href={signup}>Try JovaBook for free</a><a className={s.watchLink} href="https://book.jovamedia.com/login">Log in</a></div>
           </div>
           <BookingPreview />
         </div>
       </section>
       <section id="demo" className={s.demo} aria-labelledby="demo-title"><div className={s.container}>
-        <header className={s.sectionHeading}><h2 id="demo-title">Everything your salon needs to take bookings and grow.</h2><p>Take a closer look at the tools inside JovaBook, one by one.</p><p>The film also previews text reminders and slot recovery, which are being prepared for team plans.</p></header>
+        <header className={s.sectionHeading}><h2 id="demo-title">Everything your business needs to take bookings and grow.</h2><p>Take a closer look at the tools inside JovaBook, one by one.</p><p>The film also previews text reminders and slot recovery, which are being prepared for team plans.</p></header>
         <div className={s.videoStage} data-card-group><figure className={s.videoFigure} data-story-card><video className={s.video} controls playsInline preload="none" poster="/jovabook/demo-poster.webp" aria-label="JovaBook product film"><source src="/jovabook/demo.mp4" type="video/mp4" />Your browser does not support video. <a href="/jovabook/demo.mp4">Watch the JovaBook product film</a>.</video></figure></div>
       </div></section>
       <BookingPartner />
