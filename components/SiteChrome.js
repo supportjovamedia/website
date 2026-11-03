@@ -5,6 +5,7 @@ export default function SiteChrome({children, header, footer}) {
   const pathname = usePathname();
   const root = useRef(null);
   const isHome = pathname === "/";
+  const isJovaBook = pathname === "/jovabook";
   useEffect(() => {
     if (!root.current) return;
     const media = matchMedia('(prefers-reduced-motion: reduce)');
@@ -29,7 +30,8 @@ export default function SiteChrome({children, header, footer}) {
     setup(); media.addEventListener('change',setup);
     return () => { cleanup(); media.removeEventListener('change',setup); };
   }, [pathname,isHome]);
-  const navigation = <div className={`jova-pages jova-header-chrome${isHome ? ' jova-home-header' : ''}`}>{header}</div>;
+  const navigation = <div className={`jova-pages jova-header-chrome${isHome ? ' jova-home-header' : ''}${isJovaBook ? ' jovabook-header' : ''}`}>{header}</div>;
+  if (isJovaBook) return <>{navigation}<div className="jovabook-route" ref={root}>{children}</div></>;
   if (isHome) return <>{navigation}<div className="site-motion-home" ref={root}>{children}</div></>;
   if (pathname === "/get-a-quote") return <>{navigation}<div className="jova-pages" ref={root}>{children}</div></>;
   return <>{navigation}<div className={`jova-pages${pathname === "/basket" ? " basket-chrome" : ""}`} ref={root}>{children}{footer}</div></>;

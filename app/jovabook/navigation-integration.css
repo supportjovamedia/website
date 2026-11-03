@@ -1,0 +1,30 @@
+/* Only the JovaBook route adapts the shared navigation to the product design. */
+.jova-pages.jovabook-header{background:#c9e4f5;color:#11324e;--ink:#11324e;--blue:#235789}
+.jovabook-header .navigation-slot{padding-top:22px;box-sizing:content-box}
+.jova-pages.jovabook-header .header{background:transparent;border:0;color:#11324e;box-shadow:none}
+.jova-pages.jovabook-header .shell.nav{background:#fff;border-radius:14px;width:calc(100% - 48px);max-width:1480px;margin-inline:auto;padding:0 26px;height:78px;gap:25px}
+.jova-pages.jovabook-header .brand-logo,.jova-pages.jovabook-header .brand-logo img{width:106px;min-width:106px}
+.jova-pages.jovabook-header .desktop-nav{border:0;padding:0;gap:27px;margin-left:auto}
+.jova-pages.jovabook-header .desktop-nav a{color:#36546b;font-size:13px;min-height:44px;display:flex;align-items:center;text-decoration:none}
+.jova-pages.jovabook-header .desktop-nav a.active{color:#235789;text-decoration:underline;text-underline-offset:7px}
+.jova-pages.jovabook-header .nav-actions{gap:14px}
+.jova-pages.jovabook-header .btn{background:#235789;color:#fff;border-color:#235789;min-height:46px;padding:12px 22px;font-size:13px;box-shadow:none}
+.jova-pages.jovabook-header .btn:hover{background:#16466e;border-color:#16466e}
+.jovabook-header .jovabook-business-login{display:flex;align-items:center;justify-content:center;min-height:44px;padding:9px 15px;border:1px solid #9db5c7;border-radius:99px;color:#235789;font-size:12px;white-space:nowrap}
+.jova-pages.jovabook-header .header[data-stuck=true]{background:#c9e4f5;padding-top:8px;padding-bottom:8px;box-shadow:0 3px 16px #123e6510}
+.jova-pages.jovabook-header .header[data-stuck=true] .desktop-nav a{color:#36546b}
+.jova-pages.jovabook-header .header[data-stuck=true] .desktop-nav a.active{color:#235789}
+.jova-pages.jovabook-header .header[data-stuck=true] .logo-light-surface{display:block}
+.jova-pages.jovabook-header .header[data-stuck=true] .logo-dark-surface{display:none}
+.jova-pages.jovabook-header .header[data-stuck=true] .menu-toggle span{background:#235789}
+.jova-pages.jovabook-header .header[data-stuck=true] .menu-toggle{border-color:#aac3d6;background:#f4f8fb}
+.jova-pages.jovabook-header .header[data-stuck=true] .mobile-menu{background:#fff;color:#123e65}
+.jova-pages.jovabook-header .header[data-stuck=true] .mobile-menu a{color:#123e65}
+.jova-pages.jovabook-header .header[data-stuck=true] .mobile-menu .btn{color:#fff}
+.jova-pages.jovabook-header .menu-toggle{border:1px solid #aac3d6;background:#f4f8fb;width:46px;height:46px}
+.jova-pages.jovabook-header .menu-toggle span{background:#235789}
+.jova-pages.jovabook-header .mobile-menu{background:#fff;color:#123e65}
+.jova-pages.jovabook-header .mobile-menu a,.jova-pages.jovabook-header .mobile-menu button{color:#123e65}
+.jova-pages.jovabook-header .mobile-menu .btn{color:#fff}
+@media(max-width:1100px){.jovabook-header .jovabook-business-login{display:none}.jova-pages.jovabook-header .shell.nav{height:74px}.jova-pages.jovabook-header .mobile-menu{top:var(--navigation-height,74px)}.jova-pages.jovabook-header .nav-actions{margin-left:auto}.jova-pages.jovabook-header .desktop-nav{display:none}}
+@media(max-width:600px){.jovabook-header .navigation-slot{padding-top:12px}.jova-pages.jovabook-header .shell.nav{width:calc(100% - 24px);height:68px;padding-inline:20px;border-radius:12px}.jova-pages.jovabook-header .brand-logo,.jova-pages.jovabook-header .brand-logo img{width:91px;min-width:91px}}

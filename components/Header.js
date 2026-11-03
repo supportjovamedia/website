@@ -29,6 +29,7 @@ export default function Header() {
   return <Navigation key={pathname} pathname={pathname} />;
 }
 function Navigation({ pathname }) {
+  const isJovaBook = pathname === "/jovabook";
   const [open, setOpen] = useState(false);
   const [serviceMenu, setServiceMenu] = useState(false);
   const [websiteMenu, setWebsiteMenu] = useState(false);
@@ -177,8 +178,9 @@ function Navigation({ pathname }) {
             ))}
           </nav>
           <div className="nav-actions">
-            <a className="btn small desktop-cta" href="/get-a-quote">
-              Get a Quote
+            {isJovaBook && <a className="jovabook-business-login" href="https://book.jovamedia.com/login">Log in</a>}
+            <a className="btn small desktop-cta" href={isJovaBook ? "#plans" : "/get-a-quote"}>
+              {isJovaBook ? "Start free trial" : "Get a Quote"}
             </a>
             <button
               ref={toggle}
@@ -220,12 +222,13 @@ function Navigation({ pathname }) {
               </a>
             ))}
             <a
-              href="/get-a-quote"
+              href={isJovaBook ? "#plans" : "/get-a-quote"}
               className="btn mobile-project"
               onClick={closeMenu}
             >
-              Get a Quote
+              {isJovaBook ? "Start your 3-day trial" : "Get a Quote"}
             </a>
+            {isJovaBook && <a href="https://book.jovamedia.com/login" onClick={closeMenu}>Business log in</a>}
             </div>
             <div id="mobile-websites" className="mobile-menu-page mobile-services" data-active={websiteMenu} inert={!websiteMenu} aria-hidden={!websiteMenu}>
               <button type="button" className="mobile-menu-back" onClick={showMain}><MenuChevron back/><span>Back</span></button>
