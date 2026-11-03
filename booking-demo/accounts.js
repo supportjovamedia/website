@@ -497,6 +497,10 @@
         const r=await rpc('public_sms_reminder_info',{p_slug:slug}),d=r.data;
         return r.ok&&d&&typeof d.available==='boolean'&&d.consent_required===true&&d.reminder_hours===24?{ok:true,data:{available:d.available,consent_required:true,reminder_hours:24}}:{ok:false,data:{available:false}};
       },
+      async refundActivity() {
+        const t=await token();if(!t)return null;
+        const r=await rpc('owner_refund_activity',{},t);return r.ok&&r.data?.ok===true?r.data:null;
+      },
       async commissionAllowance() {
         const t = await token();
         if (!t) return null;
