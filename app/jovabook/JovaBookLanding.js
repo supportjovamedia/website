@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {useRef, useState} from "react";
 import CookieConsent from "@/components/CookieConsent";
+import {jovabookMarketingPlans as plans,jovabookCoreFeatures as includedInEveryPlan,jovabookUpgradeFeatures as planComparison,jovabookSignupHref} from "@/lib/jovabook-marketing-plans.mjs";
 import {FaqStory} from "@/components/ScrollStories";
 import "./landing.css";
 import "./pricing.css";
@@ -152,21 +153,6 @@ function ToolsSection(){
 const themes=[['jova-blue','Jova Blue','#235789'],['rose-studio','Rose Studio','#954562'],['midnight-glass','Midnight Glass','#242424'],['forest','Forest','#286b55'],['warm-studio','Warm Studio','#78523b'],['amethyst','Amethyst','#6b528c']];
 function WorkspaceSection(){const[selected,setSelected]=useState(0);return <section className="section workspace-section wrap ws-workspace" id="workspace"><div className="section-head center"><h2>Choose how your<br/>workspace looks.</h2><p>Six styles to make your working day feel like yours. Try a colour below. Your website and booking page keep their own branding.</p></div><div className="theme-options" role="group" aria-label="Workspace colour previews">{themes.map(([key,name,colour],index)=><button key={key} type="button" aria-pressed={index===selected} onClick={()=>setSelected(index)}><span style={{background:colour}} aria-hidden="true"/>{name}</button>)}</div><div className="theme-stage"><figure className="app-frame"><ProductImage name={`theme-${themes[selected][0]}`} alt={`${themes[selected][1]} JovaBook workspace`} className="theme-preview"/></figure></div></section>}
 
-const plans=[
- {name:'Essential',monthly:20,yearly:192,description:'For your own diary.',commission:1,features:['1 owner','Online booking and calendar','Clients and services','One-page business website','Email confirmations and reminders']},
- {name:'Standard',monthly:50,yearly:480,description:'For your team’s working day.',commission:1,features:['Up to 5 staff','Everything in Essential','Individual staff hours','Text reminders and slot recovery','Business Insights']},
- {name:'Premium',monthly:100,yearly:960,description:'More room, more control.',commission:0,features:['Up to 10 staff','Everything in Standard','Multi-page business website','Insights period comparisons','Remove JovaMedia branding']}
-];
-const planComparison=[
-  {label:'Text reminders',included:[false,true,true]},
-  {label:'Slot recovery',included:[false,true,true]},
-  {label:'Individual staff hours',included:[false,true,true]},
-  {label:'Business Insights',included:[false,true,true]},
-  {label:'Multi-page website',included:[false,false,true]},
-  {label:'Insights period comparisons',included:[false,false,true]},
-  {label:'Remove JovaMedia branding',included:[false,false,true]}
-];
-const includedInEveryPlan=['Online booking and calendar','Client records and services','Email confirmations and reminders','Website personalisation'];
 function PlanFeature({label,included}){return <li className={included?'included':'excluded'}><span>{label}</span><span className="plan-availability">{included?<Check/>:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>}<span className="plan-sr-only">{included?'Included':'Not included'}</span></span></li>}
 function PricingSection(){
   const[cadence,setCadence]=useState('monthly');
@@ -186,10 +172,10 @@ function PricingSection(){
           {index===1&&<span className="plan-popular"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 11h16v10H4zM3 7h18v4H3zM12 7v14M12 7H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/></svg>Most popular</span>}
           <header className="plan-heading"><h3>{plan.name}</h3></header>
           <p className="plan-description">{plan.description}</p>
-          <div className="plan-price" aria-live="polite" aria-atomic="true"><strong>£{annual?plan.yearly/12:plan.monthly}</strong><span>/month</span></div>
-          <p className="plan-billing">{annual?`£${plan.yearly} billed yearly`:'Billed monthly'}</p>
-          <a className={`button ${index!==1?'outline':''}`} href={`https://book.jovamedia.com/?portal=owner&plan=${plan.name.toLowerCase()}&cadence=${cadence}#signup`}>Start free trial</a>
-          <ul aria-label={`${plan.name} features`}><PlanFeature label={['1 owner','Up to 5 staff','Up to 10 staff'][index]} included/><PlanFeature label={index===2?'Multi-page business website':'One-page business website'} included/>{includedInEveryPlan.map(label=><PlanFeature key={label} label={label} included/>)}{planComparison.filter(item=>index===0?['Text reminders','Slot recovery','Business Insights'].includes(item.label):index===1?item.label!=='Insights period comparisons':item.label!=='Multi-page website').map(item=><PlanFeature key={item.label} label={item.label} included={item.included[index]}/>)}</ul>
+          <div className="plan-price" aria-live="polite" aria-atomic="true"><strong>£{annual?plan.annual/12:plan.monthly}</strong><span>/month</span></div>
+          <p className="plan-billing">{annual?`£${plan.annual} billed yearly`:'Billed monthly'}</p>
+          <a className={`button ${index!==1?'outline':''}`} href={jovabookSignupHref(plan.id,cadence)}>Start free trial</a>
+          <ul aria-label={`${plan.name} features`}><PlanFeature label={plan.staffLabel} included/><PlanFeature label={plan.websiteLabel} included/>{includedInEveryPlan.map(label=><PlanFeature key={label} label={label} included/>)}{planComparison.filter(item=>index===0?['Text reminders','Slot recovery','Business Insights'].includes(item.label):index===1?item.label!=='Insights period comparisons':item.label!=='Multi-page website').map(item=><PlanFeature key={item.label} label={item.label} included={item.included[index]}/>)}</ul>
           <div className="plan-terms"><p>{plan.commission?'1% commission on online customer bookings.':'0% booking commission.'}</p><p>Payment-processing fees are separate.</p></div>
         </article>)}
       </div>
