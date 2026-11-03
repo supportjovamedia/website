@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
-import {sources,bootstrap} from '../scripts/jovabook-test-db.mjs';
+import {sources} from '../scripts/jovabook-test-db.mjs';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const migration='migrations/20261101123635_jovabook_guest_deposit_guard.sql';
 const guard=await readFile(new URL('../booking-demo/supabase/'+migration,import.meta.url),'utf8');
@@ -37,9 +37,20 @@ test('guest deposit guard rejects unverified charges atomically while preserving
    ...(opts.sms?[opts.consent!==false,opts.request||'30000000-0000-4000-8000-000000000001']:[])]);
  let legacySms,legacySmsBody;
  try{
-  const full=await sources(),entries=full.entries.filter(x=>x.name!==migration&&!x.name.includes('jovabook_hosted_deposits')&&!x.name.includes('jovabook_deposit_attention'));
-  // This deliberately old-schema fixture is never advertised as a current CLI DB.
-  await bootstrap(db,{...full,entries,order:entries.map(x=>x.name),digest:'baseline-reproduction-only'});
+  const full=await sources(),guardIndex=full.entries.findIndex(entry=>entry.name===migration);assert(guardIndex>0);
+  // Reproduce precisely the schema before this historical guard. Loading later
+  // migrations without their hosted-deposit prerequisites is not a valid schema.
+  const entries=full.entries.slice(0,guardIndex);
+  await db.exec("create schema auth;create role anon;create role authenticated;create role service_role;create table auth.users(id uuid primary key,email text not null,email_confirmed_at timestamptz);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema public,auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;create schema storage;create table storage.buckets(id text primary key,name text not null,public boolean not null default false,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text not null references storage.buckets(id),name text not null,owner uuid,owner_id text,unique(bucket_id,name));alter table storage.objects enable row level security;grant usage on schema storage to authenticated;grant select,insert,update,delete on storage.objects to authenticated;");
+  for(const [index,entry] of entries.entries()){await db.exec(entry.sql);if(index===0)await db.exec('grant select,insert,update,delete on all tables in schema public to authenticated;grant select on all tables in schema public to anon;');}
+  for(const [index,salon] of [first,second].entries()){
+   const uid='10000000-0000-4000-8000-'+String(index+1).padStart(12,'0'),email='owner-'+(index+1)+'@example.test';
+   await q('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now())',[uid,email]);
+   await q("insert into salons(id,owner_id,name,slug,owner_name,email,phone,address,settings,status) values($1,$2,'Fictional Business',$3,'Fictional Owner',$4,'07700900123','Fictional address',$5,'active')",[salon,uid,'fictional-business-'+(index+1),email,JSON.stringify({hours:{start:'09:00',end:'18:00',days:[0,1,2,3,4,5,6]},buffer:0,notice:0})]);
+   await q("insert into staff(salon_id,id,name) values($1,'owner','Fictional calendar')",[salon]);await q("insert into services(salon_id,id,name,price,duration,staff_ids) values($1,'consultation','Test consultation',25,30,array['owner'])",[salon]);
+   await q("insert into customers(salon_id,id,name,email) values($1,'test-client','Test Client',$2)",[salon,'client-'+(index+1)+'@example.test']);
+   const seed=await value("select create_booking($1,'consultation','owner',(current_date+14)::text,'10:00','Test Client',$2,'','','Card') data",['fictional-business-'+(index+1),'client-'+(index+1)+'@example.test']);assert.equal(seed.ok,true,JSON.stringify(seed));
+  }
   date=await value('select (current_date+15)::text data');
   const original=(await q('select oid,proacl::text acl,proowner from pg_proc where oid=$1::regprocedure',[signature])).rows[0];
   const smsOriginal=(await q("select oid,proacl::text acl from pg_proc where oid='public.create_booking_with_sms(text,text,text,text,text,text,text,text,text,text,boolean,uuid)'::regprocedure")).rows[0];

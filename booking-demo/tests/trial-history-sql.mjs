@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {createHash} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {bootstrap,SOURCE_FILES,prepareSchemaSql,installOfflineGuard} from '../../scripts/jovabook-test-db.mjs';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
@@ -20,7 +20,18 @@ test('minimal private trial history survives full-schema purge and blocks repeat
  const ledger=async email=>(await q('select * from jovabook_private.trial_ledger where email_hash=jovabook_private.trial_fingerprint($1)',[email])).rows[0];
  const create=async(id,email,slug)=>{await db.exec('reset role');await q('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now())',[id,email]);await as(id);const result=await value('select create_business_for_existing_user($1,$2,$3) data',['Fictional private business',slug,'Fictional private owner']);assert.equal(result.ok,true);await db.exec('reset role');return result.salon_id;};
  const lifeToken='c'.repeat(64),work=async(action,payload={})=>value('select booking_billing_worker($1,$2,$3) data',[lifeToken,action,JSON.stringify(payload)]);
- let business,original,deletedAt,opaque;
+ let business,original,deletedAt,opaque,baselineMarkers;
+ const useCardTrial=async(salon)=>{
+  // Registration no longer consumes a trial. Establish it through the real,
+  // token-protected verification path using fictional provider references.
+  const key='a'.repeat(64),customer='cus_'+salon.replaceAll('-',''),subscription='sub_'+salon.replaceAll('-','');
+  const trialWork=async(action,payload={})=>value('select booking_billing_worker($1,$2,$3) data',[key,action,JSON.stringify({salon,...payload})]);
+  await q("update jovabook_private.billing_config set enabled=true,provider_configured=true,worker_hash=encode(sha256(convert_to($1,'UTF8')),'hex')",[key]);
+  await trialWork('bind_customer',{customer});const action=await trialWork('action_begin',{kind:'checkout',target:'essential',cadence:'monthly',request:randomUUID(),hash:'b'.repeat(64),trial:true});
+  const {fence}=await trialWork('sync_begin'),start=new Date(Date.now()-1000),end=new Date(+start+72*3600000);
+  const result=await trialWork('sync_apply',{fence,customer,subscription,plan:'essential',cadence:'monthly',status:'trialing',trial_verified:true,trial_action_id:action.id,trial_started_at:start.toISOString(),trial_ends_at:end.toISOString(),trial_payment_method:'pm_FictionalHistory'});assert.equal(result.trial_verified,true);
+ };
+
  try{
   // Explicitly append this new version until the parent-owned manifest is updated.
   const files=[...SOURCE_FILES];if(!files.includes(migration))files.push(migration);
@@ -28,14 +39,15 @@ test('minimal private trial history survives full-schema purge and blocks repeat
   await bootstrap(db,{entries,hashes:Object.fromEntries(entries.map(e=>[e.name,e.sha256])),order:files,digest:sha(JSON.stringify(files))});
   for(const [id,email,confirmed] of [[operator,'support.jovamedia@gmail.com',true],[customer,'fictional-customer@example.test',true],[unverified,'fictional-unverified@example.test',false]])await q('insert into auth.users(id,email,email_confirmed_at) values($1,$2,$3)',[id,email,confirmed?new Date():null]);
   await as(customer);await q("select portal_identity('customer')");await db.exec('reset role');
-  business=await create(owner,originalEmail,'fictional-trial-history');
+  baselineMarkers=(await q('select count(*)::int n from jovabook_private.trial_ledger')).rows[0].n;
+  business=await create(owner,originalEmail,'fictional-trial-history');assert.equal(await ledger(normalEmail),undefined,'registration alone cannot consume a trial');await useCardTrial(business);
   // The contact address is deliberately different from the anti-repeat Auth email.
   await q("update public.salons set email='different-contact@example.test' where id=$1",[business]);
   original=await ledger(normalEmail);assert(original);assert.equal(original.business_deleted_at,null);
 
   await t.test('only a current verified operator can read minimal opaque trial markers',async()=>{
    for(const id of [null,'10000000-0000-4000-8000-000000000001',customer,unverified]){await as(id);await assert.rejects(q('select operator_trial_history()'));}
-   await as(operator);const data=await value('select operator_trial_history() data');assert.equal(data.ok,true);assert.equal(data.total,3);assert.equal(data.has_more,false);
+   await as(operator);const data=await value('select operator_trial_history() data');assert.equal(data.ok,true);assert.equal(data.total,baselineMarkers+1);assert.equal(data.has_more,false);
    await db.exec('reset role');const fingerprint=(await q(fingerprintSQL,[normalEmail])).rows[0].value;
    opaque='trial_'+sha('jovabook-trial-history-v1:'+fingerprint);
    await as(operator);const record=data.history.find(row=>row.reference===opaque);assert(record);assert.match(record.reference,/^trial_[a-f0-9]{64}$/);assert.deepEqual(Object.keys(record).sort(),['deleted','deleted_at','reference','trial_used_at']);assert.equal(record.deleted,false);assert.equal(record.deleted_at,null);
@@ -63,7 +75,7 @@ test('minimal private trial history survives full-schema purge and blocks repeat
    const before=(await q('select count(*)::int n from jovabook_private.trial_ledger')).rows[0].n;
    for(const [index,email] of [normalEmail,' FICTIONAL.TRIAL+again@GMAIL.COM ','fictional.trial+third@googlemail.com'].entries()){
     const id='10000000-0000-4000-8000-'+String(30+index).padStart(12,'0'),salon=await create(id,email,'fictional-repeat-'+index);
-    await as(id);const access=await value('select owner_account_access() data');assert.equal(access.access,'billing_only');assert.equal(access.reason,'payment_required');assert.equal(access.full_until,null);assert.equal((await value('select start_trial() data')).eligible,false);await db.exec('reset role');
+    await as(id);const access=await value('select owner_account_access() data');assert.equal(access.access,'setup');assert.equal(access.reason,'business_setup');assert.equal(access.full_until,null);assert.equal(access.billing.trial_eligible,false);assert.equal((await value('select start_trial() data')).eligible,false);assert.equal((await value('select public_booking_status($1) data',['fictional-repeat-'+index])).available,false);await db.exec('reset role');
     const account=(await q('select trial_started_at,trial_ends_at from jovabook_private.billing_accounts where salon_id=$1',[salon])).rows[0];assert.equal(account.trial_started_at,null);assert.equal(account.trial_ends_at,null);
     const row=await ledger(email);assert.equal(row.email_hash,original.email_hash);assert.equal(new Date(row.business_deleted_at).toISOString(),deletedAt);
     await q('delete from auth.users where id=$1',[id]);
@@ -72,13 +84,13 @@ test('minimal private trial history survives full-schema purge and blocks repeat
   });
 
   await t.test('Auth cascade captures the current Auth email before deleting all business rows',async()=>{
-   const salon=await create(cascadeOwner,'cascade+trial@example.test','fictional-auth-cascade');await q("update public.salons set email='other-contact@example.test' where id=$1",[salon]);
+   const salon=await create(cascadeOwner,'cascade+trial@example.test','fictional-auth-cascade');await useCardTrial(salon);await q("update public.salons set email='other-contact@example.test' where id=$1",[salon]);
    const before=await ledger('cascade@example.test');assert.equal(before.business_deleted_at,null);await q('delete from auth.users where id=$1',[cascadeOwner]);assert.equal((await q('select count(*)::int n from public.salons where id=$1',[salon])).rows[0].n,0);assert((await ledger('cascade@example.test')).business_deleted_at);assert.equal(await ledger('other-contact@example.test'),undefined);
    const again='10000000-0000-4000-8000-000000000040';await create(again,'CASCADE+again@example.test','fictional-cascade-repeat');await as(again);assert.equal((await value('select start_trial() data')).eligible,false);await db.exec('reset role');assert.equal((await ledger('cascade+again@example.test')).email_hash,before.email_hash);
   });
 
   await t.test('rolled-back business deletion cannot leave a false deletion marker',async()=>{
-   const id='10000000-0000-4000-8000-000000000050',salon=await create(id,'rollback@example.test','fictional-rollback');await db.exec('begin');await q('delete from public.salons where id=$1',[salon]);assert((await ledger('rollback@example.test')).business_deleted_at);await db.exec('rollback');assert.equal((await ledger('rollback@example.test')).business_deleted_at,null);assert.equal((await q('select count(*)::int n from public.salons where id=$1',[salon])).rows[0].n,1);
+   const id='10000000-0000-4000-8000-000000000050',salon=await create(id,'rollback@example.test','fictional-rollback');await useCardTrial(salon);await db.exec('begin');await q('delete from public.salons where id=$1',[salon]);assert((await ledger('rollback@example.test')).business_deleted_at);await db.exec('rollback');assert.equal((await ledger('rollback@example.test')).business_deleted_at,null);assert.equal((await q('select count(*)::int n from public.salons where id=$1',[salon])).rows[0].n,1);
   });
 
   await t.test('private deletion helpers and raw markers remain inaccessible to every browser role',async()=>{

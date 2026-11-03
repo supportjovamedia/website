@@ -12,7 +12,7 @@ function run(args, env = {}) {
 run(['--test',
   'tests/contact-delivery.test.mjs', 'tests/quote-delivery.test.mjs',
   'tests/recaptcha-verification.test.mjs', 'tests/checkout.test.mjs',
-  'tests/live-chat.test.mjs', 'tests/marketing-analytics.test.mjs',
+  'tests/live-chat.test.mjs', 'tests/marketing-analytics.test.mjs', 'tests/jovabook-marketing-tracking.test.mjs',
   'tests/social-preview.test.mjs',
   'tests/jovabook-public-entry.test.mjs', 'tests/jovabook-public-links.test.mjs', 'tests/jovabook-deposit-readiness.test.mjs',
   'booking-demo/tests/trial-history-sql.mjs',

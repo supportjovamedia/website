@@ -14,6 +14,8 @@ This section records the current marketing release; the dated app/payment histor
 - [x] Ahrefs' 11 noindex/nofollow entries verified as booking-app/login and fictional prototypes; retained intentionally. Qaiser case-study Product-schema warning is a classifier false positive; CreativeWork retained.
 - [x] Consent-based JovaBook page visits and separate trial-interest, plan-selection and login events added to existing GA4/Clarity integration. Focused consent/privacy and pricing tests pass. QA traffic intercepted.
 - [x] Production build passed on Windows after restricted build-folder access was resolved.
+- [x] CI follow-up: sidebar wordmark now reserves its space while collapsed, preventing hover/focus navigation jumps (five desktop/phone cases pass). Homepage share artwork recaptured with stripped metadata and current source manifest.
+- [x] Pre-existing billing test drift resolved without changing production financial logic: current schema manifest, card-backed trial fixtures, legitimate online commission origins, shared v3 consent, pending-action conflict safety, current customer subdomain return and canonical online booking in the isolated verification harness. Focused suites pass: subscriptions 40, commission/deposit/trial 62, customer payment/refund 26. All provider transports are simulated.
 - [ ] Feature PR, review, explicit merge approval and correct marketing production deployment.
 - [ ] After deployment: live URL/image/canonical/sitemap checks, GA4/Clarity receipt, saved JovaBook report, Google/Bing sitemap refresh and indexing requests where supported. Ahrefs recrawl after production changes.
 
