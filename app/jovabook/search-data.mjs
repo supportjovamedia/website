@@ -2,7 +2,7 @@ const site = "https://www.jovamedia.com";
 export const jovabookUrl = `${site}/jovabook`;
 
 export function jovabookMetadata() {
-  const title = "JovaBook Online Booking & Scheduling Software | JovaMedia";
+  const title = "Booking & Scheduling Software for Service Businesses | JovaBook";
   const description = "JovaBook by JovaMedia is booking and scheduling software for service businesses. Manage appointments, clients and deposits. Plans from £20/month.";
   const image = {
     url: `${site}/jovabook/calendar-desktop.webp`,

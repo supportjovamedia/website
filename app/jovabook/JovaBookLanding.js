@@ -189,11 +189,10 @@ function PricingSection(){
           <div className="plan-price" aria-live="polite" aria-atomic="true"><strong>£{annual?plan.yearly/12:plan.monthly}</strong><span>/month</span></div>
           <p className="plan-billing">{annual?`£${plan.yearly} billed yearly`:'Billed monthly'}</p>
           <a className={`button ${index!==1?'outline':''}`} href={`https://book.jovamedia.com/?portal=owner&plan=${plan.name.toLowerCase()}&cadence=${cadence}#signup`}>Start free trial</a>
-          <div className="plan-scope"><span>{['1 owner','Up to 5 staff','Up to 10 staff'][index]}</span><span>{index===2?'Multi-page website':'One-page website'}</span></div>
-          <ul aria-label={`${plan.name} features`}>{includedInEveryPlan.map(label=><PlanFeature key={label} label={label} included/>)}{planComparison.filter(item=>index===0?['Text reminders','Slot recovery','Business Insights'].includes(item.label):index===1?item.label!=='Insights period comparisons':true).map(item=><PlanFeature key={item.label} label={item.label} included={item.included[index]}/>)}</ul>
+          <ul aria-label={`${plan.name} features`}><PlanFeature label={['1 owner','Up to 5 staff','Up to 10 staff'][index]} included/><PlanFeature label={index===2?'Multi-page business website':'One-page business website'} included/>{includedInEveryPlan.map(label=><PlanFeature key={label} label={label} included/>)}{planComparison.filter(item=>index===0?['Text reminders','Slot recovery','Business Insights'].includes(item.label):index===1?item.label!=='Insights period comparisons':item.label!=='Multi-page website').map(item=><PlanFeature key={item.label} label={item.label} included={item.included[index]}/>)}</ul>
+          <div className="plan-terms"><p>{plan.commission?'1% commission on online customer bookings.':'0% booking commission.'}</p><p>Payment-processing fees are separate.</p></div>
         </article>)}
       </div>
-      <p className="payment-fees">Essential and Standard have 1% commission on online customer bookings. Premium has 0% booking commission. Payment-processing fees are separate.</p>
     </div>
   </section>;
 }

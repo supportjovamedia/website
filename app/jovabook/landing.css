@@ -65,3 +65,19 @@
 @media(max-width:760px){.ws .ws-hero-actions{justify-content:center;gap:10px;margin-top:23px}.ws .ws-hero-actions .button{font-size:13px;min-height:48px;padding:13px 19px}.ws .ws-hero-actions .ws-hero-login{padding-inline:23px}}
 .ws .ws-hero h1{font-size:clamp(52px,5.5vw,84px);letter-spacing:-.058em}
 @media(max-width:760px){.ws .ws-hero h1{font-size:clamp(39px,10.4vw,61px)}.ws .ws-hero-copy>p{max-width:350px;font-size:14px}}
+/* Shared mobile rhythm keeps sections compact without squeezing content. */
+@media(max-width:760px){
+ .ws :is(.ws-demo,.ws-booking,.ws-payments,.ws-website,.ws-workspace,.ws-insights,.ws-industries){padding-top:46px;padding-bottom:44px;padding-left:20px;padding-right:20px}
+ .ws .ws-calendar{padding:46px 20px 30px}
+ .ws .ws-tools-cards{padding-top:46px;padding-bottom:44px}
+ .ws :is(.ws-demo,.ws-calendar,.ws-booking,.ws-tools,.ws-payments,.ws-website,.ws-workspace,.ws-insights,.ws-industries) h2{font-size:clamp(30px,8.8vw,36px);line-height:1.15}
+ .ws .ws-original-faq [data-site-faq]{padding-top:46px;padding-bottom:44px}
+ .ws .ws-payment-art{min-height:335px}
+ .ws .ws-payment-disc{height:250px;width:250px;top:30px}
+ .ws .ws-reminder{margin-top:18px;padding-top:25px}
+ .ws .ws-website{gap:26px}
+ .ws .ws-tool-choice-description{line-height:1.65}
+}
+@media(max-width:760px){.ws .refined-pricing .plan li{font-size:13px;line-height:1.6}.ws .mp-footer nav button{min-height:44px;padding:10px 8px;font:inherit}.ws .ws-original-faq a{display:inline-flex;align-items:center;min-height:44px}}
+.ws>section[id]{scroll-margin-top:110px}
+.ws .ws-payments .ws-payment-receipt>p{color:#4b6174}

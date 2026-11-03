@@ -48,3 +48,9 @@
 .ws .refined-pricing .payment-fees{font-size:14px;line-height:1.8;max-width:730px;margin-top:29px;color:#f1f6fa}
 @media(min-width:761px) and (max-width:1000px){.ws .refined-pricing .plan-popular{min-width:170px;padding:9px 13px;font-size:12px;gap:8px}.ws .refined-pricing .plan.recommended{padding-inline:18px}.ws .refined-pricing .plan-heading{min-height:30px}}
 @media(max-width:760px){.ws .refined-pricing .plan-grid{gap:36px}.ws .refined-pricing .plan.recommended{padding:29px 24px 24px}.ws .refined-pricing .plan-heading{position:static}.ws .refined-pricing .payment-fees{font-size:13px;max-width:340px}.ws .refined-pricing .plan li{font-size:12px}}
+/* Keep inclusions and charges together within each plan. */
+.ws .refined-pricing .plan ul{margin-top:20px}
+.ws .refined-pricing .plan-terms{margin-top:19px;padding-top:16px;border-top:1px solid #dce5ec;width:100%}
+.ws .refined-pricing .plan-terms p{font-size:13px;line-height:1.7;color:#345974;margin:0}
+.ws .refined-pricing .plan-terms p+p{margin-top:8px;color:#526b7e}
+@media(max-width:760px){.ws .refined-pricing .plan ul{margin-top:18px;gap:9px}.ws .refined-pricing .plan-terms{text-align:center;margin-top:17px;padding-top:14px}.ws .refined-pricing .plan-terms p{font-size:13px}}
