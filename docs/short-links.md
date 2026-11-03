@@ -14,7 +14,10 @@ All three lead to `/jovabook` with campaign labels attached. Publish and verify 
 
 - Clicks count requests, including repeat requests. Detected preview crawlers are counted separately. Detection is heuristic; these numbers do not establish how many people visited.
 - Counts cover the lifetime of each link, since tracking began. Aggregate counts remain while the link exists.
-- No cookies, IP fingerprints, visitor identifiers or unique-visitor metrics are collected by this tracker. No `SHORT_LINK_SALT` is required.
+- Estimated unique opens today use the trusted Vercel client IP and coarse browser/OS family. A keyed hash is different per link and UK calendar day. Raw IPs, full browser strings, full referrers and individual journeys are not stored. Daily hashes expire no later than 48 hours after the day ends. Only broad referrer categories and aggregate counts are retained. The existing server storage token derives the daily hash; it is never public.
+- Same-day repeats normally count once. Networks shared by users may undercount, network/browser changes may overcount, and recognised preview detection is heuristic. Daily estimates must not be summed and called unique people for a month. Older totals cannot be backfilled.
+- Short-link counting honours the explicit jova-link-statistics=off preference, Global Privacy Control and Do Not Track. Reject all also records the opt-out; the privacy page offers an independent 44px toggle. No new tracking cookie is created, only the preference cookie when a visitor makes a choice.
+- This request-only aggregate measurement is separate from consent-based GA4 and never joins its hashes to signup, payment, email or customer data. The privacy notice explains purpose, retention, provider and objection. This implementation does not claim that hashing alone establishes anonymity or an automatic legal exemption.
 - Unavailable storage is shown as unavailable, rather than zero. Built-in link addresses remain available to copy.
 - The GA4 report opens separately for consented visitor and conversion reporting. It requires the operator's own Google Analytics access. These are separate measures from redirect request counts.
 - Landing-page analytics remain governed by the existing analytics consent controls.

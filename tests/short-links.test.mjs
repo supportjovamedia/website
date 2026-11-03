@@ -41,9 +41,9 @@ test('three stable built-ins retain their labels and bypass unavailable storage'
 
 test('counting is deferred until the host runs its after-response task; events are aggregate only',async()=>{
  const store=memoryStore({[link.code]:link}),tasks=[],go=createRedirectHandler({store,schedule:task=>tasks.push(task),now:()=>new Date('2026-11-03T12:00:00Z')});
- const reads=[];const headers={get:key=>{reads.push(key);if(key!=='user-agent')throw Error('Unexpected request header access');return 'Mozilla/5.0';}};
- const response=await go({method:'GET',headers},link.code);assert.equal(response.status,302);assert.equal(store.events.length,0);assert.deepEqual(reads,['user-agent']);assert.equal(tasks.length,1);await tasks[0]();
- assert.deepEqual(store.events,[{code:link.code,bot:false,at:'2026-11-03T12:00:00.000Z'}]);await go(request('WhatsApp/2.23'),link.code);await tasks[1]();const data=await store.list(),item=data.links.find(item=>item.code===link.code);assert.equal(item.clicks,1);assert.equal(item.bots,1);assert.equal(Object.keys(item).some(key=>/unique/i.test(key)),false);
+ const reads=[];const headers={get:key=>{reads.push(key);if(!['user-agent','cookie','sec-gpc','dnt','referer'].includes(key))throw Error('Unexpected request header access');return key==='user-agent'?'Mozilla/5.0':null;}};
+ const response=await go({method:'GET',headers},link.code);assert.equal(response.status,302);assert.equal(store.events.length,0);assert.deepEqual(reads,['cookie','sec-gpc','dnt','user-agent','referer']);assert.equal(tasks.length,1);await tasks[0]();
+ assert.deepEqual(store.events,[{code:link.code,bot:false,at:'2026-11-03T12:00:00.000Z',referrer:'direct'}]);await go(request('WhatsApp/2.23'),link.code);await tasks[1]();const data=await store.list(),item=data.links.find(item=>item.code===link.code);assert.equal(item.clicks,1);assert.equal(item.bots,1);assert.equal(Object.keys(item).some(key=>/unique/i.test(key)),false);
 });
 
 test('HEAD requests do not count and a missing or failing scheduler never blocks redirect',async()=>{
@@ -71,9 +71,9 @@ test('storage sends one bounded three-command pipeline of aggregate fields only'
  assert.doesNotMatch(JSON.stringify(calls[0].commands),/PFADD|PFCOUNT|EXPIRE|visitor|agent|address/i);assert.equal(TRACKING_PERIOD.kind,'lifetime');assert.match(TRACKING_PERIOD.retention,/while the link exists/);await store.record({code:'instagram',bot:true,at:'2026-11-03T13:00:00.000Z'});assert.equal(calls[1].commands.length,2);assert.equal(calls[1].commands[0][2],'bots');assert(!calls[1].commands.some(command=>command[2]==='last'));
 });
 
-test('storage merges protected built-ins with valid legacy custom metadata in two bounded calls',async()=>{
+test('storage keeps aggregate and unique lookups separate and protects built-in metadata',async()=>{
  const calls=[],store=createStore({env:redisEnv,send:async(url,options)=>{const commands=JSON.parse(options.body);calls.push(commands);if(commands[0]==='HGETALL')return Response.json({result:['instagram',JSON.stringify({...link,code:'instagram',platform:'evil',destination:'/contact'}),link.code,JSON.stringify(link),'unsafe',JSON.stringify({...link,code:'unsafe',destination:'/go/instagram'})]});return Response.json(commands.map(([,key])=>({result:key.endsWith('instagram')?['clicks','4','bots','2','last','2026-11-03T12:00:00Z','started','2026-11-01T12:00:00Z']:[]})));}});
- const result=await store.list();assert.equal(result.available,true);assert.equal(calls.length,2);assert.equal(calls[1].length,4);const ig=result.links.find(link=>link.code==='instagram');assert.equal(ig.platform,'instagram');assert.equal(ig.destination,'/jovabook');assert.equal(ig.clicks,4);assert.equal(ig.bots,2);assert.equal(result.links.some(link=>link.code==='unsafe'),false);assert.equal(result.links.find(link=>link.code==='whatsapp').clicks,0);assert(result.links.every(link=>link.stats_available===true));
+ const result=await store.list();assert.equal(result.available,true);assert.equal(calls.length,3);assert.equal(calls[1].length,4);const ig=result.links.find(link=>link.code==='instagram');assert.equal(ig.platform,'instagram');assert.equal(ig.destination,'/jovabook');assert.equal(ig.clicks,4);assert.equal(ig.bots,2);assert.equal(result.links.some(link=>link.code==='unsafe'),false);assert.equal(result.links.find(link=>link.code==='whatsapp').clicks,0);assert(result.links.every(link=>link.stats_available===true));
 });
 
 test('unavailable or malformed counters are unknown rather than zero',async()=>{

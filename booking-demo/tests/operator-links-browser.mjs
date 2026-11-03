@@ -11,7 +11,7 @@ const server=http.createServer(async(req,res)=>{try{const file=path.resolve(root
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+server.address().port,backend='https://backend.example.test';
 const browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'chrome'}:{})});
-const builtins=()=>['instagram','nextdoor','whatsapp'].map((code,i)=>({code,platform:code,medium:code==='whatsapp'?'message':'social',campaign:'jovabook_launch',content:'introduction',destination:'/jovabook',builtin:true,clicks:i===0?7:0,bots:i===0?2:0,last:i===0?'2026-11-03T12:00:00Z':null,stats_available:true}));
+const builtins=()=>['instagram','nextdoor','whatsapp'].map((code,i)=>({code,platform:code,medium:code==='whatsapp'?'message':'social',campaign:'jovabook_launch',content:'introduction',destination:'/jovabook',builtin:true,unique_today:i===0?1:0,unique_available:true,clicks:i===0?7:0,bots:i===0?2:0,last:i===0?'2026-11-03T12:00:00Z':null,stats_available:true}));
 async function make(width=1440,role='operator'){
  const context=await browser.newContext({viewport:{width,height:950}}),state={role,links:builtins(),available:true,createError:false,status:200,hold:null,calls:[],errors:[]};
  await context.addInitScript(()=>{sessionStorage.setItem('jovabook-operator-auth-v1',JSON.stringify({access_token:'operator-fixture',expires_at:Date.now()/1000+3600,user_id:'operator'}));localStorage.setItem('jovabook-auth','owner unchanged');sessionStorage.setItem('jovabook-customer-auth-v1:test','customer unchanged');window.copied=[];Object.defineProperty(navigator,'clipboard',{value:{writeText:async value=>{if(window.copyBlocked)throw Error('blocked');window.copied.push(value);}}});});
@@ -46,9 +46,9 @@ try{
   for(const code of ['instagram','nextdoor','whatsapp']){const button=page.getByRole('button',{name:'Copy '+code+' link',exact:true});assert((await button.boundingBox()).height>=44);await button.click();await expect(button).toHaveText('Copied');}
   assert.deepEqual(await page.evaluate(()=>window.copied),['instagram','nextdoor','whatsapp'].map(c=>'https://www.jovamedia.com/go/'+c));
   await expect(page.locator('.op-link-card').first()).toContainText('7');await expect(page.locator('.op-link-card').first()).toContainText('Detected previews');await expect(page.locator('.op-link-card').nth(1)).toContainText('No clicks yet');
-  assert(!/unique|people/i.test(await page.locator('.op-main').innerText()));
+  await expect(page.locator('.op-link-card').first().locator('.op-link-unique dd')).toHaveText('1');await expect(page.locator('.op-main')).toContainText('Estimated unique opens today');
   const ga=page.getByRole('link',{name:'Open GA4 audience report (new tab)'});await expect(ga).toHaveAttribute('target','_blank');await expect(ga).toHaveAttribute('rel','noopener noreferrer');await expect(ga).toHaveAttribute('href',/p558337460/);
-  state.available=false;await page.getByRole('button',{name:'Refresh',exact:true}).click();await expect(page.locator('.op-link-card').first().locator('dd')).toHaveText(['Unavailable','Unavailable','Unavailable']);
+  state.available=false;await page.getByRole('button',{name:'Refresh',exact:true}).click();await expect(page.locator('.op-link-card').first().locator('dd')).toHaveText(['Unavailable','Unavailable','Unavailable','Unavailable']);
   await noOverflow(page);assert.deepEqual(state.errors,[]);
  }finally{await context.close();}}});
  await check('Creation validates input, retains failed draft, retries and escapes labels; copy denial is recoverable',async()=>{const {page,context,state}=await make();try{
