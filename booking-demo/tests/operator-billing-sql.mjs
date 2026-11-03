@@ -67,6 +67,29 @@ test('operator account and commission records distinguish trial, paid, settlemen
   await t.test('selected business financial projections exclude another business ledger entirely',async()=>{
    await q("insert into jovabook_private.commission_entries(salon_id,booking_id,kind,service_at,full_price_minor,rate_bps,amount_minor,status) values($1,'PRIVATE FOREIGN BOOKING','service',now()-interval '1 day',99900,100,999,'open')",[past]);await as(operator);const foreign=await summary(past),selected=await summary(paid);assert.equal(foreign.commission.unbilled_minor,999);assert.equal(selected.commission.settled_minor,50);assert.equal(selected.commission.invoiced_outstanding_minor,175);assert.equal(selected.commission.unresolved_count,1);assert(!JSON.stringify(selected).includes('PRIVATE FOREIGN BOOKING'));await db.exec('reset role');
   });
+  await t.test('future online commission is pending, becomes due after its time, and excludes trials, Premium and cancellations',async()=>{
+   await db.exec('reset role');await q("select set_config('request.jwt.claim.sub','',false)");
+   await db.exec('alter table bookings disable trigger owner_experience_booking_schedule');const position=()=>value('select jovabook_private.operator_billing_record($1,false) data',[paid]);const before=(await position()).commission;
+   await q("update jovabook_private.billing_accounts set commission_terms_version='2026-11-02-online-origin-v3',trial_started_at=null,trial_ends_at=null where salon_id=$1",[paid]);await q("insert into staff(salon_id,id,name) values($1,'projection','Fixture')",[paid]);await q("insert into services(salon_id,id,name,price,duration,staff_ids) values($1,'projection','Fixture',1,30,array['projection'])",[paid]);
+   await q("insert into jovabook_private.commission_plan_history(salon_id,invoice_id,line_id,subscription_id,plan,effective_start,period_end) values($1,'in_projection','il_projection','sub_PRIVATE','essential',now()-interval '1 day',now()+interval '10 days')",[paid]);
+   await q("select set_config('jovabook.online_booking','trusted',false)");
+   await q("insert into bookings(salon_id,id,service_id,service_name,price,duration,date,time,staff_id,name,email,status,source) values($1,'projection','projection','Fixture',1,30,current_date+2,'12:00','projection','Customer','customer@example.test','confirmed','Online')",[paid]);
+   await q("select set_config('jovabook.online_booking','',false)");
+   assert.equal((await position()).commission.pending_minor,1);assert.equal((await position()).commission.due_minor,before.due_minor);
+   await q("update jovabook_private.commission_plan_history set plan='premium' where salon_id=$1 and line_id='il_projection'",[paid]);assert.equal((await position()).commission.pending_minor,0);
+   await q("update jovabook_private.commission_plan_history set plan='essential' where salon_id=$1 and line_id='il_projection'",[paid]);
+   await q("update jovabook_private.billing_accounts set trial_started_at=now()-interval '1 day',trial_ends_at=now()+interval '4 days' where salon_id=$1",[paid]);assert.equal((await position()).commission.pending_minor,0);
+   await q("update jovabook_private.billing_accounts set trial_started_at=null,trial_ends_at=null where salon_id=$1",[paid]);
+   await q("update jovabook_private.commission_origins set current_start=now()-interval '1 second' where salon_id=$1 and booking_id='projection'",[paid]);
+   const due=(await position()).commission;assert.equal(due.pending_minor,0);assert.equal(due.due_minor,before.due_minor+1);
+   await q("update jovabook_private.commission_origins set decision='waived' where salon_id=$1 and booking_id='projection'",[paid]);assert.equal((await position()).commission.due_minor,before.due_minor);
+   await q("update jovabook_private.commission_origins set decision='pending',source='Manual' where salon_id=$1 and booking_id='projection'",[paid]);assert.equal((await position()).commission.due_minor,before.due_minor);
+  });
+  await t.test('cancelled trials show cancelled immediately and leave the active-trial count',async()=>{
+   await db.exec('reset role');await q("update jovabook_private.billing_accounts set cancel_at_period_end=true where salon_id=$1",[trial]);await as(operator);
+   const directory=await value('select operator_businesses() data');assert.equal(directory.businesses.find(b=>b.id===trial).billing_state,'trial_cancelled');const overview=await value('select operator_overview() data');assert.equal(overview.trials_active,0);assert.equal(overview.trials_cancelled,1);
+   await db.exec('reset role');await q("update jovabook_private.billing_accounts set cancel_at_period_end=false where salon_id=$1",[trial]);
+  });
   await t.test('anonymous, customer and owner roles cannot query billing helpers or operator records',async()=>{
    for(const id of [null,customer,'10000000-0000-4000-8000-000000000001']){await as(id);await assert.rejects(summary(paid));await assert.rejects(q('select operator_overview()'));await assert.rejects(q('select operator_businesses()'));await assert.rejects(q('select operator_business($1)',[paid]));for(const table of ['billing_accounts','commission_entries','commission_batches','commission_credit_actions'])await assert.rejects(q('select * from jovabook_private.'+table));await assert.rejects(q('select jovabook_private.operator_billing_record($1,true)',[paid]));await assert.rejects(q('select jovabook_private.operator_business_record($1)',[paid]));}await db.exec('reset role');
   });

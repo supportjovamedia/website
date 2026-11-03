@@ -48,7 +48,12 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261102214938_card_trial_business_setup.sql',
  'migrations/20261102215209_online_only_booking_emails.sql',
  'migrations/20261102222352_salon_cancellation_deposit_refunds.sql',
- 'migrations/20261102222714_complete_elapsed_appointments.sql']);
+ 'migrations/20261102222714_complete_elapsed_appointments.sql',
+ 'migrations/20261102233500_commission_automatic_outcomes.sql',
+ 'migrations/20261102235248_owner_refund_activity.sql',
+ 'migrations/20261102235924_operator_commission_position.sql',
+ 'migrations/20261103001257_operator_cancelled_trials.sql',
+ 'migrations/20261103002304_commission_parent_deletion_guard.sql']);
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
  'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql','migrations/20261102222936_appointment_completion_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
