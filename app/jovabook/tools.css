@@ -1,0 +1,25 @@
+/* Selectable feature cards, limited to the services and client records section. */
+.ws .ws-tools-cards .ws-tools-heading{margin-bottom:34px}
+.ws .ws-tools-layout{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.45fr);align-items:center;gap:28px;max-width:1150px;margin:auto;padding:24px;background:#fff;border-radius:24px}
+.ws .ws-tools-selector{display:grid;gap:14px;min-width:0}
+.ws .ws-tool-choice{display:flex;align-items:flex-start;gap:16px;width:100%;padding:24px 22px;background:#f1f4f6;border:1px solid transparent;border-radius:17px;color:#123653;text-align:left}
+.ws .ws-tool-choice[aria-pressed=true]{background:#e1edf5;border-color:#91b7d4}
+.ws .ws-tool-choice:hover{background:#e9f0f5}
+.ws .ws-tool-choice[aria-pressed=true]:hover{background:#e1edf5}
+.ws .ws-tool-choice:focus-visible{outline:3px solid #235789;outline-offset:4px}
+.ws .ws-tool-icon{display:grid;place-items:center;width:42px;height:42px;flex:none;background:#fff;border-radius:12px;color:#235789}
+.ws .ws-tool-icon svg{width:22px;height:22px}
+.ws .ws-tool-choice-copy{display:block;min-width:0;padding-top:4px}
+.ws .ws-tool-choice-title{display:block;font-size:19px;font-weight:600;letter-spacing:-.04em;line-height:1.35}
+.ws .ws-tool-choice-description{display:block;margin-top:12px;font-size:14px;font-weight:400;line-height:1.7;color:#4d657a}
+.ws .ws-tools-preview{min-width:0;background:#235789;border-radius:18px;padding:22px}
+.ws .ws-tools-preview figure{padding:7px;background:#fff;border-radius:10px;overflow:hidden}
+.ws .ws-tools-preview .ws-tool-image{display:block;width:100%;height:auto;border-radius:5px}
+.ws .ws-tools-preview p{font-size:14px;line-height:1.7;text-align:center;max-width:510px;margin:20px auto 0;color:#fff;min-height:48px}
+.ws .ws-calendar .ws-scene-heading{display:block;text-align:center;max-width:960px;margin:0 auto 40px}
+.ws .ws-calendar .ws-scene-heading h2{max-width:900px;margin-inline:auto}
+.ws .ws-calendar .ws-scene-heading p{max-width:680px;margin:24px auto 0;font-size:17px;line-height:1.75}
+@media(min-width:901px) and (max-width:1100px){.ws .ws-tools-layout{gap:20px;padding:20px;grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr)}.ws .ws-tool-choice{padding:20px 16px;gap:12px}.ws .ws-tool-choice-title{font-size:17px}.ws .ws-tool-choice-description{font-size:13px}.ws .ws-tools-preview{padding:16px}}
+@media(max-width:900px){.ws .ws-tools-layout{grid-template-columns:1fr;gap:20px;padding:20px}.ws .ws-tools-selector{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ws .ws-tool-choice{padding:20px 18px;gap:12px}.ws .ws-tool-choice-title{font-size:18px}.ws .ws-tools-preview{max-width:700px;width:100%;margin:auto}.ws .ws-tools-cards .ws-tools-heading{gap:0}}
+@media(max-width:560px){.ws .ws-tools-cards{padding:48px 16px}.ws .ws-tools-layout{padding:14px;gap:16px;border-radius:20px}.ws .ws-tools-selector{grid-template-columns:1fr;gap:10px}.ws .ws-tool-choice{display:block;text-align:center;padding:17px 16px;border-radius:13px}.ws .ws-tool-icon{display:inline-grid;vertical-align:middle;width:32px;height:32px;border-radius:9px;margin-right:9px}.ws .ws-tool-icon svg{width:19px;height:19px}.ws .ws-tool-choice-copy{display:contents}.ws .ws-tool-choice-title{display:inline;font-size:17px;vertical-align:middle}.ws .ws-tool-choice-description{margin:10px auto 0;font-size:13px;line-height:1.65;max-width:285px}.ws .ws-tools-preview{padding:12px;border-radius:13px}.ws .ws-tools-preview figure{padding:4px;border-radius:7px}.ws .ws-tools-preview p{font-size:13px;line-height:1.7;min-height:67px;margin-top:15px}.ws .ws-calendar .ws-scene-heading{margin-bottom:28px}.ws .ws-calendar .ws-scene-heading h2{font-size:36px}.ws .ws-calendar .ws-scene-heading p{font-size:14px;line-height:1.75;max-width:360px;margin-top:20px}}
+@media(prefers-reduced-motion:no-preference){.ws .ws-tool-choice{transition:background .18s ease,border-color .18s ease}}

@@ -5,8 +5,8 @@ import "./navigation-integration.css";
 export const metadata=jovabookMetadata();
 const faqs = [
   {
-    "question": "Why should I use JovaBook?",
-    "answer": "JovaBook gives clients a way to book online while you manage your diary, services and client records in one workspace. Essential also includes a business website, so clients can learn about your business and find your booking link."
+    "question": "What is JovaBook and who is it for?",
+    "answer": "JovaBook is booking and scheduling software by JovaMedia for service businesses, including salons, healthcare practices, tutors, coaches, consultants and spas. Clients book appointments online while you manage your calendar, services and client records. Every plan includes a business website and email confirmations and reminders."
   },
   {
     "question": "How do clients book with my business?",

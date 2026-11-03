@@ -39,3 +39,12 @@
 .ws .refined-pricing .plan-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(min-width:761px) and (max-width:1000px){.ws .refined-pricing .plan li{font-size:12px}.ws .refined-pricing .plan-scope{font-size:11px}}
 @media(max-width:760px){.ws .refined-pricing .plans-shared{font-size:13px;max-width:310px}.ws .refined-pricing .plan-scope{justify-content:center;column-gap:18px;font-size:12px}.ws .refined-pricing .plan li{font-size:13px;text-align:left}.ws .refined-pricing .plan-commission{max-width:250px;margin-inline:auto}}
+.ws .refined-pricing .plan-grid{align-items:start;margin-top:45px}
+.ws .refined-pricing .plan{position:relative;padding-top:30px}
+.ws .refined-pricing .plan.recommended{border:2px solid #f1d302;padding:29px 23px 23px;box-shadow:0 8px 25px #123e651c}
+.ws .refined-pricing .plan-popular{position:absolute;left:50%;top:-23px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;min-height:43px;min-width:190px;padding:9px 20px;background:#f1d302;border:3px solid #f1d302;border-radius:12px;font-size:13px;font-weight:700;color:#123653;box-shadow:0 4px 12px #123e6520}
+.ws .refined-pricing .plan-popular svg{width:23px;height:23px}
+.ws .refined-pricing .plan-heading{min-height:30px;flex-wrap:nowrap}
+.ws .refined-pricing .payment-fees{font-size:14px;line-height:1.8;max-width:730px;margin-top:29px;color:#f1f6fa}
+@media(min-width:761px) and (max-width:1000px){.ws .refined-pricing .plan-popular{min-width:170px;padding:9px 13px;font-size:12px;gap:8px}.ws .refined-pricing .plan.recommended{padding-inline:18px}.ws .refined-pricing .plan-heading{min-height:30px}}
+@media(max-width:760px){.ws .refined-pricing .plan-grid{gap:36px}.ws .refined-pricing .plan.recommended{padding:29px 24px 24px}.ws .refined-pricing .plan-heading{position:static}.ws .refined-pricing .payment-fees{font-size:13px;max-width:340px}.ws .refined-pricing .plan li{font-size:12px}}

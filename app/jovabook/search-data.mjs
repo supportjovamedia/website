@@ -3,7 +3,7 @@ export const jovabookUrl = `${site}/jovabook`;
 
 export function jovabookMetadata() {
   const title = "JovaBook Online Booking & Scheduling Software | JovaMedia";
-  const description = "JovaBook by JovaMedia is scheduling and online booking software for service businesses. Manage appointments, clients and your website. Plans from £20/month.";
+  const description = "JovaBook by JovaMedia is booking and scheduling software for service businesses. Manage appointments, clients and deposits. Plans from £20/month.";
   const image = {
     url: `${site}/jovabook/calendar-desktop.webp`,
     alt: "JovaBook booking calendar showing services and available working hours",
@@ -70,6 +70,8 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
         "Client and service management",
         "Business opening hours",
         "One-page business website",
+        "Email confirmations and appointment reminders",
+        "Booking deposits through a connected Stripe account",
       ],
       offers: [
         {
@@ -134,7 +136,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       "@id": `${jovabookUrl}#demo-video`,
       name: "JovaBook product demonstration",
       description: "A demonstration of JovaBook's online booking and business management workspace.",
-      thumbnailUrl: `${site}/jovabook/demo-poster.webp`,
+      thumbnailUrl: `${site}/jovabook/demo-poster-clean.webp`,
       contentUrl: `${site}/jovabook/demo.mp4`,
       uploadDate: video.uploadDate,
       duration: video.duration,
