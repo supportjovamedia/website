@@ -25,7 +25,7 @@ test('exclusive portal identities and private operator back office on full schem
   await as(customer);await value("select customer_portal_register('fictional-business-1','Test','Customer','+44 7700 900456') data");
   await assert.rejects(q("select customer_portal_register('fictional-business-1','Test','Customer','abc')"));
   await db.exec('reset role');await q("update salons set phone='020 7946 0123',email='hello@studio.example.test' where id=$1",[salon]);await q("update bookings set email='customer@example.test' where salon_id=$1",[salon]);
-  await as(customer);const data=await value("select customer_portal_bookings('fictional-business-1') data");assert.equal(data.customer.phone,'+44 7700 900456');assert.equal(data.business.phone,'020 7946 0123');assert.equal(data.business.email,'hello@studio.example.test');assert(data.bookings.length>0);
+  await as(customer);const data=await value("select customer_portal_bookings('fictional-business-1') data");assert.equal(data.customer.phone,'+44 7700 900456');assert.equal(data.business.branding_required,true);assert.equal(data.business.phone,'020 7946 0123');assert.equal(data.business.email,'hello@studio.example.test');assert(data.bookings.length>0);
   for(const b of data.bookings){assert(Number.isFinite(Number(b.price)));assert(b.duration>0);assert.equal(Date.parse(b.ends_at)-Date.parse(b.starts_at),b.duration*60000);}
   await value("select customer_portal_register('fictional-business-1','Test','Customer','') data");assert.equal((await value("select customer_portal_bookings('fictional-business-1') data")).customer.phone,'');
   await assert.rejects(q("select customer_portal_bookings('fictional-business-2')"));
