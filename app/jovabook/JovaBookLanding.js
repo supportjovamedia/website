@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {useRef, useState} from "react";
 import CookieConsent from "@/components/CookieConsent";
+import {FaqStory} from "@/components/ScrollStories";
 import "./landing.css";
+import "./pricing.css";
 
 const images={
   "calendar-desktop": {
@@ -139,9 +141,48 @@ const plans=[
  {name:'Standard',monthly:50,yearly:480,description:'For your team’s working day.',commission:1,features:['Up to 5 staff','Everything in Essential','Individual staff hours','Text reminders and slot recovery','Business Insights']},
  {name:'Premium',monthly:100,yearly:960,description:'More room, more control.',commission:0,features:['Up to 10 staff','Everything in Standard','Multi-page business website','Insights period comparisons','Remove JovaMedia branding']}
 ];
-function PricingSection(){const[cadence,setCadence]=useState('monthly'),annual=cadence==='annual';return <section className="section plans-section" id="plans" aria-labelledby="plans-title"><div className="wrap"><div className="section-head center"><h2 id="plans-title">Start taking bookings<br/>from £20 a month.</h2><p>Choose your plan and start with 3 days free. Your subscription starts automatically after the trial. Cancel before it ends to avoid being charged.</p></div><div className="cadence" role="group" aria-label="Billing frequency"><button type="button" aria-pressed={!annual} onClick={()=>setCadence('monthly')}>Monthly</button><button type="button" aria-pressed={annual} onClick={()=>setCadence('annual')}>Yearly <span>Save 20%</span></button></div><div id="essential-plan" className="plan-grid">{plans.map((plan,index)=><article key={plan.name} className={`plan ${index===1?'recommended':''}`}><h3>{plan.name}</h3><p>{plan.description}</p><div className="plan-price" aria-live="polite"><strong>£{annual?plan.yearly/12:plan.monthly}</strong><span>/month</span></div><p className="plan-commission">{plan.commission?'1% commission on online customer bookings':'0% booking commission'}</p><a className={`button ${index!==1?'outline':''}`} href={`https://book.jovamedia.com/?portal=owner&plan=${plan.name.toLowerCase()}&cadence=${cadence}#signup`}>Start your 3-day trial <Arrow/></a><ul>{plan.features.map(item=><li key={item}><Check/>{item}</li>)}</ul><p className="annual-price">{annual?`£${plan.yearly} billed yearly`:'Billed monthly'}</p></article>)}</div><p className="payment-fees">Payment-processing fees are separate.</p></div></section>}
+const planComparison=[
+  {label:'Text reminders',included:[false,true,true]},
+  {label:'Slot recovery',included:[false,true,true]},
+  {label:'Individual staff hours',included:[false,true,true]},
+  {label:'Business Insights',included:[false,true,true]},
+  {label:'Multi-page website',included:[false,false,true]},
+  {label:'Insights period comparisons',included:[false,false,true]},
+  {label:'Remove JovaMedia branding',included:[false,false,true]}
+];
+function PricingSection(){
+  const[cadence,setCadence]=useState('monthly');
+  const annual=cadence==='annual';
+  return <section className="section plans-section refined-pricing" id="plans" aria-labelledby="plans-title">
+    <div className="wrap">
+      <div className="section-head center">
+        <h2 id="plans-title">Start taking bookings<br/>from £20 a month.</h2>
+        <p>Choose your plan and start with 3 days free. Your subscription starts automatically after the trial. Cancel before it ends to avoid being charged.</p>
+      </div>
+      <div className="cadence" role="group" aria-label="Billing frequency">
+        <button type="button" aria-pressed={!annual} onClick={()=>setCadence('monthly')}>Monthly</button>
+        <button type="button" aria-pressed={annual} onClick={()=>setCadence('annual')}>Yearly <span>Save 20%</span></button>
+      </div>
+      <p className="plans-shared">Every plan includes online booking, a calendar, client records and email reminders.</p>
+      <div id="essential-plan" className="plan-grid">
+        {plans.map((plan,index)=><article key={plan.name} className={`plan ${index===1?'recommended':''}`} aria-label={`${plan.name} plan`}>
+          <header className="plan-heading"><h3>{plan.name}</h3>{index===1&&<span className="plan-popular">Most popular</span>}</header>
+          <p className="plan-description">{plan.description}</p>
+          <div className="plan-price" aria-live="polite" aria-atomic="true"><strong>£{annual?plan.yearly/12:plan.monthly}</strong><span>/month</span></div>
+          <p className="plan-billing">{annual?`£${plan.yearly} billed yearly`:'Billed monthly'}</p>
+          <p className="plan-commission">{plan.commission?'1% commission on online customer bookings':'0% booking commission'}</p>
+          <a className={`button ${index!==1?'outline':''}`} href={`https://book.jovamedia.com/?portal=owner&plan=${plan.name.toLowerCase()}&cadence=${cadence}#signup`}>Start free trial</a>
+          <div className="plan-scope"><span>{['1 owner','Up to 5 staff','Up to 10 staff'][index]}</span><span>{index===2?'Multi-page website':'One-page website'}</span></div>
+          <ul aria-label={`${plan.name} features`}>{planComparison.map(item=><li key={item.label} className={item.included[index]?'included':'excluded'}><span>{item.label}</span><span className="plan-availability">{item.included[index]?<Check/>:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>}<span className="plan-sr-only">{item.included[index]?'Included':'Not included'}</span></span></li>)}</ul>
+        </article>)}
+      </div>
+      <p className="payment-fees">Payment-processing fees are separate.</p>
+    </div>
+  </section>;
+}
 
-function FaqSection({faqs}){return <section className="section faq-section wrap" id="questions"><div><div className="section-head"><h2>A few things<br/>you might be wondering.</h2><p>About getting started, your plan and the way bookings work.</p></div><a className="text-link" href="mailto:support.jovamedia@gmail.com">Ask the JovaMedia team <Arrow/></a></div><div className="faq-list">{faqs.map(({question,answer})=><details key={question} name="jovabook-faq"><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></section>}
+
+function FaqSection({faqs}){return <div id="questions" className="ws-original-faq"><FaqStory items={faqs.map(({question,answer})=>[question,answer])} introduction="About bookings, your website, plans and getting started." contactHref="mailto:support.jovamedia@gmail.com" contactLabel="Ask the JovaMedia team" showArtwork={false}/></div>}
 
 function ClosingSection(){return <section className="mp-closing"><div className="mp-closing-panel"><div><h2>Your next booking<br/>starts here.</h2><p>Set up your services, choose your working hours<br/>and give clients a simpler way to book.</p><TrialLink/></div><div className="mp-final-art"><div className="mp-final-name">JovaBook</div><div className="mp-final-slot"><span><Check/></span><div><b>You’re in the diary.</b><span>We’ll see you soon.</span></div></div></div></div></section>}
 function CompactFooter(){return <footer className="mp-footer"><Link href="/" aria-label="JovaMedia home"><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128} sizes="110px"/></Link><span>Scheduling software by JovaMedia.</span><nav aria-label="Footer navigation"><Link href="/about">About</Link><Link href="/privacy-policy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/contact">Contact</Link><CookieConsent/></nav><span>© {new Date().getFullYear()} JovaMedia</span></footer>}
@@ -159,7 +200,7 @@ export default function JovaBookLanding({faqs}){
 <section className="ws-payments"><div className="ws-payments-inner"><div className="ws-payment-copy"><h2>{"Deposits paid directly"}<br />{"to your business."}</h2><p>{"Choose a deposit percentage for your business. Clients pay through Stripe when they book, and the money goes to your connected account."}</p><a href="#questions" className="ws-light-link">{"About deposits and cancellations "}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></a></div><div className="ws-payment-art"><div className="ws-payment-disc"></div><div className="ws-payment-receipt"><div className="ws-receipt-top"><span>{"Jova Studio"}</span><b>{"Booking deposit"}</b></div><p>{"Cut & finish"}</p><div className="ws-receipt-total">{"£10"}<span>{".00"}</span></div><span className="ws-payment-success">{"✓ Paid to your Stripe account"}</span><dl><div><dt>{"Appointment price"}</dt><dd>{"£50.00"}</dd></div><div><dt>{"20% deposit paid"}</dt><dd>{"£10.00"}</dd></div><div><dt>{"Remaining at your business"}</dt><dd>{"£40.00"}</dd></div></dl></div></div></div><div className="ws-reminder"><div className="ws-message"><div><span className="ws-message-icon">{"✉"}</span><b>{"Jova Studio"}</b><span>{"now"}</span></div><p>{"Reminder: next appt at 10:30am on Wednesday, 11 Nov. Jova Studio, 24 High Street."}</p></div><div><h3>{"Help clients remember"}<br />{"their appointment."}</h3><p>{"Email confirmations and reminders on every plan. Standard and Premium add one text reminder per appointment, sent 24 hours before or straight away for short-notice bookings."}</p></div></div></section>
 <section className="ws-website" id="website"><div className="ws-website-copy"><h2>{"Your own website,"}<br />{"connected to your booking page."}</h2><p>{"Your business website and booking page, connected from the start. Give clients a feel for your business before they choose an appointment."}</p><div className="ws-website-detail"><h3>{"Make it your own."}</h3><p>{"Choose your image and colours, write your introduction and add your contact details from your dashboard."}</p></div><div className="ws-website-detail"><h3>{"Keep everything connected."}</h3><p>{"Your services, opening hours and booking link belong to the same business. Share one clear address with your clients."}</p></div><p className="ws-website-included">{"One-page website included with Essential and Standard. More pages with Premium."}</p><a className="button" href="#plans">{"Find your plan"}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg></a></div><div className="ws-site-frame"><div className="ws-site-address">{"jovastudio.jovamedia.com"}</div><ProductImage name="website" alt="The entire Jova Studio business website, without cropping" /></div></section>
 <WorkspaceSection/>
-<section className="ws-insights"><div className="ws-scene-heading"><h2>{"See what brings"}<br />{"clients back."}</h2><p>{"Popular services. Returning clients. People who are due another visit. Insights on Standard and Premium help you see how your business is doing."}</p></div><figure><ProductImage name="insights" alt="JovaBook insights showing popular services and returning clients" /></figure></section>
+<section className="ws-insights"><div className="ws-scene-heading"><h2>{"See what brings"}<br />{"clients back."}</h2><p>See popular services, returning clients and people who are due another visit. Available on Standard and Premium.</p></div><figure><ProductImage name="insights" alt="JovaBook insights showing popular services and returning clients" /></figure></section>
 <section className="section industry-section wrap ws-industries"><div className="section-head "><h2>{"Scheduling software"}<br />{"for service businesses."}</h2><p>{"Your services, your prices and the hours you work. Set up JovaBook around the appointments your clients book."}</p></div><div className="industry-grid"><article><ProductImage name="salon" alt="Hair & beauty" /><div><h3>{"Hair & beauty"}</h3><p>{"Hair salons, nails, barbers and beauty treatments"}</p></div></article><article><ProductImage name="industry-healthcare" alt="Healthcare" /><div><h3>{"Healthcare"}</h3><p>{"Dentists, chiropractors and therapists"}</p></div></article><article><ProductImage name="education-black-tutor" alt="Education & tutors" /><div><h3>{"Education & tutors"}</h3><p>{"Tuition centres and private lessons"}</p></div></article><article><ProductImage name="fitness" alt="Coaches & trainers" /><div><h3>{"Coaches & trainers"}</h3><p>{"Personal training and one-to-one sessions"}</p></div></article><article><ProductImage name="desk" alt="Consultation services" /><div><h3>{"Consultation services"}</h3><p>{"Consultants, advisers and appointments"}</p></div></article><article><ProductImage name="industry-spa" alt="Spa & wellness" /><div><h3>{"Spa & wellness"}</h3><p>{"Spas, facials and relaxation treatments"}</p></div></article></div></section>
 <PricingSection/>
 <FaqSection faqs={faqs}/>
