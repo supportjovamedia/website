@@ -37,7 +37,7 @@ const images={
     "height": 900
   },
   "website": {
-    "src": "/jovabook/website.webp",
+    "src": "/jovabook/website-optimized.webp",
     "width": 2880,
     "height": 3932
   },

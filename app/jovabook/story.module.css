@@ -131,3 +131,11 @@
 }
 @media(max-width:350px){.mobilePlanHeading{padding-inline:17px}.mobilePlanFeatures{padding-inline:18px}.comparisonOffer .cadence button{padding-inline:13px;font-size:13px}.comparisonOffer .cadence button>span{font-size:10px}}
 @media(max-width:800px){.page.page .sharedFaq summary h3,.page.page .sharedFaq p{text-align:center}.page.page .sharedFaq summary h3{flex:1;margin-inline:auto}.page.page .sharedFaq summary{gap:12px}}
+
+/* Keep plan titles, prices and trial links on the same desktop baselines. */
+@media(min-width:801px){
+ .tablePlanHead,.recommendedPlanHead{padding-top:52px;vertical-align:top}
+ .page.page .tablePlanHead h3,.page.page .recommendedPlanHead h3{font-size:26px;line-height:1.3;min-height:34px}
+ .page.page .tablePlanDescription{min-height:45px}
+ .page.page .tableCommission{min-height:68px}
+}

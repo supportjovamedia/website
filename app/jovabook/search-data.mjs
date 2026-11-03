@@ -77,7 +77,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
         {
           "@type": "Offer",
           name: "JovaBook Essential monthly subscription",
-          url: `${jovabookUrl}#essential-plan`,
+          url: `${jovabookUrl}#plans`,
           price: "20.00",
           priceCurrency: "GBP",
           seller: organisation,
@@ -92,7 +92,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
         {
           "@type": "Offer",
           name: "JovaBook Essential annual subscription",
-          url: `${jovabookUrl}#essential-plan`,
+          url: `${jovabookUrl}#plans`,
           price: "192.00",
           priceCurrency: "GBP",
           seller: organisation,

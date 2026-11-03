@@ -1,5 +1,22 @@
 # JovaBook sales-page work queue
 
+## Marketing release checkpoint, 3 November 2026
+
+This section records the current marketing release; the dated app/payment history below is preserved and is not a current production status report.
+
+- [x] Approved Wealthsimple direction, ManyPixels closing CTA, shared JovaMedia navigation and Products catalogue.
+- [x] Products categories: JovaBook, three existing website packages, and the three chosen services. Website and Webcare amounts unchanged.
+- [x] JovaBook prices, features and trial destinations shared between `/pricing` and `/jovabook`.
+- [x] Actual mobile/desktop interactions at 320 through 1920px, no document overflow or browser errors. Separate pricing buttons aligned and phone cards stacked.
+- [x] Latest upstream SMS consent and commission changes retained through merge of origin/main into this feature branch.
+- [x] All 43 sitemap pages return 200, have canonical URLs and descriptions of 100 to 160 characters, and remain indexable. No broken or redirecting internal links found in the rendered marketing crawl.
+- [x] Missing salon article hero replaced with an existing relevant photograph. Oversized PNG previews replaced with WebP, full uncropped business-site preview reduced from 1.84MB to 80KB. Originals retained.
+- [x] Ahrefs' 11 noindex/nofollow entries verified as booking-app/login and fictional prototypes; retained intentionally. Qaiser case-study Product-schema warning is a classifier false positive; CreativeWork retained.
+- [x] Consent-based JovaBook page visits and separate trial-interest, plan-selection and login events added to existing GA4/Clarity integration. Focused consent/privacy and pricing tests pass. QA traffic intercepted.
+- [x] Production build passed on Windows after restricted build-folder access was resolved.
+- [ ] Feature PR, review, explicit merge approval and correct marketing production deployment.
+- [ ] After deployment: live URL/image/canonical/sitemap checks, GA4/Clarity receipt, saved JovaBook report, Google/Bing sitemap refresh and indexing requests where supported. Ahrefs recrawl after production changes.
+
 Current release checkpoint, 2 November: final removed sections remain removed. The actual sandbox GBP10 deposit, confirmed booking and cancellation refund passed. 125 focused server/database checks and twelve desktop/mobile browser cases passed across two runs. Production build passed. Live salon connections remain blocked by Stripe despite completed review; the support escalation is authorized and in progress. PR/merge/deployment and post-deployment checks remain. Current details: jovabook-deposit-release.md.
 
 Latest user decisions take precedence. New requests are added here, not substituted for unfinished work.

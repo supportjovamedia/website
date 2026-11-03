@@ -20,7 +20,7 @@ export default function SelectedConcepts() {
           <div className={s.browserBar} aria-hidden="true"><span>● ● ●</span><span>{concept.name}</span></div>
           <div className={s.hint} id={`preview-hint-${concept.image}`}><svg viewBox="0 0 20 24" width="16" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="2" width="14" height="20" rx="7"/><path d="M10 6v5"/></svg><span>Scroll to explore</span></div>
           <div className={s.image} tabIndex={0} role="region" aria-label={`${concept.name} website preview, scroll to explore`} aria-describedby={`preview-hint-${concept.image}`}>
-            <Image src={`/home-selected/${concept.image}.png`} alt={`${concept.name}: ${concept.category.toLowerCase()} website, showing the homepage and service or product information`} width={concept.width} height={concept.height} sizes="(max-width:700px) 90vw, (max-width:1050px) 45vw,31vw" draggable={false} />
+            <Image src={`/home-selected/${concept.image}.${['al-eiman','qaiser-watches','sumera-current'].includes(concept.image)?'webp':'png'}`} alt={`${concept.name}: ${concept.category.toLowerCase()} website, showing the homepage and service or product information`} width={concept.width} height={concept.height} sizes="(max-width:700px) 90vw, (max-width:1050px) 45vw,31vw" draggable={false} />
           </div>
         </div>
         <figcaption><strong>{concept.name}</strong><span>{concept.category}</span>{concept.name === "Qaiser Watches" && <Link href="/work/qaiser-watches">Read the case study</Link>}</figcaption>
