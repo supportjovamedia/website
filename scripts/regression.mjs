@@ -13,7 +13,7 @@ run(['--test',
   'tests/contact-delivery.test.mjs', 'tests/quote-delivery.test.mjs',
   'tests/recaptcha-verification.test.mjs', 'tests/checkout.test.mjs',
   'tests/live-chat.test.mjs', 'tests/marketing-analytics.test.mjs', 'tests/jovabook-marketing-tracking.test.mjs',
-  'tests/social-preview.test.mjs',
+  'tests/social-preview.test.mjs', 'tests/jovabook-share-preview.test.mjs', 'tests/short-links.test.mjs',
   'tests/jovabook-public-entry.test.mjs', 'tests/jovabook-public-links.test.mjs', 'tests/jovabook-deposit-readiness.test.mjs',
   'booking-demo/tests/trial-history-sql.mjs',
   'booking-demo/tests/operator-billing-sql.mjs',
@@ -49,6 +49,7 @@ run(['--test',
 ]);
 // The SMS UI runs against its own intercepted server and cannot contact a provider.
 run(['booking-demo/tests/sms-reminders-browser.mjs']);
+run(['booking-demo/tests/operator-links-browser.mjs']);
 // Every external Auth, billing, email and payment request is intercepted.
 // These proofs each start their own local server, including on clean Linux CI.
 for (const script of ['billing-access-browser','billing-plans-browser',

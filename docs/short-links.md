@@ -1,26 +1,28 @@
-# Short links and the back-office Links tab
+# Short links and the Operator Links tab
 
-Status: built on branch `feature/short-links-tracker`. Not merged, not deployed.
+The Links tab is private to verified JovaMedia operators. It provides Instagram, Nextdoor and WhatsApp launch links, a copy button for each, and a form for additional campaign links.
 
-## What it does
-- `https://www.jovamedia.com/go/<code>` records the click, then forwards to the stored page with `utm_source`, `utm_medium`, `utm_campaign` and `utm_content` attached. GA4 and Clarity then pick the visit up as normal, after consent.
-- The back office (`book.jovamedia.com/operator.html`) has a **Links** tab: every link, clicks, unique visitors, bot clicks and last click, plus a form to create links.
+| Source | URL | Medium | Campaign |
+| --- | --- | --- | --- |
+| Instagram | https://www.jovamedia.com/go/instagram | social | jovabook_launch |
+| Nextdoor | https://www.jovamedia.com/go/nextdoor | social | jovabook_launch |
+| WhatsApp | https://www.jovamedia.com/go/whatsapp | message | jovabook_launch |
 
-## Privacy and counting
-- No cookies and no stored IP address. A unique visitor is a salted one-way hash of IP + browser + day + link, so a person is counted once per day per link. Needs `SHORT_LINK_SALT`; without it unique visitors stay at 0 and clicks still count.
-- Known link-preview crawlers (WhatsApp, Facebook, Slack, etc.) are counted separately as bots and never as clicks.
-- A storage outage never blocks the visitor: they are forwarded to `/jovabook` without labels.
+All three lead to `/jovabook` with campaign labels attached. Publish and verify the routes before sharing these URLs externally.
 
-## Storage and access
-- Uses the existing Upstash database (same credentials resolution as the newsletter automation). No migration.
-- The Links API (`/api/jovabook/operator/links`) asks the booking database who is calling and only allows the `operator` role.
-- Existing codes are never overwritten. Destinations are same-site paths only.
+## Counting and privacy
 
-## Before release (not yet done)
-1. Set `SHORT_LINK_SALT` (any long random string) in the production environment.
-2. Run `npm run build` and `npm run lint` (could not be run where this was written: dependency install failed).
-3. Preview the Links tab against a signed-in operator and create one test link.
-4. Add `/go` to the analytics exclusion list only if the redirect ever renders a page. It currently returns a 302 only.
+- Clicks count requests, including repeat requests. Detected preview crawlers are counted separately. Detection is heuristic; these numbers do not establish how many people visited.
+- Counts cover the lifetime of each link, since tracking began. Aggregate counts remain while the link exists.
+- No cookies, IP fingerprints, visitor identifiers or unique-visitor metrics are collected by this tracker. No `SHORT_LINK_SALT` is required.
+- Unavailable storage is shown as unavailable, rather than zero. Built-in link addresses remain available to copy.
+- The GA4 report opens separately for consented visitor and conversion reporting. It requires the operator's own Google Analytics access. These are separate measures from redirect request counts.
+- Landing-page analytics remain governed by the existing analytics consent controls.
 
-## Naming convention
-`utm_source` platform (nextdoor, whatsapp, instagram); `utm_medium` dm or social; `utm_campaign` jovabook_outreach; `utm_content` business type or batch. Codes like `nd-barber-01`.
+## Storage, access and release
+
+The server uses the existing Upstash credentials, with the newsletter-specific environment variables taking precedence. No SQL migration is required. Only the server reads those credentials. The Links API checks the bearer session with `portal_identity` and requires the operator role for listing and creation.
+
+Existing codes are immutable. Public destination paths are validated on the server, and short-link destinations must not point back into `/go`. Storage failure must not hold up the redirect for tracking writes.
+
+Release requires the marketing server routes and booking site's Operator JavaScript/CSS to be published together. Verify configuration, the three redirects and their UTMs, the authenticated Links tab, creation validation and an unavailable-storage response. Browser tests use intercepted APIs and fictional data, so they do not prove live credentials or deployment configuration.

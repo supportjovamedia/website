@@ -5,8 +5,10 @@ export function jovabookMetadata() {
   const title = "Booking System for Service Businesses | JovaBook";
   const description = "JovaBook by JovaMedia is a booking system for service businesses. Manage appointments, clients and deposits. Plans from £20/month.";
   const image = {
-    url: `${site}/jovabook/calendar-desktop.webp`,
-    alt: "JovaBook booking calendar showing services and available working hours",
+    url: `${site}/share/jovabook-hero-2026-11.png`,
+    width: 1200,
+    height: 630,
+    alt: "JovaBook booking system for service businesses, with a calendar, mobile booking page and yellow accent",
   };
   return {
     title: { absolute: title },
