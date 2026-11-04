@@ -3,6 +3,7 @@ import { businessHostRewrites } from "./lib/jovabook-public-address.mjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  allowedDevOrigins: ["127.0.0.1"],
   images: {
     // Include the missing phone-sized step so small hero photos do not jump
     // straight from 384px to 640px on high-density mobile screens.
@@ -34,3 +35,4 @@ const nextConfig = {
 };
 export default nextConfig;
 // Service redirects include the previous System Modernization URL.
+
