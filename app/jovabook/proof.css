@@ -1,0 +1,22 @@
+.ws .jb-proof-wrap{width:min(100% - 48px,1260px);margin-inline:auto}
+.ws .jb-why{padding:clamp(64px,7vw,108px) 0;background:#f7f9fa;color:#12314a}
+.ws .jb-why h2,.ws .jb-testimonials h2,.ws .jb-founder h2{margin:0;font-size:clamp(34px,4vw,58px);line-height:1.08;letter-spacing:-.04em;text-wrap:balance}
+.ws .jb-why h2{text-align:center;margin-bottom:clamp(36px,5vw,62px)}
+.ws .jb-why-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(32px,7vw,110px);row-gap:0}
+.ws .jb-why-grid article{padding:26px 0 30px;border-top:1px solid #cbd8e2}
+.ws .jb-why-grid h3{margin:0 0 9px;font-size:clamp(20px,2vw,27px);font-weight:600;letter-spacing:-.025em}
+.ws .jb-why-grid p{margin:0;max-width:46ch;font-size:clamp(15px,1.25vw,18px);line-height:1.55;color:#45647b;text-wrap:pretty}
+.ws .jb-testimonials{padding:clamp(64px,7vw,108px) 0;background:#e8f1f7;color:#12314a}
+.ws .jb-testimonials h2{text-align:center;margin-bottom:clamp(32px,4vw,54px)}
+.ws .jb-quote-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.ws .jb-quote-grid blockquote{margin:0;padding:clamp(26px,3vw,39px);border:1px solid #c9dbe8;border-radius:18px;background:#fff;display:flex;flex-direction:column;min-height:220px}
+.ws .jb-quote-grid blockquote.jb-quote-featured{grid-column:1/-1;min-height:0;background:#123d60;color:#fff}
+.ws .jb-quote-grid blockquote p{margin:0 0 27px;font-size:clamp(19px,1.7vw,25px);line-height:1.42;letter-spacing:-.015em;text-wrap:pretty}
+.ws .jb-quote-grid blockquote.jb-quote-featured p{max-width:58ch;font-size:clamp(22px,2.1vw,32px);color:#fff}
+.ws .jb-quote-grid footer{display:flex;gap:7px;flex-wrap:wrap;align-items:baseline;margin-top:auto;font-size:14px;color:#557088}
+.ws .jb-quote-grid footer cite{font-style:normal;font-weight:650;color:#12314a}
+.ws .jb-quote-grid blockquote.jb-quote-featured footer,.ws .jb-quote-grid blockquote.jb-quote-featured cite{color:#fff}
+.ws .jb-founder{padding:clamp(56px,6vw,88px) 0;background:#fff;color:#12314a}
+.ws .jb-founder-layout{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(30px,7vw,110px);align-items:start}
+.ws .jb-founder p{margin:3px 0 0;font-size:clamp(17px,1.45vw,21px);line-height:1.65;color:#3d5d74;text-wrap:pretty}
+@media(max-width:700px){.ws .jb-proof-wrap{width:min(100% - 36px,560px)}.ws .jb-why,.ws .jb-testimonials{padding-block:58px}.ws .jb-why-grid,.ws .jb-quote-grid,.ws .jb-founder-layout{grid-template-columns:1fr}.ws .jb-why h2,.ws .jb-testimonials h2{text-align:center}.ws .jb-why-grid article{padding:21px 0 24px}.ws .jb-quote-grid blockquote,.ws .jb-quote-grid blockquote.jb-quote-featured{grid-column:auto;min-height:0;padding:25px}.ws .jb-quote-grid blockquote p{font-size:19px}.ws .jb-founder-layout{gap:22px}.ws .jb-founder h2{text-align:center}.ws .jb-founder p{text-align:center}}
