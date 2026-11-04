@@ -207,6 +207,6 @@ export default function JovaBookLanding({faqs}){
 <FaqSection faqs={faqs}/>
 <ClosingSection/>
 <CompactFooter/>
-    <dialog ref={film} className="movie-modal" aria-label="JovaBook product demo" onClose={()=>video.current?.pause()} onClick={e=>{if(e.target===e.currentTarget)film.current.close();}}><button className="modal-close" type="button" autoFocus onClick={()=>film.current.close()}>Close</button><video ref={video} controls playsInline preload="none" src="/jovabook/demo.mp4?v=clean-20261103" poster="/jovabook/demo-poster-clean.webp">Your browser does not support video. <a href="/jovabook/demo.mp4?v=clean-20261103">Watch the JovaBook demo</a>.</video></dialog>
+    <dialog ref={film} className="movie-modal" aria-label="JovaBook product demo" onClose={()=>video.current?.pause()} onClick={e=>{if(e.target===e.currentTarget)film.current.close();}}><button className="modal-close" type="button" autoFocus onClick={()=>film.current.close()}>Close</button><video ref={video} controls playsInline preload="none" src="/jovabook/demo.mp4?v=voice-20261104" poster="/jovabook/demo-poster-clean.webp">Your browser does not support video. <a href="/jovabook/demo.mp4?v=voice-20261104">Watch the JovaBook demo</a>.</video></dialog>
   </main>;
 }
