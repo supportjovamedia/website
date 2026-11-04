@@ -39,5 +39,5 @@ const faqs = [
 ];
 
 export default function JovaBookPage(){
-  return <><JovaBookLanding faqs={faqs}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jovabookStructuredData({faqs,video:{duration:"PT1M42S",uploadDate:"2026-11-01T00:00:00+00:00"}})).replace(/</g,"\\u003c")}}/></>;
+  return <><JovaBookLanding faqs={faqs}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jovabookStructuredData({faqs,video:{duration:"PT1M32S",uploadDate:"2026-11-01T00:00:00+00:00"}})).replace(/</g,"\\u003c")}}/></>;
 }
