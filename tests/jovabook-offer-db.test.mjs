@@ -43,16 +43,17 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    assert.equal(await value("select count(*)::int value from bookings where salon_id=$1 and id like 'offer-quota-%'",[sid]),21);
   });
   await t.test('a real 14-day trial reserves once and seats only unlock from verified server proof',async()=>{
-   const request=crypto.randomUUID(),selection={owner:uid,plan:'premium',seats:2,cadence:'monthly',request_id:request,kind:'checkout',hash:'a'.repeat(64)};
+   const request=crypto.randomUUID(),selection={owner:uid,plan:'premium',seats:1,cadence:'monthly',request_id:request,kind:'checkout',hash:'a'.repeat(64)};
    const action=await worker('begin',selection);assert.equal(action.trial,true);assert.equal((await limits()).staff_limit,1);
    assert.equal((await worker('begin',selection)).id,action.id);
    await assert.rejects(worker('begin',{...selection,hash:'b'.repeat(64)}),/request changed/);
    await worker('bind_customer',{customer_id:'cus_FictionalOffer'});
    const fence=await worker('sync_begin'),start=new Date(Math.floor(Date.now()/1000)*1000),end=new Date(+start+14*86400000);
-   await assert.rejects(worker('sync_apply',{fence:fence.fence,customer_id:'cus_FictionalOffer',subscription_id:'sub_FictionalOffer',plan:'premium',seats:2,cadence:'monthly',provider_status:'trialing',trial_verified:true,trial_action_id:action.id,trial_started_at:start.toISOString(),trial_ends_at:new Date(+start+3*86400000).toISOString(),paid_until:end.toISOString()}),/14-day/);
-   await worker('sync_apply',{fence:fence.fence,customer_id:'cus_FictionalOffer',subscription_id:'sub_FictionalOffer',plan:'premium',seats:2,cadence:'monthly',provider_status:'trialing',trial_verified:true,trial_action_id:action.id,trial_started_at:start.toISOString(),trial_ends_at:end.toISOString(),period_start:start.toISOString(),paid_until:end.toISOString()});
-   const result=await limits();assert.equal(result.plan,'premium');assert.equal(result.staff_limit,2);assert.equal(result.email_limit,200);assert.equal(result.sms_limit,100);assert.equal(result.branding_required,false);assert.equal(result.insights,true);assert.equal(result.commission_bps,0);
-   await q("insert into staff(salon_id,id,name) values($1,'paid-seat-2','Fixture team member')",[sid]);
+   await assert.rejects(worker('sync_apply',{fence:fence.fence,customer_id:'cus_FictionalOffer',subscription_id:'sub_FictionalOffer',plan:'premium',seats:1,cadence:'monthly',provider_status:'trialing',trial_verified:true,trial_action_id:action.id,trial_started_at:start.toISOString(),trial_ends_at:new Date(+start+3*86400000).toISOString(),paid_until:end.toISOString()}),/14-day/);
+   await worker('sync_apply',{fence:fence.fence,customer_id:'cus_FictionalOffer',subscription_id:'sub_FictionalOffer',plan:'premium',seats:1,cadence:'monthly',provider_status:'trialing',trial_verified:true,trial_action_id:action.id,trial_started_at:start.toISOString(),trial_ends_at:end.toISOString(),period_start:start.toISOString(),paid_until:end.toISOString()});
+   const result=await limits();assert.equal(result.plan,'premium');assert.equal(result.staff_limit,1);assert.equal(result.email_limit,100);assert.equal(result.sms_limit,0);assert.equal(result.branding_required,false);assert.equal(result.insights,true);assert.equal(result.commission_bps,0);
+   assert.equal(await value("select jovabook_private.offer_reserve_message($1,'sms',$2) value",[sid,crypto.randomUUID()]),false);
+   await assert.rejects(worker('begin',{...selection,seats:2,request_id:crypto.randomUUID()}),/trial|earlier billing request/i);
    await assert.rejects(q("insert into staff(salon_id,id,name) values($1,'unpaid-seat-3','Unpaid seat')",[sid]),/plan allows/);
    const cancel=await worker('begin',{owner:uid,plan:'essential',seats:1,cadence:'monthly',request_id:crypto.randomUUID(),kind:'cancel',hash:'f'.repeat(64)});assert.equal(cancel.kind,'cancel');
   });
@@ -62,8 +63,11 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    const as=async id=>{await db.exec('reset role');await q("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role authenticated');};
    await as(uid);await assert.rejects(q('select operator_overview()'),/operator|authorised|authorized|access/i);
    await as(op);const overview=await value('select operator_overview() value');assert.equal(overview.offer_version,'2026-11-free-v1');assert.equal(overview.starter,1);assert.equal(overview.trials_active,1);assert.equal(overview.premium,0);
-   const business=(await value('select operator_business($1) value',[sid])).business;assert.equal(business.plan,'premium');assert.equal(business.seats,2);assert.equal(business.billing_state,'trial');assert.equal(business.has_paid,false);
+   const business=(await value('select operator_business($1) value',[sid])).business;assert.equal(business.plan,'premium');assert.equal(business.seats,1);assert.equal(business.billing_state,'trial');assert.equal(business.has_paid,false);
    await db.exec('reset role');const fence=await worker('sync_begin');await worker('sync_apply',{fence:fence.fence,customer_id:'cus_FictionalOffer',subscription_id:'sub_FictionalOffer',plan:'premium',seats:2,cadence:'annual',provider_status:'active',paid_verified:true,period_start:new Date().toISOString(),paid_until:new Date(Date.now()+365*86400000).toISOString()});
+   assert.equal((await limits()).sms_limit,100);
+   assert.equal(await value("select jovabook_private.offer_reserve_message($1,'sms',$2) value",[sid,crypto.randomUUID()]),true);
+   await q("insert into staff(salon_id,id,name) values($1,'paid-seat-2','Fixture team member')",[sid]);
    const actions=await value('select count(*)::int value from jovabook_private.offer_actions');await as(op);
    const paid=await value('select operator_overview() value');assert.equal(paid.premium,1);assert.equal(paid.paid_active,1);assert.equal(paid.trials_active,0);
    const billing=await value('select operator_billing_summary($1) value',[sid]);assert.equal(billing.subscription.ever_paid,true);assert.equal(billing.subscription.seats,2);assert.equal(billing.subscription.cadence,'annual');
