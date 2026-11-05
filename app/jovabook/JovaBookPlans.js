@@ -21,7 +21,7 @@ export default function JovaBookPlans(){
      {plan.recommended&&<span className={s.recommendation}>For a busy solo diary</span>}
      <h3>{plan.name}</h3><p className={s.description}>{plan.description}</p>
      <div className={s.price} aria-live="polite" aria-atomic="true"><strong>{pounds(selection.monthlyEquivalent)}</strong><span>/ month</span></div>
-     <p className={s.billing}>{free?'Free to use. No card required.':`14 days free. Card required. Then ${annual?`${pounds(selection.total)} billed yearly`:`${pounds(selection.total)} billed monthly`}, starting automatically.`}</p>
+     <p className={s.billing}>{free?'Free to use. No card required.':`14 days free. Card required. Then ${annual?`${pounds(team?24000:selection.total)} billed yearly`:`${pounds(team?2500:selection.total)} billed monthly`}, starting automatically.${team?' Includes one calendar. Extra seats are added separately after payment.':''}`}</p>
      <p className={s.commission}>0% booking commission</p>
      {team&&<div className={s.seats}><label htmlFor={seatId}>Extra staff seats on the paid plan</label><input id={seatId} type="number" min="0" max="999" step="1" value={extraSeats} onChange={e=>{const value=Number(e.target.value);if(Number.isInteger(value)&&value>=0&&value<=999)setExtraSeats(value);}}/><p>{annual?'£240/year includes one seat. Each extra seat is £57.60/year.':'£25/month includes one seat. Each extra seat is £6/month.'}</p></div>}
      <a className={plan.recommended?s.primary:s.button} href={jovabookSignupHref(plan.id,cadence,0)}>{free?'Start free today':`Try ${plan.name} free`}</a>

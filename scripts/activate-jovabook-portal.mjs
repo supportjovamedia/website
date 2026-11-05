@@ -20,7 +20,7 @@ export async function activatePortal(env,stripe,{apply=false}={}){
  if(!config.active||config.livemode!==true)throw Error('Unexpected portal.');
  const update={enabled:true,default_allowed_updates:['price','quantity'],proration_behavior:'always_invoice',billing_cycle_anchor:'unchanged',trial_update_behavior:'continue_trial',products:[...products].map(([product,prices])=>({product,prices}))};
  if(!apply)return {portal:config.id,update};
- const saved=await stripe.billingPortal.configurations.update(config.id,{features:{subscription_update:update}});
+ const saved=await stripe.billingPortal.configurations.update(config.id,{features:{payment_method_update:{enabled:true},subscription_update:update}});
  const actual=saved.features?.subscription_update;
  if(!actual?.enabled||actual.trial_update_behavior!=='continue_trial'||actual.proration_behavior!=='always_invoice'||actual.billing_cycle_anchor==='now')throw Error('Portal update was not verified.');
  return {portal:saved.id,configured:true};
