@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     "question": "How do email and SMS allowances work?",
-    "answer": "Starter includes 50 emails per month. Pro Solo includes 100 emails and 50 SMS per month. Team includes 100 emails and 50 SMS for each staff seat, including the seat in the base plan. Booking confirmations, alerts and reminders use these allowances. They reset each calendar month and do not roll over. Messages pause when the allowance is used; extra messages are never charged automatically."
+    "answer": "Starter includes 50 emails per month. Pro Solo includes 100 emails and 60 SMS per month. Team includes 100 emails and 60 SMS for each staff seat, including the seat in the base plan. Booking confirmations, alerts and reminders use these allowances. They reset each calendar month and do not roll over. Messages pause when the allowance is used; extra messages are never charged automatically."
   },
   {
     "question": "Can I add bookings to my existing website?",
@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     "question": "How much does Team cost?",
-    "answer": "Pro Team is £25 per month including one staff seat, plus £6 per month for each extra staff seat. Two seats cost £31 per month and three cost £37 per month. Each seat includes 100 emails and 50 SMS per month. Team removes JovaBook branding from customer-facing booking pages and includes advanced Insights, period comparisons and extra website customisation."
+    "answer": "Pro Team is £25 per month including one staff seat, plus £6 per month for each extra staff seat. Two seats cost £31 per month and three cost £37 per month. Each seat includes 100 emails and 60 SMS per month. Team removes JovaBook branding from customer-facing booking pages and includes advanced Insights, period comparisons and extra website customisation."
   },
   {
     "question": "How do annual billing and commission work?",

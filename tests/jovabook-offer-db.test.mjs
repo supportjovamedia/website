@@ -68,7 +68,7 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    await as(op);const overview=await value('select operator_overview() value');assert.equal(overview.offer_version,'2026-11-free-v1');assert.equal(overview.starter,1);assert.equal(overview.trials_active,1);assert.equal(overview.premium,0);
    const business=(await value('select operator_business($1) value',[sid])).business;assert.equal(business.plan,'premium');assert.equal(business.seats,1);assert.equal(business.billing_state,'trial');assert.equal(business.has_paid,false);
    await db.exec('reset role');const fence=await worker('sync_begin');await worker('sync_apply',{fence:fence.fence,customer_id:'cus_FictionalOffer',subscription_id:'sub_FictionalOffer',plan:'premium',seats:2,cadence:'annual',provider_status:'active',paid_verified:true,period_start:new Date().toISOString(),paid_until:new Date(Date.now()+365*86400000).toISOString()});
-   assert.equal((await limits()).sms_limit,100);
+   assert.equal((await limits()).sms_limit,120);
    assert.equal(await value("select jovabook_private.offer_reserve_message($1,'sms',$2) value",[sid,crypto.randomUUID()]),true);
    await q("insert into staff(salon_id,id,name) values($1,'paid-seat-2','Fixture team member')",[sid]);
    const actions=await value('select count(*)::int value from jovabook_private.offer_actions');await as(op);
