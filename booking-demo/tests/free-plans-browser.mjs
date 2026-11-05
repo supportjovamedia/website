@@ -71,7 +71,7 @@ try{
  for(const plan of ['essential','premium']){const pub=await fixture(390);try{
   pub.salon.plan=plan;pub.access.business.plan=plan;pub.access.billing.branding_required=plan!=='premium';pub.salon.settings.workspace={website:{headline:'Fixture Studio',about:'Our business details.',homeIntro:'A Team introduction',aboutHeading:'Meet our team',logoImage:'https://rffsulstatmwzvrdgvec.supabase.co/storage/v1/object/public/jovabook-website-images/'+sid+'/40000000-0000-4000-8000-000000000001.png'}};
   await pub.page.goto(base+'/?salon=offer-qa#website');await expect(pub.page.locator('.bw-site')).toBeVisible();await expect(pub.page.locator('.bw-logo')).toHaveAttribute('alt','Offer QA Business');await expect(pub.page.locator('.bw-public-footer')).toContainText('Offer QA Business');
-  if(plan==='premium'){await expect(pub.page.getByText('Powered by JovaBook',{exact:true})).toHaveCount(0);await expect(pub.page.getByRole('heading',{name:'Meet our team'})).toBeVisible();}else await expect(pub.page.getByText('Powered by JovaBook',{exact:true})).toBeVisible();
+  if(plan==='premium'){await expect(pub.page.getByText('Powered by JovaMedia',{exact:true})).toHaveCount(0);await expect(pub.page.getByRole('heading',{name:'Meet our team'})).toBeVisible();}else await expect(pub.page.getByText('Powered by JovaMedia',{exact:true})).toBeVisible();
   assert(await pub.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await pub.page.screenshot({path:path.join(out,'public-'+plan+'.png'),fullPage:true});assert.deepEqual(pub.errors,[]);results.push({publicWebsite:plan,passed:true});
  }finally{await pub.context.close();}}
  const payment=await browser.newContext();try{

@@ -1,7 +1,7 @@
 export const faqs = [
   {
     "question": "What is included in Free?",
-    "answer": "Free is £0 per month with one staff calendar, up to 20 bookings per calendar month and 50 emails per month. Your one-page website includes your business name, logo, description, hours, contact details and online booking. A Powered by JovaBook badge stays visible. No card is required to use Free."
+    "answer": "Free is £0 per month with one staff calendar, up to 20 bookings per calendar month and 50 emails per month. Your one-page website includes your business name, logo, description, hours, contact details and online booking. A Powered by JovaMedia badge stays visible. No card is required to use Free."
   },
   {
     "question": "Is the free plan a trial?",
@@ -21,7 +21,7 @@ export const faqs = [
   },
   {
     "question": "How much does Team cost?",
-    "answer": "Team is £25 per month including one staff seat, plus £6 per month for each extra staff seat. Two seats cost £31 per month and three cost £37 per month. Each seat includes 100 emails and 60 SMS per month. Team removes JovaBook branding from customer-facing booking pages and includes advanced Insights, period comparisons and extra website customisation."
+    "answer": "Team is £25 per month including one staff seat, plus £6 per month for each extra staff seat. Two seats cost £31 per month and three cost £37 per month. Each seat includes 100 emails and 60 SMS per month. Team removes JovaMedia branding from customer-facing booking pages and includes advanced Insights, period comparisons and extra website customisation."
   },
   {
     "question": "How do annual billing and commission work?",
