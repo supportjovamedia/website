@@ -10,7 +10,7 @@ const faqs = [
   },
   {
     "question": "Is the free plan a trial?",
-    "answer": "Starter is a free plan with monthly limits. There is no automatic upgrade or subscription charge. Pro Solo and Pro Team offer a 14-day free trial with a card required. Your chosen paid subscription starts automatically after the 14-day trial."
+    "answer": "Starter is a free plan with monthly limits. There is no automatic upgrade or subscription charge. Pro Solo and Pro Team are paid plans. A card is taken only when you subscribe and the subscription starts straight away. There is no free trial."
   },
   {
     "question": "What happens when I reach 20 bookings?",
@@ -34,7 +34,7 @@ const faqs = [
   },
   {
     "question": "Can clients book through Instagram, and can I take deposits?",
-    "answer": "Share your one-page website link in Instagram, WhatsApp or messages. Connect a payment-ready Stripe account and choose your deposit percentage. Deposits go to your connected Stripe account. Stripe processing fees still apply. There is no native Instagram Book Now integration."
+    "answer": "Share your one-page website link in Instagram, WhatsApp or messages. On Pro Solo and Pro Team, connect a payment-ready Stripe account and choose your deposit percentage. Starter is booking only. Deposits go to your connected Stripe account. Stripe processing fees still apply. There is no native Instagram Book Now integration."
   }
 ];
 

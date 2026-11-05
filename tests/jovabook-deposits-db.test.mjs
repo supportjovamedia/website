@@ -14,6 +14,8 @@ test('direct deposits reserve privately, verify payment, isolate tenants and ref
  const begin=(extra={})=>worker('begin',{slug:'fictional-business-1',request_id:crypto.randomUUID(),verifier_hash:verifier,network_hash:network,service_id:'consultation',staff_id:'owner',date,time:'12:00',name:'Fixture Guest',email:'guest@example.test',phone:'07700900123',notes:'',...extra});
  try{
   await bootstrap(db,await sources());date=await value("select (current_date+15)::text value");
+  // Stripe deposits belong to paid plans, so these fixture businesses are on Pro Solo.
+  await q("update jovabook_private.offer_accounts set plan='standard',seats=1,provider_status='active',paid_until=now()+interval '30 days',ever_paid=true");
   await q("update jovabook_private.customer_config set payments_enabled=true,worker_hash=encode(sha256(convert_to($1,'UTF8')),'hex')",[token]);
   await q("insert into jovabook_private.business_integrations(salon_id,provider,encrypted,summary) values($1,'stripe','{\"v\":1}',jsonb_build_object('connection_method','provider_login','account_id',$2::text))",[salon,account]);
   await worker('owner_verify',{salon_id:salon,user_id:owner,account_id:account,ready:true});

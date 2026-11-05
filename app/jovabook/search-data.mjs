@@ -4,7 +4,7 @@ export const jovabookUrl = `${site}/jovabook`;
 
 export function jovabookMetadata() {
   const title = "Booking System for Service Businesses | JovaBook";
-  const description = "JovaBook by JovaMedia is a booking system for service businesses. Start free with 20 monthly bookings, a one-page website and Stripe deposits. 0% booking commission on every plan.";
+  const description = "JovaBook by JovaMedia is a booking system for service businesses. Start free with 20 monthly bookings and a one-page website. Add Stripe deposits on paid plans. 0% booking commission on every plan.";
   const image = {
     url: `${site}/share/jovabook-free-plans-2026-11.png`,
     width: 1200,
