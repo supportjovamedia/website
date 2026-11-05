@@ -43,6 +43,24 @@
           "value": "*"
         }
       ]
+    },
+    {
+      "source": "/(.*)\\.(png|jpg|jpeg|webp|svg|avif|gif|ico|woff2|woff|ttf)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(js|css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
     }
   ]
 }

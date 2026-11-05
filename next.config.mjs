@@ -7,7 +7,9 @@ const nextConfig = {
   images: {
     // Include the missing phone-sized step so small hero photos do not jump
     // straight from 384px to 640px on high-density mobile screens.
-    deviceSizes: [480, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    deviceSizes: [480, 640, 750, 828, 1080, 1200, 1920],
+    // Optimised images are reused for 31 days instead of being rebuilt/revalidated.
+    minimumCacheTTL: 2678400,
   },
   // An isolated output folder avoids locked OneDrive build artefacts during local QA.
   distDir: process.env.JOVA_BUILD_DIR || ".next",
@@ -28,6 +30,11 @@ const nextConfig = {
         ]
       : [];
     return [...previewHeaders, {
+      // Public images, fonts and video change rarely: let browsers and the CDN reuse them
+      // instead of re-requesting every file on every visit (Vercel's default is max-age=0).
+      source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2|woff|mp4|webm)",
+      headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+    }, {
       source: "/previews/aleiman/:path*",
       headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
     }];
