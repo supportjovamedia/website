@@ -9,7 +9,7 @@ for(const width of [320,360,390,768,1440])test(`JovaBook responsive plans and cl
  page.on('pageerror',error=>errors.push(error.message));
  await page.goto('/jovabook');await page.evaluate(()=>document.fonts.ready);
  const walkthrough=page.locator('#booking-demo');
- await expect(walkthrough.getByText('Interactive preview',{exact:true})).toBeVisible();
+ await expect(walkthrough.getByText('Interactive demo',{exact:true})).toBeVisible();
  await walkthrough.getByRole('button',{name:/Gel manicure/}).click();
  const next=walkthrough.getByRole('button',{name:'Choose a date',exact:true}),back=walkthrough.getByRole('button',{name:'Back',exact:true});await expect(back).toBeDisabled();
  const positions=await Promise.all([back.boundingBox(),next.boundingBox()]);expect(positions[0].x).toBeLessThan(positions[1].x);expect(Math.abs(positions[0].y-positions[1].y)).toBeLessThan(10);
