@@ -25,7 +25,7 @@ const paid=(pack,extra={})=>({id:'cs_test_fixture',mode:'payment',payment_status
  amount_total:{'sms-50':500,'sms-100':1000,'email-1000':500}[pack],metadata:{app:'jovabook',kind:'topup',salon_id:sid,offer_version:OFFER_VERSION,pack,channel:pack.startsWith('sms')?'sms':'email',quantity:pack.split('-')[1]},...extra});
 const event=session=>({type:'checkout.session.completed',livemode:false,data:{object:{id:'cs_test_fixture',metadata:session.metadata}}});
 
-test('checkout uses server prices only and refuses text packs on Starter',async()=>{
+test('checkout uses server prices only and refuses text packs on Free',async()=>{
  const h=harness();
  const ok=await h.handlers.topup(post({salon_id:sid,pack:'sms-50',request_id:req,amount:1}));
  assert.equal(ok.status,200);assert.equal((await ok.json()).url,'https://checkout.stripe.com/c/pay/cs_test_fixture');

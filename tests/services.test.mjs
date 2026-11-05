@@ -10,7 +10,7 @@ test("homepage and service pages avoid internal tiers and pricing tables", async
     const response = await fetch(base + path);
     assert.equal(response.status, 200, path);
     const html = await response.text();
-    assert.doesNotMatch(html, /Starter|Care Plus|\bTEAM [123]\b/, path);
+    assert.doesNotMatch(html, /Free|Care Plus|\bTEAM [123]\b/, path);
     assert.doesNotMatch(html, /<table[\s>]/, path);
     if (path.startsWith("/services/")) {
       assert.match(html, /The right support/, path);

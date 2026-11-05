@@ -44,16 +44,16 @@ try{
   const f=await fixture(width);try{
    await f.login();await f.page.goto(base+'/#billing');await expect(f.page.locator('[data-offer-version]')).toHaveAttribute('data-offer-version',version);
    await expect(f.page.getByRole('heading',{name:'Your plan',exact:true})).toBeVisible();
-   await expect(f.page.getByRole('heading',{name:'Starter',exact:true})).toHaveCount(2);
+   await expect(f.page.getByRole('heading',{name:'Free',exact:true})).toHaveCount(2);
    if(width===390){await f.page.goto(base+'/#scheduling');await f.page.getByRole('tab',{name:'Booking page',exact:true}).click();await f.page.getByText('More page options',{exact:true}).click();await expect(f.page.locator('[data-ws-copy=embed]')).toHaveCount(0);await f.page.goto(base+'/#billing');}
    await expect(f.page.locator('input[name*=card]')).toHaveCount(0);assert(!f.calls.some(c=>c.path.endsWith('/billing/checkout')));
    await expect(f.page.getByRole('button',{name:'Cancel subscription',exact:true})).toHaveCount(0);
-   const team=f.page.getByRole('region',{name:'Pro Team plan',exact:true});
+   const team=f.page.getByRole('region',{name:'Team plan',exact:true});
    await expect(team.locator('[data-change=offer-seats]')).toBeDisabled();await expect(team.locator('[data-change=offer-seats]')).toHaveValue('1');
-   await f.page.getByRole('button',{name:'Yearly, save 20%',exact:true}).click();await expect(f.page.getByRole('region',{name:'Pro Team plan',exact:true})).toContainText('£240.00');
+   await f.page.getByRole('button',{name:'Yearly, save 20%',exact:true}).click();await expect(f.page.getByRole('region',{name:'Team plan',exact:true})).toContainText('£240.00');
    await f.page.screenshot({path:path.join(out,'dashboard-'+width+'.png'),fullPage:true});
    assert(await f.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-   const pro=f.page.getByRole('region',{name:'Pro Solo plan',exact:true});await pro.getByRole('button',{name:'Start 14-day trial'}).click();
+   const pro=f.page.getByRole('region',{name:'Solo plan',exact:true});await pro.getByRole('button',{name:'Start 14-day trial'}).click();
    await expect(f.page.locator('[data-form=offer-confirm]')).toContainText('14 days free. Card required.');await expect(f.page.locator('[data-form=offer-confirm]')).toContainText('£192.00 per year');
    const request=f.page.waitForRequest(r=>new URL(r.url()).pathname==='/api/jovabook/billing/checkout');await f.page.locator('[data-form=offer-confirm] button.primary').click();const body=(await request).postDataJSON();assert.equal(body.plan,'standard');assert.equal(body.cadence,'annual');assert.equal(body.seats,1);assert(!('trial_days' in body));
    await expect(f.page.getByRole('heading',{name:'Mock secure card trial'})).toBeVisible();assert.deepEqual(f.errors,[]);results.push({width,passed:true});
@@ -71,7 +71,7 @@ try{
  for(const plan of ['essential','premium']){const pub=await fixture(390);try{
   pub.salon.plan=plan;pub.access.business.plan=plan;pub.access.billing.branding_required=plan!=='premium';pub.salon.settings.workspace={website:{headline:'Fixture Studio',about:'Our business details.',homeIntro:'A Team introduction',aboutHeading:'Meet our team',logoImage:'https://rffsulstatmwzvrdgvec.supabase.co/storage/v1/object/public/jovabook-website-images/'+sid+'/40000000-0000-4000-8000-000000000001.png'}};
   await pub.page.goto(base+'/?salon=offer-qa#website');await expect(pub.page.locator('.bw-site')).toBeVisible();await expect(pub.page.locator('.bw-logo')).toHaveAttribute('alt','Offer QA Business');await expect(pub.page.locator('.bw-public-footer')).toContainText('Offer QA Business');
-  if(plan==='premium'){await expect(pub.page.getByText('Powered by JovaBook',{exact:true})).toHaveCount(0);await expect(pub.page.getByRole('heading',{name:'Meet our team'})).toBeVisible();}else await expect(pub.page.getByText('Powered by JovaBook',{exact:true})).toBeVisible();
+  if(plan==='premium'){await expect(pub.page.getByText('Powered by JovaMedia',{exact:true})).toHaveCount(0);await expect(pub.page.getByRole('heading',{name:'Meet our team'})).toBeVisible();}else await expect(pub.page.getByText('Powered by JovaMedia',{exact:true})).toBeVisible();
   assert(await pub.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await pub.page.screenshot({path:path.join(out,'public-'+plan+'.png'),fullPage:true});assert.deepEqual(pub.errors,[]);results.push({publicWebsite:plan,passed:true});
  }finally{await pub.context.close();}}
  const payment=await browser.newContext();try{

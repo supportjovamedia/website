@@ -16,7 +16,7 @@ export default function JovaBookPlans(){
   <div className={s.grid} role="region" aria-label="JovaBook plans">
    {jovabookMarketingPlans.map(plan=>{
     const free=plan.id==='essential',team=plan.id==='premium',selection=offerSelection(plan.id,cadence,team?extraSeats:0);
-    const features=[team?`${selection.seats} staff ${selection.seats===1?'seat':'seats'}`:'1 staff calendar',free?'20 bookings per month':'Unlimited monthly bookings','One-page business website','Online booking and client records',...(!free?['Stripe deposits']:[]),`${selection.emails} emails per month`,free?'Email alerts only':`${selection.sms} SMS per month`,...(!free?['Embed bookings on your own website']:[]),...(team?['Clients choose their team member','Advanced Insights and comparisons','Extra website customisation','JovaBook branding removed']:['Powered by JovaBook badge'])];
+    const features=[team?`${selection.seats} staff ${selection.seats===1?'seat':'seats'}`:'1 staff calendar',free?'20 bookings per month':'Unlimited monthly bookings','One-page business website','Online booking and client records',...(!free?['Stripe deposits']:[]),`${selection.emails} emails per month`,free?'Email alerts only':`${selection.sms} SMS per month`,...(!free?['Embed bookings on your own website']:[]),...(team?['Clients choose their team member','Advanced Insights and comparisons','Extra website customisation','JovaMedia branding removed']:['Powered by JovaMedia badge'])];
     return <article key={plan.id} className={`${s.card} ${plan.recommended?s.recommended:''}`} aria-label={`${plan.name} plan`}>
      {plan.recommended&&<span className={s.recommendation}>For a busy solo diary</span>}
      <h3>{plan.name}</h3><p className={s.description}>{plan.description}</p>

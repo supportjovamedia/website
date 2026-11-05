@@ -64,7 +64,7 @@ test('Cancellation and no-show notices explain how to dispute without inventing 
  for(const kind of ['cancelled','no-show']){const j=structuredClone(fixture);j.payload.kind=kind;const mail=bookingEmailContent(j,cfg);assert.match(mail.text,/dispute/);assert.match(mail.html,/support.jovamedia@gmail.com/);j.payload.audience='owner';const owner=bookingEmailContent(j,cfg);assert(!owner.text.includes('Taylor cancelled a booking'));if(kind==='no-show')assert.match(owner.subject,/No-show reported/);}
 });
 
-test('verified Team email branding is removed while Starter and Pro Solo keep it',()=>{
+test('verified Team email branding is removed while Free and Solo keep it',()=>{
  const job=structuredClone(fixture);assert.match(bookingEmailContent(job,cfg).text,/via JovaBook/);
  job.payload.branding_required=false;const mail=bookingEmailContent(job,cfg);assert(!mail.text.includes('JovaBook'));assert(!mail.html.includes('JovaBook'));assert(!mail.from.includes('JovaBook'));assert(mail.from.includes('Example Studio'));assert(mail.text.includes('#manage/'));
 });
