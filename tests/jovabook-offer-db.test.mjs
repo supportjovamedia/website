@@ -56,6 +56,20 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    await assert.rejects(q("insert into staff(salon_id,id,name) values($1,'unpaid-seat-3','Unpaid seat')",[sid]),/plan allows/);
    const cancel=await worker('begin',{owner:uid,plan:'essential',seats:1,cadence:'monthly',request_id:crypto.randomUUID(),kind:'cancel',hash:'f'.repeat(64)});assert.equal(cancel.kind,'cancel');
   });
+  await t.test('operator analytics read verified Starter, 14-day trial, paid plan and seat records without changing billing',async()=>{
+   const op='10000000-0000-4000-8000-000000000099';
+   await q("insert into auth.users(id,email,email_confirmed_at) values($1,'operator-offer@example.test',now())",[op]);await q("insert into jovabook_private.operators(email) values('operator-offer@example.test')");
+   const as=async id=>{await db.exec('reset role');await q("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role authenticated');};
+   await as(uid);await assert.rejects(q('select operator_overview()'),/operator|authorised|authorized|access/i);
+   await as(op);const overview=await value('select operator_overview() value');assert.equal(overview.offer_version,'2026-11-free-v1');assert.equal(overview.starter,1);assert.equal(overview.trials_active,1);assert.equal(overview.premium,0);
+   const business=(await value('select operator_business($1) value',[sid])).business;assert.equal(business.plan,'premium');assert.equal(business.seats,2);assert.equal(business.billing_state,'trial');assert.equal(business.has_paid,false);
+   await db.exec('reset role');const fence=await worker('sync_begin');await worker('sync_apply',{fence:fence.fence,customer_id:'cus_FictionalOffer',subscription_id:'sub_FictionalOffer',plan:'premium',seats:2,cadence:'annual',provider_status:'active',paid_verified:true,period_start:new Date().toISOString(),paid_until:new Date(Date.now()+365*86400000).toISOString()});
+   const actions=await value('select count(*)::int value from jovabook_private.offer_actions');await as(op);
+   const paid=await value('select operator_overview() value');assert.equal(paid.premium,1);assert.equal(paid.paid_active,1);assert.equal(paid.trials_active,0);
+   const billing=await value('select operator_billing_summary($1) value',[sid]);assert.equal(billing.subscription.ever_paid,true);assert.equal(billing.subscription.seats,2);assert.equal(billing.subscription.cadence,'annual');
+   await db.exec('reset role');assert.equal(await value('select count(*)::int value from jovabook_private.offer_actions'),actions);
+   await q("update jovabook_private.offer_accounts set provider_status='trialing',ever_paid=false where salon_id=$1",[sid]);
+  });
   await t.test('expired trials return to Starter without deleting the account or restoring trial eligibility',async()=>{
    await q("update jovabook_private.offer_accounts set trial_ends_at=now()-interval '1 second' where salon_id=$1",[sid]);
    assert.equal((await limits()).plan,'essential');assert.equal((await worker('context')).trial_eligible,false);

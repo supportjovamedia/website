@@ -19,7 +19,7 @@ test('operator account and commission records distinguish trial, paid, settlemen
  const credit=async(batchId,name,amount)=>{const id=await entry(name,-amount,'paid','cancellation_credit');await q("insert into jovabook_private.commission_credit_actions(entry_id,batch_id,invoice_id,line_id,customer_id,amount_minor,credit_amount,provider_id,status) select $1::uuid,id,invoice_id,'il_PRIVATE','cus_PRIVATE',$3,$3,'cn_'||($1::uuid)::text,'issued' from jovabook_private.commission_batches where id=$2",[id,batchId,amount]);};
  let paidBatch,invoicedBatch,reservedBatch;
  try{
-  await bootstrap(db,await sources());
+  await bootstrap(db,await sources({legacy:true}));
   await q('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now()),($3,$4,now())',[operator,'support.jovamedia@gmail.com',customer,'fictional-customer@example.test']);
   await as(customer);await q("select portal_identity('customer')");await db.exec('reset role');
   await q("update jovabook_private.billing_accounts set trial_ends_at=now()-interval '1 day' where salon_id=$1",[ended]);

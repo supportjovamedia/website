@@ -72,3 +72,5 @@ message providers. Keep screenshots and reports under `output/free-plans`.
 Local proof, 5 November 2026: 803 server/SQL regression checks passed, then all nine current-offer billing cases and 43 changed-module checks passed. The full production website browser suite passed 75 checks (five device-specific skips). The new intercepted browser proof covers three dashboard widths, card-free Starter setup, paid-trial dashboard cancellation, Starter and Team public websites with logos, embed access and the deposit popup return. No live payments or SMS were used. Production build, function trace audit and ESLint passed.
 
 The provider catalogue, portal configuration and production database migration remain deployment prerequisites. The obsolete disposable trial account was deleted separately with explicit approval; no customer account is migrated or charged by this PR.
+
+Back-office account counters, business records, trial notifications and subscription summaries read the versioned offer directly. Starter is counted as free; unpaid trials are separate from active paid Pro plans. Operator reads preserve historical financial records and do not create billing actions.

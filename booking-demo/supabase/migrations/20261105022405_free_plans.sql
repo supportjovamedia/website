@@ -1,6 +1,6 @@
 begin;
 -- Deploy with JOVABOOK_OFFER_VERSION=2026-11-free-v1 only after the release
--- readiness script has verified that retired subscriptions cannot renew.
+-- readiness review has verified that retired subscriptions cannot renew.
 do $$begin
  if exists(select 1 from jovabook_private.billing_accounts where subscription_id is not null
   and coalesce(provider_status,'unknown') not in('canceled','incomplete_expired')) then
@@ -15,7 +15,7 @@ create table jovabook_private.offer_accounts(
  cadence text not null default 'monthly' check(cadence in('monthly','annual')),
  customer_id text unique,subscription_id text unique,provider_status text,
  paid_until timestamptz,period_start timestamptz,trial_started_at timestamptz,trial_ends_at timestamptz,
- cancel_at_period_end boolean not null default false,
+ cancel_at_period_end boolean not null default false,ever_paid boolean not null default false,
  pending_plan text,pending_seats int,pending_cadence text,pending_at timestamptz,schedule_id text,
  fence uuid,last_verified_at timestamptz,updated_at timestamptz not null default now(),
  check(plan='premium' or seats=1)
@@ -345,7 +345,7 @@ declare c jovabook_private.billing_config;o jovabook_private.offer_accounts;s pu
     period_start=(p_payload->>'period_start')::timestamptz,subscription_id=p_payload->>'subscription_id' where salon_id=sid;
   end if;
   update jovabook_private.offer_accounts set provider_status=p_payload->>'provider_status',cancel_at_period_end=coalesce((p_payload->>'cancel_at_period_end')::boolean,false),
-   last_verified_at=now(),updated_at=now() where salon_id=sid;
+   ever_paid=ever_paid or coalesce((p_payload->>'paid_verified')::boolean,false),last_verified_at=now(),updated_at=now() where salon_id=sid;
   update public.salons set plan=jovabook_private.offer_plan(sid) where id=sid;
   if p_payload->>'paid_verified'='true' or p_payload->>'trial_verified'='true' or p_payload->>'provider_status' in('canceled','incomplete_expired') then
    update jovabook_private.offer_actions set closed_at=now() where salon_id=sid and closed_at is null and (plan=p_payload->>'plan' and seats=(p_payload->>'seats')::int and cadence=p_payload->>'cadence' or kind='cancel');
@@ -363,5 +363,48 @@ declare c jovabook_private.billing_config;o jovabook_private.offer_accounts;s pu
 end$$;
 revoke all on function public.booking_offer_worker(text,text,jsonb) from public,anon,authenticated;
 grant execute on function public.booking_offer_worker(text,text,jsonb) to anon,authenticated;
+
+-- Back-office reads follow the same verified offer as the owner workspace.
+alter function jovabook_private.operator_billing_record(uuid,boolean) rename to operator_billing_before_free_offer;
+create function jovabook_private.operator_billing_record(p_id uuid,p_batches boolean default false) returns jsonb
+language plpgsql stable security definer set search_path='' as $$
+declare result jsonb;o jovabook_private.offer_accounts;begin
+ result:=jovabook_private.operator_billing_before_free_offer(p_id,p_batches);select * into o from jovabook_private.offer_accounts where salon_id=p_id;
+ if o.salon_id is null then return result;end if;
+ return result||jsonb_build_object('offer_version','2026-11-free-v1','subscription',jsonb_build_object('ever_paid',o.ever_paid,'plan',jovabook_private.offer_plan(p_id),'cadence',o.cadence,'seats',o.seats,'paid_until',o.paid_until,'trial_end',o.trial_ends_at,'provider_status',o.provider_status,'last_verified_at',o.last_verified_at,'cancel_at_period_end',o.cancel_at_period_end,'pending_plan',o.pending_plan,'pending_cadence',o.pending_cadence,'pending_effective_at',o.pending_at));
+end$$;
+alter function jovabook_private.operator_business_record(uuid) rename to operator_business_before_free_offer;
+create function jovabook_private.operator_business_record(p_id uuid) returns jsonb
+language plpgsql stable security definer set search_path='' as $$
+declare result jsonb;o jovabook_private.offer_accounts;p text;begin
+ result:=jovabook_private.operator_business_before_free_offer(p_id);select * into o from jovabook_private.offer_accounts where salon_id=p_id;
+ if o.salon_id is null then return result;end if;p:=jovabook_private.offer_plan(p_id);
+ return result||jsonb_build_object('offer_version','2026-11-free-v1','has_paid',o.ever_paid,'billing_state',case when o.provider_status='trialing' and o.trial_ends_at>now() then case when o.cancel_at_period_end then 'trial_cancelled' else 'trial' end when p<>'essential' then 'paid' when o.provider_status in('past_due','unpaid') then 'past_due' else 'free' end,'plan',p,'seats',jovabook_private.offer_seats(p_id),'trial_end',o.trial_ends_at,'paid_until',o.paid_until,'cadence',o.cadence,'cancel_at_period_end',o.cancel_at_period_end);
+end$$;
+alter function public.operator_overview() rename to operator_overview_before_free_offer;
+alter function public.operator_overview_before_free_offer() set schema jovabook_private;
+create function public.operator_overview() returns jsonb language plpgsql security definer set search_path='' as $$
+declare result jsonb;counts jsonb;begin
+ perform jovabook_private.require_operator();result:=jovabook_private.operator_overview_before_free_offer();
+ select jsonb_build_object('offer_version','2026-11-free-v1','essential',0,'starter',count(*) filter(where jovabook_private.offer_plan(a.salon_id)='essential'),
+ 'standard',count(*) filter(where a.ever_paid and a.provider_status<>'trialing' and jovabook_private.offer_plan(a.salon_id)='standard'),
+ 'premium',count(*) filter(where a.ever_paid and a.provider_status<>'trialing' and jovabook_private.offer_plan(a.salon_id)='premium'),
+ 'paid_total',count(*) filter(where a.ever_paid),'paid_active',count(*) filter(where a.ever_paid and a.provider_status<>'trialing' and jovabook_private.offer_plan(a.salon_id)<>'essential'),
+ 'trials_total',count(*) filter(where a.trial_started_at is not null and not a.ever_paid),
+ 'trials_active',count(*) filter(where a.provider_status='trialing' and a.trial_ends_at>now() and not a.cancel_at_period_end),
+ 'trials_cancelled',count(*) filter(where a.provider_status='trialing' and a.trial_ends_at>now() and a.cancel_at_period_end),
+ 'trials_ended',count(*) filter(where a.trial_started_at is not null and not a.ever_paid and coalesce(a.trial_ends_at,now())<=now())) into counts from jovabook_private.offer_accounts a;
+ return result||counts;
+end$$;
+create or replace function jovabook_private.operator_events() returns table(id text,salon_id uuid,business text,title text,at timestamptz) language sql stable security definer set search_path='' as $$
+ select md5(kind||':'||sid::text||':'||event_at::text),sid,name,label,event_at from (
+ select 'signup' kind,s.id sid,s.name,'New business registered' label,s.created_at event_at from public.salons s where s.created_at>now()-interval '14 days'
+ union all select 'payment',s.id,s.name,'Subscription needs attention',a.last_verified_at from public.salons s join jovabook_private.offer_accounts a on a.salon_id=s.id where a.provider_status in('past_due','unpaid')
+ union all select 'trial',s.id,s.name,'Trial ending soon',a.trial_ends_at from public.salons s join jovabook_private.offer_accounts a on a.salon_id=s.id where a.provider_status='trialing' and not a.cancel_at_period_end and a.trial_ends_at between now() and now()+interval '3 days'
+ ) events order by event_at desc limit 12
+$$;
+revoke all on function jovabook_private.operator_billing_before_free_offer(uuid,boolean),jovabook_private.operator_business_before_free_offer(uuid),jovabook_private.operator_overview_before_free_offer(),jovabook_private.operator_billing_record(uuid,boolean),jovabook_private.operator_business_record(uuid),public.operator_overview() from public,anon,authenticated;
+grant execute on function public.operator_overview() to authenticated;
+
 notify pgrst,'reload schema';
 commit;

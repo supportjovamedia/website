@@ -70,12 +70,12 @@ test('paid access needs a paid matching invoice and is removed for recurring deb
  await f.handler.reconcile(f.data);assert.equal(f.calls.findLast(c=>c.kind==='sync_apply').payload.paid_verified,false);
 });
 test('annual to monthly changes wait for renewal and cancelled hosted reviews do not block dashboard cancellation',async()=>{
- const f=fixture();f.data.customer_id='cus_Fixture';f.data.subscription_id='sub_Fixture';f.state.sub=f.trial();f.state.sub.status='active';f.state.sub.items.data[0].price='price_ProAnnual';
+ const f=fixture();f.data.customer_id='cus_Fixture';f.data.subscription_id='sub_Fixture';f.state.sub=f.trial();f.state.sub.status='active';f.state.sub.items.data[0].price='price_ProAnnual';f.state.sub.items.data[0].current_period_end+=30*86400;
  f.stripe.subscriptionSchedules={create:async()=>({id:'sub_sched_Fixture',customer:f.data.customer_id,subscription:f.state.sub.id}),update:async(id,p)=>{f.calls.push({kind:'phases',payload:p});return {id};}};
  let r=await f.handler.change(f.request({plan:'standard',cadence:'monthly',request_id:crypto.randomUUID()}));assert.equal(r.status,200);assert.equal((await r.json()).kind,'scheduled');assert.equal(f.calls.find(c=>c.kind==='phases').payload.phases[1].items[0].price,'price_Pro');
  f.data.schedule_id=null;f.data.open_action={id:actionId,kind:'change',result:{kind:'upgrade'}};
  f.stripe.subscriptions.update=async(id,params)=>{Object.assign(f.state.sub,params);f.calls.push({kind:'cancel-subscription',payload:params});return f.state.sub;};
- r=await f.handler.cancel(f.request({request_id:crypto.randomUUID()}));assert.equal(r.status,200);assert.equal((await r.json()).kind,'cancellation_scheduled');assert(f.calls.some(c=>c.kind==='close_action'));assert.deepEqual(f.calls.find(c=>c.kind==='cancel-subscription').payload,{cancel_at_period_end:true});
+ r=await f.handler.cancel(f.request({request_id:crypto.randomUUID()}));assert.equal(r.status,200);const cancelled=await r.json();assert.equal(cancelled.kind,'cancellation_scheduled');assert.equal(Date.parse(cancelled.effective_at),f.state.sub.items.data[0].current_period_end*1000);assert(f.calls.some(c=>c.kind==='close_action'));assert.deepEqual(f.calls.find(c=>c.kind==='cancel-subscription').payload,{cancel_at_period_end:true});
 });
 test('a verified released schedule clears its temporary staff cap',async()=>{
  const f=fixture();f.data.customer_id='cus_Fixture';f.state.sub=f.trial(2);f.data.schedule_id='sub_sched_Fixture';f.stripe.subscriptionSchedules={retrieve:async()=>({id:f.data.schedule_id,status:'released',customer:f.data.customer_id,released_subscription:f.state.sub.id})};
