@@ -1,9 +1,4 @@
-import JovaBookLanding from "./JovaBookLanding";
-import {jovabookMetadata,jovabookStructuredData} from "./search-data.mjs";
-import "./navigation-integration.css";
-
-export const metadata=jovabookMetadata();
-const faqs = [
+export const faqs = [
   {
     "question": "What is included in Starter?",
     "answer": "Starter is £0 per month with one staff calendar, up to 20 bookings per calendar month and 50 emails per month. Your one-page website includes your business name, logo, description, hours, contact details and online booking. A Powered by JovaBook badge stays visible. No card is required to use Starter."
@@ -37,7 +32,3 @@ const faqs = [
     "answer": "Share your one-page website link in Instagram, WhatsApp or messages. On Pro Solo and Pro Team, connect a payment-ready Stripe account and choose your deposit percentage. Starter is booking only. Deposits go to your connected Stripe account. Stripe processing fees still apply. There is no native Instagram Book Now integration."
   }
 ];
-
-export default function JovaBookPage(){
-  return <><JovaBookLanding faqs={faqs}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jovabookStructuredData({faqs,video:{duration:"PT1M32S",uploadDate:"2026-11-01T00:00:00+00:00"}})).replace(/</g,"\\u003c")}}/></>;
-}

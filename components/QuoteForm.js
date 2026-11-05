@@ -72,7 +72,7 @@ export default function QuoteForm({ product = "", website = "" }) {
   const feedback = name => fields[name] && <span className="field-error" id={`quote-${name}-error`}>{fields[name]}</span>;
   return <form className="form" data-enquiry-form noValidate onSubmit={submit} data-analytics-form="quote_callback" data-clarity-mask="true" aria-busy={status === "sending"} onChange={() => { if (status === "success") setStatus("idle"); }}>
     <div><h1>Get a Quote</h1><p className="form-note">Leave your details and we’ll get in touch about what you need.</p></div>
-    {selectedProduct && <section className="quote-package" aria-label="Selected product"><div><span className="quote-package-label">Selected product</span><h2>{selectedProduct.name}</h2><p>{selectedProduct.interval ? "" : "From "}{formatPrice(selectedProduct.amount)}{selectedProduct.interval ? " / month" : " · One-off build"}</p></div><Link href="/pricing">Change product</Link></section>}
+    {selectedProduct && <section className="quote-package" aria-label="Selected product"><div><span className="quote-package-label">Selected product</span><h2>{selectedProduct.name}</h2><p>{selectedProduct.interval ? "" : "From "}{formatPrice(selectedProduct.amount)}{selectedProduct.interval ? " / month" : " · One-off build"}</p></div><Link href="/products/pricing">Change product</Link></section>}
     {product && <input type="hidden" name="product" value={product} />}
     <fieldset className="contact-fields" disabled={status === "sending"}>
       <label><span>Name <Required /></span><input name="name" autoComplete="name" required maxLength={100} {...props("name")} />{feedback("name")}</label>

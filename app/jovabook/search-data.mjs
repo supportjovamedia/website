@@ -1,6 +1,6 @@
 import {OFFER_PLANS} from "../../lib/jovabook-offer.mjs";
 const site = "https://www.jovamedia.com";
-export const jovabookUrl = `${site}/jovabook`;
+export const jovabookUrl = `${site}/`;
 
 export function jovabookMetadata() {
   const title = "Booking System for Service Businesses | JovaBook";
