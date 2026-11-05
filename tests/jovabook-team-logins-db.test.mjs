@@ -28,7 +28,7 @@ test('team logins reach only their own business, and only the four workspace are
   await q("update jovabook_private.offer_accounts set plan='standard',seats=1 where salon_id=$1",[A]);
   const base={bookingsA:await count("select 1 from public.bookings where salon_id='"+A+"'"),customersA:await count("select 1 from public.customers where salon_id='"+A+"'"),bookingsB:await count("select 1 from public.bookings where salon_id='"+B+"'"),customersB:await count("select 1 from public.customers where salon_id='"+B+"'")};
 
-  await t.test('a login needs a paid Pro Team plan, an active team member and the right worker secret',async()=>{
+  await t.test('a login needs a paid Team plan, an active team member and the right worker secret',async()=>{
    await assert.rejects(worker('link',{staff_id:'anna',user:ANNA,email:'anna@example.test'},'0'.repeat(64)),/Invalid billing/);
    let r=await worker('link',{staff_id:'anna',user:ANNA,email:'anna@example.test'});assert.equal(r.ok,false);assert.equal(r.code,'plan');
    await q("update jovabook_private.offer_accounts set plan='premium',seats=3 where salon_id=$1",[A]);

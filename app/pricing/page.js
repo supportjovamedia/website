@@ -6,7 +6,7 @@ import {faqs} from "../jovabook/faqs.mjs";
 import "../jovabook/landing.css";
 import "../jovabook/pricing.css";
 
-export const metadata = pageMetadata("/pricing", "JovaBook Pricing | Free Starter, Pro Solo & Pro Team", "Compare JovaBook plans. Start free with 20 monthly bookings and a one-page website, or choose Pro Solo at £20/month or Pro Team from £25/month. 0% booking commission on every plan.");
+export const metadata = pageMetadata("/pricing", "JovaBook Pricing | Free, Solo & Team", "Compare JovaBook plans. Start free with 20 monthly bookings and a one-page website, or choose Solo at £20/month or Team from £25/month. 0% booking commission on every plan.");
 
 export default function PricingPage() {
   return <main>
@@ -15,7 +15,7 @@ export default function PricingPage() {
         <div className="wrap">
           <div className="section-head center">
             <h1 id="plans-title">Choose your plan.</h1>
-            <p>Every plan has 0% booking commission. Starter is free and never asks for a card. Add Stripe deposits, text reminders and more staff when you upgrade.</p>
+            <p>Every plan has 0% booking commission. The Free plan is free and never asks for a card. Add Stripe deposits, text reminders and more staff when you upgrade.</p>
           </div>
           <JovaBookPlans />
         </div>

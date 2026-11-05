@@ -33,12 +33,12 @@ function fixture(){
  return {handler,request,state,data,calls,effects,trial,env,stripe};
 }
 
-test('Starter never creates a Stripe customer, payment session or card collection',async()=>{
+test('Free never creates a Stripe customer, payment session or card collection',async()=>{
  const f=fixture();const response=await f.handler.checkout(f.request({plan:'essential',request_id:crypto.randomUUID()}));assert.equal(response.status,400);assert.deepEqual(f.effects,[]);
  for(const bad of [{plan:'standard',seats:2},{plan:'premium',seats:1001},{plan:'standard',card_number:'4242'},{plan:'standard',trial_days:3}]){const value=await f.handler.checkout(f.request({...bad,request_id:crypto.randomUUID()}));assert.equal(value.status,400);}
  assert.deepEqual(f.effects,[]);
 });
-test('Pro Solo starts an exact 14-day card trial with a reviewed recurring price',async()=>{
+test('Solo starts an exact 14-day card trial with a reviewed recurring price',async()=>{
  const f=fixture(),response=await f.handler.checkout(f.request({plan:'standard',cadence:'monthly',request_id:crypto.randomUUID()}));assert.equal(response.status,200);
  const created=f.calls.find(c=>c.kind==='stripe-checkout');assert.deepEqual(created.params.line_items,[{price:'price_Pro',quantity:1}]);assert.equal(created.params.subscription_data.trial_period_days,14);assert.equal(created.params.payment_method_collection,'always');assert.deepEqual(created.params.allowed_payment_method_types,['card']);assert.match(created.params.custom_text.submit.message,/£20.00 per month/);assert.match(created.params.custom_text.submit.message,/0% booking commission/);assert(!f.calls.some(c=>c.kind==='sync_apply'));
 });

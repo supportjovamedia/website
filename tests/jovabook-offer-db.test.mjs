@@ -11,7 +11,7 @@ test('free plans enforce bookings, message allowances and verified card-trial se
  try{
   await bootstrap(db,await sources());
   await q("update jovabook_private.billing_config set worker_hash=encode(sha256(convert_to($1,'UTF8')),'hex'),enabled=true,provider_configured=true",[token]);
-  await t.test('Starter needs no card or expiring trial and private state is inaccessible',async()=>{
+  await t.test('Free needs no card or expiring trial and private state is inaccessible',async()=>{
    assert.equal((await limits()).booking_limit,20);assert.equal((await limits()).email_limit,50);assert.equal((await limits()).sms_limit,0);
    assert.equal(await value('select jovabook_private.billing_due($1) value',[sid]),null);
    await assert.rejects(worker('context',{},'bad'),/Invalid billing/);
@@ -60,7 +60,7 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    await assert.rejects(q("insert into staff(salon_id,id,name) values($1,'unpaid-seat-3','Unpaid seat')",[sid]),/plan allows/);
    const cancel=await worker('begin',{owner:uid,plan:'essential',seats:1,cadence:'monthly',request_id:crypto.randomUUID(),kind:'cancel',hash:'f'.repeat(64)});assert.equal(cancel.kind,'cancel');
   });
-  await t.test('operator analytics read verified Starter, 14-day trial, paid plan and seat records without changing billing',async()=>{
+  await t.test('operator analytics read verified Free, 14-day trial, paid plan and seat records without changing billing',async()=>{
    const op='10000000-0000-4000-8000-000000000099';
    await q("insert into auth.users(id,email,email_confirmed_at) values($1,'operator-offer@example.test',now())",[op]);await q("insert into jovabook_private.operators(email) values('operator-offer@example.test')");
    const as=async id=>{await db.exec('reset role');await q("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role authenticated');};
@@ -77,7 +77,7 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    await db.exec('reset role');assert.equal(await value('select count(*)::int value from jovabook_private.offer_actions'),actions);
    await q("update jovabook_private.offer_accounts set provider_status='trialing',ever_paid=false where salon_id=$1",[sid]);
   });
-  await t.test('expired trials return to Starter without deleting the account or restoring trial eligibility',async()=>{
+  await t.test('expired trials return to Free without deleting the account or restoring trial eligibility',async()=>{
    await q("update jovabook_private.offer_accounts set trial_ends_at=now()-interval '1 second' where salon_id=$1",[sid]);
    assert.equal((await limits()).plan,'essential');assert.equal((await worker('context')).trial_eligible,false);
    assert.equal(await value('select jovabook_private.billing_due($1) value',[sid]),null);
@@ -90,12 +90,12 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    assert.equal(await value('select count(*)::int value from staff where salon_id=$1',[sid]),2);
    await assert.rejects(q("update staff set active=true where salon_id=$1 and id='paid-seat-2'",[sid]),/plan allows/);
   });
-  await t.test('Stripe deposits belong to paid plans: Starter is booking only and a downgrade keeps the saved settings',async()=>{
+  await t.test('Stripe deposits belong to paid plans: Free is booking only and a downgrade keeps the saved settings',async()=>{
    const slug=await value('select slug value from salons where id=$1',[sid]);await q("update salons set status='active' where id=$1",[sid]);
    await q("update jovabook_private.offer_accounts set plan='essential',seats=1,provider_status=null,paid_until=null,trial_ends_at=null where salon_id=$1",[sid]);
    assert.equal((await limits()).deposits_allowed,false);assert.equal(await value('select jovabook_private.online_deposit_pence($1,50) value',[sid]),0);
    assert.equal(await value("select jovabook_private.integration_connect_allowed($1,'stripe') value",[sid]),false);
-   await assert.rejects(q(`update salons set payments='{"enabled":true,"deposit_percent":20}'::jsonb where id=$1`,[sid]),/Pro Solo and Pro Team/);
+   await assert.rejects(q(`update salons set payments='{"enabled":true,"deposit_percent":20}'::jsonb where id=$1`,[sid]),/Solo and Team/);
    await q("update jovabook_private.offer_accounts set plan='standard',seats=1,provider_status='active',paid_until=now()+interval '30 days',ever_paid=true where salon_id=$1",[sid]);
    assert.equal((await limits()).deposits_allowed,true);assert.equal(await value("select jovabook_private.integration_connect_allowed($1,'stripe') value",[sid]),true);
    await q(`update salons set payments='{"enabled":true,"deposit_percent":20}'::jsonb where id=$1`,[sid]);

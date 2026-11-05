@@ -39,14 +39,14 @@ test('password rules match the rest of JovaBook',()=>{
  assert.equal(passwordProblem('Sunshine1'),'');
 });
 
-test('only the owner of an active Pro Team business can manage logins',async()=>{
+test('only the owner of an active Team business can manage logins',async()=>{
  let h=harness();
  assert.equal((await h.post(create,null)).status,401);
  assert.equal((await h.post(create,'stranger')).status,401);
  // A team member cannot create logins, even for their own business.
  h=harness();assert.equal((await h.post(create,'staff-token')).status,403);
  assert.equal(h.calls.some(c=>c.path==='/auth/v1/admin/users'),false);
- // Not on Pro Team, billing paused or another business.
+ // Not on Team, billing paused or another business.
  h=harness({access:{ok:true,access:'active',business:{id:SALON,plan:'standard'}}});assert.equal((await h.post(create)).status,403);
  h=harness({access:{ok:true,access:'billing_only',business:{id:SALON,plan:'premium'}}});assert.equal((await h.post(create)).status,403);
  h=harness({access:{ok:true,access:'active',business:{id:'20000000-0000-4000-8000-000000000002',plan:'premium'}}});assert.equal((await h.post(create)).status,403);
@@ -84,7 +84,7 @@ test('creating a login cleans up and explains when something goes wrong',async()
  let r=await h.post(create);assert.equal(r.status,409);assert.match((await r.json()).message,/already has a JovaBook account/);
  assert.equal(h.calls.some(c=>c.body?.p_action==='link'),false);
  // Linking is refused after the account was made: the account is removed again.
- h=harness({link:{ok:false,message:'Team logins are part of the Pro Team plan.'}});
+ h=harness({link:{ok:false,message:'Team logins are part of the Team plan.'}});
  r=await h.post(create);assert.equal(r.status,409);
  assert.equal(h.calls.some(c=>c.path==='/auth/v1/admin/users/'+NEW_USER&&c.method==='DELETE'),true);
 });

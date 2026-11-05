@@ -66,7 +66,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       browserRequirements: "Requires JavaScript and an internet connection",
       inLanguage: "en-GB",
       publisher: organisation,
-      description: "JovaBook is scheduling and booking software by JovaMedia for service businesses. Manage appointments, business opening hours, clients and services. Starter is free for one staff calendar and 20 bookings per month, including a one-page business website. Every plan has 0% booking commission.",
+      description: "JovaBook is scheduling and booking software by JovaMedia for service businesses. Manage appointments, business opening hours, clients and services. The Free plan is free for one staff calendar and 20 bookings per month, including a one-page business website. Every plan has 0% booking commission.",
       featureList: [
         "Online booking page",
         "Booking calendar",
