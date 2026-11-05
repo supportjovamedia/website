@@ -42,3 +42,6 @@
 .seats{margin-top:22px;padding-top:18px;border-top:1px solid #dce5ec;align-self:end}
 .card .seats[aria-hidden]{display:block;border:0;margin:0;padding:0}
 @media(max-width:760px){.seats{align-self:auto}.card .seats[aria-hidden]{display:none}}
+
+/* Pro Solo steps forward on larger screens. */
+@media(min-width:1001px){.card.recommended{transform:translateY(-14px) scale(1.035);z-index:2;box-shadow:0 26px 54px #061f3a4d}.grid{padding-bottom:14px;margin-top:54px}}
