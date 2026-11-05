@@ -9,7 +9,7 @@ function run(args, env = {}) {
 }
 
 // These handlers use injected test transports, never real email or payment services.
-run(['--test',
+run(['--test','--test-concurrency=2',
   'tests/contact-delivery.test.mjs', 'tests/quote-delivery.test.mjs',
   'tests/recaptcha-verification.test.mjs', 'tests/checkout.test.mjs',
   'tests/live-chat.test.mjs', 'tests/marketing-analytics.test.mjs', 'tests/jovabook-marketing-tracking.test.mjs',
@@ -20,6 +20,7 @@ run(['--test',
   'booking-demo/tests/customer-phone-optional-sql.mjs',
   'tests/jovabook-owner-funnel.test.mjs', 'tests/jovabook-owner-funnel-pipeline.test.mjs',
   'tests/jovabook-owner-funnel-scheduler.test.mjs', 'booking-demo/tests/owner-funnel-sql.mjs',
+  'tests/jovabook-offer-billing.test.mjs', 'tests/jovabook-offer-db.test.mjs', 'tests/jovabook-embed.test.mjs',
   'tests/jovabook-test-db.test.mjs', 'tests/jovabook-integrations.test.mjs', 'tests/jovabook-integration-oauth.test.mjs', 'tests/jovabook-recovery-scheduler.test.mjs',
   'tests/jovabook-guest-deposit-guard.test.mjs', 'tests/jovabook-stripe-test.test.mjs',
   'tests/jovabook-deposits.test.mjs', 'tests/jovabook-deposits-db.test.mjs',
@@ -54,7 +55,7 @@ run(['booking-demo/tests/sms-reminders-browser.mjs']);
 run(['booking-demo/tests/operator-links-browser.mjs']);
 // Every external Auth, billing, email and payment request is intercepted.
 // These proofs each start their own local server, including on clean Linux CI.
-for (const script of ['owner-funnel-browser','billing-access-browser','billing-plans-browser',
+for (const script of ['free-plans-browser','owner-funnel-browser','billing-access-browser','billing-plans-browser',
   'customer-portal-browser','customer-portal-integration-browser','operator-browser','existing-business-browser',
   'booking-horizon-browser','navigation-calendar-browser','guest-choice-browser','public-links-browser','public-experience-browser']) {
   run(['booking-demo/tests/' + script + '.mjs']);

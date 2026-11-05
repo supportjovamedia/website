@@ -1,0 +1,29 @@
+.pricing{width:100%;color:#123653}
+.cadence{display:flex;justify-content:center;gap:4px;padding:4px;width:max-content;max-width:100%;margin:0 auto 38px;border:1px solid #c7d6e2;border-radius:30px;background:#fff}
+.cadence button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 19px;border:0;border-radius:24px;font:inherit;font-size:14px;cursor:pointer;color:#235789;background:transparent}
+.cadence button[aria-pressed=true]{background:#235789;color:#fff}
+.cadence span{padding:3px 6px;background:#f1d302;color:#123653;border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start;max-width:1120px;margin:auto}
+.card{position:relative;display:flex;flex-direction:column;min-width:0;padding:28px 24px;border:1px solid #d5e0e9;border-radius:14px;background:#fff;text-align:left;color:#123653}
+.card.recommended{border:2px solid #dbc31d;padding:27px 23px;background:#fffef8}
+.recommendation{position:absolute;top:-17px;left:20px;right:20px;min-height:32px;display:flex;justify-content:center;align-items:center;border-radius:7px;background:#f1d302;color:#123653;font-size:12px;font-weight:700}
+.card h3{margin:0;font-size:26px!important;font-weight:650;line-height:1.25;letter-spacing:-.035em;color:#123653!important}
+.description{margin:10px 0 0!important;min-height:47px;font-size:14px!important;line-height:1.65!important;color:#496278!important}
+.price{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px;margin-top:22px}
+.price strong{font-size:44px;font-weight:650;letter-spacing:-.055em;line-height:1.15}
+.price>span{font-size:15px;color:#496278}
+.billing{margin:7px 0 0!important;font-size:13px!important;line-height:1.65!important;color:#496278!important}
+.commission{margin:14px 0 0!important;color:#235789!important;font-size:15px!important;font-weight:650;line-height:1.6!important}
+.button,.primary{display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:20px;padding:11px 13px;border:1px solid #235789;border-radius:8px;font-size:14px;font-weight:650;line-height:1.5;text-decoration:none!important;background:#fff;color:#235789!important}
+.primary{background:#235789;color:#fff!important}
+.button:hover{background:#edf4f9}.primary:hover{background:#173e62}
+.pricing :is(a,button,input):focus-visible{outline:3px solid #bf3446;outline-offset:4px}
+.card ul{display:grid!important;gap:10px;margin:22px 0 0!important;padding:18px 0 0!important;border-top:1px solid #dce5ec;list-style:none!important}
+.card li{display:flex!important;gap:9px;align-items:flex-start;font-size:13px!important;line-height:1.65!important;margin:0!important;color:#34546e!important}
+.card li svg{width:16px;height:16px;flex:0 0 16px;margin-top:3px;color:#235789}
+.seats{display:grid;grid-template-columns:1fr 66px;gap:8px;align-items:center;margin-top:16px}
+.seats label{font-size:13px;font-weight:600}.seats input{width:66px;min-height:44px;padding:8px;border:1px solid #a8bdcd;border-radius:6px;background:#fff;color:#123653;font:inherit;font-size:16px}
+.seats p{grid-column:1/-1;margin:0!important;font-size:13px!important;line-height:1.65!important;color:#496278!important}
+.notes{color:var(--plan-notes,#123653);max-width:740px;margin:26px auto 0;text-align:center}.notes p{font-size:14px!important;line-height:1.75!important;margin:8px 0!important;color:inherit!important}
+@media(max-width:1000px) and (min-width:761px){.card{padding:25px 17px}.card.recommended{padding:24px 16px}.grid{gap:12px}.description{min-height:70px}.price strong{font-size:39px}.card li{font-size:12px!important}}
+@media(max-width:760px){.grid{grid-template-columns:1fr;max-width:390px;gap:34px}.card{padding:27px 24px;text-align:center}.card.recommended{padding:26px 23px}.description{min-height:0}.price{justify-content:center}.card li{text-align:left}.cadence{margin-bottom:30px}.cadence button{padding:10px 14px;font-size:13px}.seats{text-align:left}.notes{max-width:390px}.notes p{font-size:13px!important}}

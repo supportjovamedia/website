@@ -13,17 +13,17 @@ test('JovaBook plan choice, six real themes and FAQ work with the current intera
  await page.goto('/jovabook');await expect(page.locator('main h1')).toHaveCount(1);
  await expect(page.getByRole('navigation',{name:'Explore the booking workspace'})).toHaveCount(0);
  await expect(page.getByRole('button',{name:'Pause animation',exact:true})).toHaveCount(0);
- const cta=page.locator('.ws-hero-actions').getByRole('link',{name:'Start your 3-day trial',exact:true});
+ const cta=page.locator('.ws-hero-actions').getByRole('link',{name:'Start free today',exact:true});
  await expect(cta).toHaveAttribute('href','#plans');await cta.focus();await page.keyboard.press('Enter');
  await expect(page).toHaveURL(/#plans$/);
- const plans=page.locator('#plans');await expect(plans.getByRole('heading',{name:'JovaBook plans and pricing.',exact:true})).toBeVisible();
- await expect.poll(()=>plans.evaluate(el=>{const top=el.getBoundingClientRect().top;return top>=80&&top<=240;})).toBe(true);
+ const plans=page.locator('#plans');await expect(plans.getByRole('heading',{name:/Start free/})).toBeVisible();
+ await expect.poll(()=>plans.evaluate(el=>{const top=el.getBoundingClientRect().top;return top>=120&&top<=360;})).toBe(true);
  // A native fragment link moves the keyboard sequence to the destination controls.
  await page.keyboard.press('Tab');await expect(plans.getByRole('button',{name:'Monthly',exact:true})).toBeFocused();
  await plans.getByRole('button',{name:'Yearly Save 20%',exact:true}).click();
- for(const total of ['£192 billed yearly','£480 billed yearly','£960 billed yearly'])await expect(plans).toContainText(total);
- const trialLinks=plans.getByRole('link',{name:'Start free trial',exact:true});await expect(trialLinks).toHaveCount(3);
- for(const [index,plan] of ['essential','standard','premium'].entries())await expect(trialLinks.nth(index)).toHaveAttribute('href',new RegExp('plan='+plan+'&cadence=annual#signup$'));
+ for(const total of ['£192 billed yearly','£240 billed yearly'])await expect(plans).toContainText(total);
+ const trialLinks=plans.locator('article a');await expect(trialLinks).toHaveCount(3);
+ for(const [index,plan] of ['essential','standard','premium'].entries())await expect(trialLinks.nth(index)).toHaveAttribute('href',new RegExp('plan='+plan+'&cadence='+(plan==='essential'?'monthly':'annual')+'#signup$'));
  const themes=page.getByRole('group',{name:'Workspace colour previews',exact:true}),screens=new Set();
  await expect(themes.getByRole('button')).toHaveCount(6);
  for(const name of ['Jova Blue','Rose Studio','Midnight Glass','Forest','Warm Studio','Amethyst']){

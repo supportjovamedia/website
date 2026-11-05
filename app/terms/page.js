@@ -32,12 +32,14 @@ export default function Page() {
           We aim to keep website information current, but service descriptions,
           availability and pricing guidance may change.
         </p>
-        <h2>JovaBook booking commission</h2>
-        <p>Billing policy version: 2026-11-02-online-origin-v3. These rules apply after acceptance and do not rewrite historical charges or settled invoices.</p>
-        <p>Essential and Standard charge 1% commission on online customer bookings. Premium charges 0%. The fee uses the original service price confirmed online, including bookings paid entirely at the business with no deposit. Later staff discounts do not reduce that original fee.</p>
-        <p>The fee is recorded when booked and becomes billable after the appointment, subject to applicable trial exemptions and cancellation review. Commission is invoiced monthly between billing dates, separately from payment-processing fees. Annual subscriptions are paid upfront; commission remains monthly. Unbilled amounts carry forward.</p>
-        <p>Rescheduling or linking a replacement appointment preserves its online origin and produces one fee. Deleting a diary entry does not delete its financial history. Genuine cancellations and no-shows can receive a waiver or credit after review. Reports and possible replacements are reviewed using booking history; a matching record alone does not prove misuse or create an extra charge.</p>
-        <p>Customers can dispute an incorrect cancellation or no-show report with the business or support.jovamedia@gmail.com, quoting their booking reference. Businesses can request a correction or credit through the same support address. The customer's cancellation window and deposit refund rules remain separate from commission review.</p>
+        <h2>JovaBook plans and billing</h2>
+        <p>Offer version: 2026-11-free-v1. Starter is free, requires no payment card, and includes one staff calendar, 20 bookings and 50 emails per calendar month.</p>
+        <p>Pro Solo costs £20 per month or £192 per year, paid upfront. Pro Team costs £25 per month or £240 per year including one staff seat. Each additional Team seat costs £6 per month or £57.60 per year. Paid annual plans save 20% against twelve monthly payments.</p>
+        <p>Paid plans offer a 14-day free trial with a card required. The selected subscription starts automatically after day 14 and renews at the selected frequency. A paid trial is available once per eligible account. Subscription controls are in the business dashboard.</p>
+        <p>All current plans have 0% booking commission. Stripe payment-processing fees are separate. Historical charges and settled invoices under the retired billing policy (2026-11-02-online-origin-v3) remain unchanged.</p>
+        <p>Pro Solo includes 100 emails and 50 SMS messages per month. Pro Team includes the same allowance per purchased staff seat. Allowances reset on UK calendar months, do not roll over, and pause delivery when exhausted. Extra messages are not charged automatically. Manual and online bookings count towards the Starter monthly limit by appointment date; cancelled appointments are excluded.</p>
+        <p>Every plan includes a one-page business website and Stripe deposits. Pro Solo and Pro Team include calendar embedding. Starter and Pro Solo retain JovaBook branding. Pro Team removes customer-facing JovaBook branding and includes advanced Insights and additional one-page customisation.</p>
+        <p>A paid plan or trial that ends returns to Starter. Existing records are retained. Businesses with more than one active staff calendar can choose which calendar to keep active on Starter. Customer cancellation windows and deposit refund rules remain separate from software subscription billing.</p>
         <h2>Contact</h2>
         <p>Questions about these terms can be sent to support.jovamedia@gmail.com.</p>
       </section>

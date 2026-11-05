@@ -1,10 +1,10 @@
-import {SOURCE_FILES,prepareSchemaSql} from '../../scripts/jovabook-test-db.mjs';
+import {LEGACY_SOURCE_FILES,prepareSchemaSql} from '../../scripts/jovabook-test-db.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {createRequire} from 'node:module';import {randomUUID} from 'node:crypto';
 import {createJovaBookBillingHandlers} from '../../lib/jovabook-billing.mjs';
 import {createMonthlyCommission,ANNUAL_COMMISSION_TERMS_VERSION,MONTHLY_COMMISSION_TERMS_VERSION} from '../../lib/jovabook-monthly-commission.mjs';
 import {subscriptionForPrice,commissionMonthWindow} from '../../lib/jovabook-subscription-catalog.mjs';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
-const files=SOURCE_FILES;
+const files=LEGACY_SOURCE_FILES;
 const env={JOVABOOK_BILLING_ENABLED:'true',JOVABOOK_BILLING_APPROVED:'true',JOVABOOK_STRIPE_SECRET_KEY:'sk_test_fictional',JOVABOOK_STRIPE_ACCOUNT_ID:'acct_Fictional',JOVABOOK_STRIPE_MODE:'test',JOVABOOK_STRIPE_UPGRADE_PORTAL_CONFIG:'bpc_Fixture',JOVABOOK_STRIPE_PRICE_ESSENTIAL:'price_essential',JOVABOOK_STRIPE_PRICE_STANDARD:'price_standard',JOVABOOK_STRIPE_PRICE_PREMIUM:'price_premium',JOVABOOK_STRIPE_PRICE_ESSENTIAL_ANNUAL:'price_essentialannual',JOVABOOK_STRIPE_PRICE_STANDARD_ANNUAL:'price_standardannual',JOVABOOK_STRIPE_PRICE_PREMIUM_ANNUAL:'price_premiumannual',JOVABOOK_BILLING_WORKER_TOKEN:'a'.repeat(64),JOVABOOK_COMMISSION_WORKER_TOKEN:'d'.repeat(64),JOVABOOK_COMMISSION_HTTP_TOKEN:'e'.repeat(64),JOVABOOK_COMMISSION_SUPERVISOR_ENABLED:'true',JOVABOOK_MONTHLY_COMMISSION_ENABLED:'true',JOVABOOK_MONTHLY_COMMISSION_INVOICING_ENABLED:'true',JOVABOOK_ANNUAL_COMMISSION_INVOICING_ENABLED:'true',JOVABOOK_SUPABASE_URL:'https://fictional.example.test',JOVABOOK_SUPABASE_PUBLISHABLE_KEY:'fictional'};
 test('annual handlers and separate monthly invoices use real isolated PostgreSQL',async t=>{
  const db=new PGlite(),q=(s,p=[])=>db.query(s,p),value=async(s,p=[])=>(await q(s,p)).rows[0].data;let serial=0;

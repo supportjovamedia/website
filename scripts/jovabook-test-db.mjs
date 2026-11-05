@@ -19,7 +19,7 @@ export const BASE_DIR=path.join(REPO_ROOT,'.jovabook-test');
 export const DATA_DIR=path.join(BASE_DIR,'data');
 const MARKER_FILE=path.join(BASE_DIR,'marker.json'),LOCK_FILE=path.join(BASE_DIR,'cli.lock');
 const FORMAT='jovabook-isolated-local-test-v1',FIXTURES='fictional-example-test-v1';
-export const MANIFEST_VERSION=20,BOOTSTRAP_VERSION=2;
+export const MANIFEST_VERSION=21,BOOTSTRAP_VERSION=2;
 export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql',
  'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
@@ -58,7 +58,9 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261103013239_workspace_branding_sms_reminders.sql',
  'migrations/20261103015311_deposit_sms_consent.sql',
  'migrations/20261103015918_sms_message_controls.sql',
- 'migrations/20261103222916_owner_funnel.sql']);
+ 'migrations/20261103222916_owner_funnel.sql','migrations/20261105022405_free_plans.sql']);
+// Historical billing suites stay on their released policy; the CLI and new offer suites use every migration.
+export const LEGACY_SOURCE_FILES=Object.freeze(SOURCE_FILES.filter(name=>!name.endsWith('_free_plans.sql')));
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
  'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql','migrations/20261102222936_appointment_completion_scheduler.sql','migrations/20261103013242_sms_reminder_scheduler.sql','migrations/20261103224835_owner_funnel_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
@@ -172,11 +174,11 @@ export function validateSourceInventory(migrations){
  const unknown=migrations.filter(name=>!SOURCE_FILES.includes(name)&&!OMITTED_SOURCE_FILES.includes(name));
  if(unknown.length)throw Error('Unreviewed local schema migrations: '+unknown.sort().join(', ')+'. Update the offline manifest explicitly before using this database.');
 }
-export async function sources(){
+export async function sources({legacy=false}={}){
  const directory=path.join(REPO_ROOT,'booking-demo','supabase');
  const migrations=(await fs.readdir(path.join(directory,'migrations'))).filter(name=>name.endsWith('.sql')).map(name=>'migrations/'+name);
  validateSourceInventory(migrations);
- const entries=await Promise.all(SOURCE_FILES.map(async name=>{const raw=await fs.readFile(path.join(directory,name),'utf8');return {name,sql:prepareSchemaSql(raw),sha256:createHash('sha256').update(raw).digest('hex')};}));
+ const entries=await Promise.all((legacy?LEGACY_SOURCE_FILES:SOURCE_FILES).map(async name=>{const raw=await fs.readFile(path.join(directory,name),'utf8');return {name,sql:prepareSchemaSql(raw),sha256:createHash('sha256').update(raw).digest('hex')};}));
  const hashes=Object.fromEntries(entries.map(entry=>[entry.name,entry.sha256])),order=entries.map(entry=>entry.name);
  const digest=createHash('sha256').update(JSON.stringify({version:MANIFEST_VERSION,bootstrap:BOOTSTRAP_VERSION,fixtures:FIXTURES,order,hashes,omitted:OMITTED_SOURCE_FILES})).digest('hex');
  return {entries,hashes,order,digest};

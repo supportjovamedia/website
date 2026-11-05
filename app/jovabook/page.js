@@ -5,36 +5,36 @@ import "./navigation-integration.css";
 export const metadata=jovabookMetadata();
 const faqs = [
   {
-    "question": "What is JovaBook and who is it for?",
-    "answer": "JovaBook is booking and scheduling software by JovaMedia for service businesses, including salons, healthcare practices, tutors, coaches, consultants and spas. Clients book appointments online while you manage your calendar, services and client records. Every plan includes a business website and email confirmations and reminders."
+    "question": "What is included in Starter?",
+    "answer": "Starter is £0 per month with one staff calendar, up to 20 bookings per calendar month and 50 emails per month. Your one-page website includes your business name, logo, description, hours, contact details and online booking. A Powered by JovaBook badge stays visible. No card is required to use Starter."
   },
   {
-    "question": "How do clients book with my business?",
-    "answer": "Share your business booking link. A client chooses a service and an available date and time, enters their details and reviews the booking before confirming. The booking appears in your business calendar."
+    "question": "Is the free plan a trial?",
+    "answer": "Starter is a free plan with monthly limits. There is no automatic upgrade or subscription charge. Pro Solo and Pro Team offer a 14-day free trial with a card required. Your chosen paid subscription starts automatically after the 14-day trial."
   },
   {
-    "question": "Can I set different hours for each day?",
-    "answer": "Yes. Set opening hours for each day and mark closed days in Business details. You can also leave time between bookings. Standard and Premium support individual working hours for team members."
+    "question": "What happens when I reach 20 bookings?",
+    "answer": "Starter pauses new bookings for a calendar month once it has 20 appointments. Existing bookings stay in your diary. Cancelled appointments do not use the limit. Upgrade to Pro Solo or Team for unlimited bookings."
   },
   {
-    "question": "Does a website come with Essential?",
-    "answer": "Yes. Essential includes a one-page business website with your hero image, introduction, opening hours, contact details and booking link. Change your image and introduction in Personalise, and your opening hours and contact information in Business details."
+    "question": "How do email and SMS allowances work?",
+    "answer": "Starter includes 50 emails per month. Pro Solo includes 100 emails and 50 SMS per month. Team includes 100 emails and 50 SMS for each staff seat, including the seat in the base plan. Booking confirmations, alerts and reminders use these allowances. They reset each calendar month and do not roll over. Messages pause when the allowance is used; extra messages are never charged automatically."
   },
   {
-    "question": "Which plan do I need for my team?",
-    "answer": "Essential is for one owner. Standard supports up to 5 staff and includes Insights. Premium supports up to 10 staff and has 0% booking commission. Choose any plan to start a three-day free trial."
+    "question": "Can I add bookings to my existing website?",
+    "answer": "Pro Solo and Team include an embeddable booking calendar: a small piece of code you paste into your own website so clients can book there. You can also keep using your included one-page website link."
+  },
+  {
+    "question": "How much does Team cost?",
+    "answer": "Pro Team is £25 per month including one staff seat, plus £6 per month for each extra staff seat. Two seats cost £31 per month and three cost £37 per month. Each seat includes 100 emails and 50 SMS per month. Team removes JovaBook branding from customer-facing booking pages and includes advanced Insights, period comparisons and extra website customisation."
   },
   {
     "question": "How do annual billing and commission work?",
-    "answer": "Annual subscriptions are paid upfront and cost 20% less than 12 monthly subscription payments. Essential and Standard charge 1% commission on online customer bookings when appointments take place. Commission is invoiced monthly, including on annual subscriptions. Premium has 0% booking commission. Payment-processing fees are separate."
-  },
-  {
-    "question": "What happens after the 3-day trial?",
-    "answer": "Choose your plan and enter your card securely with Stripe to start a three-day free trial. There is no subscription charge today. Your chosen monthly or annual subscription starts automatically after the trial unless you cancel beforehand. Essential is £20/month, Standard £50/month and Premium £100/month. Annual subscriptions are paid upfront at the displayed discounted yearly price."
+    "answer": "Every plan has 0% booking commission. Pro Solo is £192 per year, paid upfront, equivalent to £16 per month. Pro Team is £240 per year including one seat, plus £57.60 per year for each extra seat. That saves 20% against twelve monthly payments. Monthly message allowances still reset monthly. Stripe payment-processing fees are separate."
   },
   {
     "question": "Can clients book through Instagram, and can I take deposits?",
-    "answer": "Share your JovaBook booking link in your Instagram bio or messages so clients can book on your page. To take online deposits, connect your business's payment-ready Stripe account and choose a business-wide deposit percentage in Payments & deposits. Deposits go to your business's Stripe account. A native Instagram Book Now integration is not available."
+    "answer": "Share your one-page website link in Instagram, WhatsApp or messages. Connect a payment-ready Stripe account and choose your deposit percentage. Deposits go to your connected Stripe account. Stripe processing fees still apply. There is no native Instagram Book Now integration."
   }
 ];
 

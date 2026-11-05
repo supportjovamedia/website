@@ -12,14 +12,14 @@ test('public landing page is measurable but customer journeys and private URLs s
 });
 test('trial interest, plan handoff and login remain separate, bounded signals',()=>{
  const page='https://www.jovamedia.com/jovabook';
- assert.equal(jovabookClickEvent('#plans',page).name,'jovabook_trial_interest');
+ assert.equal(jovabookClickEvent('#plans',page).name,'jovabook_pricing_interest');
  assert.equal(jovabookClickEvent('https://book.jovamedia.com/login',page).name,'jovabook_login_click');
  for(const plan of jovabookMarketingPlans)for(const cadence of ['monthly','annual']){
   const href=jovabookSignupHref(plan.id,cadence),event=jovabookClickEvent(href,page);
-  assert.equal(event.name,'jovabook_plan_selected');assert.deepEqual(event.fields,{plan:plan.id,cadence});
+  assert.equal(event.name,'jovabook_plan_selected');assert.deepEqual(event.fields,{plan:plan.id,cadence:plan.id==='essential'?'monthly':cadence});
   assert.equal(eventPayload(event.name,event.fields,page).plan,plan.id);
  }
  assert.equal(jovabookClickEvent('https://evil.example/login',page),null);
  assert.equal(eventPayload('jovabook_plan_selected',{plan:'private@example.com',cadence:'monthly'},page),null);
- assert.deepEqual(jovabookMarketingPlans.map(p=>[p.monthly,p.annual,p.commission]),[[20,192,1],[50,480,1],[100,960,0]]);
+ assert.deepEqual(jovabookMarketingPlans.map(p=>[p.monthly,p.annual,p.commission]),[[0,0,0],[20,192,0],[25,240,0]]);
 });

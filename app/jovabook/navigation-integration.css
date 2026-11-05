@@ -1,3 +1,16 @@
 /* JovaBook uses the same full-width navigation as the rest of JovaMedia. */
 .jova-pages.jovabook-header{background:#fff;color:#123653;--ink:#123653;--blue:#235789}
 .jovabook-header .navigation-slot{padding-top:0}
+
+.jovabook-announcement{background:#b52e40;color:#fff;text-align:center}
+.jovabook-announcement a{display:flex;align-items:center;justify-content:center;gap:12px;min-height:42px;padding:9px 20px;color:#fff!important;font-size:14px;font-weight:600;text-decoration:none}
+.jovabook-announcement a:hover{text-decoration:underline}
+.jovabook-announcement a:focus-visible{outline:3px solid #f1d302;outline-offset:-5px}
+.ws .free-pricing{padding:75px 24px 55px;scroll-margin-top:150px}
+.ws .free-pricing>.wrap{width:100%;max-width:1120px;padding:0}
+.ws .free-pricing .section-head{max-width:720px;margin:0 auto 35px;text-align:center}
+.ws .free-pricing .section-head h2{font-size:48px;line-height:1.12;letter-spacing:-.045em}
+.ws .free-pricing .section-head p{font-size:16px;line-height:1.75;max-width:620px;margin:20px auto 0}
+@media(max-width:760px){.ws .free-pricing{padding:52px 20px 40px}.ws .free-pricing .section-head h2{font-size:36px}.ws .free-pricing .section-head p{font-size:14px}}
+
+.ws .free-pricing{--plan-notes:#f5f8fc}

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash,randomUUID} from 'node:crypto';
 import {createRequire} from 'node:module';
-import {bootstrap,SOURCE_FILES,prepareSchemaSql,installOfflineGuard} from '../../scripts/jovabook-test-db.mjs';
+import {bootstrap,LEGACY_SOURCE_FILES,prepareSchemaSql,installOfflineGuard} from '../../scripts/jovabook-test-db.mjs';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const migration='migrations/20261102134215_trial_history.sql';
 const operator='10000000-0000-4000-8000-000000000011',customer='10000000-0000-4000-8000-000000000012',unverified='10000000-0000-4000-8000-000000000013';
@@ -34,7 +34,7 @@ test('minimal private trial history survives full-schema purge and blocks repeat
 
  try{
   // Explicitly append this new version until the parent-owned manifest is updated.
-  const files=[...SOURCE_FILES];if(!files.includes(migration))files.push(migration);
+  const files=[...LEGACY_SOURCE_FILES];if(!files.includes(migration))files.push(migration);
   const entries=await Promise.all(files.map(async name=>{const raw=await readFile(new URL('../supabase/'+name,import.meta.url),'utf8');return {name,sql:prepareSchemaSql(raw),sha256:sha(raw)};}));
   await bootstrap(db,{entries,hashes:Object.fromEntries(entries.map(e=>[e.name,e.sha256])),order:files,digest:sha(JSON.stringify(files))});
   for(const [id,email,confirmed] of [[operator,'support.jovamedia@gmail.com',true],[customer,'fictional-customer@example.test',true],[unverified,'fictional-unverified@example.test',false]])await q('insert into auth.users(id,email,email_confirmed_at) values($1,$2,$3)',[id,email,confirmed?new Date():null]);
