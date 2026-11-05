@@ -94,9 +94,10 @@ test('free plans enforce bookings, message allowances and verified card-trial se
    const slug=await value('select slug value from salons where id=$1',[sid]);await q("update salons set status='active' where id=$1",[sid]);
    await q("update jovabook_private.offer_accounts set plan='essential',seats=1,provider_status=null,paid_until=null,trial_ends_at=null where salon_id=$1",[sid]);
    assert.equal((await limits()).deposits_allowed,false);assert.equal(await value('select jovabook_private.online_deposit_pence($1,50) value',[sid]),0);
+   assert.equal(await value("select jovabook_private.integration_connect_allowed($1,'stripe') value",[sid]),false);
    await assert.rejects(q(`update salons set payments='{"enabled":true,"deposit_percent":20}'::jsonb where id=$1`,[sid]),/Pro Solo and Pro Team/);
    await q("update jovabook_private.offer_accounts set plan='standard',seats=1,provider_status='active',paid_until=now()+interval '30 days',ever_paid=true where salon_id=$1",[sid]);
-   assert.equal((await limits()).deposits_allowed,true);
+   assert.equal((await limits()).deposits_allowed,true);assert.equal(await value("select jovabook_private.integration_connect_allowed($1,'stripe') value",[sid]),true);
    await q(`update salons set payments='{"enabled":true,"deposit_percent":20}'::jsonb where id=$1`,[sid]);
    assert.equal(await value('select jovabook_private.online_deposit_pence($1,50) value',[sid]),1000);
    let pub=await value('select public_salon($1) value',[slug]);assert.equal(pub.deposits_allowed,true);assert.equal(pub.payments.enabled,true);assert.equal(pub.payments.deposit_percent,20);
