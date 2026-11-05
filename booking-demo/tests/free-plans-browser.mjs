@@ -49,8 +49,8 @@ try{
    await expect(f.page.locator('input[name*=card]')).toHaveCount(0);assert(!f.calls.some(c=>c.path.endsWith('/billing/checkout')));
    await expect(f.page.getByRole('button',{name:'Cancel subscription',exact:true})).toHaveCount(0);
    const team=f.page.getByRole('region',{name:'Pro Team plan',exact:true});
-   await team.locator('[data-change=offer-seats]').fill('3');await team.locator('[data-change=offer-seats]').press('Tab');
-   await f.page.getByRole('button',{name:'Yearly, save 20%',exact:true}).click();await expect(f.page.getByRole('region',{name:'Pro Team plan',exact:true})).toContainText('£355.20');
+   await expect(team.locator('[data-change=offer-seats]')).toBeDisabled();await expect(team.locator('[data-change=offer-seats]')).toHaveValue('1');
+   await f.page.getByRole('button',{name:'Yearly, save 20%',exact:true}).click();await expect(f.page.getByRole('region',{name:'Pro Team plan',exact:true})).toContainText('£240.00');
    await f.page.screenshot({path:path.join(out,'dashboard-'+width+'.png'),fullPage:true});
    assert(await f.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
    const pro=f.page.getByRole('region',{name:'Pro Solo plan',exact:true});await pro.getByRole('button',{name:'Start 14-day trial'}).click();
@@ -60,9 +60,9 @@ try{
   }finally{await f.context.close();}
  }
  const f=await fixture(390);try{
-  f.access.business.plan='standard';f.access.billing={...f.access.billing,trial_eligible:false,trial_subscription:true,trial_ends_at:new Date(Date.now()+14*86400000).toISOString(),email_limit:100,sms_limit:50,embed_allowed:true};f.salon.plan='standard';
+  f.access.business.plan='standard';f.access.billing={...f.access.billing,trial_eligible:false,trial_subscription:true,trial_ends_at:new Date(Date.now()+14*86400000).toISOString(),email_limit:100,sms_limit:0,embed_allowed:true};f.salon.plan='standard';
   await f.login();await f.page.goto(base+'/#billing');await expect(f.page.getByRole('button',{name:'Cancel subscription',exact:true})).toBeVisible();await expect(f.page.getByRole('heading',{name:'Bookings on your own website'})).toBeVisible();
-  await f.page.getByRole('button',{name:'Cancel subscription',exact:true}).click();const request=f.page.waitForRequest(r=>new URL(r.url()).pathname==='/api/jovabook/billing/cancel');await f.page.locator('[data-form=offer-confirm] button.primary').click();await request;await expect(f.page.getByText(/Subscription ends/)).toBeVisible();assert.deepEqual(f.errors,[]);results.push({dashboardCancellation:true,passed:true});
+  await expect(f.page.getByRole('region',{name:'Monthly allowances'})).toContainText('0 / 0 SMS');await f.page.goto(base+'/#notifications');await expect(f.page.getByText('SMS is unavailable during the free trial.',{exact:false})).toBeVisible();await f.page.goto(base+'/#billing');await f.page.getByRole('button',{name:'Cancel subscription',exact:true}).click();const request=f.page.waitForRequest(r=>new URL(r.url()).pathname==='/api/jovabook/billing/cancel');await f.page.locator('[data-form=offer-confirm] button.primary').click();await request;await expect(f.page.getByText(/Subscription ends/)).toBeVisible();assert.deepEqual(f.errors,[]);results.push({dashboardCancellation:true,passed:true});
  }finally{await f.context.close();}
  const setup=await fixture(390);try{
   setup.access.access='setup';setup.access.business.status='setup';setup.salon.status='setup';setup.salon.settings.seeded=false;
