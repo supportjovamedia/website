@@ -6,7 +6,7 @@ import s from './plans.module.css';
 
 const pounds=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(value/100).replace('.00','');
 export default function JovaBookPlans(){
- const [cadence,setCadence]=useState('monthly'),[extraSeats,setExtraSeats]=useState(0),seatId=useId();
+ const [cadence,setCadence]=useState('monthly'),[extraSeats,setExtraSeats]=useState(0),[seatText,setSeatText]=useState('0'),seatId=useId();
  const annual=cadence==='annual';
  return <div id="essential-plan" className={s.pricing}>
   <div className={s.cadence} role="group" aria-label="Billing frequency">
@@ -23,7 +23,7 @@ export default function JovaBookPlans(){
      <div className={s.price} aria-live="polite" aria-atomic="true"><strong>{pounds(selection.monthlyEquivalent)}</strong><span>/ month</span></div>
      <p className={s.billing}>{free?'Free to use. No card required.':`Card required. ${annual?`${pounds(team?24000:selection.total)} billed yearly`:`${pounds(team?2500:selection.total)} billed monthly`}, starting today and renewing automatically.${team?' Includes one calendar. Extra seats are added separately after payment.':''}`}</p>
      <p className={s.commission}>0% booking commission</p>
-     {team&&<div className={s.seats}><label htmlFor={seatId}>Extra staff seats on the paid plan</label><input id={seatId} type="number" min="0" max="999" step="1" value={extraSeats} onChange={e=>{const value=Number(e.target.value);if(Number.isInteger(value)&&value>=0&&value<=999)setExtraSeats(value);}}/><p>{annual?'£240/year includes one seat. Each extra seat is £57.60/year.':'£25/month includes one seat. Each extra seat is £6/month.'}</p></div>}
+     {team&&<div className={s.seats}><label htmlFor={seatId}>Extra staff seats on the paid plan</label><input id={seatId} type="number" min="0" max="999" step="1" inputMode="numeric" value={seatText} onChange={e=>{const raw=e.target.value.replace(/\D/g,'').slice(0,3);const value=raw===''?0:Number(raw);setSeatText(raw===''?'':String(value));setExtraSeats(value);}} onBlur={()=>setSeatText(String(extraSeats))}/><p>{annual?'£240/year includes one seat. Each extra seat is £57.60/year.':'£25/month includes one seat. Each extra seat is £6/month.'}</p></div>}
      <a className={plan.recommended?s.primary:s.button} href={jovabookSignupHref(plan.id,cadence,0)}>{free?'Start free today':`Choose ${plan.name}`}</a>
      <ul aria-label={`${plan.name} features`}>{features.map(feature=><li key={feature}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg><span>{feature}</span></li>)}</ul>
     </article>;
