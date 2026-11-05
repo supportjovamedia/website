@@ -87,3 +87,11 @@ test('an abandoned Checkout resumes after reload and a different plan safely exp
  let r=await f.handler.checkout(f.request({plan:'standard',request_id:crypto.randomUUID()}));assert.equal(r.status,200);assert.equal(f.effects.filter(x=>x==='checkout').length,1);assert.equal(f.calls.findLast(c=>c.kind==='begin').payload.request_id,first);
  f.stripe.checkout.sessions.expire=async id=>({id,status:'expired'});r=await f.handler.checkout(f.request({plan:'premium',seats:2,request_id:crypto.randomUUID()}));assert.equal(r.status,200);assert(f.calls.some(c=>c.kind==='close_action'));assert.equal(f.effects.filter(x=>x==='checkout').length,2);
 });
+
+test('changing a plan during its trial cannot end the trial early through portal defaults',async()=>{
+ const f=fixture();f.data.customer_id='cus_Fixture';f.state.sub=f.trial();f.state.sub.items.data[0].price='price_Pro';
+ const config={id:'bpc_Fixture',active:true,features:{subscription_update:{enabled:true,proration_behavior:'always_invoice'}}};let sessions=0;
+ f.stripe.billingPortal={configurations:{retrieve:async()=>config},sessions:{create:async()=>{sessions++;return {id:'bps_Fixture',url:'https://billing.stripe.com/p/session/fixture'};}}};
+ let r=await f.handler.change(f.request({plan:'premium',request_id:crypto.randomUUID()}));assert.equal(r.status,503);assert.equal(sessions,0);
+ config.features.subscription_update.trial_update_behavior='continue_trial';r=await f.handler.change(f.request({plan:'premium',request_id:crypto.randomUUID()}));assert.equal(r.status,200);assert.equal(sessions,1);
+});

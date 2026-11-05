@@ -45,7 +45,7 @@ records and mean Starter, Pro Solo and Pro Team in the versioned offer.
    first tier up to 1 seat, flat 2500 pence monthly or 24000 annually, unit amount 0;
    second tier unbounded, flat 0, unit amount 600 monthly or 5760 annually.
 5. Configure the dedicated hosted plan-change portal for these products and prices,
-   with price and quantity updates, `always_invoice` proration and hosted confirmation.
+   with price and quantity updates, `always_invoice` proration, an unchanged billing-cycle anchor, `trial_update_behavior=continue_trial`, and hosted confirmation. Trial changes fail closed unless this preserves the existing free-trial deadline.
 6. Set server-only `JOVABOOK_OFFER_VERSION=2026-11-free-v1`,
    `JOVABOOK_STRIPE_PRICE_PRO_SOLO`, `JOVABOOK_STRIPE_PRICE_PRO_SOLO_ANNUAL`,
    `JOVABOOK_STRIPE_PRICE_TEAM`, `JOVABOOK_STRIPE_PRICE_TEAM_ANNUAL` and
@@ -69,8 +69,10 @@ responsive pricing and signup/dashboard browser proofs, production build and
 function-trace audit. Browser tests must intercept external auth, payments and
 message providers. Keep screenshots and reports under `output/free-plans`.
 
-Local proof, 5 November 2026: 803 server/SQL regression checks passed, then all nine current-offer billing cases and 43 changed-module checks passed. The full production website browser suite passed 75 checks (five device-specific skips). The new intercepted browser proof covers three dashboard widths, card-free Starter setup, paid-trial dashboard cancellation, Starter and Team public websites with logos, embed access and the deposit popup return. No live payments or SMS were used. Production build, function trace audit and ESLint passed.
+Local proof, 5 November 2026: 803 server/SQL regression checks passed, then all ten current-offer billing cases and 43 changed-module checks passed. The full production website browser suite passed 75 checks (five device-specific skips). The new intercepted browser proof covers three dashboard widths, card-free Starter setup, paid-trial dashboard cancellation, Starter and Team public websites with logos, embed access and the deposit popup return. No live payments or SMS were used. Production build, function trace audit and ESLint passed.
 
 The provider catalogue, portal configuration and production database migration remain deployment prerequisites. The obsolete disposable trial account was deleted separately with explicit approval; no customer account is migrated or charged by this PR.
 
 Back-office account counters, business records, trial notifications and subscription summaries read the versioned offer directly. Starter is counted as free; unpaid trials are separate from active paid Pro plans. Operator reads preserve historical financial records and do not create billing actions.
+
+Stripe reference for retaining the original trial on plan changes: https://docs.stripe.com/customer-management#limitations-to-modifying-subscriptions.
