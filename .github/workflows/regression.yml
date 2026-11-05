@@ -73,6 +73,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: node booking-demo/tests/free-plans-browser.mjs
       - run: node booking-demo/tests/business-website-browser.mjs
       - run: node booking-demo/tests/sidebar-alignment-browser.mjs
       - run: node booking-demo/tests/business-settings-browser.mjs
@@ -89,6 +90,7 @@ jobs:
         with:
           name: jovabook-website-settings-proof
           path: |
+            output/free-plans/
             output/jovabook-business-website/
             booking-demo/test-results/sidebar-alignment/after/
             booking-demo/test-results/business-settings/after/

@@ -1,11 +1,12 @@
+import {OFFER_PLANS} from "../../lib/jovabook-offer.mjs";
 const site = "https://www.jovamedia.com";
 export const jovabookUrl = `${site}/jovabook`;
 
 export function jovabookMetadata() {
   const title = "Booking System for Service Businesses | JovaBook";
-  const description = "JovaBook by JovaMedia is a booking system for service businesses. Manage appointments, clients and deposits. Plans from £20/month.";
+  const description = "JovaBook by JovaMedia is a booking system for service businesses. Start free with 20 monthly bookings, a one-page website and Stripe deposits. 0% booking commission on every plan.";
   const image = {
-    url: `${site}/share/jovabook-hero-2026-11.png`,
+    url: `${site}/share/jovabook-free-plans-2026-11.png`,
     width: 1200,
     height: 630,
     alt: "JovaBook booking system for service businesses, with a calendar, mobile booking page and yellow accent",
@@ -65,7 +66,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       browserRequirements: "Requires JavaScript and an internet connection",
       inLanguage: "en-GB",
       publisher: organisation,
-      description: "JovaBook is scheduling and booking software by JovaMedia for service businesses. Manage appointments, business opening hours, clients and services. Essential includes a workspace for one owner and a one-page business website.",
+      description: "JovaBook is scheduling and booking software by JovaMedia for service businesses. Manage appointments, business opening hours, clients and services. Starter is free for one staff calendar and 20 bookings per month, including a one-page business website. Every plan has 0% booking commission.",
       featureList: [
         "Online booking page",
         "Booking calendar",
@@ -75,50 +76,13 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
         "Email confirmations and appointment reminders",
         "Booking deposits through a connected Stripe account",
       ],
-      offers: [
-        {
-          "@type": "Offer",
-          name: "JovaBook Essential monthly subscription",
-          url: `${jovabookUrl}#plans`,
-          price: "20.00",
-          priceCurrency: "GBP",
-          seller: organisation,
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "20.00",
-            priceCurrency: "GBP",
-            billingDuration: "P1M",
-          },
-          description: "£20 per month plus 1% commission on online customer bookings when appointments take place. Commission is billed monthly. Payment processing fees are separate.",
-        },
-        {
-          "@type": "Offer",
-          name: "JovaBook Essential annual subscription",
-          url: `${jovabookUrl}#plans`,
-          price: "192.00",
-          priceCurrency: "GBP",
-          seller: organisation,
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "192.00",
-            priceCurrency: "GBP",
-            billingDuration: "P1Y",
-          },
-          description: "£192 paid upfront for a year, equivalent to £16 per month and 20% less than twelve monthly subscriptions. A separate 1% commission on online customer bookings when appointments take place is billed monthly. Payment processing fees are separate.",
-        },
-      ],
+      offers: Object.entries(OFFER_PLANS).flatMap(([id,plan])=>(id==='essential'?['monthly']:['monthly','annual']).map(cadence=>({
+        "@type":"Offer",name:'JovaBook '+plan.name+' '+cadence,url:jovabookUrl+'#plans',price:((cadence==='annual'?plan.annual:plan.amount)/100).toFixed(2),priceCurrency:'GBP',seller:organisation,
+        priceSpecification:{"@type":"UnitPriceSpecification",price:((cadence==='annual'?plan.annual:plan.amount)/100).toFixed(2),priceCurrency:'GBP',billingDuration:cadence==='annual'?'P1Y':'P1M'},
+        description:(id==='essential'?'Free plan. One staff calendar, 20 monthly bookings and 50 monthly emails.':id==='standard'?'One staff calendar, unlimited bookings, 100 emails and 50 SMS per month.':'One staff seat included. Additional seats cost '+(cadence==='annual'?'£57.60/year':'£6/month')+' each, with 100 emails and 50 SMS per seat per month.')+' 0% booking commission. Stripe processing fees are separate.'
+      }))),
     },
   ];
-  for (const [name, monthly, annual, commission] of [["Standard", 50, 480, 1], ["Premium", 100, 960, 0]]) {
-    for (const [cadence, price, billingDuration] of [["monthly", monthly, "P1M"], ["annual", annual, "P1Y"]]) {
-      graph[1].offers.push({
-        "@type": "Offer", name: `JovaBook ${name} ${cadence} subscription`,
-        url: `${jovabookUrl}#plans`, price: price.toFixed(2), priceCurrency: "GBP", seller: organisation,
-        priceSpecification: { "@type": "UnitPriceSpecification", price: price.toFixed(2), priceCurrency: "GBP", billingDuration },
-        description: `£${price} billed ${cadence === "annual" ? "yearly, paid upfront with a 20% subscription discount" : "monthly"}. ${commission ? "1% commission on online customer bookings when appointments take place, billed monthly." : "0% booking commission."} Payment processing fees are separate.`,
-      });
-    }
-  }
   const questions = faqs.filter(item => typeof item?.question === "string" && typeof item?.answer === "string");
   if (questions.length) {
     graph.push({

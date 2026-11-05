@@ -33,6 +33,12 @@ const nextConfig = {
     }];
   },
 };
-export default nextConfig;
+export default async function configuration(phase){
+  if(phase==='phase-production-build'){
+    const {verifyJovaBookRelease}=await import('./lib/jovabook-release.mjs');
+    await verifyJovaBookRelease();
+  }
+  return nextConfig;
+}
 // Service redirects include the previous System Modernization URL.
 

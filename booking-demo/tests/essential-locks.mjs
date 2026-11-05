@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 const app=await readFile(new URL('../app.js',import.meta.url),'utf8'),schedule=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
 function harness(plan='essential'){
  const state={id:'fictional-business',plan,staff:[{id:'owner',name:'Fictional Owner'}],services:[]},seen={management:0,reads:0,writes:0};
- const c={window:{},salon:()=>state,signedIn:()=>true,management:{pages:{staff:()=>{seen.management++;return 'paid staff';}}},staffPage:()=> 'upgrade',tierAvailability:'Available on Standard and Premium',staffEditor:{read:()=>{seen.reads++;return {name:'Updated',role:'Owner',active:true,hours:null,serviceIds:[]};},saved:()=>{}},canAddStaff:()=>false,save:()=>seen.writes++,closeModal:()=>{},render:()=>{},toast:()=>{}};
+ const c={window:{},salon:()=>state,signedIn:()=>true,management:{pages:{staff:()=>{seen.management++;return 'paid staff';}}},staffPage:()=> 'upgrade',tierAvailability:()=> 'Available on Standard and Premium',staffEditor:{read:()=>{seen.reads++;return {name:'Updated',role:'Owner',active:true,hours:null,serviceIds:[]};},saved:()=>{}},canAddStaff:()=>false,save:()=>seen.writes++,closeModal:()=>{},render:()=>{},toast:()=>{}};
  vm.runInNewContext(schedule,c);vm.runInNewContext('const planFor=s=>window.JovaSchedule.plan(s);'+['staffManagementAllowed','staffAction','staffRoute'].map(name=>app.split('\n').find(line=>line.startsWith('function '+name+'('))).join('\n'),c);
  const staff=app.split('\n').find(line=>line.trim().startsWith("if(type==='staff'){"));assert(staff);vm.runInNewContext('function submit(type,form,data,s){'+staff+'return false;}',c);return {state,seen,c};
 }

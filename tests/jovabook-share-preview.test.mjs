@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import sharp from 'sharp';
 import {jovabookMetadata} from '../app/jovabook/search-data.mjs';
-const asset=new URL('../public/share/jovabook-hero-2026-11.png',import.meta.url);
+const asset=new URL('../public/share/jovabook-free-plans-2026-11.png',import.meta.url);
 test('JovaBook OG and Twitter share the versioned hero with correct dimensions and unchanged page title',async()=>{
- const metadata=jovabookMetadata(),expected='https://www.jovamedia.com/share/jovabook-hero-2026-11.png';
+ const metadata=jovabookMetadata(),expected='https://www.jovamedia.com/share/jovabook-free-plans-2026-11.png';
  assert.equal(metadata.title.absolute,'Booking System for Service Businesses | JovaBook');
  assert.equal(metadata.openGraph.title,metadata.title.absolute);assert.equal(metadata.twitter.title,metadata.title.absolute);
  assert.equal(metadata.alternates.canonical,'https://www.jovamedia.com/jovabook');

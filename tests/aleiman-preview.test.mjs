@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import config from '../next.config.mjs';
+import configuration from '../next.config.mjs';
+const config=await configuration('phase-development-server');
 const root=fileURLToPath(new URL('../public/previews/aleiman/',import.meta.url));
 const pages=['index.html','perform-umrah.html','poi-ziarah.html','contact.html'];
 test('preview pages are unindexed and all local assets and navigation stay inside the preview',()=>{

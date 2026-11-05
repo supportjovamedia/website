@@ -111,6 +111,7 @@ function Navigation({ pathname }) {
         Skip to content
       </a>
       <header className="header" ref={header} data-menu-open={open}>
+        {pathname === "/jovabook" && <div className="jovabook-announcement" inert={open}><a href="#plans">Start for free today <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div>}
         <div className="shell nav">
           <a href="/" className="brand-logo" aria-label="JovaMedia home">
             <Image

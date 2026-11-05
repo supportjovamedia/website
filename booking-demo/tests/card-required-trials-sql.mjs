@@ -1,6 +1,6 @@
 /* Full-schema, isolated PostgreSQL. Fictional identities and worker proofs only. */
 import test from 'node:test';import assert from 'node:assert/strict';import {readFile,readdir} from 'node:fs/promises';import {createRequire} from 'node:module';import {randomUUID} from 'node:crypto';
-import {SOURCE_FILES,prepareSchemaSql,installOfflineGuard} from '../../scripts/jovabook-test-db.mjs';
+import {LEGACY_SOURCE_FILES,prepareSchemaSql,installOfflineGuard} from '../../scripts/jovabook-test-db.mjs';
 const {PGlite}=createRequire(import.meta.url)('@electric-sql/pglite');installOfflineGuard();
 const token='a'.repeat(64),policy='3day-card-v1';
 test('card-required three-day trials across every plan and cadence use actual isolated SQL',async t=>{
@@ -30,7 +30,7 @@ test('card-required three-day trials across every plan and cadence use actual is
  try{
   await db.exec(`create schema auth;create role anon;create role authenticated;create role service_role;create table auth.users(id uuid primary key,email text not null,email_confirmed_at timestamptz);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema public,auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;create schema storage;create table storage.buckets(id text primary key,name text not null,public boolean not null default false,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text not null references storage.buckets(id),name text not null,owner uuid,owner_id text,unique(bucket_id,name));alter table storage.objects enable row level security;grant usage on schema storage to authenticated;grant select,insert,update,delete on storage.objects to authenticated;`);
   const migration=(await readdir(new URL('../supabase/migrations/',import.meta.url))).find(f=>f.endsWith('_card_required_trials.sql'));assert(migration,'Card-required trial migration must exist');
-  const files=[...SOURCE_FILES];if(!files.includes('migrations/'+migration))files.push('migrations/'+migration);
+  const files=[...LEGACY_SOURCE_FILES];if(!files.includes('migrations/'+migration))files.push('migrations/'+migration);
   for(const [index,file] of files.entries()){const raw=await readFile(new URL('../supabase/'+file,import.meta.url),'utf8');assert(raw.trim(),file);await db.exec(prepareSchemaSql(raw));if(index===0)await db.exec('grant select,insert,update,delete on all tables in schema public to authenticated;grant select on all tables in schema public to anon;');}
   await q("update jovabook_private.billing_config set enabled=true,provider_configured=true,worker_hash=encode(sha256(convert_to($1,'UTF8')),'hex')",[token]);
   await t.test('registration and start_trial cannot grant diary or online-booking access without a card',async()=>{

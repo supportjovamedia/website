@@ -1,4 +1,4 @@
-import {SOURCE_FILES,prepareSchemaSql} from '../../scripts/jovabook-test-db.mjs';
+import {LEGACY_SOURCE_FILES,prepareSchemaSql} from '../../scripts/jovabook-test-db.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -10,7 +10,7 @@ import {MONTHLY_COMMISSION_TERMS_VERSION} from '../../lib/jovabook-monthly-commi
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const owner='10000000-0000-4000-8000-000000000001',salon='20000000-0000-4000-8000-000000000001';
 const other='20000000-0000-4000-8000-000000000002',requestId='30000000-0000-4000-8000-000000000001';
-const files=SOURCE_FILES;
+const files=LEGACY_SOURCE_FILES;
 const env={JOVABOOK_BILLING_ENABLED:'true',JOVABOOK_BILLING_APPROVED:'true',JOVABOOK_STRIPE_SECRET_KEY:'sk_test_fictional',JOVABOOK_STRIPE_ACCOUNT_ID:'acct_fictional',JOVABOOK_STRIPE_MODE:'test',JOVABOOK_STRIPE_PRICE_ESSENTIAL:'price_essential',JOVABOOK_STRIPE_PRICE_STANDARD:'price_standard',JOVABOOK_STRIPE_PRICE_PREMIUM:'price_premium',JOVABOOK_BILLING_WORKER_TOKEN:'a'.repeat(64),JOVABOOK_LIFECYCLE_WORKER_TOKEN:'b'.repeat(64),JOVABOOK_LIFECYCLE_AUTH_TOKEN:'c'.repeat(64),JOVABOOK_STRIPE_WEBHOOK_SECRET:'whsec_local_fictional_only',JOVABOOK_STRIPE_UPGRADE_PORTAL_CONFIG:'bpc_local',JOVABOOK_SUPABASE_URL:'https://fictional.example.test',JOVABOOK_SUPABASE_PUBLISHABLE_KEY:'fictional'};
 const amounts={essential:2000,standard:5000,premium:10000};
 const request=(body,token='owner')=>new Request('https://book.jovamedia.com/api/jovabook/billing/status',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
