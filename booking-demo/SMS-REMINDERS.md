@@ -92,10 +92,6 @@ No provider JWT API roundtrip, delivery webhook or live delivery was validated. 
 
 Official references checked 31 October 2026: [The SMS Works developer/auth/status documentation](https://thesmsworks.co.uk/developers), [API reference](https://api.thesmsworks.co.uk/docs/api-reference.html), [provider terms](https://thesmsworks.co.uk/terms), and [Supabase changelog](https://supabase.com/changelog.md). The Supabase skill and current relevant breaking changes were reviewed. No SDK dependency was added.
 
-## PureSMS (replaces The SMS Works as the sending provider)
+## PureSMS (parked)
 
-Set `PURESMS_API_KEY` (server secret) to send through PureSMS (`POST https://connect-api.divergent.cloud/sms/send`, `X-Api-Key`).
-When it is set it takes priority over `SMS_WORKS_JWT`. UK messages use each business's alphanumeric sender; US messages use
-`PURESMS_US_SENDER`, a toll-free number that must pass carrier toll-free verification before US texts are delivered.
-PureSMS documents no balance or message-status endpoint, so the operator panel shows "Not reported" credits and accepted messages stay "Sent".
-UK and US mobiles are accepted (`jovabook_private.sms_phone`, migration `20261105150000_us_sms_numbers.sql`).
+A PureSMS adapter exists in `lib/jovabook-sms.mjs` but is dormant: it is used only if `PURESMS_API_KEY` is set. The live provider is The SMS Works (`SMS_WORKS_JWT`), UK mobiles only.

@@ -4,14 +4,13 @@ import {PGlite} from '@electric-sql/pglite';
 import {sources,bootstrap} from '../scripts/jovabook-test-db.mjs';
 import {createPureSmsAdapter} from '../lib/jovabook-sms.mjs';
 
-test('sms_phone accepts UK and US mobiles in canonical digit form and rejects junk',async()=>{
+test('sms_phone is UK-only again and rejects US and other numbers',async()=>{
  const db=new PGlite();
  try{
   await bootstrap(db,await sources());
   const f=async v=>(await db.query('select jovabook_private.sms_phone($1) v',[v])).rows[0].v;
   assert.equal(await f('07700 900123'),'447700900123');assert.equal(await f('+44 7700 900123'),'447700900123');
-  assert.equal(await f('+1 (415) 555-2671'),'14155552671');assert.equal(await f('001 415 555 2671'),'14155552671');
-  for(const bad of ['4155552671','+1 115 555 2671','+1 415 155 2671','+1415555267','+91 98765 43210','+92 300 1234567','','abc'])assert.equal(await f(bad),null,bad);
+  for(const bad of ['+1 (415) 555-2671','001 415 555 2671','4155552671','+1 115 555 2671','+1 415 155 2671','+1415555267','+91 98765 43210','+92 300 1234567','','abc'])assert.equal(await f(bad),null,bad);
  }finally{await db.close();}
 });
 
