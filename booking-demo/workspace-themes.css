@@ -258,3 +258,26 @@ html[data-workspace-theme] .shell.jb-reference .sidebar .st-settings-links.sb-se
 html[data-workspace-theme] .shell.jb-reference.sb-expanded .sidebar .side-nav,
 html[data-workspace-theme] .shell.jb-reference.is-menu-open .sidebar .side-nav{width:100%!important;margin:0!important;min-width:0!important}
 @media(min-width:701px){html[data-workspace-theme] .shell.jb-reference .sidebar{height:calc(100dvh - 28px)!important;max-height:calc(100dvh - 28px)!important}}
+@media(max-width:700px){
+ html[data-workspace-theme] .shell.jb-reference.is-menu-open .sidebar .side-nav{flex:1 1 0%!important;min-height:0!important;overflow:hidden!important;gap:8px!important}
+ html[data-workspace-theme] .shell.jb-reference.is-menu-open .sidebar .jb-nav-section{flex:1 1 0%!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain}
+ html[data-workspace-theme] .shell.jb-reference.is-menu-open .sidebar .jb-more-settings{flex:none!important;margin-top:0!important;min-height:44px!important}
+}
+/* Locked pages mirror the finished layout without exposing business records. */
+.rf-ghost{opacity:.3}
+.rf-ghost-staff>header,.rf-ghost-table>div.rf-ghost-staff-row{display:grid;grid-template-columns:1.1fr .9fr 1.1fr .6fr;align-items:center;gap:24px;padding:24px 28px;min-width:740px}
+.rf-ghost-staff>header{background:var(--theme-inset);font-size:12px;color:var(--theme-muted)}
+.rf-ghost-table .rf-ghost-person{display:flex;align-items:center;gap:12px;min-width:0}
+.rf-ghost-avatar{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--theme-primary);color:var(--theme-panel);flex:none;font-size:12px;font-weight:700}
+.rf-ghost-person strong,.rf-ghost-login strong,.rf-ghost-service strong{display:block;font-size:13px;font-weight:600}
+.rf-ghost-person small,.rf-ghost-login small{display:block;font-size:12px;margin-top:5px;color:var(--theme-muted)}
+.rf-ghost-days{display:flex;gap:5px}
+.rf-ghost-days>span{display:grid;place-items:center;width:28px;height:28px;background:var(--theme-inset);border-radius:50%;font-size:11px}
+.rf-ghost-state{font-size:11px;border-radius:20px;padding:6px 10px;background:var(--theme-inset);white-space:nowrap;justify-self:start}
+.rf-ghost-login{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;border-top:1px solid var(--theme-line)}
+.rf-ghost-service{margin-top:24px}
+.rf-ghost-panels .rf-ghost-service i{margin-top:10px;height:7px}
+.rf-ghost-overview{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.rf-ghost-overview .rf-ghost-panels{grid-template-columns:1fr}
+.rf-upgrade-actions{margin-bottom:0}
+@media(max-width:700px){.rf-ghost-overview{grid-template-columns:1fr}.rf-ghost-staff-row{padding:20px!important}.rf-ghost-staff{overflow:hidden}}
