@@ -79,7 +79,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       offers: Object.entries(OFFER_PLANS).flatMap(([id,plan])=>(id==='essential'?['monthly']:['monthly','annual']).map(cadence=>({
         "@type":"Offer",name:'JovaBook '+plan.name+' '+cadence,url:jovabookUrl+'#plans',price:((cadence==='annual'?plan.annual:plan.amount)/100).toFixed(2),priceCurrency:'GBP',seller:organisation,
         priceSpecification:{"@type":"UnitPriceSpecification",price:((cadence==='annual'?plan.annual:plan.amount)/100).toFixed(2),priceCurrency:'GBP',billingDuration:cadence==='annual'?'P1Y':'P1M'},
-        description:(id==='essential'?'Free plan. One staff calendar, 20 monthly bookings and 50 monthly emails.':id==='standard'?'One staff calendar, unlimited bookings, 100 emails and 50 SMS per month.':'One staff seat included. Additional seats cost '+(cadence==='annual'?'£57.60/year':'£6/month')+' each, with 100 emails and 50 SMS per seat per month.')+' 0% booking commission. Stripe processing fees are separate.'
+        description:(id==='essential'?'Free plan. One staff calendar, 20 monthly bookings and 50 monthly emails.':id==='standard'?'One staff calendar, unlimited bookings, 100 emails and 60 SMS per month.':'One staff seat included. Additional seats cost '+(cadence==='annual'?'£57.60/year':'£6/month')+' each, with 100 emails and 60 SMS per seat per month.')+' 0% booking commission. Stripe processing fees are separate.'
       }))),
     },
   ];
