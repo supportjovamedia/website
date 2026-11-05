@@ -54,3 +54,6 @@
 .ws .refined-pricing .plan-terms p{font-size:13px;line-height:1.7;color:#345974;margin:0}
 .ws .refined-pricing .plan-terms p+p{margin-top:8px;color:#526b7e}
 @media(max-width:760px){.ws .refined-pricing .plan ul{margin-top:18px;gap:9px}.ws .refined-pricing .plan-terms{text-align:center;margin-top:17px;padding-top:14px}.ws .refined-pricing .plan-terms p{font-size:13px}}
+
+/* Plan fine print sits on the blue band, so it is white on every page that shows the plans. */
+.ws .free-pricing{--plan-notes:#fff}

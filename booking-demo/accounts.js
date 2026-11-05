@@ -329,9 +329,26 @@
       try{const response=await fetch('/api/jovabook/'+action,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)});let data=null;try{data=await response.json();}catch{}if(!current(expected)||!writeScope(sid))return stale();if(data?.salon_id&&data.salon_id!==sid)return scopeFailure();return {ok:response.ok&&data?.ok===true,status:response.status,data,message:typeof data?.message==='string'?data.message:'We could not verify this connection request. Try again.'};}
       catch{return current(expected)&&writeScope(sid)?{ok:false,network:true,message:NET}:stale();}finally{clearTimeout(timer);}
     }
+    // A team login (a staff member added by the owner) opens one business with limited access.
+    // Its session has the same shape as the owner's, with no billing detail.
+    async function teamAccess(ownerId) {
+      const t=await token();if(!t)return authFailure();
+      const r=await rpc('team_account_access',{},t);
+      if(r.stale)return r;
+      if(ownerId!==load()?.user?.id)return stale();
+      const data=r.data;
+      if(r.ok&&data?.access==='team_suspended'){verifiedAccess=null;verifiedSalon=null;return {ok:false,message:data.message||'Your login is not active. Ask the business owner.'};}
+      if(!r.ok||data?.team!==true||data.access!=='active'||!websiteId(data.business?.id)||data.business.plan!=='premium'||typeof data.business.name!=='string'||typeof data.business.slug!=='string'||!data.lifecycle||typeof data.billing?.connected!=='boolean'||typeof data.billing?.canCheckout!=='boolean'){
+        verifiedAccess=null;verifiedSalon=null;return {...r,ok:false,message:'We could not verify your login. Try again.'};
+      }
+      clearExisting();
+      verifiedAccess={ownerId,data};verifiedSalon={id:data.business.id,ownerId};
+      return {ok:true,data};
+    }
     async function ownerAccess() {
       const ownerId=load()?.user?.id,result=await billingCall('status');if(result.stale)return result;
       const data=result.data,business=data?.business;
+      if(data?.access==='wrong_portal'&&data.role==='team')return teamAccess(ownerId);
       if(data?.access==='wrong_portal'){verifiedAccess=null;verifiedSalon=null;return {ok:false,wrongPortal:true,message:data.message||'Use the correct login for this account.'};}
       if(result.ok&&data?.no_business===true&&data.access==='no_business'&&business===null){verifiedAccess=null;verifiedSalon=null;if(!ownerId||ownerId!==load()?.user?.id)return stale();return {ok:false,noBusiness:true,data,message:'No business is linked to this account. Log in to create one.'};}
       if(!result.ok||!['active','billing_only','setup','deleting'].includes(data?.access)||!websiteId(business?.id)||!['essential','standard','premium'].includes(business?.plan)||typeof business?.name!=='string'||typeof business?.slug!=='string'||!data.lifecycle||typeof data.billing?.connected!=='boolean'||typeof data.billing?.canCheckout!=='boolean'){
@@ -538,7 +555,8 @@
         const get = q => call('/rest/v1/' + q + '&limit=5000', { method: 'GET', token: t,owner:true });
         const names = ['categories', 'staff', 'services', 'customers', 'bookings', 'email_log', 'payments'];
         const orders = ['created_at,id', 'created_at,id', 'created_at,id', 'created_at,id', 'date,time', 'sent_at.desc', 'created_at.desc'];
-        const salonResult=await get('salons?select=*');
+        const team=access.data.team===true;
+        const salonResult=team?await (async()=>{const r=await rpc('team_workspace',{},t);return r.ok&&r.data&&typeof r.data==='object'?{...r,data:[r.data]}:{...r,ok:r.ok,data:r.ok?[]:r.data};})():await get('salons?select=*');
         if(!current(expected)||salonResult.stale)return stale();
         if(!salonResult.ok||!Array.isArray(salonResult.data))return {...salonResult,auth:salonResult.status===401};
         if(salonResult.data.length!==1)return {ok:false,invalidTenant:salonResult.data.length>1,message:'Your business could not be loaded. Log in again.'};
@@ -559,6 +577,7 @@
         return { ok: true, salon: res[0].data[0] || null, rows, emailActivityUnavailable,access:checked.data };
       },
       async upsertRows(table, rows) {
+        if (verifiedAccess?.data?.team===true&&!['bookings','customers'].includes(table)) return {ok:false, status:403, message:'Your login can only change bookings and customers.'};
         if (table === 'email_log') return {ok:false, status:403, message:'Email delivery records are read-only.'};
         const target=Array.isArray(rows)&&rows.length?rows[0].salon_id:null;
         if(!writeScope(target)||rows.some(row=>row.salon_id!==target))return scopeFailure();
@@ -568,6 +587,7 @@
         return { ok: r.ok,stale:r.stale,auth:r.auth, network: r.network, status: r.status, message: r.message||r.data && r.data.message };
       },
       async deleteRows(table, salonId, ids) {
+        if (verifiedAccess?.data?.team===true) return {ok:false, status:403, message:'Ask the business owner to delete this.'};
         if (table === 'email_log') return {ok:false, status:403, message:'Email delivery records are read-only.'};
         if(!writeScope(salonId))return scopeFailure();
         const t = await token(); if (!t) return authFailure();
@@ -577,6 +597,7 @@
         return { ok: r.ok,stale:r.stale,auth:r.auth, network: r.network, status: r.status };
       },
       async saveSalon(a,expectedSalonId) {
+        if(verifiedAccess?.data?.team===true)return {ok:false,status:403,message:'Only the business owner can change business settings.'};
         if(!writeScope(expectedSalonId))return scopeFailure();
         const t = await token(); if (!t) return authFailure();
         if(!writeScope(expectedSalonId))return scopeFailure();
@@ -597,6 +618,25 @@
       existingBusinessContext,
       async createBusinessForExistingUser({name,slug}){const context=existingBusinessContext();if(!context)return {ok:false,message:'Log in again before creating your business.'};const identity=load()?.user?.id,n=String(name||'').trim(),s=String(slug||'').trim().toLowerCase();if(!n||n.length>60)return {ok:false,field:'name',message:'Enter a business name up to 60 characters.'};if(s.length<3||s.length>30||!ADDRESS_RULE.test(s)||RESERVED.includes(s))return {ok:false,field:'slug',message:'Choose an available address with 3 to 30 letters, numbers or hyphens.'};const access=await ownerAccess();if(identity!==load()?.user?.id)return stale();if(!access.noBusiness)return {ok:false,message:access.ok?'This account already has a business. Log in to open it.':access.message};const verified=await verifiedBusinessIdentity();if(!verified.ok)return verified;if(identity!==load()?.user?.id||verified.profile.id!==identity)return stale();const t=await token();if(!t)return authFailure();const result=await rpc('create_business_for_existing_user',{p_name:n,p_slug:s,p_owner:verified.profile.owner},t);if(result.stale||identity!==load()?.user?.id)return stale();if(!result.ok||result.data?.ok!==true||!websiteId(result.data.salon_id))return {ok:false,field:result.data?.field||'',message:result.data?.message||'We could not create your business. Try again.'};const checked=await ownerAccess();if(identity!==load()?.user?.id)return stale();if(!checked.ok||checked.data.business.id!==result.data.salon_id)return {ok:false,message:'Your business was created. Log in to verify its subscription and continue.'};try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}void window.JovaOwnerFunnel?.bind(t);return {ok:true,account:{salonId:result.data.salon_id},access:checked.data,profile:{owner:verified.profile.owner,email:verified.profile.email}};},
       integrationCall,
+      isTeamLogin(){return verifiedAccess?.ownerId===load()?.user?.id&&verifiedAccess?.data?.team===true;},
+      async teamLogins(){
+        const t=await token();if(!t)return {ok:false,logins:[]};
+        const r=await rpc('owner_team_logins',{},t);
+        return {ok:r.ok&&Array.isArray(r.data),logins:r.ok&&Array.isArray(r.data)?r.data:[]};
+      },
+      async teamLogin(action,salonId,staffId,fields={}){
+        if(!['create','password','email','remove'].includes(action))return {ok:false,message:'Choose what to do.'};
+        if(!writeScope(salonId))return scopeFailure();
+        const t=await token();if(!t)return authFailure();if(!writeScope(salonId))return scopeFailure();
+        const expected=stamp(),ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),20000);
+        try{
+          const response=await fetch('/api/jovabook/team',{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({action,salon_id:salonId,staff_id:staffId,...(fields.email?{email:fields.email}:{}),...(fields.password?{password:fields.password}:{})})});
+          let data=null;try{data=await response.json();}catch{}
+          if(!current(expected)||!writeScope(salonId))return stale();
+          return {ok:response.ok&&data?.ok===true,status:response.status,email:data?.email,message:typeof data?.message==='string'?data.message:'The team login could not be updated. Try again.'};
+        }catch{return current(expected)&&writeScope(salonId)?{ok:false,network:true,message:NET}:stale();}
+        finally{clearTimeout(timer);}
+      },
       chooseStarterCalendar(staff){return rpc('offer_choose_starter_calendar',{p_staff:staff});},
       offerBilling(action,body){if(!['checkout','change','cancel','cancel-change','topup'].includes(action))return Promise.resolve({ok:false,message:'Unavailable billing action.'});if(action==='checkout')void token().then(t=>{if(t)void window.JovaOwnerFunnel?.bind(t);}).catch(()=>{});return billingCall(action,body);},
       billingCheckout(plan,salonId,requestId,termsVersion,cadence,trial=false){void token().then(t=>{if(t)void window.JovaOwnerFunnel?.bind(t);}).catch(()=>{});return billingCall('checkout',{salon_id:salonId,plan,...(cadence?{cadence}:{}),request_id:requestId,...(termsVersion?{terms_version:termsVersion}:{}),...(trial?{trial:true}:{})});},

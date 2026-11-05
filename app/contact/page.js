@@ -7,7 +7,7 @@ import PhotoHero from "@/components/PhotoHero";
 export const metadata = pageMetadata(
   "/contact",
   "Contact JovaMedia",
-  "Talk to JovaMedia about website design across the UK. Request a free homepage preview, call, use WhatsApp or leave a website chat message.",
+  "Questions about JovaBook, your plan or our other products? Email, call, use WhatsApp or leave a message for the JovaMedia team.",
 );
 export default function Page() {
   return (
@@ -15,9 +15,9 @@ export default function Page() {
       <PhotoHero image="contact" className="page-hero">
         <div className="shell">
 
-          <h1>Let’s make<br /><em>it happen.</em></h1>
+          <h1>Talk to<br /><em>JovaBook support.</em></h1>
           <p className="lead">
-            A new project, a quick question or support with existing work. Tell us what you need and we’ll help you find the next step.
+            A question about JovaBook, help with your account or something about our other products. Tell us what you need and we’ll help you find the next step.
           </p>
         </div>
       </PhotoHero>

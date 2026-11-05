@@ -4,7 +4,9 @@ import Image from "next/image";
 /* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-const links = [["Home","/"],["About","/about"],["Products","/products"],["Pricing","/pricing"],["JovaBook","/jovabook"]];
+const links = [["Home","/"],["Pricing","/pricing"],["Blog","/blog"],["Other products","/products"],["Contact","/contact"]];
+const startHref = "https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup";
+const loginHref = "https://book.jovamedia.com/login";
 export default function Header() {
   const pathname = usePathname();
   return <Navigation key={pathname} pathname={pathname} />;
@@ -111,7 +113,7 @@ function Navigation({ pathname }) {
         Skip to content
       </a>
       <header className="header" ref={header} data-menu-open={open}>
-        {pathname === "/jovabook" && <div className="jovabook-announcement" inert={open}><a href="#plans">Start for free today <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div>}
+        {pathname === "/" && <div className="jovabook-announcement" inert={open}><a href="#plans">Start for free today <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div>}
         <div className="shell nav">
           <a href="/" className="brand-logo" aria-label="JovaMedia home">
             <Image
@@ -139,7 +141,8 @@ function Navigation({ pathname }) {
             ))}
           </nav>
           <div className="nav-actions">
-            <a className="btn small desktop-cta" href="/contact">Contact us</a>
+            <a className="btn small desktop-login" href={loginHref}>Login</a>
+            <a className="btn small desktop-cta" href={startHref}>Start now</a>
             <button
               ref={toggle}
               className="menu-toggle"
@@ -157,7 +160,8 @@ function Navigation({ pathname }) {
         <nav ref={menu} inert={!open} aria-hidden={!open} data-open={open} id="mobile-menu" className="mobile-menu" aria-label="Mobile navigation">
           <div className="mobile-menu-inner"><div className="mobile-menu-page" data-active="true">
             {links.map(([name,href])=><a key={href} href={href} onClick={closeMenu} aria-current={active(href)?"page":undefined}>{name}</a>)}
-            <a href="/contact" className="btn mobile-project" onClick={closeMenu}>Contact us</a>
+            <a href={startHref} className="btn mobile-project" onClick={closeMenu}>Start now</a>
+            <a href={loginHref} className="mobile-login" onClick={closeMenu}>Login</a>
           </div></div>
         </nav>
       </header>

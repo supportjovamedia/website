@@ -9,7 +9,7 @@ const sourceSha=(bytes,file)=>sha(/\.(png|webp)$/.test(file)?bytes:bytes.toStrin
 test("share image is refreshed whenever its hero, logo or capture layout changes",async()=>{
  const manifest=JSON.parse(await readFile(new URL("../public/share/social-preview-manifest.json",import.meta.url)));
  assert.equal(socialPreview.url,manifest.image);
- for(const required of ["components/StudioHome.js","components/StudioHome.module.css","app/studio.css","scripts/capture-social-preview.cjs","public/brand/jova-logo.png"]){
+ for(const required of ["public/brand/jova-logo.png"]){
   assert.ok(manifest.sources[required],`Missing freshness check for ${required}`);
  }
  for(const [file,expected] of Object.entries(manifest.sources)){

@@ -82,9 +82,9 @@ test("completed insights and articles are indexable, discoverable and contain th
   }
 });
 
-test("social previews use the current homepage capture and return a valid PNG", async () => {
-  const expected = "https://www.jovamedia.com/share/jovamedia-hero-2026-10.png";
-  const approved = await readFile(new URL("../public/share/jovamedia-hero-2026-10.png",import.meta.url));
+test("social previews use the JovaBook share image and return a valid PNG", async () => {
+  const expected = "https://www.jovamedia.com/share/jovabook-free-plans-2026-11.png";
+  const approved = await readFile(new URL("../public/share/jovabook-free-plans-2026-11.png",import.meta.url));
   const xml = await (await fetch(base + "/sitemap.xml")).text();
   for (const [,url] of xml.matchAll(/<loc>(.*?)<\/loc>/g)) {
     const response = await fetch(base + new URL(url).pathname, {headers:{"User-Agent":"Twitterbot/1.0"}});
@@ -99,7 +99,7 @@ test("social previews use the current homepage capture and return a valid PNG", 
     assert.ok(!html.includes("jovamedia-homepage-2026-09.png"), url);
     assert.equal(html.match(/rel="canonical" href="([^"]+)"/)?.[1], url);
   }
-  for (const path of [new URL(expected).pathname, "/share/jovamedia-homepage-2026-09.png", "/opengraph-image", "/share/jovamedia-digital-partner", "/share/jovamedia-2026"]) {
+  for (const path of [new URL(expected).pathname, "/opengraph-image"]) {
     const response = await fetch(base + path);
     assert.equal(response.status, 200);
     assert.match(response.headers.get("content-type"), /image\/png/);

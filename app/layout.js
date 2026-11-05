@@ -24,15 +24,15 @@ const jakarta = localFont({
 export const metadata = {
   metadataBase: new URL("https://www.jovamedia.com"),
   title: {
-    default: "Small Business Website Design UK | JovaMedia",
+    default: "JovaBook | Booking Software for UK Small Businesses | JovaMedia",
     template: "%s | JovaMedia",
   },
   description:
-    "JovaMedia provides JovaBook booking software, website design, system modernisation, email marketing and automation, and search and local visibility.",
+    "JovaBook by JovaMedia is booking software for service businesses. Start free with online bookings and a one-page website. 0% booking commission on every plan.",
   openGraph: {
-    title: "JovaMedia | JovaBook, Websites & Business Services",
+    title: "JovaBook | Booking software by JovaMedia",
     description:
-      "Strategy, creative, media and technology for ambitious businesses.",
+      "Online bookings, a one-page website and Stripe deposits for service businesses. Start free.",
     url: "https://www.jovamedia.com",
     siteName: "JovaMedia",
     locale: "en_GB",
@@ -52,7 +52,7 @@ const organisation = {
   "@type": "Organization",
   "@id": "https://www.jovamedia.com/#organisation",
   name: "JovaMedia",
-  description: "London digital agency providing JovaBook booking software, website development, system modernisation, email marketing and automation, and search and local visibility.",
+  description: "JovaMedia is a London software company. Its main product is JovaBook, booking software for service businesses. It also offers website packages and business services.",
   sameAs: socialProfiles.map(profile => profile.url),
   url: "https://www.jovamedia.com",
   logo: "https://www.jovamedia.com/brand/jova-logo.png",
