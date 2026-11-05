@@ -1,5 +1,3 @@
-import PhotoHero from "@/components/PhotoHero";
-import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import {FaqStory} from "@/components/ScrollStories";
 import {pageMetadata} from "@/lib/seo";
@@ -12,19 +10,12 @@ export const metadata = pageMetadata("/pricing", "JovaBook Pricing | Free Starte
 
 export default function PricingPage() {
   return <main>
-    <PhotoHero image="pricing" className="page-hero">
-      <div className="shell">
-        <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]} />
-        <h1>JovaBook plans.<br />Start free, grow when you are ready.</h1>
-        <p className="lead">Every plan has 0% booking commission. Starter is free and never asks for a card.</p>
-      </div>
-    </PhotoHero>
     <div className="ws">
       <section className="section plans-section free-pricing" id="plans" aria-labelledby="plans-title">
         <div className="wrap">
           <div className="section-head center">
-            <h2 id="plans-title">Choose your plan.</h2>
-            <p>A one-page website and online bookings, free. Add Stripe deposits, text reminders and more staff when you upgrade.</p>
+            <h1 id="plans-title">Choose your plan.</h1>
+            <p>Every plan has 0% booking commission. Starter is free and never asks for a card. Add Stripe deposits, text reminders and more staff when you upgrade.</p>
           </div>
           <JovaBookPlans />
         </div>
