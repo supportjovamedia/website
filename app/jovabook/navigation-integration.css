@@ -13,4 +13,4 @@
 .ws .free-pricing .section-head p{font-size:16px;line-height:1.75;max-width:620px;margin:20px auto 0}
 @media(max-width:760px){.ws .free-pricing{padding:52px 20px 40px}.ws .free-pricing .section-head h2{font-size:36px}.ws .free-pricing .section-head p{font-size:14px}}
 
-.ws .free-pricing{--plan-notes:#f5f8fc}
+.ws .free-pricing{--plan-notes:#fff}
