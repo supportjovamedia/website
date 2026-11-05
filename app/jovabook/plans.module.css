@@ -27,3 +27,18 @@
 .notes{color:var(--plan-notes,#123653);max-width:620px;margin:38px auto 0;padding-top:22px;border-top:1px solid color-mix(in srgb,currentColor 24%,transparent);text-align:center}.notes p{font-size:12px!important;line-height:1.7!important;margin:7px 0!important;color:inherit!important;opacity:1;letter-spacing:.01em}
 @media(max-width:1000px) and (min-width:761px){.card{padding:25px 17px}.card.recommended{padding:24px 16px}.grid{gap:12px}.description{min-height:70px}.price strong{font-size:39px}.card li{font-size:12px!important}}
 @media(max-width:760px){.grid{grid-template-columns:1fr;max-width:390px;gap:34px}.card{padding:27px 24px;text-align:center}.card.recommended{padding:26px 23px}.description{min-height:0}.price{justify-content:center}.card li{text-align:left}.cadence{margin-bottom:30px}.cadence button{padding:10px 14px;font-size:13px}.seats{text-align:left}.notes{max-width:390px;margin-top:30px}.notes p{font-size:11.5px!important}}
+
+/* Even cards: every plan shares the same rows, so titles, prices, buttons and lists line up across the row. */
+.grid{align-items:stretch;margin-top:26px}
+.card{display:grid;grid-row:span 8;grid-template-rows:subgrid;row-gap:0;padding:30px 26px}
+.card.recommended{padding:29px 25px;box-shadow:0 14px 34px #0a2a4a30}
+.card:not(.recommended){border-color:transparent}
+.recommendation{left:50%;right:auto;transform:translateX(-50%);padding:0 18px;white-space:nowrap}
+.card h3{align-self:end}
+.description{min-height:0;align-self:start}
+.card ul{align-self:start}
+.card>.button,.card>.primary{align-self:end}
+@media(max-width:760px){.grid{display:flex;flex-direction:column;margin-top:34px}.card{display:flex;grid-row:auto}.card h3,.card>.button,.card>.primary{align-self:auto}.card .seats[aria-hidden]{display:none}}
+.seats{margin-top:22px;padding-top:18px;border-top:1px solid #dce5ec;align-self:end}
+.card .seats[aria-hidden]{display:block;border:0;margin:0;padding:0}
+@media(max-width:760px){.seats{align-self:auto}.card .seats[aria-hidden]{display:none}}
