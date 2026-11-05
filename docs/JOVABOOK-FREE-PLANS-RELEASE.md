@@ -76,3 +76,7 @@ The provider catalogue, portal configuration and production database migration r
 Back-office account counters, business records, trial notifications and subscription summaries read the versioned offer directly. Starter is counted as free; unpaid trials are separate from active paid Pro plans. Operator reads preserve historical financial records and do not create billing actions.
 
 Stripe reference for retaining the original trial on plan changes: https://docs.stripe.com/customer-management#limitations-to-modifying-subscriptions.
+
+## Merge and production publication
+
+Merging this PR does not activate the offer. The Next production-build entry checks the release version, the applied database migration, the deployed booking-app version, the expected live merchant, all four exact approved prices and the trial-preserving portal configuration. An incomplete setup stops that candidate build before publication, leaving the existing deployment serving the domain. Preview and local builds remain available without production credentials. No Vercel project-wide routing or automatic-domain settings are changed. Configure the prerequisites and deploy the booking app first, then redeploy the main app to publish the offer.

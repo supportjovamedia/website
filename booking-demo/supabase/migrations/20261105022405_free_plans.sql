@@ -406,5 +406,8 @@ $$;
 revoke all on function jovabook_private.operator_billing_before_free_offer(uuid,boolean),jovabook_private.operator_business_before_free_offer(uuid),jovabook_private.operator_overview_before_free_offer(),jovabook_private.operator_billing_record(uuid,boolean),jovabook_private.operator_business_record(uuid),public.operator_overview() from public,anon,authenticated;
 grant execute on function public.operator_overview() to authenticated;
 
+create function public.jovabook_offer_version() returns text language sql immutable set search_path='' as $$select '2026-11-free-v1'::text$$;
+revoke all on function public.jovabook_offer_version() from public;
+grant execute on function public.jovabook_offer_version() to anon,authenticated;
 notify pgrst,'reload schema';
 commit;
