@@ -26,7 +26,8 @@
   const key=()=>String(api.ownerIdentity?.()||'demo')+'|'+salon().id;
   const paid=()=>['standard','premium'].includes(String(salon().entitlements?.plan||'').toLowerCase());
   const activePlan=()=>['essential','standard','premium'].includes(String(salon().entitlements?.plan||'').toLowerCase());
-  const eligible=provider=>providers.some(p=>p.id===provider)&&(paid()||activePlan()&&['stripe','paypal'].includes(provider));
+  const freeOffer=()=>salon().entitlements?.offer_version==='2026-11-free-v1'||window.JOVA_OFFER_VERSION==='2026-11-free-v1';
+  const eligible=provider=>providers.some(p=>p.id===provider)&&(paid()||activePlan()&&!freeOffer()&&['stripe','paypal'].includes(provider));
   const live=()=>api.isLive?.(salon())===true;
   const scope=()=>{if(cache?.key!==key()){releaseAuthorization(cache);cache={key:key(),data:null,loading:false,error:'',loaded:false};dialog=null;serial++;}return cache;};
   const current=(entry,form)=>entry.key===key()&&dialog===entry&&(!form||form.isConnected!==false);

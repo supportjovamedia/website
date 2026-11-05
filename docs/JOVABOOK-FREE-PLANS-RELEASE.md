@@ -80,3 +80,9 @@ Stripe reference for retaining the original trial on plan changes: https://docs.
 ## Merge and production publication
 
 Merging this PR does not activate the offer. The Next production-build entry checks the release version, the applied database migration, the deployed booking-app version, the expected live merchant, all four exact approved prices and the trial-preserving portal configuration. An incomplete setup stops that candidate build before publication, leaving the existing deployment serving the domain. Preview and local builds remain available without production credentials. No Vercel project-wide routing or automatic-domain settings are changed. Configure the prerequisites and deploy the booking app first, then redeploy the main app to publish the offer.
+
+## Update: deposits are paid-plan only, and there is no free trial (5 November 2026)
+
+- Stripe deposits belong to Pro Solo and Pro Team. Starter is booking only. The database returns no deposit for a Starter business, hides the deposit from its public booking page, and refuses to switch deposits on. A downgraded business keeps its saved settings but takes no deposits, and can still switch them off.
+- New free trials are retired. Starter never asks for a card. Pro Solo and Pro Team take a card and charge when the owner subscribes. Trials that already started continue to be verified and end as normal.
+- Migrations: `20261105110000_deposits_paid_plans.sql` and `20261105113000_no_free_trial.sql`. Apply both, in that order, after `trial_limits`.
