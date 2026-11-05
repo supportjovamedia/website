@@ -65,10 +65,10 @@ test('preview agents are separate detected bots, including empty agents',()=>{
  for(const ua of ['WhatsApp/2.23','facebookexternalhit/1.1','Slackbot-LinkExpanding','Twitterbot',''])assert.equal(isBot(ua),true,ua);assert.equal(isBot('Mozilla/5.0 iPhone AppleWebKit Mobile Safari Instagram 300'),false);
 });
 
-test('storage sends one bounded three-command pipeline of aggregate fields only',async()=>{
+test('storage sends one bounded pipeline of lifetime and expiring daily aggregates',async()=>{
  const calls=[],store=createStore({env:redisEnv,send:async(url,options)=>{calls.push({url,options,commands:JSON.parse(options.body)});return Response.json(JSON.parse(options.body).map(()=>({result:1})));}});
- await store.record({code:'instagram',bot:false,at:'2026-11-03T12:00:00.000Z'});assert.equal(calls.length,1);assert.equal(calls[0].url,'https://redis.example.test/pipeline');assert(calls[0].options.signal instanceof AbortSignal);assert.deepEqual(calls[0].commands,[['HINCRBY','shortlink:v2:totals:instagram','clicks',1],['HSET','shortlink:v2:totals:instagram','last','2026-11-03T12:00:00.000Z'],['HSETNX','shortlink:v2:totals:instagram','started','2026-11-03T12:00:00.000Z']]);
- assert.doesNotMatch(JSON.stringify(calls[0].commands),/PFADD|PFCOUNT|EXPIRE|visitor|agent|address/i);assert.equal(TRACKING_PERIOD.kind,'lifetime');assert.match(TRACKING_PERIOD.retention,/while the link exists/);await store.record({code:'instagram',bot:true,at:'2026-11-03T13:00:00.000Z'});assert.equal(calls[1].commands.length,2);assert.equal(calls[1].commands[0][2],'bots');assert(!calls[1].commands.some(command=>command[2]==='last'));
+ await store.record({code:'instagram',bot:false,at:'2026-11-03T12:00:00.000Z'});assert.equal(calls.length,1);assert.equal(calls[0].url,'https://redis.example.test/pipeline');assert(calls[0].options.signal instanceof AbortSignal);assert.deepEqual(calls[0].commands.slice(0,3),[['HINCRBY','shortlink:v2:totals:instagram','clicks',1],['HSET','shortlink:v2:totals:instagram','last','2026-11-03T12:00:00.000Z'],['HSETNX','shortlink:v2:totals:instagram','started','2026-11-03T12:00:00.000Z']]);
+ assert.doesNotMatch(JSON.stringify(calls[0].commands),/PFADD|PFCOUNT|visitor|agent|address/i);assert.equal(TRACKING_PERIOD.kind,'lifetime');assert.match(TRACKING_PERIOD.retention,/while the link exists/);await store.record({code:'instagram',bot:true,at:'2026-11-03T13:00:00.000Z'});assert.equal(calls[1].commands.length,5);assert.equal(calls[1].commands[0][2],'bots');assert(!calls[1].commands.some(command=>command[2]==='last'));
 });
 
 test('storage keeps aggregate and unique lookups separate and protects built-in metadata',async()=>{
