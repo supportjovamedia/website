@@ -21,7 +21,7 @@ export const faqs = [
   },
   {
     "question": "How much does Team cost?",
-    "answer": "Team is £25 per month including one staff seat, plus £6 per month for each extra staff seat. Two seats cost £31 per month and three cost £37 per month. Each seat includes 100 emails and 60 SMS per month. Team removes JovaMedia branding from customer-facing booking pages and includes advanced Insights, period comparisons and extra website customisation."
+    "answer": "Team is £25 per month including one staff seat, plus £6 per month for each extra staff seat. Two seats cost £31 per month and three cost £37 per month. Each seat includes 100 emails and 60 SMS per month. Solo and Team include full Insights and period comparisons. Team also removes JovaMedia branding from customer-facing booking pages and includes extra website customisation."
   },
   {
     "question": "How do annual billing and commission work?",

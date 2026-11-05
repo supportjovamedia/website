@@ -39,7 +39,7 @@
     return raw === 'standard' ? {name: 'Standard', staffLimit: 5} : raw === 'premium' ?
       {name: 'Premium', staffLimit: 10} : {name: 'Essential', staffLimit: 1};
   }
-  const insightsAllowed = salon => ['Standard','Premium','Team'].includes(plan(salon).name);
+  const insightsAllowed = salon => ['Standard','Premium','Solo','Team'].includes(plan(salon).name);
   const validDate=value=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(String(value||'')))return false;const d=new Date(value+'T12:00:00Z');return !Number.isNaN(d.getTime())&&d.toISOString().slice(0,10)===value;};
   const addCalendarDays=(date,count)=>{const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+count);return d.toISOString().slice(0,10);};
   function onlineBookingWindow(salon,{now=Date.now(),tick=typeof performance!=='undefined'?performance.now():now}={}){
