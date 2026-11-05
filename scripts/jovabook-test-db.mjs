@@ -61,7 +61,7 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261103222916_owner_funnel.sql','migrations/20261105022405_free_plans.sql','migrations/20261105071000_trial_limits.sql','migrations/20261105110000_deposits_paid_plans.sql','migrations/20261105113000_no_free_trial.sql']);
 // Historical billing suites stay on their released policy; the CLI and new offer suites use every migration.
 export const LEGACY_SOURCE_FILES=Object.freeze(SOURCE_FILES.filter(name=>!name.endsWith('_free_plans.sql')&&!name.endsWith('_trial_limits.sql')&&!name.endsWith('_deposits_paid_plans.sql')&&!name.endsWith('_no_free_trial.sql')));
-export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql',
+export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql','migrations/20261105130000_workers_skip_when_idle.sql',
  'migrations/20261101054233_jovabook_recovery_scheduler.sql','migrations/20261101055544_jovabook_commission_scheduler.sql','migrations/20261102014242_jovabook_customer_payment_scheduler.sql','migrations/20261102222936_appointment_completion_scheduler.sql','migrations/20261103013242_sms_reminder_scheduler.sql','migrations/20261103224835_owner_funnel_scheduler.sql']);
 const OWNERS=['10000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000002'];
 const SALONS=['20000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002'];
