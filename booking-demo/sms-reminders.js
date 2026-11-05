@@ -1,9 +1,9 @@
 /* Owner SMS settings and optional public consent. No provider calls or delivery claims. */
 (() => {
  'use strict';
- const mobile=value=>{const v=String(value||'').replace(/[\s()-]/g,'');return /^07[0-9]{9}$/.test(v)?'44'+v.slice(1):/^\+447[0-9]{9}$/.test(v)?v.slice(1):/^00447[0-9]{9}$/.test(v)?v.slice(2):/^447[0-9]{9}$/.test(v)?v:'';};
+ const mobile=value=>{const v=String(value||'').replace(/[\s()-]/g,'');return /^07[0-9]{9}$/.test(v)?'44'+v.slice(1):/^\+447[0-9]{9}$/.test(v)?v.slice(1):/^00447[0-9]{9}$/.test(v)?v.slice(2):/^447[0-9]{9}$/.test(v)?v:/^\+1[2-9][0-9]{2}[2-9][0-9]{6}$/.test(v)?v.slice(1):/^001[2-9][0-9]{2}[2-9][0-9]{6}$/.test(v)?v.slice(2):'';};
  const eligible=s=>['Standard','Premium','Pro Solo','Pro Team'].includes(window.JovaSchedule?.plan(s)?.name);
- const consentError='Enter a UK mobile number for your optional text reminder, or leave text reminders unchecked.';
+ const consentError='Enter a UK or US mobile number for your optional text reminder, or leave text reminders unchecked.';
  const uncertain='We could not confirm whether this booking was saved. Retry with the same details to check the existing request. Please contact the business before starting another booking.';
  window.JovaSmsReminders={mobile,create(api){
   const {salon,esc,render,isLive}=api;let state=null;

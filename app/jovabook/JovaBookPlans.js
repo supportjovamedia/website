@@ -29,6 +29,6 @@ export default function JovaBookPlans(){
     </article>;
    })}
   </div>
-  <div className={s.notes}><p>Starter is free to use and never asks for a card. Pro Solo and Pro Team need a card and start as soon as you subscribe. There is no free trial.</p><p>JovaBook is currently open to businesses in the United Kingdom.</p><p>Stripe deposits are included on paid plans. Stripe payment-processing fees are separate.</p><p>Monthly email and SMS allowances reset each calendar month and do not roll over. Messages pause when the allowance is used; extra messages are never charged automatically.</p></div>
+  <div className={s.notes}><p>Starter is free to use and never asks for a card. Pro Solo and Pro Team need a card and start as soon as you subscribe. There is no free trial.</p><p>JovaBook is currently open to businesses in the United Kingdom and the United States.</p><p>Stripe deposits are included on paid plans. Stripe payment-processing fees are separate.</p><p>Monthly email and SMS allowances reset each calendar month and do not roll over. Messages pause when the allowance is used; extra messages are never charged automatically.</p></div>
  </div>;
 }
