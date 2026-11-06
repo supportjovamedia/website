@@ -10,7 +10,7 @@ The reference styling is applied to the existing owner shell, calendar, bookings
 
 Staff management is Team only for the current offer. Free and Solo can open a faded Staff layout with fictional names, roles and .example email addresses with an inert background and an upgrade card. Free Insights and deposits use the same treatment. Solo and Team include all Insights, including comparisons. Historical legacy entitlements are retained.
 
-Apply supabase/migrations/20261105230019_solo_insights_access.sql with the reviewed UI release. It patches only the two current-offer Insights flags and preserves existing staff limits, credit balances, SMS allowances and payment checks. It has not been applied to production in this design review.
+Applied supabase/migrations/20261106003810_solo_insights_access.sql for the approved release. It patches only the two current-offer Insights flags and preserves existing staff limits, credit balances, SMS allowances and payment checks. The guarded migration succeeded, and the database migration version was aligned with the recorded production version.
 
 Dashboard figures derive from actual saved booking statuses and service prices, with no invented growth percentages, deposits held, payout dates or no-shows prevented. Customer visit value is labelled as saved service prices, not cash received. Team includes one seat at GBP25/month, extra seats GBP6/month. Existing Stripe price IDs are unchanged.
 
