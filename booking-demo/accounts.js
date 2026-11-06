@@ -401,8 +401,8 @@
         if(!o||o.length>80)return {ok:false,field:'owner',message:'Enter your name, up to 80 characters.'};
         if(!EMAIL_RULE.test(e)||e.length>254)return {ok:false,field:'email',message:'Enter a valid email address.'};
         if(passwordIssues(password).length||String(password||'').length>72)return {ok:false,field:'password',message:'Use 8 to 72 characters, a capital letter and a number.'};
-        // UK-only for now. Only an explicit refusal blocks; a network problem lets the sign-up continue.
-        try{const region=await fetch('https://www.jovamedia.com/api/jovabook/region',{cache:'no-store'}).then(x=>x.ok?x.json():null);if(!current(expected))return stale();if(region&&region.allowed===false)return {ok:false,field:'',message:region.message||'JovaBook is currently open to businesses in the United Kingdom.'};}catch(_){}
+        // UK and USA only. Only an explicit refusal blocks; a network problem lets the sign-up continue.
+        try{const region=await fetch('https://www.jovamedia.com/api/jovabook/region',{cache:'no-store'}).then(x=>x.ok?x.json():null);if(!current(expected))return stale();if(region&&region.allowed===false)return {ok:false,field:'',message:region.message||'JovaBook is currently open to businesses in the United Kingdom and the USA.'};}catch(_){}
         const origin=String(location.origin||''),local=/^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::[0-9]+)?$/.test(origin),redirect=(local?origin:'https://book.jovamedia.com')+'/?portal=owner#login';
         const r=await call('/auth/v1/signup?redirect_to='+encodeURIComponent(redirect),{body:{email:e,password,data:{owner_name:o}}});if(!current(expected))return stale();
         if(r.network)return {ok:false,field:'',message:NET};
@@ -461,8 +461,8 @@
       },
       async syncSetup(salon) {
         const t = await token(); if (!t) return { ok: false };
-        const r = await rpc('save_setup', { p_address: salon.address, p_phone: salon.phone, p_settings: { hours: salon.hours, color: salon.color } }, t);
-        return { ok: r.ok };
+        const r = await rpc('save_setup', { p_address: salon.address, p_phone: salon.phone, p_settings: { ...window.JovaBusinessLocale.resolve(salon), hours: salon.hours, color: salon.color } }, t);
+        return { ok: r.ok, message:r.message||r.data?.message };
       },
       async trialCheck() {
         const t = await token(); if (!t) return { ok: false };

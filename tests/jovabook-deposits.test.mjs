@@ -99,3 +99,19 @@ test('only verified salon OAuth connections bind payment readiness, and only whe
 });
 
 test('deposit requests retain explicit SMS opt-in and reject non-boolean consent before effects',async()=>{const f=fixture(),r=await f.handlers.start(req('start',{...startBody(),sms_consent:true}));assert.equal(r.status,200);assert.equal(f.db.find(x=>x.p_action==='begin').p_payload.sms_consent,true);const bad=fixture();assert.equal((await bad.handlers.start(req('start',{...startBody(),sms_consent:'true'}))).status,400);assert.equal(bad.db.length,0);assert.equal(bad.calls.length,0);});
+
+test('UK and US deposits preserve the trusted amount and currency through connected-account Checkout',async()=>{
+ for(const [currency,amount] of [['gbp',30],['usd',50]]){
+  const f=fixture({hold:{currency,amount},session:{currency,amount_total:amount}});
+  const r=await f.handlers.start(req('start',startBody()));assert.equal(r.status,200,currency);
+  const created=f.calls.find(c=>c.method==='create');
+  assert.equal(created.args[0].line_items[0].price_data.currency,currency);
+  assert.equal(created.args[0].line_items[0].price_data.unit_amount,amount);
+  assert.equal(created.args[1].stripeAccount,account);
+ }
+ for(const [currency,amount] of [['eur',100],['usd',49],['cad',100],['aud',100]]){
+  const f=fixture({hold:{currency,amount},session:{currency,amount_total:amount}});
+  assert.equal((await f.handlers.start(req('start',startBody()))).status,503);
+  assert.ok(!f.calls.some(c=>c.method==='create'));
+ }
+});
