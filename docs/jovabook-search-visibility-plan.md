@@ -18,6 +18,10 @@ Numbered process decorations, example-menu chips and screenshot captions are rem
 
 ## Page ownership and overlap
 
+The primary navigation is Home, About, Pricing, Blog, Contact. Industry pages are discovered through the shared footer's Booking by industry link, the directory and relevant related-page links. The directory is `/industries`, and each guide sits under `/industries/{slug}`. This keeps individual guides two links from a standard page without adding every industry to the header. Google's guidance asks for crawlable internal links; it does not require every page to be in the primary navigation. [Google link guidance](https://developers.google.com/search/docs/crawling-indexing/links-crawlable).
+
+Vagaro uses a grouped Business Types dropdown as well as industry links in its footer. JovaBook keeps its simpler primary navigation and uses the footer/directory structure for now. [Vagaro reference](https://www.vagaro.com/en-gb/pro/salon-software).
+
 | Page group | Main intent | Supporting questions |
 | --- | --- | --- |
 | Hair salons | Online booking software for hair salons | Stylist calendars, service lengths, deposits, existing website |
