@@ -45,7 +45,7 @@ test('Solo starts an exact 14-day card trial with a reviewed recurring price',as
 test('Team charges and allowances scale from one included seat, including the annual discount',async()=>{
  const f=fixture();f.data.trial_eligible=false;const response=await f.handler.checkout(f.request({plan:'premium',cadence:'annual',seats:3,request_id:crypto.randomUUID()}));assert.equal(response.status,200);
  const created=f.calls.find(c=>c.kind==='stripe-checkout');assert.deepEqual(created.params.line_items,[{price:'price_TeamAnnual',quantity:3}]);assert.match(created.params.custom_text.submit.message,/£355.20 per year/);
- const selection=offerSelection('premium','annual',2);assert.equal(selection.total,35520);assert.equal(selection.emails,300);assert.equal(selection.sms,150);
+ const selection=offerSelection('premium','annual',2);assert.equal(selection.total,35520);assert.equal(selection.emails,300);assert.equal(selection.sms,180);
 });
 test('paid trial access requires the exact period, saved card, customer, price and merchant',async()=>{
  for(const change of [s=>{s.trial_end=s.trial_start+3*86400;},s=>{s.default_payment_method=null;},()=>{}]){
@@ -97,3 +97,24 @@ test('changing a plan during its trial cannot end the trial early through portal
 });
 
  test('trials cannot buy extra staff seats through checkout or plan changes',async()=>{const f=fixture();let r=await f.handler.checkout(f.request({plan:'premium',seats:2,request_id:crypto.randomUUID()}));assert.equal(r.status,400);assert.deepEqual(f.effects,[]);f.data.customer_id='cus_Fixture';f.state.sub=f.trial();r=await f.handler.change(f.request({plan:'premium',seats:2,request_id:crypto.randomUUID()}));assert.equal(r.status,400);assert(!f.calls.some(c=>c.kind==='begin'));});
+test('one approved monthly reward invoice preserves Solo access at zero without accepting arbitrary free or annual invoices',async()=>{
+ const f=fixture();f.data.customer_id='cus_Fixture';f.data.referral_reward_invoices=['in_Reward'];f.data.referral={invoice_id:null,status:'joined'};f.state.sub=f.trial(1);f.state.sub.status='active';f.state.sub.items.data[0].price='price_Pro';
+ const item=f.state.sub.items.data[0];item.current_period_end=item.current_period_start+30*86400;
+ const invoice={id:'in_Reward',status:'paid',currency:'gbp',customer:f.data.customer_id,subscription:f.state.sub.id,billing_reason:'subscription_cycle',amount_paid:0,amount_due:0,amount_remaining:0,total:0,total_discount_amounts:[{amount:2000}]};
+ const line={price:'price_Pro',quantity:1,amount:2000,period:{start:item.current_period_start,end:item.current_period_end}};
+ f.stripe.invoices.list=async()=>({data:[invoice],has_more:false});f.stripe.invoices.listLineItems=async()=>({data:[line],has_more:false});
+ await f.handler.reconcile(f.data);let state=f.calls.findLast(c=>c.kind==='sync_apply').payload;assert.equal(state.paid_verified,true);assert.equal(state.referral_evidence,null);assert.deepEqual(f.effects,[]);
+ invoice.id='in_Unapproved';await f.handler.reconcile(f.data);assert.equal(f.calls.findLast(c=>c.kind==='sync_apply').payload.paid_verified,false);
+ invoice.id='in_Reward';line.proration=true;await f.handler.reconcile(f.data);assert.equal(f.calls.findLast(c=>c.kind==='sync_apply').payload.paid_verified,false);line.proration=false;
+ item.price='price_ProAnnual';line.price='price_ProAnnual';await f.handler.reconcile(f.data);assert.equal(f.calls.findLast(c=>c.kind==='sync_apply').payload.paid_verified,false);
+});
+
+test('first paid monthly-cycle evidence is server verified; zero, failed, annual and prorated invoices cannot supply it',async()=>{
+ const f=fixture();f.data.customer_id='cus_Fixture';f.data.referral={invoice_id:null,status:'joined'};f.state.sub=f.trial(1);f.state.sub.status='active';f.state.sub.items.data[0].price='price_Pro';
+ const item=f.state.sub.items.data[0];item.current_period_end=item.current_period_start+30*86400;
+ const invoice={id:'in_FirstPaid',status:'paid',currency:'gbp',customer:f.data.customer_id,subscription:f.state.sub.id,billing_reason:'subscription_create',amount_paid:2000,created:item.current_period_start};
+ const line={price:'price_Pro',quantity:1,amount:2000,period:{start:item.current_period_start,end:item.current_period_end}};
+ f.stripe.invoices.list=async()=>({data:[invoice],has_more:false});f.stripe.invoices.listLineItems=async()=>({data:[line],has_more:false});
+ await f.handler.reconcile(f.data);assert.equal(f.calls.findLast(c=>c.kind==='sync_apply').payload.referral_evidence.invoice_id,'in_FirstPaid');
+ for(const mutate of [()=>{invoice.amount_paid=0;},()=>{invoice.amount_paid=2000;invoice.status='open';},()=>{invoice.status='paid';line.proration=true;},()=>{line.proration=false;line.period.end=line.period.start+86400;}]){mutate();await f.handler.reconcile(f.data);assert.equal(f.calls.findLast(c=>c.kind==='sync_apply').payload.referral_evidence,null);}
+});
