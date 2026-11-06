@@ -1,6 +1,7 @@
 {
   "dashboard": {
     "alt": "JovaBook dashboard showing appointments, bookings and calendar controls",
+    "kind": "product",
     "small": {
       "src": "/jovabook/industries/dashboard-small-0f9bd72b2d32.webp",
       "width": 640,
@@ -12,6 +13,150 @@
       "width": 1120,
       "height": 747,
       "bytes": 25928
+    }
+  },
+  "calendar": {
+    "alt": "The JovaBook calendar with appointments arranged across the week",
+    "kind": "product",
+    "small": {
+      "src": "/jovabook/industries/calendar-small-a293b32f9467.webp",
+      "width": 640,
+      "height": 427,
+      "bytes": 14262
+    },
+    "large": {
+      "src": "/jovabook/industries/calendar-large-db70754bff23.webp",
+      "width": 1120,
+      "height": 747,
+      "bytes": 32062
+    }
+  },
+  "services": {
+    "alt": "Service names, prices and appointment durations in JovaBook",
+    "kind": "product",
+    "small": {
+      "src": "/jovabook/industries/services-small-8f70d3b32545.webp",
+      "width": 640,
+      "height": 427,
+      "bytes": 11808
+    },
+    "large": {
+      "src": "/jovabook/industries/services-large-417a61163b71.webp",
+      "width": 1120,
+      "height": 747,
+      "bytes": 25520
+    }
+  },
+  "booking": {
+    "alt": "The JovaBook appointment booking page on a phone",
+    "kind": "phone",
+    "small": {
+      "src": "/jovabook/industries/booking-small-a614316b8009.webp",
+      "width": 320,
+      "height": 692,
+      "bytes": 10220
+    },
+    "large": {
+      "src": "/jovabook/industries/booking-large-5647dbf98cae.webp",
+      "width": 480,
+      "height": 1038,
+      "bytes": 17056
+    }
+  },
+  "salon": {
+    "alt": "Chairs and mirrors in a hair salon",
+    "kind": "photo",
+    "small": {
+      "src": "/jovabook/industries/salon-small-16e4fc0569f6.webp",
+      "width": 480,
+      "height": 320,
+      "bytes": 14290
+    },
+    "large": {
+      "src": "/jovabook/industries/salon-large-3547ec5bedcd.webp",
+      "width": 960,
+      "height": 640,
+      "bytes": 36540
+    }
+  },
+  "barber": {
+    "alt": "A barber chair reflected in a salon mirror",
+    "kind": "photo",
+    "small": {
+      "src": "/jovabook/industries/barber-small-601d65c015a9.webp",
+      "width": 480,
+      "height": 320,
+      "bytes": 10244
+    },
+    "large": {
+      "src": "/jovabook/industries/barber-large-2b4fce19bfd5.webp",
+      "width": 960,
+      "height": 640,
+      "bytes": 23432
+    }
+  },
+  "room": {
+    "alt": "A calm waiting area with seating",
+    "kind": "photo",
+    "small": {
+      "src": "/jovabook/industries/room-small-ef98bba3a431.webp",
+      "width": 480,
+      "height": 341,
+      "bytes": 8468
+    },
+    "large": {
+      "src": "/jovabook/industries/room-large-777451782f0a.webp",
+      "width": 960,
+      "height": 682,
+      "bytes": 21898
+    }
+  },
+  "spa": {
+    "alt": "A massage treatment in progress",
+    "kind": "photo",
+    "small": {
+      "src": "/jovabook/industries/spa-small-24376f5ba438.webp",
+      "width": 480,
+      "height": 320,
+      "bytes": 6116
+    },
+    "large": {
+      "src": "/jovabook/industries/spa-large-f1283ccbdc64.webp",
+      "width": 960,
+      "height": 640,
+      "bytes": 14412
+    }
+  },
+  "tutor": {
+    "alt": "A tutor and student working through a lesson",
+    "kind": "photo",
+    "small": {
+      "src": "/jovabook/industries/tutor-small-3a20c2c3b485.webp",
+      "width": 480,
+      "height": 360,
+      "bytes": 16052
+    },
+    "large": {
+      "src": "/jovabook/industries/tutor-large-516d1f582c49.webp",
+      "width": 960,
+      "height": 720,
+      "bytes": 40470
+    }
+  },
+  "fitness": {
+    "alt": "A woman in fitness clothing",
+    "kind": "photo",
+    "small": {
+      "src": "/jovabook/industries/fitness-small-93885d71a43c.webp",
+      "width": 480,
+      "height": 672,
+      "bytes": 7048
+    },
+    "large": {
+      "src": "/jovabook/industries/fitness-large-375c4d4bfe76.webp",
+      "width": 960,
+      "height": 1345,
+      "bytes": 19380
     }
   }
 }

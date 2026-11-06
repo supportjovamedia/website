@@ -8,13 +8,13 @@ Help an appointment-business owner decide whether JovaBook fits their scheduling
 
 ## Content approach
 
-Each industry page has one main subject: online booking software for that type of business. Appointment scheduling, booking systems, calendars and booking links appear where they describe a real action or capability. There is no keyword-density target and no list of interchangeable keywords.
+Each industry page has one main subject: online booking software for that type of business. Appointment scheduling, booking systems, calendars and booking links appear where they describe a real action or capability. The requested primary long-tail phrase appears six times across the opening, overview, website section, FAQs and plan introduction. That editorial frequency is not a ranking guarantee or a substitute for useful content. There is no hidden keyword list or metadata-keywords tag.
 
-The title and H1 identify the product category and audience. The opening paragraph names JovaBook and explains what that business can do with it. Four industry-specific sections answer practical questions about service timing, availability, how clients book, and preparing the diary. The page also has supported product benefits, direct FAQ answers and accurate plan information.
+The title and H1 identify the product category and audience. The opening paragraph names JovaBook and explains what that business can do with it. Four industry-specific sections answer practical questions about service timing, availability, how clients book, and preparing the diary. The page also has supported product benefits, six to eight direct FAQ answers and accurate plan information. Rendered detail pages contain approximately 930 to 1,050 words. Word count describes the implementation, not a ranking threshold.
 
 Industry distinctions matter. Barbers need to understand appointments alongside walk-ins; salons need clear service durations and the limits around processing stages; nail technicians need infills and removals described correctly. Pilates and yoga pages cover private appointments. Medical and mental-health pages explain general administrative scheduling and its limits, without claiming clinical records or healthcare certification.
 
-Numbered process decorations, example-menu chips and screenshot captions are removed. The content does not claim that the depicted booking totals are customer results. There are no invented testimonials, success statistics or comparison victories.
+Numbered process decorations, example-menu chips and screenshot captions are removed. Each page contains the dashboard, a relevant context photograph or mobile-booking view, calendar and service screenshots. The content does not claim that depicted booking totals or illustrative photographs are customer results. There are no invented testimonials, success statistics or comparison victories.
 
 ## Page ownership and overlap
 
@@ -36,11 +36,20 @@ These are intent choices, not measured search-volume estimates. The existing com
 
 ## Search and AI-answer foundations implemented
 
-The pages use server-rendered text so the main explanation does not depend on opening a widget or running a carousel. Each has an individual search title and description, a self-referencing canonical and social metadata. The industry directory, footer and related links provide crawlable routes to the content. Canonical pages appear in the sitemap with a real content-change date.
+The pages use server-rendered text so the main explanation does not depend on opening a widget or running a carousel. Each has an individual search title and description, a self-referencing canonical and product-specific social metadata using the existing static JovaBook share image. Search snippets and large image previews are explicitly permitted in page metadata. Preview deployment noindex headers remain in place. The industry directory, footer and related links provide crawlable routes to the content. Canonical pages appear in the sitemap with a real content-change date.
 
-WebPage structured data identifies the page and connects it to the existing JovaBook WebApplication entity and JovaMedia publisher. Breadcrumb structured data matches the visible breadcrumbs outside the hero. It describes the software pages, not a collection of fictional local businesses. FAQs remain visible, expandable HTML. This change does not claim FAQ rich-result eligibility or an AI ranking benefit from a particular schema type.
+WebPage structured data identifies the page and connects it to the existing JovaBook WebApplication entity and JovaMedia publisher. Its primary image identifies the actual dashboard image. Breadcrumb structured data matches the visible breadcrumbs outside the hero. It describes the software pages, not a collection of fictional local businesses. FAQs remain visible, expandable HTML. This change does not claim FAQ rich-result eligibility or an AI ranking benefit from a particular schema type.
 
-The repository's robots configuration already allows public crawling and points to the sitemap. Preview deployments intentionally remain noindex. Production indexing and any hosting-level crawler restrictions must be checked after release; repository configuration alone is not proof that a crawler can access the deployed page.
+The repository's robots configuration already allows public crawling and points to the sitemap. A focused production check on 6 November returned HTTP 200 for `/robots.txt`, with `User-Agent: *`, `Allow: /` and the correct sitemap. The existing `/industries/salons-and-barbers` page returned HTTP 200 with no X-Robots-Tag or meta noindex restriction. This confirms normal public HTTP access for those resources, not successful crawling from every provider's authenticated crawler IP. New PR pages must still be checked after release.
+
+| Provider | Relevant search access | Current robots scope |
+| --- | --- | --- |
+| Google Search and its AI features | Googlebot | Allowed by the public wildcard rule |
+| Bing and Copilot discovery | Bingbot | Allowed by the public wildcard rule |
+| ChatGPT Search | OAI-SearchBot | Allowed by the public wildcard rule |
+| Claude search | Claude-SearchBot; Claude-User for user-directed retrieval | Allowed by the public wildcard rule |
+
+Search and training crawler controls are separate. No training preference was changed in this task. OpenAI documents OAI-SearchBot separately from GPTBot; Anthropic documents Claude-SearchBot and Claude-User separately from ClaudeBot. See [OpenAI crawler documentation](https://developers.openai.com/api/docs/bots) and [Anthropic crawler documentation](https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler). A robots allowance alone does not prove indexation, provider-IP access or citation eligibility in every product.
 
 Google says its existing SEO fundamentals apply to AI Overviews and AI Mode. A page must be indexed and eligible for a search snippet; inclusion is not guaranteed. It does not require special AI text files or special schema. See [Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features).
 
@@ -48,11 +57,11 @@ Bing describes discoverability, focused content, clear structure and accurate in
 
 ## Asset and hosting costs
 
-All 18 detail pages share the same dashboard source URLs. There is one content image per page, with a 640px phone variant of 11,536 bytes and a 1120px variant of 25,928 bytes. A picture element selects the appropriate version. The files are compressed before deployment and served directly, with no runtime image-transformation service.
+All 18 detail pages share the same dashboard, calendar and services source URLs, plus a context photograph or mobile-booking product view. There are four content images per page; three are lazy-loaded below the hero. The dashboard phone and desktop variants remain 11,536 and 25,928 bytes. All individual exports are 6,116 to 40,470 bytes. A picture element selects the appropriate version. The files are compressed before deployment and served directly, with no runtime image-transformation service.
 
 Hashed filenames have a one-year immutable cache. At the same breakpoint, navigating to another industry page can reuse the browser's existing image instead of requesting a page-specific copy. A first visit, a new browser, a cleared cache or the other breakpoint can still require a request. See [MDN: immutable caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control#immutable).
 
-The fourteen superseded industry exports are removed from this branch. Original source artwork is retained in its existing locations. There is no asset-directory download script, image preloader, new analytics beacon, client-side polling, paid SEO service or new automation in this change. Content links disable automatic Next prefetch.
+Only the chosen four images appear in a detail page's content markup. Original source artwork is retained in its existing locations. There is no asset-directory download script, image preloader, new analytics beacon, client-side polling, paid SEO service or new automation in this change. Content links disable automatic Next prefetch. More images can mean up to three additional below-hero image downloads on an initial complete read, with subsequent reuse subject to the browser cache.
 
 ## Release and measurement
 
