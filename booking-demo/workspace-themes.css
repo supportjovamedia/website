@@ -328,3 +328,15 @@ html[data-workspace-theme] .shell.jb-reference .rf-colour-swatches>button{displa
  html[data-workspace-theme] #modal-root .se-hours-row input[type=time]{min-width:0;width:100%;min-height:44px;padding:9px 6px!important;font-size:12px}
 }
 @media(max-width:400px){html[data-workspace-theme] #modal-root .se-save-bar{flex-wrap:wrap}html[data-workspace-theme] #modal-root .se-save-bar>.btn{width:100%;min-height:44px}html[data-workspace-theme] #modal-root .se-save-status{width:100%}}
+/* Referral hero keeps readable contrast in every workspace theme. */
+html[data-workspace-theme] .shell .jr-page .jr-hero :is(h2,h3){color:#fff!important}
+html[data-workspace-theme] .shell .jr-page .jr-hero h2{font-size:clamp(28px,3.2vw,42px)!important;line-height:1.12!important;margin:20px 0 16px!important}
+html[data-workspace-theme] .shell .jr-page .jr-hero h3{font-size:16px!important;margin:3px 0 8px!important}
+html[data-workspace-theme] .shell .jr-page .jr-hero p{color:#c2d2df!important}
+html[data-workspace-theme] .shell .jr-page .jr-link input{color:#fff!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:4px!important;border-radius:0!important}
+html[data-workspace-theme] .shell .jr-page .jr-link button,html[data-workspace-theme] .shell .jr-page .jr-share .btn{color:#fff!important;background:transparent!important}
+html[data-workspace-theme] .shell .jr-page .jr-share .btn:first-child{color:#193447!important;background:#fff!important}
+html[data-workspace-theme] .shell .jr-page .jr-stats h2{font-size:14px!important;color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell .jr-page .jr-good h3{font-size:14px!important}
+html[data-workspace-theme] .shell .jr-page .jr-filters [aria-pressed=true]{background:#153a53!important;color:#fff!important}
+@media(max-width:640px){html[data-workspace-theme] .shell .jr-page .jr-hero h2{font-size:30px!important}}
