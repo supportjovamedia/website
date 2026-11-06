@@ -29,6 +29,6 @@ export default function JovaBookPlans(){
     </article>;
    })}
   </div>
-  <div className={s.notes}><p>JovaBook is currently open to businesses in the United Kingdom and the USA.</p><p>Stripe deposits are included on paid plans. Stripe payment-processing fees are separate.</p><p>Monthly email and SMS allowances reset each calendar month and do not roll over. Messages pause when the allowance is used; extra messages are never charged automatically.</p></div>
+  <div className={s.notes}><p>JovaBook is currently open to businesses in the United Kingdom, the USA, Canada and Australia.</p><p>Stripe deposits are included on paid plans. Stripe payment-processing fees are separate.</p><p>Monthly email and SMS allowances reset each calendar month and do not roll over. Messages pause when the allowance is used; extra messages are never charged automatically.</p></div>
  </div>;
 }
