@@ -1,10 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {useRef, useState} from "react";
 import JovaBookPlans from "./JovaBookPlans";
-import CookieConsent from "@/components/CookieConsent";
 
 import {FaqStory} from "@/components/ScrollStories";
 import {WhyJovaBook,JovaBookTestimonials,JovaBookFounderNote} from "./JovaBookProof";
@@ -161,7 +159,6 @@ function PricingSection(){return <section className="section plans-section free-
 function FaqSection({faqs}){return <div id="questions" className="ws-original-faq"><FaqStory items={faqs.map(({question,answer})=>[question,answer])} introduction="About bookings, your website, plans and getting started." contactHref="mailto:support.jovamedia@gmail.com" contactLabel="Ask the JovaMedia team" showArtwork={false}/></div>}
 
 function ClosingSection(){return <section className="mp-closing"><div className="mp-closing-panel"><div><h2>Your next booking<br/>starts here.</h2><p>Set up your services, choose your working hours<br/>and give clients a simpler way to book.</p><TrialLink/></div><div className="mp-final-art"><div className="mp-final-name">JovaBook</div><div className="mp-final-slot"><span><Check/></span><div><b>You’re in the diary.</b><span>We’ll see you soon.</span></div></div></div></div></section>}
-function CompactFooter(){return <footer className="mp-footer"><Link prefetch={false} href="/" aria-label="JovaMedia home"><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128} sizes="110px"/></Link><span>Scheduling software by JovaMedia.</span><nav aria-label="Footer navigation"><Link prefetch={false} href="/about">About</Link><Link prefetch={false} href="/privacy-policy">Privacy</Link><Link prefetch={false} href="/terms">Terms</Link><Link prefetch={false} href="/contact">Contact</Link><CookieConsent/></nav><span>© {new Date().getFullYear()} JovaMedia</span></footer>}
 
 export default function JovaBookLanding({faqs}){
   const film=useRef(null),video=useRef(null);
@@ -183,7 +180,6 @@ export default function JovaBookLanding({faqs}){
 <PricingSection/>
 <FaqSection faqs={faqs}/>
 <ClosingSection/>
-<CompactFooter/>
     <dialog ref={film} className="movie-modal" aria-label="JovaBook product demo" onClose={()=>video.current?.pause()} onClick={e=>{if(e.target===e.currentTarget)film.current.close();}}><button className="modal-close" type="button" autoFocus onClick={()=>film.current.close()}>Close</button><video ref={video} controls playsInline preload="none" src="/jovabook/demo.mp4?v=v4-20261105" poster="/jovabook/demo-poster-clean.webp">Your browser does not support video. <a href="/jovabook/demo.mp4?v=v4-20261105">Watch the JovaBook demo</a>.</video></dialog>
   </main>;
 }

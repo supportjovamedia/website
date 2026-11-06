@@ -6,6 +6,7 @@ export default function sitemap() {
   const base = "https://www.jovamedia.com";
   const pages = [
     "",
+    "/about",
     "/products",
     "/industries",
     "/services",
@@ -20,7 +21,7 @@ export default function sitemap() {
   ];
   return [
     ...bookingIndustries.map(item => ({ url: `${base}/industries/${item.slug}`, lastModified: "2026-11-05" })),
-    ...pages.map((path) => ({ url: base + path, ...(["","/pricing","/terms"].includes(path) ? { lastModified: "2026-11-05" } : path === "/products" ? { lastModified: "2026-11-03" } : path === "/websites" ? { lastModified: "2026-10-19" } : path === "/blog" ? { lastModified: articles.map(article => articleDates(article).updatedAt).sort().at(-1) } : {}) })),
+    ...pages.map((path) => ({ url: base + path, ...(["","/pricing","/terms","/about"].includes(path) ? { lastModified: "2026-11-06" } : path === "/products" ? { lastModified: "2026-11-03" } : path === "/websites" ? { lastModified: "2026-10-19" } : path === "/blog" ? { lastModified: articles.map(article => articleDates(article).updatedAt).sort().at(-1) } : {}) })),
     ...services.filter(service => service.slug !== "web-design").map((service) => ({ url: `${base}/services/${service.slug}` })),
     ...websiteTypes.map(item => ({ url: base + websitePath(item.slug), lastModified: "2026-10-19" })),
     ...articles.map(article => ({ url: `${base}/blog/${article.slug}`, lastModified: articleDates(article).updatedAt })),

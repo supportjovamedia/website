@@ -30,7 +30,7 @@ export default function SiteChrome({children, header, footer}) {
     return () => { cleanup(); media.removeEventListener('change',setup); };
   }, [pathname]);
   const navigation = <div className={`jova-pages jova-header-chrome${isJovaBook ? ' jovabook-header' : ''}`}>{header}</div>;
-  if (isJovaBook) return <>{navigation}<div className="jovabook-route" ref={root}>{children}</div></>;
+  if (isJovaBook) return <>{navigation}<div className="jovabook-route" ref={root}>{children}</div><div className="jova-pages">{footer}</div></>;
   if (pathname === "/get-a-quote") return <>{navigation}<div className="jova-pages" ref={root}>{children}</div></>;
   return <>{navigation}<div className={`jova-pages${pathname === "/basket" ? " basket-chrome" : ""}`} ref={root}>{children}{footer}</div></>;
 }

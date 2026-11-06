@@ -4,7 +4,7 @@ import Image from "next/image";
 /* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-const links = [["Home","/"],["Pricing","/pricing"],["Blog","/blog"],["Other products","/products"],["Contact","/contact"]];
+const links = [["Home","/"],["Pricing","/pricing"],["Blog","/blog"],["About","/about"],["Contact","/contact"]];
 const startHref = "https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup";
 const loginHref = "https://book.jovamedia.com/login";
 export default function Header() {
@@ -160,8 +160,8 @@ function Navigation({ pathname }) {
         <nav ref={menu} inert={!open} aria-hidden={!open} data-open={open} id="mobile-menu" className="mobile-menu" aria-label="Mobile navigation">
           <div className="mobile-menu-inner"><div className="mobile-menu-page" data-active="true">
             {links.map(([name,href])=><a key={href} href={href} onClick={closeMenu} aria-current={active(href)?"page":undefined}>{name}</a>)}
-            <a href={startHref} className="btn mobile-project" onClick={closeMenu}>Start now</a>
-            <a href={loginHref} className="mobile-login" onClick={closeMenu}>Login</a>
+            <a href={startHref} onClick={closeMenu}>Start now</a>
+            <a href={loginHref} onClick={closeMenu}>Login</a>
           </div></div>
         </nav>
       </header>
