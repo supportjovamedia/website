@@ -1,9 +1,16 @@
-import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {bookingIndustries} from '@/lib/jovabook-industries.mjs';
 import {pageMetadata} from '@/lib/seo';
-import s from '../industries.module.css';
+import BookingIndustryLanding from '@/components/BookingIndustryLanding';
+
 export const dynamicParams=false;
-export function generateStaticParams(){return bookingIndustries.map(item=>({industry:item.slug}))}
-export async function generateMetadata({params}){const {industry}=await params,item=bookingIndustries.find(x=>x.slug===industry);return item?pageMetadata(`/industries/${industry}`,`${item.title} | JovaBook`,item.intro):{}}
-export default async function IndustryPage({params}){const {industry}=await params,item=bookingIndustries.find(x=>x.slug===industry);if(!item)notFound();return <main className={s.page}><section className={s.hero}><div className={s.wrap}><Link prefetch={false} className={s.breadcrumb} href='/industries'>JovaBook for your industry</Link><h1>{item.title}.</h1><p>{item.intro}</p><div className={s.actions}><a className={s.primary} href='https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup'>Start for free</a><Link prefetch={false} className={s.secondary} href='/pricing'>See plans</Link></div></div></section><section className={s.wrap}><div className={s.sectionHeading}><h2>From your services to a booked appointment.</h2></div><ol className={s.workflow}>{item.workflow.map((step,i)=><li key={step}><span aria-hidden='true'>0{i+1}</span><p>{step}</p></li>)}</ol><div className={s.grid}>{item.benefits.map(([title,copy])=><article className={s.card} key={title}><h2>{title}</h2><p>{copy}</p></article>)}</div><div className={s.note}><h2>{item.question}</h2><p>{item.answer}</p></div><div className={s.closing}><h2>Start with your next booking.</h2><p>Free includes one calendar, 20 monthly bookings, 50 emails and a one-page website. Solo is £20/month. Team starts at £25/month. All plans have 0% booking commission; Stripe processing fees are separate.</p><a className={s.primary} href='https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup'>Create your free account</a></div></section></main>}
+export function generateStaticParams(){return bookingIndustries.map(item=>({industry:item.slug}));}
+export async function generateMetadata({params}){
+ const {industry}=await params,item=bookingIndustries.find(x=>x.slug===industry);
+ return item?pageMetadata('/industries/'+industry,item.searchTitle+' | JovaBook by JovaMedia',item.description||item.intro):{};
+}
+export default async function IndustryPage({params}){
+ const {industry}=await params,item=bookingIndustries.find(x=>x.slug===industry);
+ if(!item)notFound();
+ return <BookingIndustryLanding item={item} path={'/industries/'+industry}/>;
+}

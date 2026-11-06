@@ -1,0 +1,107 @@
+{
+  "salon": {
+    "alt": "Chairs and mirrors in a hair salon",
+    "small": {
+      "src": "/jovabook/industries/salon-small-c9314b114dbf.webp",
+      "width": 640,
+      "height": 427,
+      "bytes": 23942
+    },
+    "large": {
+      "src": "/jovabook/industries/salon-large-a9824e6735fa.webp",
+      "width": 1120,
+      "height": 747,
+      "bytes": 46624
+    }
+  },
+  "spa": {
+    "alt": "A massage treatment in progress",
+    "small": {
+      "src": "/jovabook/industries/spa-small-1d705e2abcce.webp",
+      "width": 640,
+      "height": 427,
+      "bytes": 9058
+    },
+    "large": {
+      "src": "/jovabook/industries/spa-large-f3ae391a5b51.webp",
+      "width": 1120,
+      "height": 747,
+      "bytes": 18244
+    }
+  },
+  "fitness": {
+    "alt": "A woman in fitness clothing",
+    "small": {
+      "src": "/jovabook/industries/fitness-small-d20e6ac45297.webp",
+      "width": 640,
+      "height": 896,
+      "bytes": 10996
+    },
+    "large": {
+      "src": "/jovabook/industries/fitness-large-f269053f75a3.webp",
+      "width": 1120,
+      "height": 1569,
+      "bytes": 24362
+    }
+  },
+  "tutor": {
+    "alt": "A tutor working with a student",
+    "small": {
+      "src": "/jovabook/industries/tutor-small-0ed6bffe7399.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 24178
+    },
+    "large": {
+      "src": "/jovabook/industries/tutor-large-15f809fed89d.webp",
+      "width": 1120,
+      "height": 840,
+      "bytes": 50372
+    }
+  },
+  "desk": {
+    "alt": "A workspace with a closed laptop and camera",
+    "small": {
+      "src": "/jovabook/industries/desk-small-848d6d375125.webp",
+      "width": 640,
+      "height": 960,
+      "bytes": 18182
+    },
+    "large": {
+      "src": "/jovabook/industries/desk-large-5922ab8a9d77.webp",
+      "width": 1120,
+      "height": 1680,
+      "bytes": 39800
+    }
+  },
+  "calendar": {
+    "alt": "JovaBook weekly calendar with example appointments",
+    "small": {
+      "src": "/jovabook/industries/calendar-small-a293b32f9467.webp",
+      "width": 640,
+      "height": 427,
+      "bytes": 14262
+    },
+    "large": {
+      "src": "/jovabook/industries/calendar-large-db70754bff23.webp",
+      "width": 1120,
+      "height": 747,
+      "bytes": 32062
+    }
+  },
+  "services": {
+    "alt": "Services, prices and durations in the JovaBook dashboard",
+    "small": {
+      "src": "/jovabook/industries/services-small-8f70d3b32545.webp",
+      "width": 640,
+      "height": 427,
+      "bytes": 11808
+    },
+    "large": {
+      "src": "/jovabook/industries/services-large-417a61163b71.webp",
+      "width": 1120,
+      "height": 747,
+      "bytes": 25520
+    }
+  }
+}
