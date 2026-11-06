@@ -7,8 +7,16 @@ import { footerSocialProfiles } from "@/lib/site";
 import { bookingIndustries } from "@/lib/jovabook-industries.mjs";
 import SocialIcon from "./SocialIcon";
 
+const industryLabels = {
+  "hair-salons": "Hair salons", "barbers": "Barbers", "nail-salons": "Nail salons",
+  "spas": "Spas", "medical-spas": "Medical spas", "tanning-salons": "Tanning salons",
+  "pilates-instructors": "Pilates", "mental-health-practitioners": "Mental health",
+};
 const groups = [
-  { title: "Business software", industries: true, links: bookingIndustries.map(item => ({ label: item.name, href: `/industries/${item.slug}` })) },
+  { title: "Business software", industries: true, links: [
+    ...bookingIndustries.filter(item => industryLabels[item.slug]).map(item => ({ label: industryLabels[item.slug], href: `/industries/${item.slug}` })),
+    { label: "All industries", href: "/industries" },
+  ] },
   { title: "JovaBook", links: [
     { label: "Plans & pricing", href: "/pricing" },
     { label: "Start now", href: "https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup" },
@@ -36,14 +44,8 @@ export default function Footer() {
   return <footer className={`jova-footer ${styles.footer}`}>
     <div className={styles.inner}>
       <Link className={styles.brand} prefetch={false} href="/" aria-label="JovaMedia home"><Image src="/brand/jova-logo.png" alt="JovaMedia" width={361} height={128}/></Link>
-      <div className={styles.desktopNavigation}>
+      <div className={styles.navigation}>
         {groups.map(group => <nav key={group.title} aria-label={`Footer ${group.title}`}><h3>{group.title}</h3><GroupLinks group={group}/></nav>)}
-      </div>
-      <div className={styles.mobileNavigation}>
-        {groups.map(group => <details key={group.title}>
-          <summary>{group.title}<svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12" stroke="currentColor" strokeWidth="1.5"/><path className={styles.plusVertical} d="M9 3v12" stroke="currentColor" strokeWidth="1.5"/></svg></summary>
-          <nav aria-label={`Footer ${group.title}`}><GroupLinks group={group}/></nav>
-        </details>)}
       </div>
       <div className={styles.contactRow}>
         <div className={styles.contactLinks}><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a><a href={whatsappLink()} target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></div>
