@@ -1,5 +1,11 @@
 # JovaBook referrals
 
+## Production database receipt, 6 November 2026
+
+The user authorised the production migration and referral release. The reviewed SQL was applied to the `jovabook` project as migration `20261106232612_referral_program`. All three existing businesses retained their records and received referral codes. The initial referral and reward ledgers were empty. Authenticated owner and operator read checks passed; a real owner's code validated without exposing its value in the release report.
+
+All three private referral tables have RLS enabled, with no direct anonymous or authenticated ledger access. The new public referral wrappers are security invoker. Security-adviser warning counts were unchanged; the three additional informational RLS-without-policy notices are expected for these private, RPC-only ledgers. The focused PostgreSQL referral suite passed all eight checks after merging the current main branch. No customer reward, charge, refund or message was created during verification.
+
 This release adds owner referral progress, referral codes and links, signup attribution, an operator review ledger and reward access. Apply the migration before deploying either application. No paid sending or live customer billing is activated by the migration.
 
 ## Rules
