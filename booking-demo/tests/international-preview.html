@@ -2,14 +2,14 @@
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Local international booking fixture</title>
 <style>body{font:16px system-ui;max-width:720px;margin:48px auto;padding:16px;color:#17202b}label{display:block;margin:20px 0}select,button{font:inherit;padding:12px;border:1px solid #aaa;border-radius:8px;background:white}button{margin:5px}p{line-height:1.6}</style>
 <main><h1>Local international booking fixture</h1><p>Fictional browser-only records for checking country, time zone and currency. This page runs only on localhost. It removes the real account configuration from the local page before loading the application. No live bookings or SMS are sent.</p>
-<label>Business location <select id="location"><option value="GB|Europe/London|GBP">UK, London, GBP</option><option value="US|America/Los_Angeles|USD">US, Los Angeles, USD</option></select></label>
+<label>Business location <select id="location"><option value="GB|Europe/London|GBP">UK, London, GBP</option><option value="US|America/Los_Angeles|USD">US, Los Angeles, USD</option><option value="CA|America/St_Johns|CAD">Canada, St Johns, CAD</option><option value="AU|Australia/Adelaide|AUD">Australia, Adelaide, AUD</option><option value="AU|Australia/Lord_Howe|AUD">Australia, Lord Howe, AUD</option></select></label>
 <button data-route="settings">Open business details</button><button data-route="calendar">Open owner calendar</button><button data-route="book/service">Open customer booking</button><button data-route="setup">Open business setup</button><p id="status" role="status"></p></main>
 <script src="/demo-data.js"></script><script>
 if(!['localhost','127.0.0.1'].includes(location.hostname)){document.querySelector('main').textContent='Local preview only.';}
 else document.addEventListener('click',async event=>{
  const route=event.target.dataset.route;if(!route)return;
  const [country,timezone,currency]=document.getElementById('location').value.split('|'),s=JovaDemoData.build();
- Object.assign(s,{country,timezone,currency,name:'Fictional '+country+' Studio',phone:country==='GB'?'+44 7700 900123':'+1 212 555 0100',address:'Fictional local preview address',bookings:[],emails:[],customers:[]});
+ Object.assign(s,{country,timezone,currency,name:'Fictional '+country+' Studio',phone:country==='AU'?'+61 412 345 678':country==='GB'?'+44 7700 900123':country==='CA'?'+1 416 555 0100':'+1 212 555 0100',address:'Fictional local preview address',bookings:[],emails:[],customers:[]});
  if(route==='setup')s.subscription.status='setup';
  localStorage.setItem('jovabook-essential-demo-v2',JSON.stringify({version:1,active:s.id,salons:[s],accounts:[],resets:[]}));
  localStorage.removeItem('jovabook-auth');sessionStorage.setItem('jovabook-owner','1');

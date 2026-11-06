@@ -39,24 +39,24 @@ test('international database migration preserves local booking and payment contr
   });
 
   await t.test('server country-zone and service-currency validation matches the browser choices',async()=>{
-   assert.deepEqual(Object.keys(locale.countries).sort(),['GB','US']);
+   assert.deepEqual(Object.keys(locale.countries).sort(),['AU','CA','GB','US']);
    for(const [country,zones] of Object.entries(locale.zones))for(const zone of zones){
     assert.equal(await scalar('select jovabook_private.locale_valid($1,$2,$3) as value',[country,zone,locale.countries[country].currency]),true,country+':'+zone);
    }
-   for(const values of [['US','America/Sao_Paulo','USD'],['CA','America/Toronto','USD'],['AU','Australia/Sydney','USD'],['DE','Europe/Berlin','EUR'],['GB','Europe/London','EUR']]){
+   for(const values of [['US','America/Sao_Paulo','USD'],['CA','Europe/London','CAD'],['AU','Australia/Unknown','AUD'],['DE','Europe/Berlin','EUR'],['GB','Europe/London','EUR']]){
     assert.equal(await scalar('select jovabook_private.locale_valid($1,$2,$3) as value',values),false,values.join('/'));
    }
    await assert.rejects(q("update public.salons set settings=settings||'{\"country\":\"US\",\"timezone\":\"America/Sao_Paulo\"}' where id=$1",[us.id]),/supported business country/);
   });
 
   await t.test('DST gaps, folds and intervals crossing an offset change are refused',async()=>{
-   for(const [date,time,zone] of [['2027-03-14','02:30','America/New_York'],['2027-11-07','01:30','America/New_York'],['2027-03-28','01:30','Europe/London'],['2027-10-31','01:30','Europe/London']]){
+   for(const [date,time,zone] of [['2027-03-14','02:30','America/New_York'],['2027-11-07','01:30','America/New_York'],['2027-03-28','01:30','Europe/London'],['2027-10-31','01:30','Europe/London'],['2027-10-03','02:30','Australia/Sydney'],['2027-10-03','02:15','Australia/Lord_Howe']]){
     assert.equal(await scalar('select jovabook_private.business_instant($1,$2,$3) as value',[date,time,zone]),null,[date,time,zone].join(' '));
    }
    assert.equal(await scalar("select public.slot_free($1,'owner','2027-03-14','02:00',30,null) as value",[us.id]),false);
    assert.equal(await scalar("select public.slot_free($1,'owner','2027-03-14','01:30',120,null) as value",[us.id]),false);
    assert.equal(await scalar("select public.slot_free($1,'owner','2027-03-14','10:00',30,null) as value",[us.id]),true);
-   const cases=[['2027-03-07','12:00','America/New_York','2027-03-07T17:00:00.000Z'],['2027-03-14','12:00','America/New_York','2027-03-14T16:00:00.000Z'],['2027-03-14','12:00','Europe/London','2027-03-14T12:00:00.000Z'],['2027-03-28','12:00','Europe/London','2027-03-28T11:00:00.000Z'],['2027-01-15','10:00','America/Phoenix','2027-01-15T17:00:00.000Z'],['2027-07-15','10:00','America/Phoenix','2027-07-15T17:00:00.000Z'],['2027-01-15','10:00','Pacific/Honolulu','2027-01-15T20:00:00.000Z']];
+   const cases=[['2027-03-07','12:00','America/New_York','2027-03-07T17:00:00.000Z'],['2027-03-14','12:00','America/New_York','2027-03-14T16:00:00.000Z'],['2027-03-14','12:00','Europe/London','2027-03-14T12:00:00.000Z'],['2027-03-28','12:00','Europe/London','2027-03-28T11:00:00.000Z'],['2027-01-15','10:00','America/Phoenix','2027-01-15T17:00:00.000Z'],['2027-07-15','10:00','America/Phoenix','2027-07-15T17:00:00.000Z'],['2027-01-15','10:00','Pacific/Honolulu','2027-01-15T20:00:00.000Z'],['2027-01-15','10:00','Australia/Adelaide','2027-01-14T23:30:00.000Z'],['2027-01-15','10:00','Australia/Eucla','2027-01-15T01:15:00.000Z'],['2027-01-15','10:00','America/St_Johns','2027-01-15T13:30:00.000Z']];
    for(const [date,time,zone,want] of cases){const actual=await scalar('select jovabook_private.business_instant($1,$2,$3) as value',[date,time,zone]);assert.equal(actual.toISOString(),want);}
   });
 
@@ -83,7 +83,7 @@ test('international database migration preserves local booking and payment contr
   });
 
   await t.test('paid service deposit minimums follow currency while the Free plan stays deposit-free',async()=>{
-   for(const [country,timezone,currency,min] of [['GB','Europe/London','GBP',30],['US','America/New_York','USD',50]]){
+   for(const [country,timezone,currency,min] of [['GB','Europe/London','GBP',30],['US','America/New_York','USD',50],['CA','America/Toronto','CAD',50],['AU','Australia/Sydney','AUD',50]]){
     const b=await business({country,timezone,currency});
     await q("update jovabook_private.offer_accounts set plan='standard',provider_status='active',paid_until=now()+interval '30 days' where salon_id=$1",[b.id]);
     await q("update public.salons set payments='{\"enabled\":true,\"deposit_percent\":100}' where id=$1",[b.id]);
@@ -111,7 +111,7 @@ test('international database migration preserves local booking and payment contr
   await t.test('hosted checkout and capture preserve each trusted service currency',async()=>{
    const token='a'.repeat(64),worker=(action,payload={})=>scalar('select public.booking_deposit_worker($1,$2,$3) as value',[token,action,JSON.stringify(payload)]);
    await q("update jovabook_private.customer_config set payments_enabled=true,worker_hash=encode(sha256(convert_to($1,'UTF8')),'hex')",[token]);
-   for(const [country,timezone,currency] of [['GB','Europe/London','GBP'],['US','America/New_York','USD']]){
+   for(const [country,timezone,currency] of [['GB','Europe/London','GBP'],['US','America/New_York','USD'],['CA','America/Toronto','CAD'],['AU','Australia/Sydney','AUD']]){
     const b=await business({country,timezone,currency}),account='acct_'+country,provider='cs_test_'+country;
     await q("update jovabook_private.offer_accounts set plan='standard',provider_status='active',paid_until=now()+interval '30 days' where salon_id=$1",[b.id]);
     await q("update public.salons set status='active',plan='standard' where id=$1",[b.id]);

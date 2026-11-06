@@ -6,7 +6,7 @@ import {normaliseSmsPhone} from '../lib/jovabook-phone.mjs';
 import {createPureSmsAdapter,selectSmsProvider,createBookingSmsHandlers} from '../lib/jovabook-sms.mjs';
 
 const json=(data,status=200)=>Response.json(data,{status});
-const config={apiKey:'fixture-key',ukSender:'JovaBook',usSender:'+18885550100',approvedCountries:['GB','US']};
+const config={apiKey:'fixture-key',ukSender:'JovaBook',usSender:'+18885550100',caSender:'+18885550101',auSender:'JovaBook',approvedCountries:['GB','US','CA','AU']};
 const salon_id='20000000-0000-4000-8000-000000000001';
 
 test('browser and server phone rules stay identical without runtime dependencies',async()=>{
@@ -18,19 +18,21 @@ test('browser and server phone rules stay identical without runtime dependencies
  }
 });
 
-test('phone routing allows UK and US and refuses Canada and other destinations',()=>{
+test('phone routing supports the four markets and refuses other NANP destinations',()=>{
  for(const [input,defaultCountry,destination,country] of [
   ['07700 900123','GB','447700900123','GB'],['0044 (7700) 900123','GB','447700900123','GB'],
   ['(415) 555-2671','US','14155552671','US'],['+1 212 555 2671','GB','12125552671','US'],
+  ['+1 604 555 2671','GB','16045552671','CA'],['416-555-2671','CA','14165552671','CA'],
+  ['+61 412 345 678','GB','61412345678','AU'],['0412 345 678','AU','61412345678','AU'],
  ])assert.deepEqual(normaliseSmsPhone(input,defaultCountry),{destination,country},input);
- for(const input of ['+1 604 555 2671','+1 416 555 2671','+1 242 555 2671','+1 246 555 2671','+1 787 555 2671','+1 671 555 2671','+1 876 555 2671','+1 800 555 2671','+1 999 555 2671','+61 412 345 678','+61 2 1234 5678','07000 900123','+33 612345678','+447700900123 ext 9','++447700900123','+00447700900123',''])assert.equal(normaliseSmsPhone(input),null,input);
+ for(const input of ['+1 242 555 2671','+1 246 555 2671','+1 787 555 2671','+1 671 555 2671','+1 876 555 2671','+1 800 555 2671','+1 999 555 2671','+61 2 1234 5678','07000 900123','+33 612345678','+447700900123 ext 9','++447700900123','+00447700900123',''])assert.equal(normaliseSmsPhone(input),null,input);
 });
 
 test('approved platform sender is selected by recipient country with one direct API POST',async()=>{
  const calls=[],adapter=createPureSmsAdapter({...config,send:async(url,options)=>{calls.push({url,options});return json({id:String(calls.length),countryCode:1});}});
- for(const destination of ['447700900123','14155552671'])assert.equal((await adapter.sendMessage({destination,sender:'Unapproved',salon_id,content:'Your appointment is tomorrow.'})).state,'Sent');
- assert.equal(calls.length,2);
- assert.deepEqual(calls.map(c=>JSON.parse(c.options.body).sender),['JovaBook','+18885550100']);
+ for(const destination of ['447700900123','14155552671','14165552671','61412345678'])assert.equal((await adapter.sendMessage({destination,sender:'Unapproved',salon_id,content:'Your appointment is tomorrow.'})).state,'Sent');
+ assert.equal(calls.length,4);
+ assert.deepEqual(calls.map(c=>JSON.parse(c.options.body).sender),['JovaBook','+18885550100','+18885550101','JovaBook']);
  for(const call of calls){
   assert.equal(call.url,'https://connect-api.divergent.cloud/sms/send');
   assert.equal(call.options.method,'POST');assert.equal(call.options.headers['X-Api-Key'],'fixture-key');
@@ -82,7 +84,7 @@ test('readiness reports unverified PureSMS transport separately from configured 
  const send=async(url,options)=>{calls.push(url);const action=JSON.parse(options.body).p_action;assert.equal(action,'health');return json({enabled:false,provider_configured:false,budgets_configured:true});};
  const handler=createBookingSmsHandlers({env,send});
  const response=await handler.worker(new Request('https://example.test/worker',{method:'POST',headers:{authorization:'Bearer '+token},body:JSON.stringify({action:'status'})}));
- const body=await response.json();assert.equal(body.provider_name,'PureSMS');assert.equal(body.provider_configuration_ready,true);assert.equal(body.provider_ready,null);assert.equal(body.provider_verification,'not_checked');assert.equal(body.delivery_verified,false);assert.equal(body.credits,null);assert.equal(body.attempted,0);assert.deepEqual(body.configured_countries,['GB']);assert.deepEqual(body.missing_countries,['US']);assert.equal(calls.length,1);
+ const body=await response.json();assert.equal(body.provider_name,'PureSMS');assert.equal(body.provider_configuration_ready,true);assert.equal(body.provider_ready,null);assert.equal(body.provider_verification,'not_checked');assert.equal(body.delivery_verified,false);assert.equal(body.credits,null);assert.equal(body.attempted,0);assert.deepEqual(body.configured_countries,['GB']);assert.deepEqual(body.missing_countries,['US','AU','CA']);assert.equal(calls.length,1);
 });
 
 test('unapproved prepared route is cancelled before begin, retail debit or provider HTTP',async()=>{

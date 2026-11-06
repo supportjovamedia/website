@@ -1,6 +1,6 @@
 # JovaBook PureSMS configuration
 
-This release supports UK and US SMS destinations and selects PureSMS by default. Canada and Australia remain outside the launch. A missing PureSMS key or sender never activates The SMS Works as an automatic fallback. The code change alone does not establish an approved account, successful send or delivery. Live credentials and destination senders must be verified before enabling dispatch.
+This release prepares UK, US, Canadian and Australian phone routes and selects PureSMS by default. Business registration is separate from SMS readiness. No country is approved for SMS by default. A missing PureSMS key or sender never activates The SMS Works as an automatic fallback. The code change alone does not establish an approved account, successful send or delivery. Live credentials, SaaS use case and destination senders must be verified before enabling dispatch.
 
 ## Server configuration
 
@@ -12,12 +12,14 @@ Set these only in the server environment, never in NEXT_PUBLIC variables or book
 | PURESMS_API_KEY | Existing PureSMS/Divergent workspace API key with permission to send SMS |
 | PURESMS_UK_SENDER | Approved platform sender for UK destinations |
 | PURESMS_US_SENDER | Approved numeric platform sender for US destinations, in +1 international format |
-| PURESMS_APPROVED_COUNTRIES | GB and/or US, added only after that destination's account and sender route is approved |
+| PURESMS_CA_SENDER | Approved numeric sender for Canadian destinations, in +1 international format |
+| PURESMS_AU_SENDER | Approved sender for Australian destinations |
+| PURESMS_APPROVED_COUNTRIES | GB, US, CA and/or AU, added only after that destination's account, SaaS use case and sender route are approved |
 | JOVABOOK_SMS_ENABLED | Existing independent dispatch switch; keep false until account, country routes and budgets are ready |
 
 The existing worker token, database readiness, plan entitlement, customer consent, business setting and segment budgets continue to apply. An API key or sender string alone does not enable a country: PURESMS_APPROVED_COUNTRIES must explicitly include it after approval is checked. A business-provided display sender cannot override the verified platform sender. This setup does not purchase phone numbers, create recurring add-ons or imply that a separate paid number is needed for each business. Confirm the provider's available shared/platform route and any charges before accepting an add-on.
 
-PureSMS advertises UK and US coverage. US destinations do not accept a generic alphanumeric sender in this integration. Sender registration or approval must be confirmed for each destination and for JovaBook's actual use case: sending booking reminders on behalf of independent businesses. An approved JovaMedia sender alone does not establish approval for every business brand. The provider may reject a country or use case even when credentials are valid. Do not mark a country approved until that scope has been confirmed.
+PureSMS advertises all four destinations. US and Canadian destinations do not accept a generic alphanumeric sender in this integration. Sender registration or approval must be confirmed for each destination and for JovaBook's actual use case: sending booking reminders on behalf of independent businesses. An approved JovaMedia sender alone does not establish approval for every business brand. The provider may reject a country or use case even when credentials are valid. Do not mark a country approved until that scope has been confirmed.
 
 ## Business usage and credits
 
@@ -27,7 +29,7 @@ JovaBook's existing queue has independent global and per-business segment safety
 
 ## Phone handling
 
-booking-demo/sms-phone.js provides the browser phone parser. lib/jovabook-phone.mjs contains equivalent server rules, with parity verified across the NANP area prefixes and country-format fixtures. Both normalise supported international numbers to digits-only E.164 for the database; the provider request restores the leading plus. US national numbers require an explicit US default country, while legacy UK 07 numbers remain supported. US +1 numbers are checked against pinned mobile-number plan metadata, so a Canadian, Bahamas, Jamaica or Puerto Rico +1 number does not become an allowed US route accidentally.
+booking-demo/sms-phone.js provides the browser phone parser. lib/jovabook-phone.mjs contains equivalent server rules, with parity verified across the NANP area prefixes and country-format fixtures. Both normalise supported international numbers to digits-only E.164 for the database; the provider request restores the leading plus. National numbers require the business/default country, while legacy UK 07 numbers remain supported. US and Canadian +1 numbers are distinguished using pinned mobile-number plan metadata, so a Bahamas, Jamaica or Puerto Rico +1 number does not become an allowed US route accidentally.
 
 Dial-plan validation does not prove that a number exists, is currently a mobile number after porting, or has consented. No paid lookup or new runtime request is added. Review the pinned numbering metadata when a newly allocated area code is needed. NANP patterns are derived from Google's Apache-2.0 libphonenumber metadata, revision 5ea78f46ccc1a258012344801ce04eb6eb4c55da: https://github.com/google/libphonenumber/blob/5ea78f46ccc1a258012344801ce04eb6eb4c55da/resources/PhoneNumberMetadata.xml. Licence: https://github.com/google/libphonenumber/blob/5ea78f46ccc1a258012344801ce04eb6eb4c55da/LICENSE.
 
@@ -43,7 +45,7 @@ The stable adapter does not claim a verified balance or delivery lookup. The sta
 
 ## Release verification
 
-1. Confirm account access and destination approval for the UK and US platform senders. Do not create paid or recurring services without explicit approval.
+1. Confirm account access, SaaS use case and destination approval for the four routes. Do not create paid or recurring services without explicit approval. Signup access does not imply SMS approval.
 2. Install the reviewed database and application changes together, preserving existing UK settings and historical delivery records.
 3. Check protected status with dispatch off. Verify budgets and each configured country without claiming that configuration proves delivery.
 4. Use provider simulator/test mode where supported. Confirm provider acceptance and final delivery separately using explicitly approved test numbers before any paid test send.

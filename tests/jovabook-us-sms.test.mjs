@@ -4,14 +4,15 @@ import {PGlite} from '@electric-sql/pglite';
 import {sources,bootstrap} from '../scripts/jovabook-test-db.mjs';
 import {createPureSmsAdapter} from '../lib/jovabook-sms.mjs';
 
-test('sms_phone supports UK and US and rejects Canada, Australia and other destinations',async()=>{
+test('sms_phone supports the four launch markets and rejects other destinations',async()=>{
  const db=new PGlite();
  try{
   await bootstrap(db,await sources());
   const f=async v=>(await db.query('select jovabook_private.sms_phone($1) v',[v])).rows[0].v;
   assert.equal(await f('07700 900123'),'447700900123');assert.equal(await f('+44 7700 900123'),'447700900123');
   assert.equal(await f('+1 (415) 555-2671'),'14155552671');
-  for(const bad of ['+1 (416) 555-2671','+61 412 345 678','4155552671','+1 115 555 2671','+1 415 155 2671','+1415555267','+1 242 555 2671','+1 787 555 2671','+1 876 555 2671','+91 98765 43210','+92 300 1234567','','abc'])assert.equal(await f(bad),null,bad);
+  assert.equal(await f('+1 (416) 555-2671'),'14165552671');assert.equal(await f('+61 412 345 678'),'61412345678');
+  for(const bad of ['4155552671','+1 115 555 2671','+1 415 155 2671','+1415555267','+1 242 555 2671','+1 787 555 2671','+1 876 555 2671','+91 98765 43210','+92 300 1234567','','abc'])assert.equal(await f(bad),null,bad);
  }finally{await db.close();}
 });
 

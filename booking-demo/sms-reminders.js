@@ -3,7 +3,7 @@
  'use strict';
  const mobile=(value,country='GB')=>window.JovaSmsPhone?.normalise(value,country)||'';
  const eligible=s=>['Standard','Premium','Solo','Team'].includes(window.JovaSchedule?.plan(s)?.name);
- const consentError='Enter a supported UK or US mobile number with its country code for your optional text reminder, or leave text reminders unchecked.';
+ const consentError='Enter a supported UK, US, Canadian or Australian mobile number with its country code for your optional text reminder, or leave text reminders unchecked.';
  const uncertain='We could not confirm whether this booking was saved. Retry with the same details to check the existing request. Please contact the business before starting another booking.';
  window.JovaSmsReminders={mobile,create(api){
   const {salon,esc,render,isLive}=api;let state=null;

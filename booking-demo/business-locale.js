@@ -1,12 +1,14 @@
 /* Business wall times remain local to the saved IANA zone, never the viewer's device. */
 ((root) => {
  'use strict';
- const countries={GB:{name:'United Kingdom',currency:'GBP',zone:'Europe/London'},US:{name:'United States',currency:'USD',zone:'America/New_York'}};
+ const countries={GB:{name:'United Kingdom',currency:'GBP',zone:'Europe/London'},US:{name:'United States',currency:'USD',zone:'America/New_York'},CA:{name:'Canada',currency:'CAD',zone:'America/Toronto'},AU:{name:'Australia',currency:'AUD',zone:'Australia/Sydney'}};
  const zones={
   GB:['Europe/London'],
   US:['America/New_York','America/Detroit','America/Kentucky/Louisville','America/Kentucky/Monticello','America/Indiana/Indianapolis','America/Indiana/Vincennes','America/Indiana/Winamac','America/Indiana/Marengo','America/Indiana/Petersburg','America/Indiana/Vevay','America/Chicago','America/Indiana/Tell_City','America/Indiana/Knox','America/Menominee','America/North_Dakota/Center','America/North_Dakota/New_Salem','America/North_Dakota/Beulah','America/Denver','America/Boise','America/Phoenix','America/Los_Angeles','America/Anchorage','America/Juneau','America/Sitka','America/Metlakatla','America/Yakutat','America/Nome','America/Adak','Pacific/Honolulu'],
+  CA:['America/St_Johns','America/Halifax','America/Glace_Bay','America/Moncton','America/Goose_Bay','America/Toronto','America/Nipigon','America/Thunder_Bay','America/Iqaluit','America/Pangnirtung','America/Winnipeg','America/Rainy_River','America/Rankin_Inlet','America/Resolute','America/Regina','America/Swift_Current','America/Edmonton','America/Cambridge_Bay','America/Yellowknife','America/Inuvik','America/Creston','America/Dawson_Creek','America/Fort_Nelson','America/Vancouver','America/Whitehorse','America/Dawson'],
+  AU:['Australia/Adelaide','Australia/Brisbane','Australia/Broken_Hill','Australia/Darwin','Australia/Eucla','Australia/Hobart','Australia/Lindeman','Australia/Lord_Howe','Australia/Melbourne','Australia/Perth','Australia/Sydney']
  };
- const currencies=['GBP','USD'];
+ const currencies=['GBP','USD','CAD','AUD'];
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const country=value=>['IM','JE','GG'].includes(value)?'GB':value;
  function validate(value){
@@ -14,7 +16,7 @@
   if(!Object.hasOwn(countries,code))throw Error('Choose a supported business country.');
   if(!zones[code].includes(value.timezone))throw Error('Choose a time zone in your business country.');
   try{new Intl.DateTimeFormat('en',{timeZone:value.timezone}).format();}catch{throw Error('Choose a valid business time zone.');}
-  if(!currencies.includes(value.currency))throw Error('Choose GBP or USD for service prices.');
+  if(!currencies.includes(value.currency))throw Error('Choose GBP, USD, CAD or AUD for service prices.');
   return {country:code,timezone:value.timezone,currency:value.currency};
  }
  function resolve(salon){

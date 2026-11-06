@@ -18,14 +18,16 @@ test('SaaS and legacy commission amounts retain GBP minor-unit interpretation',(
 });
 
 test('original booking prices display their explicit currencies without a mixed total',()=>{
- const html=context.commissionReviewsMarkup({ok:true,total:2,reviews:[record('USD'),record('GBP')]});
+ const html=context.commissionReviewsMarkup({ok:true,total:4,reviews:[record('USD'),record('GBP'),record('CAD'),record('AUD')]});
  assert.match(html,/USD\s*25\.00/);
  assert.match(html,/£25\.00/);
+ assert.match(html,/CAD\s*25\.00/);
+ assert.match(html,/AUD\s*25\.00/);
  assert.doesNotMatch(html,/£50|USD\s*50/);
 });
 
 test('missing or unsupported booking currency withholds the amount instead of assuming GBP',()=>{
- for(const currency of [undefined,null,'','EUR','CAD','AUD','not-a-currency']){
+ for(const currency of [undefined,null,'','EUR','not-a-currency']){
   const html=context.commissionReviewsMarkup({ok:true,total:1,reviews:[record(currency)]});
   assert.match(html,/Currency not recorded/);
   assert.doesNotMatch(html,/£25|25\.00/);

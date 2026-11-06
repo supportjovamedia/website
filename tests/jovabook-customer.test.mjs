@@ -49,6 +49,6 @@ test('business origins allow only matching customer context and keep CORS creden
 
 
 test('customer card setup uses the trusted business currency and rejects unsupported currencies before creating a session',async()=>{
- for(const currency of ['gbp','usd']){const h=harness({context:{currency}});const r=await h.handlers.paymentMethod(req('payment-method',{salon:slug,request_id:requestId}));assert.equal(r.status,200,currency);assert.equal(h.calls.find(c=>c.method==='checkout.sessions.create').args[0].currency,currency);}
+ for(const currency of ['gbp','usd','cad','aud']){const h=harness({context:{currency}});const r=await h.handlers.paymentMethod(req('payment-method',{salon:slug,request_id:requestId}));assert.equal(r.status,200,currency);assert.equal(h.calls.find(c=>c.method==='checkout.sessions.create').args[0].currency,currency);}
  const h=harness({context:{currency:'eur'}});assert.equal((await h.handlers.paymentMethod(req('payment-method',{salon:slug,request_id:requestId}))).status,503);assert.ok(!h.calls.some(c=>c.method.endsWith('.create')));
 });

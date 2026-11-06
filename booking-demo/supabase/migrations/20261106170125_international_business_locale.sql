@@ -4,9 +4,11 @@ begin;
 -- instants. Keep UK defaults and prevent a settings edit from reinterpreting them.
 create function jovabook_private.locale_valid(p_country text,p_timezone text,p_currency text) returns boolean
 language sql stable set search_path='' as $$
- select coalesce(p_currency in('GBP','USD') and exists(select 1 from pg_catalog.pg_timezone_names where name=p_timezone) and
+ select coalesce(p_currency in('GBP','USD','CAD','AUD') and exists(select 1 from pg_catalog.pg_timezone_names where name=p_timezone) and
  case when p_country in('GB','IM','JE','GG') then p_timezone='Europe/London'
  when p_country='US' then p_timezone=any(array['America/New_York','America/Detroit','America/Kentucky/Louisville','America/Kentucky/Monticello','America/Indiana/Indianapolis','America/Indiana/Vincennes','America/Indiana/Winamac','America/Indiana/Marengo','America/Indiana/Petersburg','America/Indiana/Vevay','America/Chicago','America/Indiana/Tell_City','America/Indiana/Knox','America/Menominee','America/North_Dakota/Center','America/North_Dakota/New_Salem','America/North_Dakota/Beulah','America/Denver','America/Boise','America/Phoenix','America/Los_Angeles','America/Anchorage','America/Juneau','America/Sitka','America/Metlakatla','America/Yakutat','America/Nome','America/Adak','Pacific/Honolulu'])
+ when p_country='CA' then p_timezone=any(array['America/St_Johns','America/Halifax','America/Glace_Bay','America/Moncton','America/Goose_Bay','America/Toronto','America/Nipigon','America/Thunder_Bay','America/Iqaluit','America/Pangnirtung','America/Winnipeg','America/Rainy_River','America/Rankin_Inlet','America/Resolute','America/Regina','America/Swift_Current','America/Edmonton','America/Cambridge_Bay','America/Yellowknife','America/Inuvik','America/Creston','America/Dawson_Creek','America/Fort_Nelson','America/Vancouver','America/Whitehorse','America/Dawson'])
+ when p_country='AU' then p_timezone=any(array['Australia/Adelaide','Australia/Brisbane','Australia/Broken_Hill','Australia/Darwin','Australia/Eucla','Australia/Hobart','Australia/Lindeman','Australia/Lord_Howe','Australia/Melbourne','Australia/Perth','Australia/Sydney'])
  else false end,false)
 $$;
 revoke all on function jovabook_private.locale_valid(text,text,text) from public,anon,authenticated;
@@ -19,9 +21,9 @@ begin
  if jsonb_typeof(new.settings) is distinct from 'object' then raise exception 'Enter valid business settings.' using errcode='22023';end if;
  code:=coalesce(new.settings->>'country',previous->>'country','GB');
  if code in('IM','JE','GG') then code:='GB';end if;
- zone:=coalesce(new.settings->>'timezone',previous->>'timezone',case code when 'US' then 'America/New_York' else 'Europe/London' end);
- currency:=coalesce(new.settings->>'currency',previous->>'currency',case code when 'US' then 'USD' else 'GBP' end);
- if not jovabook_private.locale_valid(code,zone,currency) then raise exception 'Choose a supported business country, its time zone, and GBP or USD.' using errcode='22023';end if;
+ zone:=coalesce(new.settings->>'timezone',previous->>'timezone',case code when 'US' then 'America/New_York' when 'CA' then 'America/Toronto' when 'AU' then 'Australia/Sydney' else 'Europe/London' end);
+ currency:=coalesce(new.settings->>'currency',previous->>'currency',case code when 'US' then 'USD' when 'CA' then 'CAD' when 'AU' then 'AUD' else 'GBP' end);
+ if not jovabook_private.locale_valid(code,zone,currency) then raise exception 'Choose a supported business country, its time zone, and GBP, USD, CAD or AUD.' using errcode='22023';end if;
  if tg_op='UPDATE' then
   perform pg_advisory_xact_lock(hashtext('jovabook-owner:'||new.id::text));
   old_code:=coalesce(previous->>'country','GB');old_zone:=coalesce(previous->>'timezone','Europe/London');old_currency:=coalesce(previous->>'currency','GBP');
@@ -183,10 +185,10 @@ create function jovabook_private.service_currency(p_salon uuid) returns text lan
 $$;
 revoke all on function jovabook_private.service_currency(uuid) from public,anon,authenticated;
 alter table jovabook_private.deposit_checkouts drop constraint deposit_checkouts_currency_check;
-alter table jovabook_private.deposit_checkouts add constraint deposit_checkouts_currency_check check(currency in('gbp','usd'));
+alter table jovabook_private.deposit_checkouts add constraint deposit_checkouts_currency_check check(currency in('gbp','usd','cad','aud'));
 alter table jovabook_private.deposit_checkouts add constraint international_deposit_amount check(amount>=case currency when 'gbp' then 30 else 50 end);
 alter table jovabook_private.customer_deposits drop constraint customer_deposits_currency_check;
-alter table jovabook_private.customer_deposits add constraint customer_deposits_currency_check check(currency in('gbp','usd'));
+alter table jovabook_private.customer_deposits add constraint customer_deposits_currency_check check(currency in('gbp','usd','cad','aud'));
 do $patch$
 declare src text;needle text;
 begin
@@ -225,6 +227,16 @@ revoke all on function public.customer_portal_worker(text,text,jsonb) from publi
 grant execute on function public.customer_portal_worker(text,text,jsonb) to anon;
 
 -- Provider accounting tags come only from the verified server queue record.
+-- Owner reminder credits are managed by JovaBook. Provider selection lives in
+-- the server environment, so this label also stays accurate on a legacy rollback.
+do $patch$
+declare src text;needle text:='''provider'',''The SMS Works''';
+begin
+ src:=pg_get_functiondef('jovabook_private.message_original_sms_reminder_info()'::regprocedure);
+ if position(needle in src)=0 then raise exception 'Review owner SMS provider label insertion point.';end if;
+ execute replace(src,needle,'''provider'',''JovaBook''');
+end$patch$;
+
 create or replace function jovabook_private.sms_template_valid(value text) returns boolean language sql immutable set search_path='' as $$
  select length(trim(value)) between 1 and 320 and strpos(value,'{time}')>0 and strpos(value,'{date}')>0 and strpos(value,'{business}')>0
  and regexp_replace(value,'\{(time|day|date|business|address|timezone)\}','','g')!~'[{}]'
@@ -267,20 +279,20 @@ begin
 end$patch$;
 
 -- Phone metadata is pinned to the same Google libphonenumber revision as
--- lib/jovabook-phone.mjs. US exact dial plans exclude other NANP countries.
+-- lib/jovabook-phone.mjs. US/CA exact dial plans exclude other NANP countries.
 create or replace function jovabook_private.sms_phone(p_phone text) returns text language plpgsql immutable set search_path='' as $$
 declare n text;begin
  if length(coalesce(p_phone,''))>40 or trim(coalesce(p_phone,''))!~'^\+?[0-9[:space:]().-]+$' then return null;end if;
  n:=regexp_replace(trim(p_phone),'[[:space:]().-]','','g');
  if n like '+%' then n:=substr(n,2);elsif n like '00%' then n:=substr(n,3);end if;
  if n~'^07[0-9]{9}$' then n:='44'||substr(n,2);end if;
- if n~'^447([1-5789][0-9]{8}|624[0-9]{6})$' or n~'^1(983[2-57-9][0-9]{6}|(?:2(?:0[1-35-9]|1[02-9]|2[03-57-9]|3[1459]|4[08]|5[1-46]|6[0279]|7[02469]|8[13])|3(?:0[1-57-9]|1[02-9]|2[013-79]|3[0-24679]|4[167]|5[0-3]|6[01349]|8[056])|4(?:0[124-9]|1[02-579]|2[3-5]|3[0245]|4[023578]|58|6[349]|7[02589]|8[04])|5(?:0[1-57-9]|1[0235-8]|20|3[0149]|4[01]|5[179]|6[1-47]|7[0-5]|8[0256])|6(?:0[1-35-9]|1[024-9]|2[03689]|3[016]|4[0156]|5[01679]|6[0-279]|78|8[0-269])|7(?:0[1-46-8]|1[2-9]|2[04-8]|3[0-2478]|4[0378]|5[47]|6[02359]|7[0-59]|8[156])|8(?:0[1-68]|1[02-8]|2[0168]|3[0-2589]|4[03578]|5[046-9]|6[02-5]|7[028])|9(?:0[1346-9]|1[02-9]|2[0589]|3[0146-8]|4[01357-9]|5[12469]|7[0-3589]|8[04-69]))[2-9][0-9]{6})$' then return n;end if;
+ if n~'^447([1-5789][0-9]{8}|624[0-9]{6})$' or n~'^614[0-9]{8}$' or n~'^1(983[2-57-9][0-9]{6}|(?:2(?:0[1-35-9]|1[02-9]|2[03-57-9]|3[1459]|4[08]|5[1-46]|6[0279]|7[02469]|8[13])|3(?:0[1-57-9]|1[02-9]|2[013-79]|3[0-24679]|4[167]|5[0-3]|6[01349]|8[056])|4(?:0[124-9]|1[02-579]|2[3-5]|3[0245]|4[023578]|58|6[349]|7[02589]|8[04])|5(?:0[1-57-9]|1[0235-8]|20|3[0149]|4[01]|5[179]|6[1-47]|7[0-5]|8[0256])|6(?:0[1-35-9]|1[024-9]|2[03689]|3[016]|4[0156]|5[01679]|6[0-279]|78|8[0-269])|7(?:0[1-46-8]|1[2-9]|2[04-8]|3[0-2478]|4[0378]|5[47]|6[02359]|7[0-59]|8[156])|8(?:0[1-68]|1[02-8]|2[0168]|3[0-2589]|4[03578]|5[046-9]|6[02-5]|7[028])|9(?:0[1346-9]|1[02-9]|2[0589]|3[0146-8]|4[01357-9]|5[12469]|7[0-3589]|8[04-69]))[2-9][0-9]{6})$' or n~'^1((?:2(?:04|[23]6|[48]9|5[07]|[67]3)|3(?:06|43|54|6[578]|82)|4(?:03|1[68]|[26]8|3[178]|50|74)|5(?:06|1[49]|48|79|8[147])|6(?:04|[18]3|39|47|72)|7(?:0[59]|42|53|78|8[02])|8(?:[06]7|19|25|7[39])|9(?:0[25]|42))[2-9][0-9]{6})$' then return n;end if;
  return null;end$$;
 revoke all on function jovabook_private.sms_phone(text) from public,anon,authenticated;
 do $patch$declare src text;needle text:='Enter a valid UK mobile number for an SMS reminder.';begin
  src:=pg_get_functiondef('jovabook_private.billing_original_create_booking_with_sms(text,text,text,text,text,text,text,text,text,text,boolean,uuid)'::regprocedure);
  if position(needle in src)=0 then raise exception 'Review SMS validation message insertion point.';end if;
- execute replace(src,needle,'Enter a valid UK or US mobile number for an SMS reminder.');
+ execute replace(src,needle,'Enter a valid UK, US, Canadian or Australian mobile number for an SMS reminder.');
 end$patch$;
 
 notify pgrst,'reload schema';
