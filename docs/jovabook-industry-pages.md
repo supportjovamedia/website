@@ -10,7 +10,7 @@ New pages target salon booking software, barber booking software, nail salon boo
 
 ## Page content and search signals
 
-Pages contain a specific workflow, practical examples where appropriate, product features, limitations, FAQs, plan information and a signup route. Each page has an individual title, description, canonical URL, social metadata, H1, visible breadcrumbs and matching breadcrumb JSON-LD. All canonical industry URLs and online booking appear in the sitemap.
+Pages lead with “Online booking software for…” and contain an industry-specific introduction, four detailed scheduling sections, product features, limitations, FAQs, plan information and a signup route. Each page has an individual title, description, canonical URL, social metadata, H1, WebPage schema linked to the established JovaBook software entity, and breadcrumbs outside the hero with matching JSON-LD. All canonical industry URLs and online booking appear in the sitemap. Numbered steps, example-menu chips and screenshot captions are removed.
 
 Clinical pages do not claim healthcare compliance or clinical-record capabilities. Pilates and yoga cover private appointments, not group classes. Tanning covers appointments, not sunbed controls or package credits. These limits are visible on the relevant pages.
 
@@ -22,16 +22,16 @@ No indexation, traffic or ranking improvement is guaranteed by publishing these 
 
 ## Images and request costs
 
-Each detail page renders exactly two content images. The directory has no content images. Shared navigation/footer logos remain separate. Only the selected page's images enter the HTML; there is no asset-directory fetch, preload loop, gallery carousel, remote image API or client-side image loader. Links in the new content explicitly disable Next prefetch.
+Every detail page renders the same single dashboard image, using the same source URLs across all industries. The directory has no content images. Shared navigation/footer logos remain separate. There is no asset-directory fetch, preload loop, gallery carousel, remote image API or client-side image loader. Links in the new content explicitly disable Next prefetch.
 
-`scripts/prepare-industry-media.mjs` uses an explicit seven-source allowlist and runs only when an editor changes artwork. It does not run at build time or on a visit. It creates WebP variants with metadata stripped, and a source manifest at `lib/jovabook-industry-media.json`.
+`scripts/prepare-industry-media.mjs` processes only the explicit dashboard source and runs only when an editor changes artwork. It does not run at build time or on a visit. It creates WebP variants with metadata stripped, and a source manifest at `lib/jovabook-industry-media.json`.
 
-A native picture element selects either the 640px or 1120px version, not both. The hero loads eagerly; the second image is lazy. Browsers may load a lazy image shortly before it enters the viewport. New filenames contain a SHA-256 content hash and are served with a one-year immutable browser cache. Changed artwork must receive a new hash; never overwrite an immutable URL with different bytes.
+A native picture element selects either the 640px or 1120px version. The hero loads eagerly. Filenames contain a SHA-256 content hash and are served with a one-year immutable browser cache. Moving between landing pages at the same image breakpoint reuses the same URL. Crossing a breakpoint can request the other variant. Changed artwork must receive a new hash; never overwrite an immutable URL with different bytes.
 
-Files range from 9,058 to 50,372 bytes. These are precompressed exports served directly without Next image transformations. Existing originals are retained for recovery and other pages. Existing unused files in public storage are not requested merely because they exist. No broad deletion of historical assets is part of this change.
+The dashboard variants are 11,536 and 25,928 bytes. These are precompressed exports served directly without Next image transformations. The fourteen superseded industry exports are removed from this feature branch; original artwork remains in its existing source locations for recovery and other pages. Existing unused files in public storage are not requested merely because they exist.
 
 An initial visit, expired cache, cleared cache or new image URL still creates requests. This setup reduces unnecessary repeat requests; it cannot make hosting traffic free.
 
 ## Maintaining the pages
 
-Edit content in `lib/jovabook-industries.mjs`. Add a distinct, supported workflow before adding another industry. Keep plan prices aligned with the active offer. For a media change, run `node scripts/prepare-industry-media.mjs` and inspect the actual output, then commit the manifest and referenced exports together. Do not add a blanket image preloader.
+Edit page-specific long-form content in `lib/jovabook-industry-copy.mjs`, and the catalogue, product benefits and core FAQs in `lib/jovabook-industries.mjs`. Add a distinct, supported workflow before adding another industry. Keep plan prices aligned with the active offer. For a media change, run `node scripts/prepare-industry-media.mjs` and inspect the actual output, then commit the manifest and referenced exports together. Do not add a blanket image preloader. See `docs/jovabook-search-visibility-plan.md` for the search and answer-engine approach and release measurement.

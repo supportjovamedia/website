@@ -7,20 +7,14 @@ import {fileURLToPath} from 'node:url';
 const root=new URL('../',import.meta.url);
 const target=new URL('public/jovabook/industries/',root);
 const sources={
- salon:['public/websites/photography/salon-website-design-hero-main.webp','Chairs and mirrors in a hair salon'],
- spa:['public/jovabook/industry-spa.webp','A massage treatment in progress'],
- fitness:['public/home-agency/fitness.webp','A woman in fitness clothing'],
- tutor:['public/jovabook/education-black-tutor.webp','A tutor working with a student'],
- desk:['public/home-agency/desk.webp','A workspace with a closed laptop and camera'],
- calendar:['public/jovabook/calendar-desktop.webp','JovaBook weekly calendar with example appointments'],
- services:['public/jovabook/services.webp','Services, prices and durations in the JovaBook dashboard'],
+ dashboard:['public/jovabook/dashboard.webp','JovaBook dashboard showing appointments, bookings and calendar controls'],
 };
 await mkdir(target,{recursive:true});
 const manifest={};
 for(const [key,[source,alt]] of Object.entries(sources)){
  const variants={};
  for(const [variant,width] of [['small',640],['large',1120]]){
-  const {data,info}=await sharp(fileURLToPath(new URL(source,root))).rotate().resize({width,withoutEnlargement:true}).webp({quality:key==='calendar'||key==='services'?82:72,effort:6}).toBuffer({resolveWithObject:true});
+  const {data,info}=await sharp(fileURLToPath(new URL(source,root))).rotate().resize({width,withoutEnlargement:true}).webp({quality:82,effort:6}).toBuffer({resolveWithObject:true});
   const hash=createHash('sha256').update(data).digest('hex').slice(0,12);
   const name=`${key}-${variant}-${hash}.webp`;
   await writeFile(new URL(name,target),data);
