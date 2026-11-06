@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Local international responsive preview</title>
+<style>body{margin:20px;background:#e8e8e8;color:#222;font:16px system-ui}label{display:block;margin:12px 0}iframe{display:block;border:1px solid #777;background:white;height:900px;max-width:none}main{overflow:auto}</style>
+<h1>Local international responsive preview</h1>
+<p>Fictional local records only. The frame provides a real CSS viewport without changing your Chrome window. No live accounts or SMS.</p>
+<label>Preview width <select id="size"><option value="1440">Desktop 1440</option><option value="375">Phone 375</option><option value="430">Phone 430</option></select></label>
+<main id="preview-root"></main>
+<script>
+(()=>{
+ if(!['localhost','127.0.0.1'].includes(location.hostname)){document.body.textContent='Local preview only.';return;}
+ const frame=document.createElement('iframe');frame.id='booking-preview';frame.title='Booking preview';frame.width='1440';frame.src='/tests/international-preview.html';
+ document.getElementById('preview-root').append(frame);
+ document.getElementById('size').addEventListener('change',event=>{frame.width=event.target.value;});
+})();
+</script></html>

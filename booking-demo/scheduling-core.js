@@ -43,9 +43,15 @@
   const validDate=value=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(String(value||'')))return false;const d=new Date(value+'T12:00:00Z');return !Number.isNaN(d.getTime())&&d.toISOString().slice(0,10)===value;};
   const addCalendarDays=(date,count)=>{const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+count);return d.toISOString().slice(0,10);};
   function onlineBookingWindow(salon,{now=Date.now(),tick=typeof performance!=='undefined'?performance.now():now}={}){
-    const saved=salon?.bookingWindow,timezone=saved?.timezone||salon?.timezone||'Europe/London';
+    const saved=salon?.bookingWindow,timezone=saved?.timezone||salon?.timezone||salon?.settings?.timezone||'Europe/London';
     let instant=Number(now);
-    if(saved){const server=Date.parse(saved.server_now);if(!validDate(saved.today)||!validDate(saved.max_date)||saved.days!==75||saved.max_date!==addCalendarDays(saved.today,75)||!Number.isFinite(server))return {valid:false,today:'',maxDate:'',timezone,days:75,minutes:0};instant=server+(Number.isFinite(saved.receivedTick)?Math.max(0,tick-saved.receivedTick):0);}
+    if(saved){const server=Date.parse(saved.server_now);if(!validDate(saved.today)||!validDate(saved.max_date)||saved.days!==75||saved.max_date!==addCalendarDays(saved.today,75)||!Number.isFinite(server))return {valid:false,today:'',maxDate:'',timezone,days:75,minutes:0};
+      if(Number.isFinite(saved.utc_offset_minutes)){
+        try{const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(server)).map(part=>[part.type,part.value])),offset=(Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second)-Math.floor(server/1000)*1000)/60000;
+          if(offset!==saved.utc_offset_minutes)return {valid:false,clockMismatch:true,today:'',maxDate:'',timezone,days:75,minutes:0};
+        }catch{return {valid:false,clockMismatch:true,today:'',maxDate:'',timezone,days:75,minutes:0};}
+      }
+      instant=server+(Number.isFinite(saved.receivedTick)?Math.max(0,tick-saved.receivedTick):0);}
     try{const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(instant)).map(p=>[p.type,p.value]));const today=parts.year+'-'+parts.month+'-'+parts.day;return {valid:true,today,maxDate:addCalendarDays(today,75),timezone,days:75,minutes:Number(parts.hour)*60+Number(parts.minute)};}catch{return {valid:false,today:'',maxDate:'',timezone,days:75,minutes:0};}
   }
   function onlineDateAllowed(date,salon,clock){const w=onlineBookingWindow(salon,clock);return w.valid&&validDate(date)&&date>=w.today&&date<=w.maxDate;}

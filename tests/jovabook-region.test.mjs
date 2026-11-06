@@ -4,7 +4,7 @@ import {regionDecision,regionEndpoint} from '../lib/jovabook-region.mjs';
 const h=o=>new Headers(o);
 test('UK, crown dependencies, USA, Canada and Australia are allowed; other countries are not',()=>{
  for(const c of ['GB','gb','IM','JE','GG','US','us','CA','AU'])assert.equal(regionDecision(h({'x-vercel-ip-country':c})).allowed,true);
- for(const c of ['IN','PK','FR','DE','NZ'])assert.equal(regionDecision(h({'x-vercel-ip-country':c})).allowed,false);
+ for(const c of ['IN','PK','FR','DE','NZ','ZZ'])assert.equal(regionDecision(h({'x-vercel-ip-country':c})).allowed,false);
  assert.equal(regionDecision(h({})).allowed,true);
 });
 test('endpoint answers with CORS only for JovaMedia origins',async()=>{
@@ -15,4 +15,12 @@ test('endpoint answers with CORS only for JovaMedia origins',async()=>{
  assert.equal(ok.headers.get('access-control-allow-origin'),'https://book.jovamedia.com');
  const bad=await e.GET(new Request('https://www.jovamedia.com/api/jovabook/region',{headers:{origin:'https://evil.example','x-vercel-ip-country':'GB'}}));
  assert.equal(bad.headers.get('access-control-allow-origin'),null);assert.equal((await bad.json()).allowed,true);
+});
+
+test('hosted preflight fails closed without a country while local development remains usable',async()=>{
+ assert.equal(regionDecision(h({}),{requireCountry:true}).allowed,false);
+ const hosted=regionEndpoint({requireCountry:true});
+ const result=await (await hosted.GET(new Request('https://www.jovamedia.com/api/jovabook/region'))).json();
+ assert.equal(result.allowed,false);assert.match(result.message,/could not verify/);
+ for(const country of ['GB','US','CA','AU'])assert.equal((await (await hosted.GET(new Request('https://www.jovamedia.com/api/jovabook/region',{headers:{'x-vercel-ip-country':country}}))).json()).allowed,true);
 });

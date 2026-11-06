@@ -38,7 +38,7 @@
   const unreadCount=()=>{const read=reads();return events().filter(event=>!read.has(event.id)).length;};
   function eventTime(event) {
    if(!stamp(event))return 'Time not recorded';
-   return new Date(event.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});
+   return new Date(event.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:window.JovaBusinessLocale?.resolve(salon()).timezone||'Europe/London'});
   }
   function appointmentTime(booking) {
    if(!/^\d{4}-\d{2}-\d{2}$/.test(booking.date||''))return 'Booking details unavailable';
@@ -47,7 +47,7 @@
   }
   function relativeTime(event){
    const value=stamp(event),elapsed=Date.now()-value;if(!value)return 'Time not recorded';if(elapsed<0)return eventTime(event);
-   const minutes=Math.floor(elapsed/60000);if(minutes<1)return 'Just now';if(minutes<60)return minutes+'m ago';const hours=Math.floor(minutes/60);if(hours<24)return hours+'h ago';const days=Math.floor(hours/24);if(days<8)return days+'d ago';return new Date(value).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'Europe/London'});
+   const minutes=Math.floor(elapsed/60000);if(minutes<1)return 'Just now';if(minutes<60)return minutes+'m ago';const hours=Math.floor(minutes/60);if(hours<24)return hours+'h ago';const days=Math.floor(hours/24);if(days<8)return days+'d ago';return new Date(value).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:window.JovaBusinessLocale?.resolve(salon()).timezone||'Europe/London'});
   }
   const recoveryTier='Available on Standard and Premium';
   function recoveryState(event){if(!['Standard','Premium','Solo','Team'].includes(api.planFor?.(salon())?.name))return {enabled:false,locked:true,reason:recoveryTier};const booking=(salon().bookings||[]).find(item=>item.id===event?.booking?.id),clock=window.JovaSchedule?.onlineBookingWindow?.(salon());if(!booking||booking.status!=='cancelled'||!clock?.valid||!/^\d{2}:\d{2}$/.test(booking.time||'')||!(booking.date>clock.today||booking.date===clock.today&&Number(booking.time.slice(0,2))*60+Number(booking.time.slice(3))>clock.minutes))return {enabled:false,locked:false,reason:'Only future cancelled appointments can be recovered.'};return {enabled:true,locked:false,reason:''};}
