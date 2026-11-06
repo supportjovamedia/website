@@ -15,7 +15,7 @@ const websiteFeatures={"landing-page":["One focused page","Responsive design","C
 export default function ProductsCatalogue({initialCategory="websites"}){
  const [selected,setSelected]=useState(initialCategory);
  return <main className={s.page}>
-  <section className={s.hero} data-website-intro><div className={s.container}><h1>Our other products.</h1><p>Choose a website package, or get help with your existing systems, email marketing and search visibility.</p></div></section>
+  <section className={s.hero} data-website-intro><div className={s.container}><h1>Our other products.</h1><p>Choose a website package, or get help with your existing systems, email marketing and search visibility.</p><Link prefetch={false} className={s.heroLink} href="/websites">Explore our website design</Link></div></section>
   <div className={`${s.container} ${s.layout}`}>
    <nav className={s.sidebar} aria-label="Browse categories">{categories.map(category=><button type="button" key={category.id} aria-pressed={selected===category.id} aria-controls={`catalogue-${category.id}`} onClick={()=>setSelected(category.id)}>{category.name}</button>)}</nav>
    <div className={s.content}>
@@ -26,7 +26,7 @@ export default function ProductsCatalogue({initialCategory="websites"}){
     </section>
     <section id="catalogue-services" hidden={selected!=="services"} aria-labelledby="services-heading">
      <header className={s.categoryHeading}><h2 id="services-heading">Make more of the tools you use.</h2><p>Practical support for your systems, email marketing and search visibility.</p></header>
-     <div className={s.serviceGrid}>{services.map(service=><Link href={`/services/${service.slug}`} key={service.slug} className={s.serviceCard}><div className={s.serviceImage}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt={serviceArtAlt[service.slug]} fill sizes="(max-width:650px) 90vw, 300px"/></div><div className={s.serviceBody}><h3>{service.name}</h3><p>{service.description}</p><span>Explore service</span></div></Link>)}</div>
+     <div className={s.serviceGrid}>{services.map(service=><Link prefetch={false} href={`/services/${service.slug}`} key={service.slug} className={s.serviceCard}><div className={s.serviceImage}><Image src={`/service-crafted/${serviceArt[service.slug]}.webp`} alt={serviceArtAlt[service.slug]} fill sizes="(max-width:650px) 90vw, 300px"/></div><div className={s.serviceBody}><h3>{service.name}</h3><p>{service.description}</p><span>Explore service</span></div></Link>)}</div>
     </section>
    </div>
   </div>

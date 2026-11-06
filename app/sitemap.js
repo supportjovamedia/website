@@ -1,11 +1,13 @@
 import { services } from "@/lib/data";
 import { articles, articleDates } from "@/lib/insights.mjs";
 import { websiteTypes, websitePath } from "@/lib/website-catalogue.mjs";
+import { bookingIndustries } from "@/lib/jovabook-industries.mjs";
 export default function sitemap() {
   const base = "https://www.jovamedia.com";
   const pages = [
     "",
     "/products",
+    "/industries",
     "/services",
     "/websites",
     "/blog",
@@ -17,6 +19,7 @@ export default function sitemap() {
     "/terms",
   ];
   return [
+    ...bookingIndustries.map(item => ({ url: `${base}/industries/${item.slug}`, lastModified: "2026-11-05" })),
     ...pages.map((path) => ({ url: base + path, ...(["","/pricing","/terms"].includes(path) ? { lastModified: "2026-11-05" } : path === "/products" ? { lastModified: "2026-11-03" } : path === "/websites" ? { lastModified: "2026-10-19" } : path === "/blog" ? { lastModified: articles.map(article => articleDates(article).updatedAt).sort().at(-1) } : {}) })),
     ...services.filter(service => service.slug !== "web-design").map((service) => ({ url: `${base}/services/${service.slug}` })),
     ...websiteTypes.map(item => ({ url: base + websitePath(item.slug), lastModified: "2026-10-19" })),

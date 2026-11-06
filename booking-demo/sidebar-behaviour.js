@@ -103,6 +103,9 @@
   document.addEventListener('pointerout',event=>{const sidebar=sidebarFrom(event.target);if(sidebar&&!sidebar.contains(event.relatedTarget))queueMicrotask(()=>sync(sidebar.closest('.shell')));});
   document.addEventListener('focusin',event=>{if(isOpen()&&!settings.panel.contains(event.target)&&event.target!==settings.summary)closeSettings();const sidebar=sidebarFrom(event.target);if(sidebar)sync(sidebar.closest('.shell'));});
   document.addEventListener('focusout',event=>{const sidebar=sidebarFrom(event.target);if(sidebar)queueMicrotask(()=>sync(sidebar.closest('.shell')));});
+  // The reference phone layout uses the existing drawer, with outside-click and Escape dismissal.
+  document.addEventListener('click',event=>{const shell=document.querySelector('.shell.jb-reference.is-menu-open');if(!shell||innerWidth>700||event.target.closest?.('.sidebar,.jb-mobile-nav'))return;shell.classList.remove('is-menu-open');shell.querySelector('.jb-mobile-nav')?.setAttribute('aria-expanded','false');});
+  document.addEventListener('keydown',event=>{if(event.key!=='Escape'||event.defaultPrevented||isOpen())return;const shell=document.querySelector('.shell.jb-reference.is-menu-open');if(!shell||innerWidth>700)return;shell.classList.remove('is-menu-open');const button=shell.querySelector('.jb-mobile-nav');button?.setAttribute('aria-expanded','false');button?.focus({preventScroll:true});});
   window.addEventListener('storage',event=>{if(event.key!==KEY)return;preference=event.newValue==='1';sync();});
   window.addEventListener('hashchange',()=>closeSettings());window.addEventListener('resize',schedulePosition);
   window.addEventListener('scroll',event=>{if(!isOpen()||(event.target instanceof Node&&settings.panel.contains(event.target)))return;schedulePosition();},true);
