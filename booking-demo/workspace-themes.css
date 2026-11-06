@@ -309,3 +309,22 @@ html[data-workspace-theme] .shell.jb-reference .rf-colour-swatches>button{displa
 @media(max-width:600px){.rf-colour-picker{grid-template-columns:minmax(0,1fr);gap:16px;padding:16px}.rf-standard-picker{height:180px}.rf-colour-details{gap:10px}}
 @media(max-width:350px){.rf-colour-picker{padding:13px}.rf-standard-picker{height:164px}html[data-workspace-theme] .shell.jb-reference .rf-colour-swatches>button{width:26px!important}}
 .rf-standard-picker::part(saturation){border:0!important}
+/* Long service lists must stay inside their own Staff column. */
+.shell.jb-reference .mg-staff-table td:nth-child(3),.shell.jb-reference .mg-staff-table td:nth-child(3) :is(span,div){white-space:normal!important;overflow-wrap:anywhere;line-height:1.65}
+@media(max-width:700px){
+ .shell.jb-reference .mg-staff-table tbody td[data-label]:not(:first-child){display:grid!important;grid-template-columns:78px minmax(0,1fr);gap:12px;align-items:start;text-align:left!important}
+ .shell.jb-reference .mg-staff-table tbody td[data-label]:not(:first-child)::before{content:attr(data-label);display:block!important;font-size:11px;font-weight:500;color:var(--theme-muted);text-align:left;white-space:normal}
+ .shell.jb-reference .mg-staff-table tbody td:nth-child(2)>div{display:flex;flex-wrap:wrap;gap:4px}
+ .shell.jb-reference .mg-staff-table tbody td:nth-child(3) .mg-services{max-width:100%;text-align:left}
+}
+@media(max-width:700px){.shell.jb-reference .ot-metric strong{font-size:clamp(18px,5.5vw,25px)!important;white-space:nowrap;overflow-wrap:normal}}
+@media(max-width:600px){
+ html[data-workspace-theme] #modal-root .se-hours-row{grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr);gap:8px;padding:14px 0}
+ html[data-workspace-theme] #modal-root .se-hours-row>:first-child{grid-column:1/3;grid-row:1;font-size:12px}
+ html[data-workspace-theme] #modal-root .se-hours-row>.se-closed{grid-column:3;grid-row:1;justify-self:end}
+ html[data-workspace-theme] #modal-root .se-hours-row>:nth-child(3){grid-column:1;grid-row:2;min-width:0}
+ html[data-workspace-theme] #modal-root .se-hours-row>:nth-child(4){grid-column:2;grid-row:2}
+ html[data-workspace-theme] #modal-root .se-hours-row>:nth-child(5){grid-column:3;grid-row:2;min-width:0}
+ html[data-workspace-theme] #modal-root .se-hours-row input[type=time]{min-width:0;width:100%;min-height:44px;padding:9px 6px!important;font-size:12px}
+}
+@media(max-width:400px){html[data-workspace-theme] #modal-root .se-save-bar{flex-wrap:wrap}html[data-workspace-theme] #modal-root .se-save-bar>.btn{width:100%;min-height:44px}html[data-workspace-theme] #modal-root .se-save-status{width:100%}}

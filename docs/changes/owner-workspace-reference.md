@@ -4,11 +4,11 @@ Local preview: http://127.0.0.1:4432/?preview=team#dashboard
 Start with: node scripts/preview-jovabook-reference.mjs
 Use preview=free, solo or team. Login and signup use #login and #signup. The preview binds localhost only, removes remote configuration, blocks remote API/frame/image connections and uses fictional records. Payment saving and subscription context are mocked locally. It cannot verify a real payment, sign-in or provider connection.
 
-This branch builds on draft PR162. Keep it separate from production until owner review. No merge is authorised for this new design.
+This branch builds on PR162. The owner approved the final visual review and a coordinated production merge on 6 November 2026.
 
 The reference styling is applied to the existing owner shell, calendar, bookings, customers, services, Staff, Insights, settings, integrations, subscription, deposits and Personalise pages. Login, signup, verification and business setup share the split auth layout. Existing actions, validation, persistence and backend checks are retained.
 
-Staff management is Team only for the current offer. Free and Solo can open an faded Staff layout with fictional names, roles and .example email addresses with an inert background and an upgrade card. Free Insights and deposits use the same treatment. Solo and Team include all Insights, including comparisons. Historical legacy entitlements are retained.
+Staff management is Team only for the current offer. Free and Solo can open a faded Staff layout with fictional names, roles and .example email addresses with an inert background and an upgrade card. Free Insights and deposits use the same treatment. Solo and Team include all Insights, including comparisons. Historical legacy entitlements are retained.
 
 Apply supabase/migrations/20261105230019_solo_insights_access.sql with the reviewed UI release. It patches only the two current-offer Insights flags and preserves existing staff limits, credit balances, SMS allowances and payment checks. It has not been applied to production in this design review.
 
@@ -27,3 +27,5 @@ Additional breakpoint review covered 360px and 430px phones, 820px tablet, and 6
 Personalise uses the standard square saturation/value and hue controls from vanilla-colorful 0.7.2 (MIT), with hex entry and plain preset swatches. The decorative wheel and sculpted effects were replaced at the owner's request. The package is bundled directly into workspace.js, with the MIT licence retained, so there is no extra browser/CDN request. Existing form fields, preview events, dirty-state guards, contrast validation and save paths remain intact. Pointer selection, keyboard hue selection, hex entry, live preview and save/reload persistence were checked locally. The picker fits 320px and 390px phones and the desktop layout.
 
 Vendor source: https://github.com/web-padawan/vanilla-colorful, npm vanilla-colorful@0.7.2. Bundled with esbuild@0.28.2 as an IIFE, minified without a source map, then included in the existing workspace.js asset. No root package manifest or lockfile changes.
+
+Release review on 6 November: local production build passed, with no regression/performance/load/crawl suite. Final desktop and phone page review found and fixed long Staff services overlapping adjacent cells, missing Staff card labels, a wrapping Insights currency value and narrow Staff hours/footer controls. Actual 320px modal inspection found no overflowing visible element after the fixes. Existing paid credit purchases, external provider delivery and real authentication were not transacted in this visual release review. Vercel Usage displayed 914,545 requests for its selected 30-day window ending 5 November at 17:00, updated just now; this is delayed reporting, not a current rolling guarantee. Retain the owner's 930k conservative planning baseline. No bulk live test or indexing push is part of the release.
