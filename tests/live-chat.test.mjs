@@ -102,3 +102,26 @@ test("browsers without requestIdleCallback use a deferred fallback", () => {
   f.timers[0]();
   assert.equal(f.scripts.length, 1);
 });
+
+test("consented campaign context uses the existing chat session and stops on private navigation", () => {
+  const f = fixture();
+  f.win.location.href = "https://www.jovamedia.com/?utm_source=instagram&utm_content=dm_a&email=secret";
+  f.doc.referrer = "https://m.facebook.com/?token=private";
+  loadLiveChat(f.win, f.doc, "accepted");
+  f.idle[0]();
+  const loaded = f.win.$crisp.find(c => c[0] === "on" && c[1] === "session:loaded")[2];
+  loaded();
+  const writes = () => f.win.$crisp.filter(c => c[0] === "set");
+  assert.equal(writes().length, 1);
+  assert.equal(Object.fromEntries(writes()[0][2][0]).marketing_first_source, "instagram");
+  assert.doesNotMatch(JSON.stringify(writes()), /secret|private/);
+  loadLiveChat(f.win, f.doc, "accepted");
+  assert.equal(writes().length, 1);
+  f.win.location.pathname = "/account/settings";
+  f.win.location.href = "https://www.jovamedia.com/account/settings";
+  loadLiveChat(f.win, f.doc, "accepted");
+  loaded();
+  assert.equal(writes().length, 1);
+  assert.equal(f.scripts.length, 1);
+  assert.ok(f.win.$crisp.every(c => c[1] !== "session:reset"));
+});

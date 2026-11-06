@@ -6,7 +6,7 @@ Collection is disabled by default. This is optional consent-based measurement, n
 
 | Stage | Event | Evidence |
 | --- | --- | --- |
-| Trial CTA | jovabook_trial_interest | Existing consented marketing click |
+| Pricing CTA | jovabook_pricing_interest | Existing consented marketing click, not a signup |
 | Plan choice | jovabook_plan_selected | Existing consented click with plan/cadence |
 | Registration landing | jovabook_registration_view | One-use anonymous handoff redeemed at owner signup |
 | Registered | jovabook_registered | Verified owner and genuinely new business, after email verification/password login |
