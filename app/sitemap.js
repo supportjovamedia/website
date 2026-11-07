@@ -14,6 +14,8 @@ export default function sitemap() {
     "/websites",
     "/blog",
     "/resources",
+    "/resources/guides",
+    "/resources/tips-and-tricks",
     "/contact",
     "/get-a-quote",
     "/pricing",

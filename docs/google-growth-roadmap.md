@@ -4,7 +4,7 @@ Prepared 7 November 2026. Work quantities below are proposed operating targets, 
 
 ## Name and structure
 
-Use **Resources** in navigation as the umbrella hub, with **Guides**, **Articles** and a **Free checklist**. Education can become an umbrella later if there are actual courses or classes. Keep existing /blog URLs to avoid an unnecessary migration. The words Guides, Blog or Education do not confer a special ranking advantage. Useful answers, crawlable pages, descriptive titles, links and genuine evidence are the work that matters.
+Use **Resources** in navigation as the umbrella hub, with **Blogs**, **Tips & tricks**, **Guides** and a **Free checklist**. Education can become an umbrella later if there are actual courses or classes. Keep existing /blog URLs to avoid an unnecessary migration. The words Guides, Blog or Education do not confer a special ranking advantage. Useful answers, crawlable pages, descriptive titles, links and genuine evidence are the work that matters.
 
 ## First release: a complete four-step path
 
@@ -14,6 +14,8 @@ Use **Resources** in navigation as the umbrella hub, with **Guides**, **Articles
 4. Genuine Google reviews and measuring enquiries and bookings.
 
 Each page has a specific search intent, official sources, practical examples, a table of contents, links to the other steps, and a restrained product CTA. No invented search-volume estimates, ranking guarantees or unimplemented Google integration claims. New pages render on the server and join the existing sitemap, canonical and article metadata systems.
+
+Three additional Tips & tricks articles cover filling quiet slots, sharing an Instagram booking link and writing useful appointment reminders. The Resources hub and new collections use existing compressed photography; the blog archive keeps its established URLs.
 
 ## Email capture
 
