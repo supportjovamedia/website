@@ -1,0 +1,79 @@
+/* One spacing scale across the final landing-page sections. */
+.jovabook-story{--story-section:56px;--story-heading-gap:32px;--story-caption-gap:32px;--story-cta-gap:48px}
+.jovabook-story .art-hero{padding-bottom:var(--story-section)}
+.jovabook-story .art-hero-copy{margin-top:32px}
+.jovabook-story .art-hero-copy>p{margin:24px auto}
+.jovabook-story #jova-story-concept :is(#why-jovabook,#service-businesses,#ex-product,#workspace-details,#booking-tools,#ex-websites,#ex-themes,#ex-compare,#ex-pricing,#ex-referral,#ex-support,#ex-reviews,[data-story-section])[data-story-section]{padding-block:var(--story-top,var(--story-section)) var(--story-bottom,var(--story-section))!important}
+.jovabook-story #jova-story-concept .q4-demo-band{--story-bottom:24px}
+.jovabook-story #jova-story-concept #ex-film{padding:0!important}
+.jovabook-story #jova-story-concept #booking-mount{padding:var(--story-section) 0 24px}
+.jovabook-story #jova-story-concept #booking-mount #booking{padding-block:0!important;margin-block:0}
+.jovabook-story #jova-story-concept #ex-websites{--story-bottom:24px}
+.jovabook-story #jova-story-concept .vp-cta-break,
+.jovabook-story #jova-story-concept .story-fragment:has(.q4-demo-band)+.story-fragment .vp-cta-break{padding:24px 24px var(--story-cta-gap)}
+.jovabook-story #jova-story-concept :is(.ex-section-head,.ex-film-title,.ex-comparison .ex-title,.nr-review-head){margin-block:0 var(--story-heading-gap)}
+.jovabook-story #jova-story-concept :is(.ex-section-head,.ex-film-title,.ex-comparison .ex-title) h2{margin-top:0}
+.jovabook-story #jova-story-concept .ex-film-title p{margin:16px auto 0}
+.jovabook-story #jova-story-concept #ex-product .ex-section-head{margin-bottom:var(--story-heading-gap)}
+.jovabook-story #jova-story-concept #ex-product{--story-bottom:var(--story-caption-gap)}
+.jovabook-story #jova-story-concept #ex-faq{padding-block:var(--story-section)}
+.jovabook-story #jova-story-concept #ex-faq #faq{padding-block:0!important}
+.jovabook-story #jova-story-concept #ex-product .ex-product-details{margin:var(--story-caption-gap) auto 0}
+.jovabook-story #jova-story-concept #ex-product .ex-product-details :is(h3,p){margin-block:0}
+.jovabook-story #jova-story-concept #service-businesses .vp-all-industries{margin:24px auto 0}
+.jovabook-story #jova-story-concept .vp-industry-intro{margin-bottom:var(--story-heading-gap)}
+.jovabook-story #jova-story-concept #ex-compare .vp-unified-calculator{margin-block:0}
+.jovabook-story #jova-story-concept #ex-pricing .plan-inherits strong{font-weight:750}
+.jovabook-story #jova-story-concept #ex-pricing .js-recommended .js-plan-tag{font-size:16px;font-weight:750;line-height:1.3;padding:11px 24px;top:-25px}
+.jovabook-story #jova-story-concept .solo-value{font-size:14px;line-height:1.55;margin:10px auto 0;max-width:245px;color:inherit;opacity:.95}
+.jovabook-story .art-hero-actions .nv-secondary-button{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.jovabook-story .art-hero-actions .nv-secondary-button::before{content:none!important}
+.jovabook-story .art-hero-actions .nv-secondary-button svg{width:17px;height:17px;flex:none;display:block}
+.jovabook-story #jova-story-concept .ex-play{display:flex;align-items:center;justify-content:center;text-align:center}
+.jovabook-story #jova-story-concept .ex-play-disc{display:grid;place-items:center;padding:0;line-height:1;font-size:0;flex:none}
+.jovabook-story #jova-story-concept .ex-play-disc svg{display:block;width:28px;height:28px;transform:translateX(-1px)}
+.jovabook-story #jova-story-concept #ex-referral details{margin:28px 0 0;padding:0 20px;border:1px solid #d5c99e;border-radius:16px;background:#fffdf5;overflow:hidden;text-align:left}
+.jovabook-story #jova-story-concept #ex-referral details summary{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:58px;padding:16px 0;list-style:none;font-size:14px;font-weight:650;line-height:1.5;color:#3e412f;cursor:pointer}
+.jovabook-story #jova-story-concept #ex-referral details summary::-webkit-details-marker{display:none}
+.jovabook-story #jova-story-concept #ex-referral details summary::after{content:none}
+.jovabook-story #jova-story-concept #ex-referral details summary svg{width:19px;height:19px;flex:none;transition:transform 180ms ease}
+.jovabook-story #jova-story-concept #ex-referral details[open] summary svg{transform:rotate(180deg)}
+.jovabook-story #jova-story-concept #ex-referral details p{margin:0;padding:0 0 20px;font-size:13px;line-height:1.7;color:#55583f}
+.jovabook-story .story-motion-ready{opacity:0;transform:translateY(16px);transition:opacity 480ms ease,transform 480ms cubic-bezier(.2,.7,.2,1)}
+.jovabook-story .story-motion-ready.story-motion-in{opacity:1;transform:translateY(0)}
+.jovabook-story .vp-cta-break .js-btn,.jovabook-story .art-hero-actions :is(a,button){transition:transform 180ms ease,box-shadow 180ms ease}
+.jovabook-story .vp-cta-break .js-btn:active,.jovabook-story .art-hero-actions :is(a,button):active{transform:scale(.98)}
+@media(hover:hover) and (pointer:fine){
+ .jovabook-story .vp-cta-break .js-btn:hover,.jovabook-story .art-hero-actions :is(a,button):hover{transform:translateY(-2px);box-shadow:0 8px 16px -10px #12365380}
+ .jovabook-story #jova-story-concept .vp-benefit-card{transition:border-color 180ms ease,box-shadow 180ms ease}
+ .jovabook-story #jova-story-concept .vp-benefit-card:hover{border-color:#829794;box-shadow:0 12px 24px -20px #12365380}
+}
+@media(prefers-reduced-motion:reduce){
+ .jovabook-story .story-motion-ready{opacity:1;transform:none;transition:none}
+ .jovabook-story *, .jovabook-story *::before,.jovabook-story *::after{animation:none!important;scroll-behavior:auto!important}
+ .jovabook-story #jova-story-concept #ex-referral details summary svg,.jovabook-story .vp-cta-break .js-btn,.jovabook-story .art-hero-actions :is(a,button){transition:none}
+}
+@media(min-width:900px){
+ .jovabook-story #jova-story-concept .vp-swipe-track{scroll-padding-inline:36px}
+ .jovabook-story #jova-story-concept .vp-swipe-track>:is(.vp-reason-row,.vp-capability){scroll-snap-align:start}
+ .jovabook-story #jova-story-concept #service-businesses .vp-industry-shell{max-width:1120px}
+ .jovabook-story #jova-story-concept .vp-industry-photos.vp-swipe-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;overflow:visible;padding:0;scroll-snap-type:none;cursor:auto}
+ .jovabook-story #jova-story-concept .vp-industry-photos.vp-swipe-track::before,
+ .jovabook-story #jova-story-concept .vp-industry-photos.vp-swipe-track::after{display:none}
+ .jovabook-story #jova-story-concept .vp-industry-photos>[data-loop-clone],
+ .jovabook-story #jova-story-concept .vp-industry-photos+.vp-swipe-dots{display:none}
+ .jovabook-story #jova-story-concept .vp-industry-photos.vp-swipe-track>.vp-industry-card{width:auto;min-width:0;margin:0}
+ .jovabook-story #jova-story-concept .vp-industry-card img{aspect-ratio:1.7}
+ .jovabook-story #jova-story-concept .vp-industry-card h3{padding:18px 16px;font-size:20px}
+}
+@media(max-width:899px){
+ .jovabook-story{--story-section:44px;--story-heading-gap:26px;--story-caption-gap:28px;--story-cta-gap:36px}
+ .jovabook-story .art-hero-copy{margin-top:24px}
+ .jovabook-story .art-hero-copy>p{margin:20px auto 24px}
+ .jovabook-story #jova-story-concept .q4-demo-band,
+ .jovabook-story #jova-story-concept #ex-websites{--story-bottom:18px}
+ .jovabook-story #jova-story-concept #booking-mount{padding-bottom:18px}
+ .jovabook-story #jova-story-concept .vp-cta-break,
+ .jovabook-story #jova-story-concept .story-fragment:has(.q4-demo-band)+.story-fragment .vp-cta-break{padding-top:18px}
+ .jovabook-story #jova-story-concept #ex-pricing .js-recommended .js-plan-tag{font-size:15px;padding:10px 22px}
+}
