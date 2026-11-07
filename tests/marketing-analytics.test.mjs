@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CONSENT_KEY, CONSENT_MAX_AGE, readConsent, browserConsent, publicPage, measurementUrl, replaySafeUrl, eventPayload, trackEvent, revokeTracking, campaignAttribution } from "../lib/marketing-analytics.mjs";
+import { CONSENT_KEY, CONSENT_MAX_AGE, readConsent, browserConsent, publicPage, measurementUrl, replaySafeUrl, eventPayload, trackEvent, revokeTracking, campaignAttribution, jovabookClickEvent } from "../lib/marketing-analytics.mjs";
 
 test("consent fails closed for corrupt, expired, future and unavailable storage", () => {
   const now = Date.now();
@@ -21,6 +21,18 @@ test("only bounded campaign labels survive URL cleaning", () => {
   assert.equal(replaySafeUrl("https://www.jovamedia.com/contact?email=private"),false);
   assert.equal(replaySafeUrl("https://www.jovamedia.com/#private-token"),false);
   assert.equal(replaySafeUrl("https://www.jovamedia.com/?utm_source=nextdoor"),true);
+});
+
+test("industry campaigns and their signup CTAs are measured only on known public pages", () => {
+  for (const path of ["/industries", "/industries/beauty-and-nails", "/industries/salons-and-barbers"]) {
+    assert.equal(publicPage(path), true);
+    assert.equal(eventPayload("page_view", {}, `https://www.jovamedia.com${path}`).page_path, path);
+    assert.equal(jovabookClickEvent("https://book.jovamedia.com/?plan=essential&cadence=monthly#signup", `https://www.jovamedia.com${path}`).name, "jovabook_plan_selected");
+  }
+  for (const path of ["/industries/unknown", "/industries/beauty-and-nails/account"]) {
+    assert.equal(publicPage(path), false);
+    assert.equal(jovabookClickEvent("https://book.jovamedia.com/?plan=essential&cadence=monthly#signup", `https://www.jovamedia.com${path}`), null);
+  }
 });
 
 test("event allowlist discards arbitrary names, enquiry fields and contact targets", () => {
