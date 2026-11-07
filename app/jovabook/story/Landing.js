@@ -4,6 +4,7 @@ import StoryInteractions from './StoryInteractions';
 import {sections, dialogs} from './sections.mjs';
 import '../landing.css';
 import './story.css';
+import './rhythm.css';
 
 export default function StoryLanding() {
   return <main className="jovabook-story">

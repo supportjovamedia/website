@@ -116,8 +116,8 @@ function BookingSection(){
 
 export function OriginalHero(){
  return <section className="art-hero" data-website-intro aria-labelledby="jovabook-title">
-  <div className="art-hero-scene"><div className="art-calendar"><img src="/jovabook/calendar-desktop.webp" alt="JovaBook calendar with a week of client appointments" width="2880" height="1920" fetchPriority="high"/></div><div className="art-booking-phone"><img src="/jovabook/booking-mobile.webp" alt="JovaBook client booking page on a phone" width="390" height="844" fetchPriority="high"/></div></div>
-  <div className="art-hero-copy"><h1 id="jovabook-title">Your online<br/>booking system.</h1><p>For service businesses. Your calendar, client bookings and your own website, all together.</p><div className="art-hero-actions"><a className="nv-main-button" href="#plans">Start free</a><button className="nv-secondary-button" type="button" onClick={()=>document.getElementById('local-film')?.showModal()}>Watch the demo</button></div></div>
+  <div className="art-hero-scene"><div className="art-calendar"><img src="/jovabook/story/dashboard-current-5df2dc7de8.webp" alt="The current JovaBook dashboard with appointments, client records and team calendars" width="1600" height="996" fetchPriority="high"/></div><div className="art-booking-phone"><img src="/jovabook/story/calendar-phone-current-5e5232164a.webp" alt="The current JovaBook calendar on a phone" width="540" height="1217" fetchPriority="high"/></div></div>
+  <div className="art-hero-copy"><h1 id="jovabook-title">Your online<br/>booking system.</h1><p>For service businesses. Your calendar, client bookings and your own website, all together.</p><div className="art-hero-actions"><a className="nv-main-button" href="#plans">Start free</a><button className="nv-secondary-button" type="button" onClick={()=>document.getElementById('local-film')?.showModal()}><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5a1 1 0 0 1 1.5-.86l10 6.5a1 1 0 0 1 0 1.72l-10 6.5A1 1 0 0 1 8 18.5Z"/></svg><span>Watch the demo</span></button></div></div>
  </section>;
 }
 

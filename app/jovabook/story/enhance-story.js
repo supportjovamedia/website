@@ -172,24 +172,39 @@ export function enhanceStory(host){
  if(industries){const shell=document.createElement('div');shell.className='vp-swipe-shell vp-industry-shell';industries.before(shell);shell.append(industries);[...industries.children].forEach(link=>{const card=document.createElement('article');card.className='vp-industry-card';link.before(card);card.append(link);});industries.classList.add('vp-swipe-track');industries.tabIndex=0;industries.setAttribute('role','region');industries.setAttribute('aria-roledescription','carousel');industries.setAttribute('aria-label','Industries using appointment booking');}
  root.querySelectorAll('.vp-swipe-track').forEach((track,group)=>{
   const kind=track.classList.contains('vp-industry-photos')?'Industry':track.classList.contains('vp-reason-track')?'Reason':'Workspace feature';
+  const originals=[...track.children],count=originals.length;
+  const grid=()=>kind==='Industry'&&matchMedia('(min-width:900px)').matches;
+  const wide=()=>matchMedia('(min-width:900px)').matches;
+  const clone=card=>{const copy=card.cloneNode(true);copy.dataset.loopClone='true';copy.setAttribute('aria-hidden','true');copy.inert=true;return copy;};
+  originals.forEach((card,index)=>{card.setAttribute('role','group');card.setAttribute('aria-roledescription','slide');card.setAttribute('aria-label',(index+1)+' of '+count);});
+  track.prepend(...originals.map(clone));track.append(...originals.map(clone));
   const cards=[...track.children],dots=document.createElement('div');dots.className='vp-swipe-dots';dots.setAttribute('role','group');dots.setAttribute('aria-label','Choose a '+kind.toLowerCase());track.after(dots);
   const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const go=(index,instant=false)=>{const card=cards[Math.max(0,Math.min(cards.length-1,index))];track.scrollTo({left:card.offsetLeft-track.offsetLeft-(track.clientWidth-card.clientWidth)/2,behavior:instant||reduced()?'instant':'smooth'});};
-  cards.forEach((card,index)=>{card.setAttribute('role','group');card.setAttribute('aria-roledescription','slide');card.setAttribute('aria-label',(index+1)+' of '+cards.length);const button=document.createElement('button');button.type='button';button.setAttribute('aria-label',kind+' '+(index+1));button.addEventListener('click',()=>go(index));dots.append(button);});
-  let active=0,pending=false;
-  const sync=()=>{pending=false;const centre=track.getBoundingClientRect().left+track.clientWidth/2;active=cards.reduce((best,card,index)=>Math.abs(card.getBoundingClientRect().left+card.clientWidth/2-centre)<Math.abs(cards[best].getBoundingClientRect().left+cards[best].clientWidth/2-centre)?index:best,0);cards.forEach((card,index)=>{card.dataset.active=String(index===active);dots.children[index].setAttribute('aria-current',String(index===active));});};
-  track.addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(sync);}},{passive:true});
-  track.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();go(active+(event.key==='ArrowRight'?1:-1));}});
-  let drag=null,moved=false;track.addEventListener('pointerdown',event=>{if(event.pointerType!=='mouse'||event.button!==0)return;moved=false;drag={x:event.clientX,left:track.scrollLeft};});
+  let active=0,position=count,pending=false,settle=0;
+  const destination=index=>{const card=cards[index],rect=card.getBoundingClientRect(),rail=track.getBoundingClientRect();return track.scrollLeft+rect.left-rail.left-(wide()?36:(track.clientWidth-rect.width)/2);};
+  const go=(index,instant=false)=>{if(grid())return;position=Math.max(0,Math.min(cards.length-1,index));track.scrollTo({left:destination(position),behavior:instant||reduced()?'instant':'smooth'});};
+  const sync=()=>{pending=false;if(grid()){track.tabIndex=-1;track.removeAttribute('aria-roledescription');return;}track.tabIndex=0;track.setAttribute('aria-roledescription','carousel');const rail=track.getBoundingClientRect(),anchor=rail.left+(wide()?36:track.clientWidth/2),distance=card=>{const r=card.getBoundingClientRect();return Math.abs(r.left+(wide()?0:r.width/2)-anchor);};position=cards.reduce((best,card,index)=>distance(card)<distance(cards[best])?index:best,0);active=((position-count)%count+count)%count;track.dataset.activeIndex=String(active+1);cards.forEach((card,index)=>card.dataset.active=String(index===position));[...dots.children].forEach((button,index)=>button.setAttribute('aria-current',String(index===active)));};
+  originals.forEach((card,index)=>{const button=document.createElement('button');button.type='button';button.setAttribute('aria-label',kind+' '+(index+1));button.addEventListener('click',()=>go(count+index));dots.append(button);});
+  const normalise=()=>{sync();if(!grid()&&!drag&&(position<count||position>=count*2)){go(count+active,true);sync();}};
+  track.addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(sync);}clearTimeout(settle);settle=setTimeout(normalise,180);},{passive:true});
+  track.addEventListener('keydown',event=>{if(!grid()&&(event.key==='ArrowRight'||event.key==='ArrowLeft')){event.preventDefault();go(position+(event.key==='ArrowRight'?1:-1));}});
+  let drag=null,moved=false;track.addEventListener('pointerdown',event=>{if(grid()||event.pointerType!=='mouse'||event.button!==0)return;moved=false;drag={x:event.clientX,left:track.scrollLeft};});
   track.addEventListener('pointermove',event=>{if(!drag)return;if(Math.abs(event.clientX-drag.x)>6){moved=true;track.setPointerCapture(event.pointerId);track.classList.add('is-dragging');}if(moved){event.preventDefault();track.scrollLeft=drag.left+drag.x-event.clientX;}});
   track.addEventListener('dragstart',event=>event.preventDefault());
   track.addEventListener('click',event=>{if(moved){event.preventDefault();event.stopPropagation();moved=false;}},true);
-  const release=()=>{if(!drag)return;drag=null;track.classList.remove('is-dragging');if(moved){sync();go(active);}};track.addEventListener('pointerup',release);track.addEventListener('pointercancel',release);track.addEventListener('pointerleave',event=>{if(!moved)drag=null;});
-  new ResizeObserver(()=>{go(active,true);sync();}).observe(track);sync();
+  const release=()=>{if(!drag)return;drag=null;track.classList.remove('is-dragging');if(moved){sync();go(position);}};track.addEventListener('pointerup',release);track.addEventListener('pointercancel',release);track.addEventListener('pointerleave',event=>{if(!moved)drag=null;});
+  new ResizeObserver(()=>{if(grid())track.scrollLeft=0;else go(count+active,true);sync();}).observe(track);
+  requestAnimationFrame(()=>{go(count,true);sync();});
  });
 })();
 
 (()=>{const root=document.getElementById('jova-story-concept');const sync=()=>{const cadence=root.querySelector('[data-cadence="annual"]').getAttribute('aria-pressed')==='true'?'annual':'monthly';const seats=Math.max(1,Math.min(100,Number(root.querySelector('#nv-team-count').value)||1));root.querySelectorAll('a[data-plan]').forEach(a=>{const ids={Free:'essential',Solo:'standard',Team:'premium'};const url=new URL('https://book.jovamedia.com/');url.searchParams.set('portal','owner');url.searchParams.set('plan',ids[a.dataset.plan]);url.searchParams.set('cadence',cadence);if(a.dataset.plan==='Team')url.searchParams.set('seats',String(seats));url.hash='signup';a.href=url.href;});};root.addEventListener('input',sync);root.addEventListener('change',sync);root.addEventListener('click',e=>{if(e.target.closest('[data-cadence],#nv-team-plus,#nv-team-minus'))requestAnimationFrame(sync);});sync();})();
 
+ (()=>{
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const targets=host.querySelectorAll('.ex-film-title,.ex-video-shell,#why-jovabook h2,#service-businesses h2,.vp-swipe-shell,#ex-product .ex-section-head,#ex-product .ex-frame,.sw-journey-panel,.nr-website-grid,.vp-unified-calculator,.nv-referral-card,.nr-review-head');
+  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('story-motion-in');observer.unobserve(entry.target);}}),{threshold:.12,rootMargin:'0px 0px -20px 0px'});
+  targets.forEach(target=>{target.classList.add('story-motion-ready');if(target.getBoundingClientRect().top<innerHeight)target.classList.add('story-motion-in');else observer.observe(target);});
+ })();
  return()=>{observers.forEach(o=>o.disconnect());frames.forEach(id=>window.cancelAnimationFrame(id));timers.forEach(id=>window.clearTimeout(id));host.querySelectorAll('video').forEach(v=>v.pause());};
 }
