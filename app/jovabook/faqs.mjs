@@ -28,7 +28,9 @@ export const faqs = [
     "answer": "Every plan has 0% booking commission. Solo is £192 per year, paid upfront, equivalent to £16 per month. Team is £240 per year including one seat, plus £57.60 per year for each extra seat. That saves 20% against twelve monthly payments. Monthly message allowances still reset monthly. Stripe payment-processing fees are separate."
   },
   {
-    "question": "Can clients book through Instagram, and can I take deposits?",
+    "question": "Can I take online appointment bookings through Instagram?",
     "answer": "Share your one-page website link in Instagram, WhatsApp or messages. On Solo and Team, connect a payment-ready Stripe account and choose your deposit percentage. Free is booking only. Deposits go to your connected Stripe account. Stripe processing fees still apply. There is no native Instagram Book Now integration."
-  }
+  },
+  {question:"Can I use an online booking system with deposits?",answer:"Yes. Solo and Team let you connect your own Stripe account and choose a deposit percentage. Customers pay the deposit when booking online, and the money goes to your connected Stripe account. JovaBook takes 0% booking commission. Stripe payment-processing fees are separate."},
+  {question:"Is JovaBook an appointment booking system for small businesses?",answer:"JovaBook is built for service businesses that take appointments, including independent salons, barbers, beauty businesses, tutors and personal trainers. Start with one calendar on Free or Solo, or use Team for separate staff calendars and logins."}
 ];

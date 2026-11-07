@@ -3,15 +3,16 @@
  'use strict';
  const keys='page panel inset rail railText railHover railSelected heading body muted line controlLine primary onPrimary soft focus statStrong statSoft chart2 chart3 overlay'.split(' ');
  const rows=[
-  ['jova-blue','Jova Blue','JovaMedia blue accents on clean white.','#F4F6F8 #FFFFFF #EDF2F6 #123653 #A6BFD0 #294966 #FFFFFF #172F40 #294355 #647C91 #E0E8EF #D9E4ED #235789 #FFFFFF #EAF3F9 #1D5FA3 #FFFFFF #FFFFFF #278E65 #7D4594 #12365366'],
-  ['rose-studio','Rose Studio','Dusty rose accents on clean white.','#F5F5F5 #FFFFFF #EEEEEE #432B38 #E7E7E7 #624153 #F0CDD9 #202020 #373737 #606060 #DDDDDD #8A8A8A #954562 #FFFFFF #F5E9ED #A12F5D #FFFFFF #FFFFFF #6F7970 #8B6744 #00000066'],
-  ['midnight-glass','Midnight Glass','Charcoal surfaces and clear neutral text.','#171717 #232323 #2C2C2C #101010 #D7D7D7 #303030 #D4D4D4 #F5F5F5 #E0E0E0 #B8B8B8 #414141 #858585 #E3E3E3 #202020 #343434 #DADADA #232323 #232323 #AEC9BB #D2C3AF #000000B3'],
-  ['forest','Forest','Evergreen accents on clean white.','#F5F5F5 #FFFFFF #EEEEEE #203C31 #E7E7E7 #355548 #D1E4D3 #202020 #373737 #606060 #DDDDDD #8A8A8A #286B55 #FFFFFF #E8F1EB #186A4C #FFFFFF #FFFFFF #698195 #947449 #00000066'],
-  ['warm-studio','Warm Studio','Espresso accents on clean white.','#F5F5F5 #FFFFFF #EEEEEE #352A23 #E7E7E7 #514137 #EAD5BD #202020 #373737 #606060 #DDDDDD #8A8A8A #78523B #FFFFFF #F2ECE6 #805129 #FFFFFF #FFFFFF #6D806C #587A94 #00000066'],
-  ['amethyst','Amethyst','Muted violet accents on clean white.','#F5F5F5 #FFFFFF #EEEEEE #332B46 #E7E7E7 #4C3D65 #DFD2EF #202020 #373737 #606060 #DDDDDD #8A8A8A #6B528C #FFFFFF #EFEAF5 #73529D #FFFFFF #FFFFFF #52837C #92724C #00000066']
+  ['classic','Classic','Crisp white panels and familiar JovaMedia blue.','#F4F6F8 #FFFFFF #EDF2F6 #123653 #A6BFD0 #294966 #FFFFFF #172F40 #294355 #647C91 #E0E8EF #D9E4ED #235789 #FFFFFF #EAF3F9 #1D5FA3 #FFFFFF #FFFFFF #278E65 #7D4594 #12365366'],
+  ['liquid-glass','Liquid Glass','Light-filled surfaces with translucent floating panels.','#E1EAFA #FFFFFFD9 #DDE8F4 #FFFFFFB8 #38536E #D3E2F1 #FFFFFF #254362 #36546F #536B89 #C6D6E7 #9BB4CD #3769AB #FFFFFF #EDF5FC #285994 #FFFFFFD9 #FFFFFFD9 #357D70 #8171A2 #203D6466'],
+  ['graphite','Graphite','Matte charcoal, warm gold and clear contrast.','#1E2420 #292F2A #343C35 #171C18 #B1BAAD #353E35 #D6B366 #F3F1E7 #DFE4D9 #B1BAAD #414A40 #6C7969 #D6B366 #22291F #343E32 #E5C984 #292F2A #292F2A #8FB9A0 #B5A7C9 #000000B3'],
+  ['editorial','Editorial','Warm paper, precise borders and editorial typography.','#F1EEE7 #F8F6EF #EAE4D9 #E8E2D7 #62584C #DDD4C7 #D9D0C1 #322E29 #4E473F #726B60 #D5CFC4 #B2A58F #6A5340 #FFFFFF #ECE5D9 #705039 #F8F6EF #F8F6EF #678271 #A47C52 #30271966'],
+  ['porcelain','Porcelain','Soft sculpted panels with a subtle lilac finish.','#EAEAF1 #EAEAF1 #E2E2ED #E6E6EF #5C5873 #D8D5E5 #F5F5FA #3D3B54 #4B4961 #66637E #C9C7D8 #A7A0BD #71618E #FFFFFF #F3F1F8 #665181 #EAEAF1 #EAEAF1 #52837C #92724C #28243C66'],
+  ['studio','Studio','A calm white workspace with an evergreen sidebar.','#EDF1EC #FFFFFF #E7EEE4 #214337 #D8E3D9 #36594A #E9EFE8 #254237 #3B5547 #607568 #D1DDD1 #AFC3B0 #375F4E #FFFFFF #E1EADF #2B654C #FFFFFF #FFFFFF #65859B #9A7959 #16392B66']
  ];
- const THEMES=Object.freeze(rows.map(([id,name,description,values])=>{const tokens=Object.freeze(Object.fromEntries(keys.map((key,i)=>[key,values.split(' ')[i]])));return Object.freeze({id,name,description,accent:tokens.primary,dark:id==='midnight-glass',...tokens,tokens});}));
- const byId=id=>THEMES.find(theme=>theme.id===id);
+ const THEMES=Object.freeze(rows.map(([id,name,description,values])=>{const tokens=Object.freeze(Object.fromEntries(keys.map((key,i)=>[key,values.split(' ')[i]])));return Object.freeze({id,name,description,accent:tokens.primary,dark:id==='graphite',...tokens,tokens});}));
+ const aliases={'jova-blue':'classic','rose-studio':'liquid-glass','midnight-glass':'graphite',forest:'studio','warm-studio':'editorial',amethyst:'porcelain'};
+ const byId=id=>THEMES.find(theme=>theme.id===(aliases[id]||id));
  const legacy={'#235789':'jova-blue','#77504e':'rose-studio','#286b64':'forest','#8bcf97':'forest','#6d4777':'amethyst','#2b221e':'warm-studio'};
  const cssKey=key=>'--theme-'+key.replace(/[A-Z]/g,c=>'-'+c.toLowerCase());
  function resolve(appearance){

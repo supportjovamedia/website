@@ -1,4 +1,4 @@
-import JovaBookLanding from "./JovaBookLanding";
+import JovaBookLanding from "./story/Landing";
 import {jovabookStructuredData} from "./search-data.mjs";
 import {faqs} from "./faqs.mjs";
 import "./navigation-integration.css";

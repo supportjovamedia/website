@@ -7,7 +7,7 @@ html[data-workspace-theme] body,html[data-workspace-theme] .shell{
  --theme-success-bg:#e4f1e8;--theme-success-text:#245b3c;--theme-warning-bg:#f7eccd;--theme-warning-text:#765214;--theme-error-bg:#f8e4e5;--theme-error-text:#8f3441;--theme-info-bg:#e1edf8;--theme-info-text:#25547c;--theme-neutral-bg:#ececec;--theme-neutral-text:#555555;
  background:var(--theme-page);color:var(--theme-body);color-scheme:light;
 }
-html[data-workspace-theme=midnight-glass] body,html[data-workspace-theme=midnight-glass] .shell{
+html[data-workspace-theme=graphite] body,html[data-workspace-theme=graphite] .shell{
  --theme-success-bg:#203f32;--theme-success-text:#a9dfc0;--theme-warning-bg:#47391e;--theme-warning-text:#f0d593;--theme-error-bg:#482831;--theme-error-text:#f0b3be;--theme-info-bg:#253d55;--theme-info-text:#b6d4f3;--theme-neutral-bg:#353535;--theme-neutral-text:#d2d2d2;color-scheme:dark;
 }
 html[data-workspace-theme] .shell :is(.workspace,.workspace-main,.workspace-header){background:var(--theme-page)!important;color:var(--theme-body)}
@@ -40,7 +40,7 @@ html[data-workspace-theme] .shell .sidebar{background:var(--theme-rail)!importan
 html[data-workspace-theme] .shell .sidebar :is(.jb-nav-section>a,.jb-more-settings>summary){color:var(--theme-rail-text)!important;background:transparent!important}
 html[data-workspace-theme] .shell .sidebar :is(.jb-nav-section>a:hover,.jb-more-settings>summary:hover,.jb-more-settings[open]>summary,.jb-more-settings.is-current>summary){background:var(--theme-rail-hover)!important;color:#fff!important}
 html[data-workspace-theme] .shell .sidebar :is(.brand.jb-wordmark,.jb-nav-section>a.active,.jb-nav-section>a.active:hover){background:var(--theme-rail-selected)!important;color:var(--theme-heading)!important}
-html[data-workspace-theme=midnight-glass] .shell .sidebar :is(.brand.jb-wordmark,.jb-nav-section>a.active,.jb-nav-section>a.active:hover){color:var(--theme-on-primary)!important}
+html[data-workspace-theme=graphite] .shell .sidebar :is(.brand.jb-wordmark,.jb-nav-section>a.active,.jb-nav-section>a.active:hover){color:var(--theme-on-primary)!important}
 html[data-workspace-theme] .shell .sidebar :is(a,summary):focus-visible{outline-color:#fff!important}
 html[data-workspace-theme] .shell .st-settings-links :is(a,button){color:var(--theme-body)!important}
 html[data-workspace-theme] .shell .st-settings-links a.active{background:var(--theme-soft)!important;color:var(--theme-heading)!important}
@@ -95,8 +95,8 @@ html[data-workspace-theme] .shell .mg-day-open{background:var(--theme-success-bg
 html[data-workspace-theme] :is(.shell,#modal-root,.mg-action-list) :is(.danger,.mg-delete,.sm-delete-category,.sm-delete-service,[data-action=remove-service],[data-action=remove-service-confirm],[data-action=delete-category-confirm],[data-staff-discard-confirm]){color:var(--theme-error-text)!important;background:var(--theme-error-bg)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) :is(.error,.se-save-status.is-dirty,.df-save-status.is-dirty){color:var(--theme-error-text)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) :is(.se-save-status.is-dirty .se-save-dot,.df-save-status.is-dirty .df-save-dot){background:var(--theme-error-text)!important}
-html[data-workspace-theme=midnight-glass] :is(.shell,#modal-root) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5' stroke='%23B8B8B8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")!important}
-html[data-workspace-theme=midnight-glass] :is(.nf-popover,.st-settings-links){background:rgba(35,35,35,.94)!important;backdrop-filter:blur(12px);box-shadow:0 12px 32px #0003}
+html[data-workspace-theme=graphite] :is(.shell,#modal-root) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5' stroke='%23B8B8B8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")!important}
+html[data-workspace-theme=graphite] :is(.nf-popover,.st-settings-links){background:rgba(35,35,35,.94)!important;backdrop-filter:blur(12px);box-shadow:0 12px 32px #0003}
 html[data-workspace-theme] #modal-root .modal-backdrop{background:var(--theme-overlay)!important}
 html[data-workspace-theme] .shell :is(.jb-week-scroll,.jb-week-body,.jb-week-day,.dg-times,.dg-body,.month-head,.mday){background:var(--theme-panel)!important;border-color:var(--theme-line)!important;color:var(--theme-body)!important}
 html[data-workspace-theme] .shell :is(.jb-week-day.is-today,.mday.other){background:var(--theme-inset)!important}
@@ -129,7 +129,7 @@ html[data-workspace-theme] .shell .db-list-note{color:var(--theme-muted)!importa
 html[data-workspace-theme] .shell .st-calendar-filter>summary{background:var(--theme-panel)!important;color:var(--theme-body)!important;border-color:var(--theme-control-line)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) .pill:not(.green):not(.red):not(.blue):not(.yellow):not(.amber){background:var(--theme-neutral-bg)!important;color:var(--theme-neutral-text)!important}
 html[data-workspace-theme] :is(.shell,#modal-root) .pill.amber{background:var(--theme-warning-bg)!important;color:var(--theme-warning-text)!important}
-@media(prefers-reduced-transparency:reduce){html[data-workspace-theme=midnight-glass] :is(.nf-popover,.st-settings-links){background:var(--theme-panel)!important;backdrop-filter:none}}
+@media(prefers-reduced-transparency:reduce){html[data-workspace-theme=graphite] :is(.nf-popover,.st-settings-links){background:var(--theme-panel)!important;backdrop-filter:none}}
 /* Six miniature workspaces, not colour dots. Native radio semantics and focus remain. */
 .wt-choices{margin:0;padding:0;border:0;min-width:0}.wt-legend{font-size:13px;font-weight:500;margin-bottom:14px;color:var(--theme-heading,#172d43)}
 .wt-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.wt-choice{position:relative;display:block;cursor:pointer;min-width:0}.wt-choice>input{position:absolute;width:1px;height:1px;padding:0;margin:0;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
@@ -328,6 +328,61 @@ html[data-workspace-theme] .shell.jb-reference .rf-colour-swatches>button{displa
  html[data-workspace-theme] #modal-root .se-hours-row input[type=time]{min-width:0;width:100%;min-height:44px;padding:9px 6px!important;font-size:12px}
 }
 @media(max-width:400px){html[data-workspace-theme] #modal-root .se-save-bar{flex-wrap:wrap}html[data-workspace-theme] #modal-root .se-save-bar>.btn{width:100%;min-height:44px}html[data-workspace-theme] #modal-root .se-save-status{width:100%}}
+
+/* Mobile authentication uses a straight header edge and space below the form. */
+/* The landing-page styles share the existing owner controls, routes and sidebar. */
+html[data-workspace-theme=liquid-glass] body{background:radial-gradient(ellipse at 5% 5%,#c7edf2 0,transparent 45%),radial-gradient(ellipse at 95% 95%,#c2cdec 0,transparent 45%),#e1eafa;background-attachment:fixed}
+html[data-workspace-theme=liquid-glass] .shell :is(.workspace,.workspace-main,.workspace-header){background:transparent!important}
+html[data-workspace-theme=liquid-glass] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){box-shadow:inset 0 1px 0 #fff,0 8px 22px -18px #45679455;border-color:#ffffffd9!important}
+html[data-workspace-theme=liquid-glass] .shell .sidebar{border:1px solid #ffffffdc;box-shadow:inset 0 1px 1px #fff,0 12px 24px -20px #345f9b66;backdrop-filter:blur(16px)}
+html[data-workspace-theme=liquid-glass] .shell .workspace-header{border-bottom-color:#ffffffaa}
+html[data-workspace-theme=liquid-glass] :is(#modal-root .modal,.nf-popover,.st-settings-links){background:#f8fbff!important}
+html[data-workspace-theme=graphite] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){box-shadow:none;border:1px solid var(--theme-line);border-radius:12px}
+html[data-workspace-theme=graphite] .shell .sidebar{box-shadow:none;border:1px solid #353d33}
+html[data-workspace-theme=editorial] .shell :is(h1,.db-metric-value,.ot-metric strong,.st-calendar-stat>strong){font-family:Georgia,'Times New Roman',serif!important;font-weight:400!important;letter-spacing:-.04em}
+html[data-workspace-theme=editorial] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){border-radius:6px;box-shadow:2px 3px 0 #ddd7ca;border-color:#c5bdae!important}
+html[data-workspace-theme=editorial] .shell .sidebar{border-radius:10px;border:1px solid #c5bdae;box-shadow:2px 3px 0 #ddd7ca}
+html[data-workspace-theme=porcelain] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){box-shadow:7px 7px 17px #cfcfdd,-7px -7px 17px #fff;border:1px solid #ffffff80!important;border-radius:22px}
+html[data-workspace-theme=porcelain] .shell .sidebar{box-shadow:inset 4px 4px 10px #cfcfdc,inset -4px -4px 10px #fff;border:1px solid #ffffff66}
+html[data-workspace-theme=studio] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){box-shadow:0 5px 18px -18px #244b3566;border-radius:18px}
+html[data-workspace-theme=studio] .shell .sidebar{box-shadow:none;border:1px solid #214337}
+html[data-workspace-theme] .shell.jb-reference .sidebar .brand .sb-brand-label{color:inherit!important}
+html:is([data-workspace-theme=liquid-glass],[data-workspace-theme=editorial],[data-workspace-theme=porcelain]) .shell.jb-reference .sidebar .brand .sb-brand-label{color:var(--theme-heading)!important}
+html:is([data-workspace-theme=liquid-glass],[data-workspace-theme=editorial],[data-workspace-theme=porcelain]) .shell.jb-reference:is(.sb-expanded,.is-menu-open) .sidebar .jb-wordmark .sb-brand-label{color:var(--theme-heading)!important}
+html[data-workspace-theme=graphite] .shell.jb-reference .side-nav .jb-nav-section>a.active{color:var(--theme-on-primary)!important}
+html[data-workspace-theme] .shell.jb-reference .rf-share-card{background:var(--theme-rail)!important;color:var(--theme-rail-text)!important;border:1px solid var(--theme-line)}
+html[data-workspace-theme] .shell.jb-reference .rf-share-card :is(h2,p,.rf-copy-link,.rf-copy-link>span){color:var(--theme-rail-text)!important}
+html[data-workspace-theme] .shell.jb-reference .rf-copy-link{background:transparent!important;border-color:color-mix(in srgb,var(--theme-rail-text) 30%,transparent)!important}
+html:is([data-workspace-theme=liquid-glass],[data-workspace-theme=editorial],[data-workspace-theme=porcelain]) .shell .sidebar :is(.jb-nav-section>a:hover,.jb-more-settings>summary:hover,.jb-more-settings[open]>summary,.jb-more-settings.is-current>summary){color:var(--theme-heading)!important}
+html:is([data-workspace-theme=liquid-glass],[data-workspace-theme=editorial],[data-workspace-theme=porcelain]) .shell .sidebar :is(a,summary):focus-visible{outline-color:var(--theme-focus)!important}
+.wt-choice:has(input[value=liquid-glass]) .wt-preview{background:linear-gradient(135deg,#c7edf2,#d7dff5);box-shadow:inset 0 1px #fff}
+.wt-choice:has(input[value=liquid-glass]) .wt-preview :is(.wt-preview-rail,.wt-preview-stats i,.wt-preview-table){box-shadow:inset 0 1px #fff;border:1px solid #ffffffb8}
+.wt-choice:has(input[value=editorial]) .wt-preview :is(.wt-preview-rail,.wt-preview-table,.wt-preview-stats i){border-radius:1px}
+.wt-choice:has(input[value=porcelain]) .wt-preview :is(.wt-preview-table,.wt-preview-stats i){box-shadow:3px 3px 6px #cfcfdd,-3px -3px 6px #fff}
+.wt-choice:has(input[value=graphite]) .wt-preview-rail i:first-child{background:#d6b366}
+@media(prefers-reduced-transparency:reduce){
+ html[data-workspace-theme=liquid-glass] .shell .sidebar{backdrop-filter:none;background:#e9f1f9!important}
+ html[data-workspace-theme=liquid-glass] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){background:#f8fbff!important}
+}
+@media(max-width:700px){html[data-workspace-theme=porcelain] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.mg-surface){box-shadow:4px 4px 10px #cfcfdd,-4px -4px 10px #fff}}
+@media(max-width:700px){
+ .rf-auth{padding:0;gap:0;background:#f7f8f6}
+ .rf-auth-story{width:100%;max-width:480px;margin-inline:auto;min-height:0;border-radius:0;padding:28px 24px 0;gap:0;background:#f7f8f6;display:block}
+ .rf-auth-story>div{display:none}
+ .rf-auth-story .rf-auth-mark{position:relative;display:grid;place-items:center;width:36px;height:38px;border-radius:11px;background:#123653;color:#fff;font-size:23px;font-weight:700}
+ .rf-auth-story .rf-auth-mark:after{content:'JovaBook';position:absolute;left:48px;top:50%;transform:translateY(-50%);font-size:18px;font-weight:700;letter-spacing:-.6px;color:#123653;white-space:nowrap}
+ .rf-auth-form{width:100%;max-width:480px;margin-inline:auto;padding:52px 24px max(80px,calc(env(safe-area-inset-bottom) + 40px))}
+ .rf-auth-form h1{font-size:32px;line-height:1.2;letter-spacing:-1.1px}
+ .rf-auth-form input{border-radius:12px!important;background:#fff;border-color:#d6ddd7;box-shadow:none}
+ .rf-auth-form input[type=email],.rf-auth-form input[type=password],.rf-auth-form input[type=text]{font-size:16px;min-width:0}
+ .rf-auth-form .pw{display:flex;align-items:center;border:1px solid #d6ddd7;border-radius:12px;background:#fff;overflow:hidden}
+ .rf-auth-form .pw input{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;outline:none}
+ .rf-auth-form .pw:focus-within{border-color:#46666b;box-shadow:0 0 0 3px #12365312}
+ .rf-auth-form .pw button{flex:none;padding:0 13px;min-width:55px;min-height:48px;border:0;border-radius:0;background:transparent;box-shadow:none;font-size:12px;color:#46616e}
+ .rf-auth-form .btn.primary{border-radius:12px;background:#123653;border-color:#123653;color:#fff;font-size:15px;box-shadow:0 5px 12px #12365312}
+}
+@media(max-width:360px){.rf-auth-story{padding-inline:20px}.rf-auth-form{padding-inline:20px}}
+
 /* Referral hero keeps readable contrast in every workspace theme. */
 html[data-workspace-theme] .shell .jr-page .jr-hero :is(h2,h3){color:#fff!important}
 html[data-workspace-theme] .shell .jr-page .jr-hero h2{font-size:clamp(28px,3.2vw,42px)!important;line-height:1.12!important;margin:20px 0 16px!important}
