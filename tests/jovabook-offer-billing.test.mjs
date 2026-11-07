@@ -23,8 +23,11 @@ function fixture(){
   if(a==='schedule'){Object.assign(data,{schedule_id:p.schedule_id,pending_plan:p.plan,pending_seats:p.seats,pending_cadence:p.cadence,pending_at:p.at});return Response.json({ok:true});}
   if(a==='clear_schedule'){data.schedule_id=null;return Response.json({ok:true});}
   if(a==='finish'){data.open_action.result=p.result;data.open_action.provider_id=p.provider_id;return Response.json(p.result);}
-  if(a==='sync_begin')return Response.json({fence:actionId});
-  if(a==='sync_apply')return Response.json({ok:true});
+  if(a==='sync_begin'){state.fence=crypto.randomUUID();return Response.json({fence:state.fence});}
+  if(a==='sync_apply'){
+   if(state.staleSyncs>0){state.staleSyncs--;return Response.json({stale:true});}
+   return Response.json(p.fence===state.fence?{ok:true}:{stale:true});
+  }
   throw Error('Unexpected worker operation '+a);
  };
  const handler=createJovaBookBillingHandlers({env,send,stripe,now:()=>clock});
@@ -32,6 +35,28 @@ function fixture(){
  const trial=(quantity=1)=>({id:'sub_Fixture',customer:'cus_Fixture',metadata,livemode:false,status:'trialing',collection_method:'charge_automatically',default_payment_method:'pm_Fixture',trial_start:start,trial_end:end,items:{data:[{id:'si_Fixture',price:'price_Team',quantity,current_period_start:start,current_period_end:end}]}});
  return {handler,request,state,data,calls,effects,trial,env,stripe};
 }
+
+test('sign-in status retries a competing billing refresh with fresh context and a new fence',async()=>{
+ const f=fixture();f.data.customer_id='cus_Fixture';f.state.staleSyncs=1;
+ const response=await f.handler.status(f.request({}));
+ assert.equal(response.status,200);assert.equal((await response.json()).business.id,sid);
+ assert.equal(f.calls.filter(c=>c.kind==='context').length,2);
+ const syncs=f.calls.filter(c=>c.kind==='sync_apply');assert.equal(syncs.length,2);
+ assert.notEqual(syncs[0].payload.fence,syncs[1].payload.fence);
+ assert(syncs.every(c=>c.payload.paid_verified===false));assert.deepEqual(f.effects,[]);
+});
+test('sign-in status never grants access when competing refreshes exhaust the bounded retry',async()=>{
+ const f=fixture();f.data.customer_id='cus_Fixture';f.state.staleSyncs=10;
+ const response=await f.handler.status(f.request({}));assert.equal(response.status,409);
+ const body=await response.json();assert.equal(body.ok,false);assert.equal(body.business,undefined);
+ assert.equal(f.calls.filter(c=>c.kind==='sync_apply').length,3);assert.deepEqual(f.effects,[]);
+});
+test('sign-in status does not retry unrelated provider errors',async()=>{
+ const f=fixture();f.data.customer_id='cus_Fixture';let reads=0;
+ f.stripe.subscriptions.list=async()=>{reads++;throw Error('Provider unavailable.');};
+ const response=await f.handler.status(f.request({}));assert.equal(response.status,503);
+ assert.equal(reads,1);assert.equal(f.calls.filter(c=>c.kind==='context').length,1);
+});
 
 test('Free never creates a Stripe customer, payment session or card collection',async()=>{
  const f=fixture();const response=await f.handler.checkout(f.request({plan:'essential',request_id:crypto.randomUUID()}));assert.equal(response.status,400);assert.deepEqual(f.effects,[]);
