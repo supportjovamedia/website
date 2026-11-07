@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import CookieConsent from "./CookieConsent";
 import styles from "./Footer.module.css";
-import { whatsappLink } from "@/lib/business-contact.mjs";
+import { businessPhone, whatsappLink } from "@/lib/business-contact.mjs";
 import { footerSocialProfiles } from "@/lib/site";
 import { bookingIndustries } from "@/lib/jovabook-industries.mjs";
 import SocialIcon from "./SocialIcon";
@@ -13,7 +13,7 @@ const industryLabels = {
   "pilates-instructors": "Pilates", "mental-health-practitioners": "Mental health",
 };
 const groups = [
-  { title: "Business software", industries: true, links: [
+  { title: "Industry", industries: true, links: [
     ...bookingIndustries.filter(item => industryLabels[item.slug]).map(item => ({ label: industryLabels[item.slug], href: `/industries/${item.slug}` })),
     { label: "All industries", href: "/industries" },
   ] },
@@ -48,7 +48,7 @@ export default function Footer() {
         {groups.map(group => <nav key={group.title} aria-label={`Footer ${group.title}`}><h3>{group.title}</h3><GroupLinks group={group}/></nav>)}
       </div>
       <div className={styles.contactRow}>
-        <div className={styles.contactLinks}><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a><a href={whatsappLink()} target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></div>
+        <div className={styles.contactLinks}><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a><a href={businessPhone.tel}>{businessPhone.display}</a><a href={whatsappLink()} target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></div>
         <nav className={styles.socials} aria-label="JovaMedia social profiles">{footerSocialProfiles.map(profile => <a key={profile.icon} href={profile.url} target="_blank" rel="noopener noreferrer me" aria-label={`JovaMedia on ${profile.label}`} title={profile.label}><SocialIcon name={profile.icon}/></a>)}<a href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat with JovaMedia on WhatsApp" title="WhatsApp" data-contact-placement="footer"><SocialIcon name="whatsapp"/></a></nav>
       </div>
       <div className={styles.bottom}>
