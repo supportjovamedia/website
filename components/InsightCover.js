@@ -13,6 +13,8 @@ const photographs = {
 };
 
 export default function InsightCover({ kind = "business", compact = false, preload = false }) {
+  const guide = { googleProfile: ['01', 'Be found locally.'], googleBookings: ['02', 'From search to booking.'], googleWebsite: ['03', 'Make your services clear.'], googleReviews: ['04', 'Build trust. See progress.'] }[kind];
+  if (guide) return <div className={`${s.cover} ${s.googleGuide} ${compact ? s.compact : ''}`} aria-hidden="true"><span>Get found on Google</span><strong>{guide[0]}</strong><p>{guide[1]}</p></div>;
   const photo = photographs[kind];
   const className = `${s.cover} ${s[kind]} ${compact ? s.compact : ""}`;
   if (photo) return <div className={className}><Image src={photo.src} alt={photo.alt} fill preload={preload} sizes={compact ? "(max-width:600px) 92vw, (max-width:950px) 46vw, 580px" : "(max-width:1000px) 92vw, 960px"}/></div>;

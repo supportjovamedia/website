@@ -20,3 +20,5 @@
 .newsletter .form button{background:#0c2948;color:#fff}
 
 @media(max-width:700px){.newsletter .form{text-align:center}.newsletter .form input{text-align:left}}
+.newsletter{scroll-margin-top:110px;align-items:center;padding-block:52px;background:#f7f5eb!important}.newsletter .label{display:block;margin:0 0 14px;color:#736749;font-size:11px;letter-spacing:1px}.newsletter h2{max-width:510px;margin-bottom:16px}.newsletter .form{gap:12px;padding:26px;background:#fff;border:1px solid #dce1df;border-radius:20px}.newsletter .form input{border-radius:12px;border-color:#bfcad0;padding:13px 15px;min-width:0}.newsletter .form button{border-radius:99px;padding:14px 24px;font-weight:600;justify-self:stretch}.guideLink{display:inline-block;margin-top:12px;font-size:14px;font-weight:600;text-underline-offset:4px}.newsletter .privacy{font-size:12px!important;line-height:1.65}.newsletter .message:empty{display:none}.newsletter .message{min-height:0}.newsletter .guideLink{color:#123653}.newsletter>div>p{margin-bottom:10px}
+@media(max-width:700px){.newsletter{padding:36px 20px;gap:24px}.newsletter .form{padding:22px 18px}.newsletter .label{font-size:10px}}

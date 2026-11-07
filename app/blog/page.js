@@ -6,15 +6,17 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import InsightCover from "@/components/InsightCover";
 import ContactChoices from "@/components/ContactChoices";
+import GuideSeries from "@/components/GuideSeries";
 import s from "@/components/Editorial.module.css";
 
-export const metadata = pageMetadata("/blog", "Website, Booking & Security Guides | JovaMedia", "Practical guides to website security, AI, salon booking systems and small business website costs. Clear explanations, worked examples and linked sources.");
+export const metadata = pageMetadata("/blog", "Small Business Growth, Google & Booking Guides | JovaMedia", "Practical guides to getting found on Google, turning visits into bookings and running your service business. Clear steps, checklists and useful examples.");
 export default function BlogPage() {
   return <main className={s.editorial}>
-    <StructuredData data={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "JovaMedia Blog", url: "https://www.jovamedia.com/blog", mainEntity: { "@type": "ItemList", itemListElement: articles.map((article, index) => ({ "@type": "ListItem", position: index + 1, url: `https://www.jovamedia.com/blog/${article.slug}`, name: article.title })) } }}/>
-    <PhotoHero src={"/hero-backgrounds/services.webp"} className={`page-hero ${s.photoHero}`}><div className={s.shell}><header className={s.indexHero}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }]}/><h1>Websites, bookings<br/>and better decisions.</h1><p className={s.intro}>Practical guides for small business owners. Understand website costs, compare booking options and keep up with the security issues that affect your business.</p></header></div></PhotoHero>
+    <StructuredData data={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "JovaMedia Guides", url: "https://www.jovamedia.com/blog", mainEntity: { "@type": "ItemList", itemListElement: articles.map((article, index) => ({ "@type": "ListItem", position: index + 1, url: `https://www.jovamedia.com/blog/${article.slug}`, name: article.title })) } }}/>
+    <PhotoHero src={"/hero-backgrounds/services.webp"} className={`page-hero ${s.photoHero}`}><div className={s.shell}><header className={s.indexHero}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Guides", path: "/blog" }]}/><h1>Guides to growing<br/>your service business.</h1><p className={s.intro}>Get found on Google, make booking easier and learn what to improve next. Practical steps you can work through yourself.</p></header></div></PhotoHero>
     <div className={s.shell}>
-      <section className={s.indexGrid} aria-label="Website, booking and security guides">{articles.map(article => <article className={s.card} key={article.slug}><Link className={s.cardLink} href={`/blog/${article.slug}`}><InsightCover kind={article.cover} compact/><div className={s.cardMeta}><span>{article.category}</span><span>{articleReadMinutes(article)} min read</span></div><h2>{article.title}</h2></Link><p>{article.summary}</p><Link className={s.readLink} href={`/blog/${article.slug}`}>Read article<span className={s.srOnly}>: {article.title}</span></Link></article>)}</section>
+      <GuideSeries/>
+      <section className={s.indexGrid} aria-label="Business growth, booking and website guides">{articles.map(article => <article className={s.card} key={article.slug}><Link className={s.cardLink} href={`/blog/${article.slug}`}><InsightCover kind={article.cover} compact/><div className={s.cardMeta}><span>{article.series ? `Google guide ${article.step} of 4` : article.category}</span><span>{articleReadMinutes(article)} min read</span></div><h2>{article.title}</h2></Link><p>{article.summary}</p><Link className={s.readLink} href={`/blog/${article.slug}`}>Read guide<span className={s.srOnly}>: {article.title}</span></Link></article>)}</section>
       <ContactChoices/>
     </div>
   </main>;

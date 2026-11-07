@@ -26,7 +26,7 @@ const groups = [
   { title: "Company", links: [
     { label: "About us", href: "/about" },
     { label: "Contact us", href: "/contact" },
-    { label: "Blog", href: "/blog" },
+    { label: "Resources", href: "/resources" },
   ] },
   { title: "Other products", links: [
     { label: "All products", href: "/products" },
