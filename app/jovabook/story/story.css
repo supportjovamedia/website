@@ -1152,3 +1152,22 @@
 :where(body:has(.jovabook-story)) .jovabook-story .story-fragment{display:contents}
 :where(body:has(.jovabook-story)) #jova-story-concept .story-fragment:has(.q4-demo-band)+.story-fragment .vp-cta-break{padding-top:30px}:where(body:has(.jovabook-story)) #jova-story-concept .q4-demo-band .ex-film{padding-bottom:18px}:where(body:has(.jovabook-story)) #jova-story-concept #booking-mount .ws-booking{padding-bottom:0!important}:where(body:has(.jovabook-story)) #jova-story-concept #ex-websites{padding-bottom:18px}
 :where(body:has(.jovabook-story)) .jovabook-header .jovabook-announcement{display:none}
+
+/* Desktop shows several readable cards. Phone swipe layouts remain unchanged. */
+@media(min-width:900px){
+ :where(body:has(.jovabook-story)) #jova-story-concept .vp-swipe-shell{max-width:1120px}
+ :where(body:has(.jovabook-story)) #jova-story-concept .vp-swipe-track{gap:20px}
+ :where(body:has(.jovabook-story)) #jova-story-concept .vp-swipe-track>.vp-reason-row,
+ :where(body:has(.jovabook-story)) #jova-story-concept #workspace-details .ex-capabilities.vp-swipe-track>.vp-capability{flex-basis:calc((100% - 64px)/2)}
+ :where(body:has(.jovabook-story)) #jova-story-concept .vp-industry-photos.vp-swipe-track>.vp-industry-card{flex-basis:calc((100% - 64px)/2)}
+ :where(body:has(.jovabook-story)) #jova-story-concept #ex-reviews .nr-reviews-track{--review-width:calc((100% - 72px)/2);gap:24px;max-width:1440px;margin-inline:auto}
+ :where(body:has(.jovabook-story)) #jova-story-concept #ex-reviews .nr-review[data-review-tone]{transform:none;opacity:1;min-height:355px}
+ :where(body:has(.jovabook-story)) #jova-story-concept #ex-reviews .nr-review[data-review-tone] blockquote{font-size:21px;line-height:1.5;padding:28px 26px;min-height:255px;letter-spacing:-.4px}
+ :where(body:has(.jovabook-story)) #jova-story-concept #ex-reviews .nr-review[data-review-tone] .js-person{padding:22px 18px}
+ :where(body:has(.jovabook-story)) #jova-story-concept .vp-reason-track .vp-benefit-card h3{font-size:28px}
+ :where(body:has(.jovabook-story)) #jova-story-concept #ex-pricing .js-plan li{font-size:14px;line-height:1.65}
+}
+@media(min-width:1200px){
+ :where(body:has(.jovabook-story)) #jova-story-concept .vp-industry-photos.vp-swipe-track>.vp-industry-card{flex-basis:calc((100% - 84px)/3)}
+ :where(body:has(.jovabook-story)) #jova-story-concept #ex-reviews .nr-reviews-track{--review-width:calc((100% - 96px)/3)}
+}
