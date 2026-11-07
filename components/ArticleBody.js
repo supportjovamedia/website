@@ -20,6 +20,7 @@ export default function ArticleBody({ blocks, tableHints = false }) {
     }
     if (block.type === "paragraph") return <p key={index}><Inline text={block.text}/>{block.sources.length > 0 && <Citations ids={block.sources}/>}</p>;
     if (block.type === "list") return <ul key={index}>{block.items.map(item => <li key={item}><Inline text={item}/></li>)}</ul>;
+    if (block.type === "steps") return <ol key={index}>{block.items.map(item => <li key={item}><Inline text={item}/></li>)}</ol>;
     if (block.type === "sources") return <p className={s.sourceLine} key={index}>Provider sources: <Citations ids={block.ids}/></p>;
     if (block.type === "calculator") return <BookingCostCalculator key={index}/>;
     if (block.type === "table") return <div className={s.tableScroll} key={index} role="region" aria-label={block.caption} tabIndex={0}>{tableHints && <p className={s.tableHint}>Swipe across to compare all columns.</p>}<table><caption>{block.caption}</caption><thead><tr>{block.headers.map(header => <th scope="col" key={header}>{header}</th>)}</tr></thead><tbody>{block.rows.map((row, rowIndex) => <tr key={rowIndex}>{row.map((cell, cellIndex) => cellIndex === 0 ? <th scope="row" key={cellIndex}>{cell}</th> : <td key={cellIndex}>{cell}</td>)}</tr>)}</tbody></table></div>;

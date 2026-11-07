@@ -4,7 +4,8 @@ import Image from "next/image";
 /* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-const links = [["Home","/"],["About","/about"],["Pricing","/pricing"],["Blog","/blog"],["Contact","/contact"]];
+const links = [["Home","/"],["About","/about"],["Pricing","/pricing"],["Resources","/resources"],["Contact","/contact"]];
+const resourceLinks=[['All resources','/resources'],['Blogs','/blog'],['Tips & tricks','/resources/tips-and-tricks'],['Guides','/resources/guides']];
 const startHref = "https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup";
 const loginHref = "https://book.jovamedia.com/login";
 export default function Header() {
@@ -14,11 +15,15 @@ export default function Header() {
 function Navigation({ pathname }) {
 
   const [open, setOpen] = useState(false);
+  const [resourcesOpen,setResourcesOpen]=useState(false);
+  const resources=useRef(null);
+  const resourceToggle=useRef(null);
   const toggle = useRef(null);
   const menu = useRef(null);
   const header = useRef(null);
   const slot = useRef(null);
   const measureNavigation = useRef(null);
+  useEffect(()=>{if(!resourcesOpen)return;const outside=e=>{if(!resources.current?.contains(e.target))setResourcesOpen(false);};const escape=e=>{if(e.key==='Escape'){setResourcesOpen(false);resourceToggle.current?.focus();}};document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};},[resourcesOpen]);
   useEffect(() => {
     const main = document.querySelector('#main-content main');
     if (!main) return;
@@ -84,7 +89,7 @@ function Navigation({ pathname }) {
         toggle.current?.focus();
       }
       if (e.key === "Tab") {
-        const nodes = [toggle.current, ...menu.current.querySelectorAll("a, button")].filter(node => !node.closest('[inert]'));
+        const nodes = [toggle.current, ...menu.current.querySelectorAll("a, button, summary")].filter(node => !node.closest('[inert]')&&node.getClientRects().length);
         if (e.shiftKey && document.activeElement === nodes[0]) {
           e.preventDefault();
           nodes.at(-1).focus();
@@ -103,7 +108,7 @@ function Navigation({ pathname }) {
     };
   }, [open]);
   const active = (href) =>
-    href === "/products" ? /^\/(products|websites|services)(\/|$)/.test(pathname) : href === "/"
+    href === '/resources' ? /^\/(resources|blog)(\/|$)/.test(pathname) : href === "/products" ? /^\/(products|websites|services)(\/|$)/.test(pathname) : href === "/"
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
   const closeMenu = () => { setOpen(false); };
@@ -129,7 +134,7 @@ function Navigation({ pathname }) {
             <Image className="logo-dark-surface" src="/brand/jova-logo-white.png" alt="" aria-hidden="true" width={361} height={128} sizes="132px" loading="eager" fetchPriority="low" />
           </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
-            {links.map(([name, href]) => (
+            {links.map(([name, href]) => name==='Resources'?<div ref={resources} key={href} className="resource-nav" onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setResourcesOpen(false);}}><a href={href} className={active(href)?'active':''} aria-current={pathname===href?'page':undefined}>Resources</a><button ref={resourceToggle} type="button" className="resource-nav-toggle" aria-label="Show resource sections" aria-expanded={resourcesOpen} aria-controls="resource-nav-panel" onClick={()=>setResourcesOpen(v=>!v)}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg></button><div id="resource-nav-panel" className="resource-nav-panel" hidden={!resourcesOpen}>{resourceLinks.map(([label,to])=><a key={to} href={to} aria-current={pathname===to?'page':undefined}>{label}</a>)}</div></div>:(
               <a
                 key={href}
                 href={href}
@@ -159,7 +164,7 @@ function Navigation({ pathname }) {
         </div>
         <nav ref={menu} inert={!open} aria-hidden={!open} data-open={open} id="mobile-menu" className="mobile-menu" aria-label="Mobile navigation">
           <div className="mobile-menu-inner"><div className="mobile-menu-page" data-active="true">
-            {links.map(([name,href])=><a key={href} href={href} onClick={closeMenu} aria-current={active(href)?"page":undefined}>{name}</a>)}
+            {links.map(([name,href])=>name==='Resources'?<details className="mobile-resource-group" key={href}><summary>Resources<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg></summary><div>{resourceLinks.map(([label,to])=><a key={to} href={to} onClick={closeMenu} aria-current={pathname===to?'page':undefined}>{label}</a>)}</div></details>:<a key={href} href={href} onClick={closeMenu} aria-current={active(href)?"page":undefined}>{name}</a>)}
             <a href={startHref} onClick={closeMenu}>Start now</a>
             <a href={loginHref} onClick={closeMenu}>Login</a>
           </div></div>
