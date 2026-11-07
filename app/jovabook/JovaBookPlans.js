@@ -3,6 +3,7 @@ import {useEffect,useId,useState} from 'react';
 import {localPrice,currencyLabel,isCurrency} from '@/lib/jovabook-currency.mjs';
 import {jovabookMarketingPlans,jovabookSignupHref} from '@/lib/jovabook-marketing-plans.mjs';
 import {offerSelection} from '@/lib/jovabook-offer.mjs';
+import {jovabookPlanFeatures} from '@/lib/jovabook-plan-features.mjs';
 import s from './plans.module.css';
 
 const pounds=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(value/100).replace('.00','');
@@ -20,7 +21,7 @@ export default function JovaBookPlans(){
   <div className={s.grid} role="region" aria-label="JovaBook plans">
    {jovabookMarketingPlans.map(plan=>{
     const free=plan.id==='essential',team=plan.id==='premium',selection=offerSelection(plan.id,cadence,team?extraSeats:0);
-    const features=[team?`${selection.seats} staff ${selection.seats===1?'seat':'seats'}`:'1 staff calendar',free?'20 bookings per month':'Unlimited monthly bookings','One-page business website','Online booking and client records',...(!free?['Stripe deposits']:[]),`${selection.emails} emails per month`,free?'Email alerts only':`${selection.sms} SMS per month`,...(!free?['Embed bookings on your own website']:[]),...(team?['Clients choose their team member','Advanced Insights and comparisons','Extra website customisation','JovaMedia branding removed']:['Powered by JovaMedia badge'])];
+    const features=jovabookPlanFeatures[plan.id];
     return <article key={plan.id} className={`${s.card} ${plan.recommended?s.recommended:''}`} aria-label={`${plan.name} plan`}>
      {plan.recommended&&<span className={s.recommendation}>For a busy solo diary</span>}
      <h3>{plan.name}</h3><p className={s.description}>{plan.description}</p>
