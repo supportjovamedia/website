@@ -8,7 +8,7 @@ import MotionRegion from "@/components/MotionRegion";
 import PhotoHero from "@/components/PhotoHero";
 import { FaqStory } from "@/components/ScrollStories";
 
-export const metadata = pageMetadata("/services", "Digital Services for UK Small Businesses | JovaMedia", "System modernisation, email marketing and automation, and search and local visibility for UK businesses. Explore JovaMedia's practical business services.");
+export const metadata = pageMetadata("/services", "Email Marketing, Local SEO & System Upgrades | JovaMedia", "Email marketing and automation, local search visibility and system modernisation for UK small businesses. See what each service includes and request a quote.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
@@ -36,6 +36,6 @@ export default function Page() {
       </div>
     </section>
     <FaqStory />
-    <section className={`section ${styles.custom}`}><div className="shell"><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><Link href="/get-a-quote" className="btn">Get a Quote</Link></div></section>
+    <section className={`section ${styles.custom}`}><div className="shell"><h2>One project. A useful combination.</h2><p className="lead">Tell us what you want to achieve. We’ll put together a clear scope and quote, counting shared work once.</p><p>Still deciding what you need? Read <Link prefetch={false} href="/blog/does-a-small-business-need-a-website">whether a small business needs a website</Link>, or use the <Link prefetch={false} href="/blog/small-business-website-brief-template">website brief worksheet</Link> before asking for a quote.</p><Link href="/get-a-quote" className="btn">Get a Quote</Link></div></section>
   </main>;
 }

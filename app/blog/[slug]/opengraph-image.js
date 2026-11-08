@@ -13,6 +13,8 @@ async function photograph(kind) {
     bookingMigration: () => readFile(join(process.cwd(), "public/service-editorial/copywriting.jpg")),
     barberDiary: () => readFile(join(process.cwd(), "public/insights/salon-interior-share.jpg")),
     bookingComparison: () => readFile(join(process.cwd(), "public/service-editorial/copywriting.jpg")),
+    websiteChannels: () => readFile(join(process.cwd(), "public/insights/qaiser-website-share.jpg")),
+    websiteBrief: () => readFile(join(process.cwd(), "public/service-editorial/copywriting.jpg")),
     salonInvestment: () => readFile(join(process.cwd(), "public/insights/salon-booking-investment-share.jpg")),
     lashes: () => readFile(join(process.cwd(), "public/insights/lash-treatment-share.jpg")),
     salon: () => readFile(join(process.cwd(), "public/insights/salon-interior-share.jpg")),

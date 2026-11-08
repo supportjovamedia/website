@@ -30,6 +30,7 @@ const groups = [
   ] },
   { title: "Other products", links: [
     { label: "All products", href: "/products" },
+    { label: "Do you need a website?", href: "/blog/does-a-small-business-need-a-website" },
     { label: "Get a Quote", href: "/get-a-quote" },
   ] },
 ];
