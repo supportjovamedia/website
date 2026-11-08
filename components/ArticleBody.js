@@ -6,7 +6,8 @@ function Inline({ text }) {
   return text.split(/(\[[^\]]+\]\([^)]+\))/g).map((part, index) => {
     const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (!match) return part;
-    return <a key={index} href={match[2]}>{match[1]}</a>;
+    const download = /^\/resources\/downloads\/[a-z0-9-]+\.csv$/.test(match[2]);
+    return <a key={index} href={match[2]} download={download || undefined}>{match[1]}</a>;
   });
 }
 function Citations({ ids }) {
