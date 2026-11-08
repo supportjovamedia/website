@@ -10,7 +10,8 @@
 .jovabook-story #jova-story-concept #booking-mount #booking{padding-block:0!important;margin-block:0}
 .jovabook-story #jova-story-concept #ex-websites{--story-bottom:24px}
 .jovabook-story #jova-story-concept .vp-cta-break,
-.jovabook-story #jova-story-concept .story-fragment:has(.q4-demo-band)+.story-fragment .vp-cta-break{padding:24px 24px var(--story-cta-gap)}
+.jovabook-story #jova-story-concept .story-fragment:has(.q4-demo-band)+.story-fragment .vp-cta-break{width:100%;display:flex;align-items:center;justify-content:center;padding:var(--story-cta-gap) 24px;text-align:center}
+.jovabook-story #jova-story-concept .vp-cta-break>.js-btn{flex:0 0 auto;max-width:100%;margin:0}
 .jovabook-story #jova-story-concept :is(.ex-section-head,.ex-film-title,.ex-comparison .ex-title,.nr-review-head){margin-block:0 var(--story-heading-gap)}
 .jovabook-story #jova-story-concept :is(.ex-section-head,.ex-film-title,.ex-comparison .ex-title) h2{margin-top:0}
 .jovabook-story #jova-story-concept .ex-film-title p{margin:16px auto 0}
@@ -74,6 +75,6 @@
  .jovabook-story #jova-story-concept #ex-websites{--story-bottom:18px}
  .jovabook-story #jova-story-concept #booking-mount{padding-bottom:18px}
  .jovabook-story #jova-story-concept .vp-cta-break,
- .jovabook-story #jova-story-concept .story-fragment:has(.q4-demo-band)+.story-fragment .vp-cta-break{padding-top:18px}
+ .jovabook-story #jova-story-concept .story-fragment:has(.q4-demo-band)+.story-fragment .vp-cta-break{padding-block:var(--story-cta-gap)}
  .jovabook-story #jova-story-concept #ex-pricing .js-recommended .js-plan-tag{font-size:15px;padding:10px 22px}
 }

@@ -30,9 +30,9 @@ export const metadata = {
   description:
     "JovaBook by JovaMedia is booking software for service businesses. Start free with online bookings and a one-page website. 0% booking commission on every plan.",
   openGraph: {
-    title: "JovaBook | Booking software by JovaMedia",
+    title: "JovaBook | Your online booking system",
     description:
-      "Online bookings, a one-page website and Stripe deposits for service businesses. Start free.",
+      "Your calendar, client bookings and your own website, all together. Start free with JovaBook.",
     url: "https://www.jovamedia.com",
     siteName: "JovaMedia",
     locale: "en_GB",

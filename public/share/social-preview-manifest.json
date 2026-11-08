@@ -1,9 +1,16 @@
 {
-  "image": "/share/jovabook-free-plans-2026-11.png",
+  "image": "/share/jovabook-hero-bd69bc54f8c9.png",
   "width": 1200,
   "height": 630,
-  "sha256": "a53c993cbccab3249db3409cf945aefc4da688e502b842122b105b453ee60b9a",
+  "sha256": "bd69bc54f8c9fc112cc11578912ec52a27c65192a78979fe26dbd99774477e51",
   "sources": {
-    "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55"
+    "app/jovabook/story/OriginalSections.js": "17978e0e2ee1df865562a47df0ae2c3d5c04aea8f41798e98feb0046206604cf",
+    "app/jovabook/story/story.css": "7f741f039ccc84cc1ada540aaea86af105b991015ab90561d1c1500a7138d0a0",
+    "app/jovabook/story/rhythm.css": "3088ae1829bf52994d631511d6e93b90be5249b6f26dd312db70476572da566f",
+    "scripts/capture-jovabook-share.mjs": "8ac176721157c7a3beac389b98de566f6ca716558816b78ab1205df22f2f2c04",
+    "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55",
+    "public/jovabook/story/dashboard-current-5df2dc7de8.webp": "5df2dc7de830545024ea5c16ca4294475c111e2679ec91acb383553df8cfb686",
+    "public/jovabook/story/calendar-phone-current-5e5232164a.webp": "5e5232164a62db6109a35da9d05cef6047b8f7cf66f483c3f762ccd8f761ce3c",
+    "app/fonts/plus-jakarta-sans.woff2": "153fc85b70298beeb1d61a5f723331649e7f23bb77302a66e61cb3e2fbdb5e79"
   }
 }

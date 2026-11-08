@@ -1,16 +1,12 @@
 import {OFFER_PLANS} from "../../lib/jovabook-offer.mjs";
+import {socialPreview} from "../../lib/social-preview.mjs";
 const site = "https://www.jovamedia.com";
 export const jovabookUrl = `${site}/`;
 
 export function jovabookMetadata() {
   const title = "Booking System for Service Businesses | JovaBook";
   const description = "JovaBook by JovaMedia is a booking system for service businesses. Start free with 20 monthly bookings and a one-page website. Add Stripe deposits on paid plans. 0% booking commission on every plan.";
-  const image = {
-    url: `${site}/share/jovabook-free-plans-2026-11.png`,
-    width: 1200,
-    height: 630,
-    alt: "JovaBook booking system for service businesses, with a calendar, mobile booking page and yellow accent",
-  };
+  const image = {...socialPreview, url: new URL(socialPreview.url, site).href};
   return {
     title: { absolute: title },
     description,
