@@ -4,8 +4,8 @@ import styles from "./about.module.css";
 
 export const metadata=pageMetadata(
  "/about",
- "About JovaMedia and JovaBook",
- "Meet JovaMedia, the London company behind JovaBook. We build booking software and websites to help service businesses manage their working day.",
+ "About JovaMedia: London Websites & Booking Software",
+ "JovaMedia is a London company that builds websites and JovaBook booking software for service businesses. Find out who we are and how we work.",
 );
 
 export default function AboutPage(){

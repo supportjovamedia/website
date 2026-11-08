@@ -8,7 +8,7 @@ import MotionRegion from "@/components/MotionRegion";
 import PhotoHero from "@/components/PhotoHero";
 import { FaqStory } from "@/components/ScrollStories";
 
-export const metadata = pageMetadata("/services", "Digital Services for UK Small Businesses | JovaMedia", "System modernisation, email marketing and automation, and search and local visibility for UK businesses. Explore JovaMedia's practical business services.");
+export const metadata = pageMetadata("/services", "Email Marketing, Local SEO & System Upgrades | JovaMedia", "Email marketing and automation, local search visibility and system modernisation for UK small businesses. See what each service includes and request a quote.");
 
 export default function Page() {
   return <main className={styles.catalogue}>
