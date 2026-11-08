@@ -10,6 +10,7 @@ import InsightCover from "@/components/InsightCover";
 import ContactChoices from "@/components/ContactChoices";
 import GuideSeries from "@/components/GuideSeries";
 import LinkCta from "@/components/GuideSignupCta";
+import guideStyles from "@/components/Guides.module.css";
 import s from "@/components/Editorial.module.css";
 
 const articleHeroImages = { phpSecurity: "/websites/photography/crm-systems-hero-context.webp", aiSecurity: "/websites/photography/bespoke-websites-hero-main.webp", bookingSecurity: "/websites/photography/booking-systems-editorial-one.webp", booking: "/service-editorial/email.jpg", cost: "/hero-backgrounds/pricing.webp", lashes: "/insights/lash-treatment.webp", salon: "/insights/salon-interior.webp", salonInvestment: "/insights/salon-interior.webp", business: "/insights/qaiser-website.webp", launch: "/service-editorial/copywriting.jpg" };
@@ -33,7 +34,7 @@ export default async function ArticlePage({ params }) {
   const publicationDate = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${publishedAt}T00:00:00Z`));
   const headings = article.blocks.filter(block => block.type === "heading" && (!article.contents || article.contents.includes(block.id)));
   const isGuide = article.series === 'google-growth';
-  const isResource = isGuide || article.collection==='tips';
+  const isResource = isGuide || ['tips', 'guides'].includes(article.collection);
   const HeaderFrame = isResource ? 'section' : PhotoHero;
   return <main className={`${s.editorial} ${article.layout === "longform" ? s.articleReading : ""}`}>
     <StructuredData data={articleSchema(article, `https://www.jovamedia.com/blog/${slug}/opengraph-image`)}/>
@@ -45,8 +46,8 @@ export default async function ArticlePage({ params }) {
         <nav className={s.toc} aria-label="In this guide"><p className={s.tocTitle}>Contents</p><ul>{headings.map(block => <li key={block.id}><a href={`#${block.id}`}>{block.title}</a></li>)}</ul><Link href={article.collection === "tips" ? "/resources/tips-and-tricks" : "/resources/guides"}>{article.collection === "tips" ? "All tips & tricks" : "All guides"}</Link></nav>
         <article className={s.articleMain} aria-label={article.title}>
           <ArticleBody blocks={article.blocks} tableHints={article.layout === "longform"}/>
-          {isResource && <LinkCta/>}
-          <footer className={s.articleFooter}><p>{isGuide ? 'Written by JovaMedia, the team behind JovaBook. Google guidance checked on 7 November 2026.' : isResource ? 'Written by JovaMedia, the team behind JovaBook.' : 'Written by JovaMedia, a London website design and development studio.'}{article.cover === "booking" && " Provider terms checked on 14 October 2026. Check your agreement for the charges that apply to your business."}</p><p><Link href="/about">About JovaMedia</Link> · <Link href="/contact">Ask about this guide</Link></p></footer>
+          {article.cta ? <aside className={guideStyles.guideCta}><h2>{article.cta.title}</h2><p>{article.cta.text}</p><Link prefetch={false} href={article.cta.href}>{article.cta.label}</Link></aside> : isResource && <LinkCta/>}
+          <footer className={s.articleFooter}><p>{isGuide ? 'Written by JovaMedia, the team behind JovaBook. Google guidance checked on 7 November 2026.' : isResource ? 'Written by JovaMedia, the team behind JovaBook.' : 'Written by JovaMedia, a London website design and development studio.'}{article.slug === 'salon-booking-platform-fees-vs-own-website' && ' Comparison updated 8 November 2026. Check your provider agreement for applicable charges.'}</p><p><Link href="/about">About JovaMedia</Link> · <Link href="/contact">Ask about this guide</Link></p></footer>
           {!isResource && <ContactChoices compact/>}
         </article>
       </div>

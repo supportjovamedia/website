@@ -9,6 +9,10 @@ export const runtime = "nodejs";
 async function photograph(kind) {
   // Literal paths keep the trace limited to the photographs this endpoint uses.
   const photographs = {
+    nailMenu: () => readFile(join(process.cwd(), "public/service-editorial/copywriting.jpg")),
+    bookingMigration: () => readFile(join(process.cwd(), "public/service-editorial/copywriting.jpg")),
+    barberDiary: () => readFile(join(process.cwd(), "public/insights/salon-interior-share.jpg")),
+    bookingComparison: () => readFile(join(process.cwd(), "public/service-editorial/copywriting.jpg")),
     salonInvestment: () => readFile(join(process.cwd(), "public/insights/salon-booking-investment-share.jpg")),
     lashes: () => readFile(join(process.cwd(), "public/insights/lash-treatment-share.jpg")),
     salon: () => readFile(join(process.cwd(), "public/insights/salon-interior-share.jpg")),

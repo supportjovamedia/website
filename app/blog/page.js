@@ -9,7 +9,7 @@ import ContactChoices from "@/components/ContactChoices";
 import s from "@/components/Editorial.module.css";
 
 export const metadata = pageMetadata("/blog", "Small Business, Booking & Website Blogs | JovaMedia", "Articles on booking systems, small business websites and making useful improvements to your online presence.");
-const blogArticles = articles.filter(article => !article.series && article.collection !== "tips");
+const blogArticles = articles.filter(article => !article.series && !['tips','guides'].includes(article.collection));
 export default function BlogPage() {
   return <main className={s.editorial}>
     <StructuredData data={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "JovaMedia Blog", url: "https://www.jovamedia.com/blog", mainEntity: { "@type": "ItemList", itemListElement: blogArticles.map((article, index) => ({ "@type": "ListItem", position: index + 1, url: `https://www.jovamedia.com/blog/${article.slug}`, name: article.title })) } }}/>
