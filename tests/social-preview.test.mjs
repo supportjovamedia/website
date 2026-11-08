@@ -5,11 +5,11 @@ import {createHash} from "node:crypto";
 import {socialPreview} from "../lib/social-preview.mjs";
 
 const sha=bytes=>createHash("sha256").update(bytes).digest("hex");
-const sourceSha=(bytes,file)=>sha(/\.(png|webp)$/.test(file)?bytes:bytes.toString("utf8").replace(/\r\n/g,"\n"));
+const sourceSha=(bytes,file)=>sha(/\.(png|webp|woff2)$/.test(file)?bytes:bytes.toString("utf8").replace(/\r\n/g,"\n"));
 test("share image is refreshed whenever its hero, logo or capture layout changes",async()=>{
  const manifest=JSON.parse(await readFile(new URL("../public/share/social-preview-manifest.json",import.meta.url)));
  assert.equal(socialPreview.url,manifest.image);
- for(const required of ["public/brand/jova-logo.png"]){
+ for(const required of ["public/brand/jova-logo.png","app/jovabook/story/OriginalSections.js","app/jovabook/story/story.css","app/jovabook/story/rhythm.css"]){
   assert.ok(manifest.sources[required],`Missing freshness check for ${required}`);
  }
  for(const [file,expected] of Object.entries(manifest.sources)){

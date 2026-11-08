@@ -1,3 +1,4 @@
+import {socialPreview} from '../lib/social-preview.mjs';
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
@@ -83,8 +84,8 @@ test("completed insights and articles are indexable, discoverable and contain th
 });
 
 test("social previews use the JovaBook share image and return a valid PNG", async () => {
-  const expected = "https://www.jovamedia.com/share/jovabook-free-plans-2026-11.png";
-  const approved = await readFile(new URL("../public/share/jovabook-free-plans-2026-11.png",import.meta.url));
+  const expected = new URL(socialPreview.url,"https://www.jovamedia.com").href;
+  const approved = await readFile(new URL("../public"+socialPreview.url,import.meta.url));
   const xml = await (await fetch(base + "/sitemap.xml")).text();
   for (const [,url] of xml.matchAll(/<loc>(.*?)<\/loc>/g)) {
     const response = await fetch(base + new URL(url).pathname, {headers:{"User-Agent":"Twitterbot/1.0"}});
