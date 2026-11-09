@@ -7,6 +7,17 @@
 .hero h1{font-size:clamp(42px,4.8vw,68px);line-height:1.09;max-width:24ch;margin:0 auto 24px}
 .hero h1 span{display:block}
 .hero h1 span:last-child{color:#235789}
+.bookingExample{background:#fff;padding-block:56px}
+.exampleHeading{text-align:center;max-width:720px;margin:0 auto 30px}
+.exampleHeading h2,.freeStart h2{font-size:clamp(26px,2.8vw,36px);line-height:1.25;margin:0 0 16px}
+.exampleHeading p,.serviceChoices p,.freeStart p{font-size:15px;line-height:1.75;color:#456276;margin:0}
+.serviceChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.serviceChoices article{background:#f5f8fa;border:1px solid #d9e4eb;border-radius:18px;padding:25px;min-width:0}
+.serviceChoices h3{font-size:21px;line-height:1.35;margin:0 0 12px}
+.freeStart{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:35px;align-items:center;background:#fff3ba;border-radius:20px;padding:32px;margin-top:25px}
+.freeStart h2{font-size:27px;max-width:28ch}
+.freeStart p+p{margin-top:12px}
+@media(max-width:700px){.bookingExample{padding-block:40px}.serviceChoices{grid-template-columns:minmax(0,1fr)}.serviceChoices article{padding:22px}.freeStart{grid-template-columns:minmax(0,1fr);padding:25px 22px;gap:24px}.freeStart h2{font-size:25px}.exampleHeading{text-align:left}}
 .hero p{font-size:18px;line-height:1.8;max-width:66ch;margin:0 auto 28px}
 .hero .brand{font-size:18px;margin-bottom:20px}
 .hero .smallPrint{font-size:12px;margin:18px auto 0;line-height:1.7;color:#456276}
