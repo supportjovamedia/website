@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
-const sql=await readFile(new URL('../supabase/migrations/20261109035434_owner_onboarding_progress.sql',import.meta.url),'utf8');
+const sql=await readFile(new URL('../supabase/migrations/20261109115800_owner_onboarding_progress.sql',import.meta.url),'utf8');
 const owner='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002',business='20000000-0000-4000-8000-000000000001';
 test('submitted onboarding is private, resumable and cannot grant a paid plan or skip verification',async()=>{
  const db=new PGlite();try{
@@ -43,3 +43,4 @@ test('submitted onboarding is private, resumable and cannot grant a paid plan or
   await db.exec(`reset role;insert into jovabook_private.portal_roles values('${other}','customer');set role authenticated;`);await assert.rejects(progress('read'),/verified business/);
  }finally{await db.close();}
 });
+
