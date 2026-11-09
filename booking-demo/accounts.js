@@ -216,7 +216,7 @@
     const cfg = window.JOVA_SUPABASE, AUTH = 'jovabook-auth';
     const DEMO = normEmail('demo@jovamedia.com');
     const load = () => { try { return JSON.parse(localStorage.getItem(AUTH) || 'null'); } catch (e) { return null; } };
-    let generation=0,refreshFlight=null,refreshFailure=null,verifiedSalon=null,verifiedAccess=null,pendingEmailVerification=null;
+    let generation=0,refreshFlight=null,refreshFailure=null,verifiedSalon=null,verifiedAccess=null,pendingEmailVerification=null,pendingOwnerAdoption=null;
     const SIGNUP_DRAFT='jovabook-owner-signup-draft-v1';
     const EXISTING='jovabook-existing-business-v1';let pendingBusinessOwner=null;
     try{pendingBusinessOwner=JSON.parse(sessionStorage.getItem(EXISTING)||'null');}catch{}
@@ -227,10 +227,11 @@
     const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
     const stamp=()=>({raw:rawSession(),generation});
     const current=expected=>expected.generation===generation&&expected.raw===rawSession();
-    const keep = s => {if(!s||load()?.user?.id!==s.user?.id){verifiedSalon=null;verifiedAccess=null;clearExisting();}generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} window.JovaOwnerDiagnostics?.setSession?.(s);};
+    const keep = s => {if(!s)pendingOwnerAdoption=null;if(!s||load()?.user?.id!==s.user?.id){verifiedSalon=null;verifiedAccess=null;clearExisting();}generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} window.JovaOwnerDiagnostics?.setSession?.(s);};
     window.JovaOwnerDiagnostics?.setSession?.(load());
-    const intent=()=>{clearExisting();generation++;refreshFlight=null;return stamp();};
+    const intent=()=>{pendingOwnerAdoption=null;clearExisting();generation++;refreshFlight=null;return stamp();};
     const stale=()=>({ok:false,stale:true,status:0,message:'Your session changed. Open this page again.'});
+    const pendingAdoption=()=>{if(pendingOwnerAdoption&&(!current(pendingOwnerAdoption.expected)||Date.now()>pendingOwnerAdoption.until))pendingOwnerAdoption=null;return pendingOwnerAdoption;};
     const authFailure=()=>refreshFailure&&current(refreshFailure.expected)?refreshFailure.result:load()?stale():{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'};
     const writeScope=(salonId)=>!!salonId&&!!load()?.user?.id&&!!verifiedAccess?.data&&verifiedAccess.ownerId===load().user.id&&['active','setup'].includes(verifiedAccess.data.access)&&!!verifiedSalon?.ownerId&&verifiedSalon.id===salonId&&verifiedSalon.ownerId===load()?.user?.id;
     const scopeFailure=()=>!load()?.user?.id?{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'}:({...stale(),invalidTenant:true,message:'Your business changed. Refresh before saving.'});
@@ -399,16 +400,30 @@
       async acceptGoogleSession(session) {return this.acceptOwnerSession(session);},
       async acceptOwnerSession(session,expectedEmail=null) {
         const expected=intent();
-        if(!session?.access_token||!session?.refresh_token)return {ok:false,message:'Your sign-in could not be confirmed.'};
+        if(typeof session?.access_token!=='string'||!session.access_token||typeof session?.refresh_token!=='string'||!session.refresh_token)return {ok:false,message:'Your sign-in could not be confirmed.'};
+        // Unverified candidates remain in memory only. A retry never reuses the one-use OAuth code.
+        const resumable=(stage,result,message)=>{pendingOwnerAdoption={expected:stamp(),session:{access_token:session.access_token,refresh_token:session.refresh_token,expires_at:session.expires_at,expires_in:session.expires_in},expectedEmail,until:Date.now()+600000};return {ok:false,resumable:true,retryable:true,adoptionPending:true,stage,status:Number(result?.status)||0,network:!!result?.network,message};};
+        const denied=result=>result?.auth===true||result?.wrongPortal===true||[401,403].includes(Number(result?.status));
         const checked=await call('/auth/v1/user',{method:'GET',token:session.access_token});
         if(!current(expected))return stale();const user=checked.data;
-        if(!checked.ok||!user?.id||typeof user.email!=='string'||!Number.isFinite(Date.parse(user.email_confirmed_at||''))||(expectedEmail&&normEmail(user.email)!==normEmail(expectedEmail)))return {ok:false,message:'Your email could not be verified. Please try again.'};
+        if(!checked.ok){if(checked.network||checked.status===0||checked.status===429||checked.status>=500)return resumable('verify_session',checked,'We could not finish verifying your sign-in. Please try again.');if(load()?.access_token===session.access_token)keep(null);return {ok:false,auth:true,status:checked.status,message:'Your sign-in is no longer valid. Please sign in again.'};}
+        if(!user?.id||typeof user.email!=='string')return resumable('verify_session',checked,'We could not finish verifying your sign-in. Please try again.');
+        if(!Number.isFinite(Date.parse(user.email_confirmed_at||''))||(expectedEmail&&normEmail(user.email)!==normEmail(expectedEmail))){if(load()?.access_token===session.access_token)keep(null);return {ok:false,auth:true,message:'Your email could not be verified. Please try again.'};}
         keep({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:Number.isFinite(Number(session.expires_at))?Number(session.expires_at):Date.now()/1000+Math.max(1,Number(session.expires_in)||60),user});
         const saved=stamp(),access=await ownerAccess();if(!current(saved))return stale();
-        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!current(saved))return stale();if(!identity.ok){keep(null);return identity;}const entered=await rpc('owner_onboarding_progress',{p_step:'entry',p_values:{}},session.access_token);if(!current(saved))return stale();if(!entered.ok||entered.data?.ok!==true){keep(null);return {ok:false,message:'We could not save your account progress. Please try again.'};}pendingBusinessOwner={...identity.profile,manualSetup:true};try{localStorage.removeItem(SIGNUP_DRAFT);sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}return {ok:true,needsBusiness:true};}
-        if(!access.ok){keep(null);return access;}
+        if(access.noBusiness){
+          // This identity was already verified by Auth above and remains bound to the same session.
+          const metadata=user.user_metadata||{},name=metadata.owner_name||metadata.full_name||[metadata.first_name,metadata.last_name].filter(value=>typeof value==='string').join(' ');
+          const profile={id:user.id,email:user.email,owner:String(name||'Owner').trim().slice(0,80)||'Owner',referralCode:String(metadata.referral_code||'').trim().toUpperCase()};
+          const entered=await rpc('owner_onboarding_progress',{p_step:'entry',p_values:{}},session.access_token);if(!current(saved))return stale();
+          if(!entered.ok||entered.data?.ok!==true){if(denied(entered)){keep(null);return {ok:false,auth:true,status:entered.status,message:'Your sign-in could not be authorised. Please sign in again.'};}return resumable('onboarding',entered,'Your sign-in is verified. We could not load your account setup. Please try again.');}
+          pendingBusinessOwner={...profile,manualSetup:true};try{localStorage.removeItem(SIGNUP_DRAFT);sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}return {ok:true,needsBusiness:true};
+        }
+        if(!access.ok){if(denied(access)){keep(null);return access;}return resumable('account_access',access,'Your sign-in is verified. We could not load your business access. Please try again.');}
         return {ok:true,account:{salonId:access.data.business.id},access:access.data};
       },
+      hasPendingOwnerSessionAdoption(){return !!pendingAdoption();},
+      async retryOwnerSessionAdoption(){const pending=pendingAdoption();if(!pending)return {ok:false,stale:true,message:'Your sign-in changed or expired. Please sign in again.'};return this.acceptOwnerSession(pending.session,pending.expectedEmail);},
       needsOwnerPassword(){const m=load()?.user?.user_metadata;return m?.email_first===true&&m.email_first_profile_complete!==true;},
       async reserveOwnerCode(email){
         const r=await rpc('reserve_owner_verification',{p_email:email});
@@ -587,7 +602,7 @@
         const r = await call('/rest/v1/email_log?select=*&salon_id=eq.' + encodeURIComponent(salonId) + after + '&order=updated_at.desc&limit=200', {method:'GET', token:t,owner:true});
         if(r.stale)return r;
         const valid=r.ok&&Array.isArray(r.data)&&r.data.every(row=>row.salon_id===salonId);
-        return {ok:valid, rows:valid?r.data:[],...(!valid&&r.ok?{invalidTenant:true}:{})};
+        return {ok:valid, rows:valid?r.data:[],...(!valid?{status:r.status,auth:r.status===401||r.status===403,network:!!r.network,...(r.ok?{invalidTenant:true}:{})}:{})};
       },
       async emailDeliveryInfo() {
         const t = await token();

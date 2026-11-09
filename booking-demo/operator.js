@@ -135,7 +135,9 @@ async function linksOverview(create){
  const notice=linkNotice;linkNotice=null;renderLinks(r.data,notice,isError);void loadLinkHistory();
  }catch{if(turn===sequence&&version===epoch)shell('<div class="op-heading"><h1>Links</h1><button data-action="links">Try again</button></div><section class="op-panel op-detail"><p role="alert">Links could not be loaded. Please try again.</p></section>',true);}
 }
-async function referralsOverview(){viewMode='referrals';selected=null;unsaved=false;const turn=++sequence;shell('<h1>Referrals</h1><p role="status">Loading referral records…</p>',true);const auth=await authorised();if(turn!==sequence)return;if(!auth.ok)return fail(auth);const r=await rpc('operator_referrals');if(turn!==sequence)return;if([401,403].includes(signup?.status)||[401,403].includes(flowEvents?.status))return fail(signup?.status===401||signup?.status===403?signup:flowEvents);if(!r.ok||r.data?.ok!==true)return fail(r);shell(JovaOperatorReferrals.render(r.data,{esc,date,money}),true);}
+// Operator reads run on initial entry, navigation, Refresh or completion of an explicit action.
+// There are no visibility, focus or interval-triggered background reads.
+async function referralsOverview(){viewMode='referrals';selected=null;unsaved=false;const turn=++sequence;shell('<h1>Referrals</h1><p role="status">Loading referral records…</p>',true);const auth=await authorised();if(turn!==sequence)return;if(!auth.ok)return fail(auth);const r=await rpc('operator_referrals');if(turn!==sequence)return;if([401,403].includes(r.status))return fail(r);if(!r.ok||r.data?.ok!==true)return fail(r);shell(JovaOperatorReferrals.render(r.data,{esc,date,money}),true);}
 async function directory(mode=viewMode){
  if(mode==='referrals')return referralsOverview();
  if(mode==='sms')return smsOverview();

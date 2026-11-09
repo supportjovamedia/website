@@ -46,6 +46,11 @@ test('mixed tenant rows and a salon belonging to a different owner are rejected'
 test('unavailable email activity preserves core reads, while mixed activity never passes',async()=>{
  const r=await harness({handler:diaryHandler({failEmail:true})}).api.loadDiary();assert.equal(r.ok,true);assert.equal(r.emailActivityUnavailable,true);const h=harness({handler:async()=>response([{salon_id:sidB,id:'foreign'}])});assert.equal((await h.api.loadActivity(sidA)).invalidTenant,true);
 });
+
+test('notification-only activity reads preserve denied, network and server status without broad private reloads',async()=>{
+ for(const status of [401,403,503]){const h=harness({handler:async()=>response({},status)}),result=await h.api.loadActivity(sidA);assert.equal(result.ok,false);assert.equal(result.status,status);assert.equal(result.auth,status===401||status===403);assert.equal(result.rows.length,0);assert.equal(h.requests.length,1);assert(h.requests[0].url.includes('/email_log?'));}
+ const offline=harness({handler:async()=>{throw Error('Synthetic network outage');}}),network=await offline.api.loadActivity(sidA);assert.equal(network.network,true);assert.equal(network.status,0);assert.equal(network.auth,false);assert.equal(offline.requests.length,1);
+});
 test('switching accounts between salon discovery and table responses rejects the whole diary',async()=>{
  const pending=deferred(),h=harness({handler:async url=>url.includes('/salons?')?response([{id:sidA,owner_id:'owner-a'}]):pending.promise});const request=h.api.loadDiary();await settle();h.local.set(AUTH,JSON.stringify(session('owner-b')));pending.resolve(response([{salon_id:sidA,id:'old-a'}]));assert.equal((await request).stale,true);assert.equal(h.api.sessionIdentity(),'owner-b');
 });
