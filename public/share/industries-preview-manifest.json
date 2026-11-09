@@ -1,0 +1,12 @@
+{
+  "image": "/share/jovabook-industries-2026-11-09.png",
+  "width": 1200,
+  "height": 630,
+  "sha256": "d735d64a01d3d13f8c5912483f31ae5dfa398c2a861dfc9030de748713427663",
+  "sources": {
+    "app/industries/page.js": "dff05374a24d68bf82016c4ad33cd1273bafb497614294a9e12900663738c62a",
+    "app/industries/directory.module.css": "7d9e5b8099ff9f47c2687514bb1fb96213df9e888464b6f7974e204329812e68",
+    "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55",
+    "public/jovabook/industries/booking-small-a614316b8009.webp": "a614316b800973af940ce42a1b4b16843dc5d1f3a937748c4f499d655f944c39"
+  }
+}
