@@ -5,7 +5,7 @@
   if(!cfg?.url||!cfg?.key)return;
   const steps=['signup','login','verification','business_setup','account_access','setup','runtime','dashboard','calendar','bookings','customers','services','staff','insights','personalise','website','billing','settings','availability'];
   const codes=['page_opened','network_unavailable','request_rejected','server_error','rate_limited','email_not_confirmed','verification_failed','region_unavailable','setup_resumed','runtime_error','session_identified','step_viewed','step_saved','verification_requested'];
-  const stages=['email','check-email','profile','business','category','team','location','source','ready'];
+  const stages=['email','check-email','profile','business','category','team','location','software','source','ready'];
   const storageKey='jovabook-diagnostic-visit-v1',uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const recent=new Map();let sent=0,access=null,identity=null,visit=null;
   function excluded(){return ['customer','operator','team'].includes(new URLSearchParams(location.search||'').get('portal'));}
@@ -36,7 +36,7 @@
   }
   function failure(path,status,data,token){
     const route=String(path).split('?')[0];
-    const step=route==='/auth/v1/signup'?'signup':route==='/auth/v1/token'?'login':route==='/auth/v1/user'?'verification':['/rest/v1/rpc/create_business_for_existing_user','/rest/v1/rpc/create_referred_business'].includes(route)?'business_setup':['/rest/v1/rpc/save_setup','/rest/v1/rpc/owner_onboarding_progress'].includes(route)?'setup':null;
+    const step=route==='/auth/v1/signup'?'signup':route==='/auth/v1/token'?'login':['/auth/v1/user','/auth/v1/verify','/auth/v1/resend'].includes(route)?'verification':['/rest/v1/rpc/create_business_for_existing_user','/rest/v1/rpc/create_referred_business'].includes(route)?'business_setup':['/rest/v1/rpc/save_setup','/rest/v1/rpc/owner_onboarding_progress'].includes(route)?'setup':null;
     if(!step)return;
     const code=status===0?'network_unavailable':status===429?'rate_limited':status>=500?'server_error':data?.error_code==='email_not_confirmed'||data?.code==='email_not_confirmed'?'email_not_confirmed':'request_rejected';
     report(step,code,status,token);
