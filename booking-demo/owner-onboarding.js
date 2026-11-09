@@ -19,12 +19,12 @@
    if(!result.ok){message=result.message;stage='load-error';h.render();return;}
    data=result.data.data||{};steps=result.data.steps||{};email=result.data.email;businessId=result.data.business_id;
    // Confirmed email owners already submitted this profile before verification.
-   if(!steps.profile&&data.first_name&&data.last_name&&countries.some(([key])=>key===data.country)){
+   if(!h.directory.needsOwnerPassword?.()&&!steps.profile&&data.first_name&&data.last_name&&countries.some(([key])=>key===data.country)){
     const saved=await h.directory.onboardingProgress('profile',{first_name:data.first_name,last_name:data.last_name,country:data.country,mobile:data.mobile||''});
     if(identity!==expected||h.directory.sessionIdentity()!==expected)return;
     if(saved.ok){steps=saved.data.steps;data=saved.data.data;}
    }
-   stage=result.data.completed_at?'ready':nextMissing();message='';h.render();
+   stage=h.directory.needsOwnerPassword?.()?'profile':result.data.completed_at?'ready':nextMissing();message='';h.render();
   }
   function page(){
    const owner=h.directory.sessionIdentity();
@@ -35,12 +35,12 @@
    else if(stage==='load-error'){title='Let’s try that again';content='<button type="button" class="btn primary wide" data-onb="retry">Load my progress</button>';}
    else if(stage==='email'){title='Your next booking starts here.';sub='Create your free business account.';content=(window.JovaGoogleAuth?.button()||'')+field('Email','email',email,'email','required maxlength="254" autocomplete="email" placeholder="you@example.com"')+'<button class="btn primary wide">Continue with email</button><p class="ob-switch">Already have an account? <a href="#login">Sign in</a></p>';}
    else if(stage==='profile'){
-    title=owner?'A little about you':'Create your account';sub=owner?'Your details, all in one place.':email;
+    title=owner&&!h.directory.needsOwnerPassword?.()?'A little about you':'Create your account';sub=owner?'Your details, all in one place.':email;
     content='<div class="ob-pair">'+field('First name','first_name',data.first_name,'text','required maxlength="40" autocomplete="given-name"')+field('Last name','last_name',data.last_name,'text','required maxlength="40" autocomplete="family-name"')+'</div>'+field('Mobile number (optional)','mobile',data.mobile,'tel','maxlength="24" autocomplete="tel"')+'<label class="ob-field">Country<select name="country" required><option value="">Choose your country</option>'+countries.map(([key,label])=>`<option value="${key}" ${(data.country||'GB')===key?'selected':''}>${label}</option>`).join('')+'</select></label>';
-    if(!owner)content+=field('Password','password','','password','required minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="ob-password-rules"')+'<ul class="ob-password-rules" id="ob-password-rules" aria-label="Password requirements" aria-live="polite"><li data-password-rule="length">At least 8 characters</li><li data-password-rule="capital">One capital letter</li><li data-password-rule="number">One number</li></ul>';
-    button=owner?'Continue':'Create account';
+    if(!owner||h.directory.needsOwnerPassword?.())content+=field('Password','password','','password','required minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="ob-password-rules"')+'<ul class="ob-password-rules" id="ob-password-rules" aria-label="Password requirements" aria-live="polite"><li data-password-rule="length">At least 8 characters</li><li data-password-rule="capital">One capital letter</li><li data-password-rule="number">One number</li></ul>';
+    button=owner&&!h.directory.needsOwnerPassword?.()?'Continue':'Create account';
    }
-   else if(stage==='check-email'){title='Check your email';sub='Open the verification link, then sign in to finish your business setup.';content='<a class="btn primary wide" href="#login">Continue to sign in</a><p class="ob-switch">Can’t find it? Check your spam folder.</p>';}
+   else if(stage==='check-email'){title='Check your email';sub='Open the email and confirm your address to create your account. You can open it on any device.';content='<p class="ob-switch">Can’t find it? Check your spam folder.</p><button type="button" class="btn primary wide" data-onb="resend">Resend verification email</button><p class="ob-switch">Already have an account? <a href="#login">Sign in</a></p>';}
    else if(stage==='business'){title='Give your business a home';content=field('Business name','business_name',data.business_name,'text','required maxlength="60" autocomplete="organization"'+(businessId?' readonly':'' ))+'<label class="ob-field">Booking page name<div class="ob-address"><span>book.jovamedia.com/</span><input name="booking_slug" value="'+esc(data.booking_slug||'')+'" '+(businessId?'readonly':'')+' required minlength="3" maxlength="30" pattern="[a-z0-9]+(-[a-z0-9]+)*" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="your-business"></div></label>'+field('Referral code (optional)','referral_code',data.referral_code,'text','maxlength="10" autocomplete="off" autocapitalize="characters"'+(businessId?' readonly':'' ));}
    else if(stage==='category'){title='What kind of business do you run?';sub='Choose your main service.';content='<label class="ob-field">Primary category<select name="primary_category" required><option value="">Choose a category</option>'+categories.map(([key,label])=>`<option value="${key}" ${data.primary_category===key?'selected':''}>${label}</option>`).join('')+'</select></label><fieldset class="ob-related"><legend>Related services (optional, up to 3)</legend><div>'+categories.map(([key,label])=>`<label><input type="checkbox" name="related_categories" value="${key}" ${(data.related_categories||[]).includes(key)?'checked':''}><span>${label}</span></label>`).join('')+'</div></fieldset>';}
    else if(stage==='team'){title='How big is your team?';content=options('team_size',[['independent','Just me'],['2-5','2 to 5 people'],['6-10','6 to 10 people'],['11-20','11 to 20 people'],['20+','More than 20 people']],data.team_size);}
@@ -61,7 +61,7 @@
    if(form.dataset.stage!==stage||pending)return;pending=true;const expected=identity,values=new FormData(form),submitted=stage;
    const button=form.querySelector('button.primary');button.disabled=true;const original=button.textContent;button.textContent='Saving...';message='';
    try{
-    if(stage==='email'){email=String(values.get('email')||'').trim();data={};stage='profile';}
+    if(stage==='email'){email=String(values.get('email')||'').trim();const result=await h.directory.requestOwnerVerification(email);if(!result.ok)throw Error(result.message);data={};stage='check-email';}
     else if(stage==='profile'&&!identity){
      const result=await h.directory.registerOwnerProfile({email,firstName:values.get('first_name'),lastName:values.get('last_name'),mobile:values.get('mobile'),country:values.get('country'),password:values.get('password')});
      form.elements.password.value='';if(!result.ok)throw Error(result.message);stage='check-email';
@@ -73,7 +73,8 @@
       payload.booking_slug=payload.booking_slug.trim().toLowerCase();payload.referral_code=payload.referral_code.trim().toUpperCase();
       if(!businessId){const created=await h.directory.createBusinessForExistingUser({name:payload.business_name,slug:payload.booking_slug,referralCode:payload.referral_code});if(!created.ok)throw Error(created.message);businessId=created.account.salonId;}
      }
-     if(stage==='source')await finish(payload.heard_about);
+     if(stage==='profile'&&identity&&h.directory.needsOwnerPassword?.()){const result=await h.directory.completeOwnerProfile(payload);if(!result.ok)throw Error(result.message);form.elements.password.value='';data=result.data.data;steps=result.data.steps;stage='business';}
+     else if(stage==='source')await finish(payload.heard_about);
      else{const result=await h.directory.onboardingProgress(stage,payload);if(!result.ok)throw Error(result.message);data=result.data.data;steps=result.data.steps;stage=stages[stages.indexOf(stage)+1];}
     }
     if(h.directory.sessionIdentity()!==expected)return;message='';h.render();document.querySelector('.ob-panel h1')?.scrollIntoView({block:'start'});
@@ -92,6 +93,7 @@
    const button=event.target.closest('[data-onb]');if(!button)return;event.preventDefault();event.stopImmediatePropagation();
    if(button.disabled||pending)return;
    if(button.dataset.onb==='back'){message='';stage=stage==='profile'&&!identity?'email':stages[Math.max(0,stages.indexOf(stage)-1)];h.render();}
+   else if(button.dataset.onb==='resend'){button.disabled=true;const result=await h.directory.requestOwnerVerification(email);message=result.ok?'Verification email requested. Check your inbox.':result.message;h.render();}
    else if(button.dataset.onb==='retry'){loaded=false;message='';h.render();}
    else if(button.dataset.onb==='logout'){reset();await h.logout();}
    else if(button.dataset.onb==='dashboard'){button.disabled=true;const result=await h.openDashboard();if(!result.ok){button.disabled=false;message=result.message||'We could not open your dashboard. Please try again.';h.render();}}
