@@ -2,9 +2,9 @@ import test from 'node:test';import assert from 'node:assert/strict';import vm f
 const accounts=await readFile(new URL('../accounts.js',import.meta.url),'utf8'),google=await readFile(new URL('../google-auth.js',import.meta.url),'utf8');
 const id='30000000-0000-4000-8000-000000000001';
 const storage=map=>({getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)});
-function native({confirmed=true,wrongPortal=false}={}){
+function native({confirmed=true,wrongPortal=false,emailFirst=false}={}){
  const local=new Map(),tab=new Map(),calls=[],state={salons:[],accounts:[],resets:[]},window={JOVA_SUPABASE:{url:'https://fixture.example.test',key:'public-fixture'}};
- vm.runInNewContext(accounts,{window,crypto:webcrypto,Uint8Array,Date,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://book.jovamedia.com',search:'?portal=owner'},localStorage:storage(local),sessionStorage:storage(tab),fetch:async(url,options)=>{calls.push({url,options});let data={ok:true};if(url.endsWith('/auth/v1/user'))data={id,email:'owner@example.test',email_confirmed_at:confirmed?new Date().toISOString():null,user_metadata:{full_name:'Avery Smith'}};else if(url==='/api/jovabook/billing/status')data=wrongPortal?{ok:true,access:'wrong_portal',role:'operator'}:{ok:true,access:'no_business',no_business:true,business:null};else if(url.includes('/region'))data={allowed:true};else if(url.includes('/signup'))data={user:{id}};return {ok:true,status:200,json:async()=>data};}});
+ vm.runInNewContext(accounts,{window,crypto:webcrypto,Uint8Array,Date,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://book.jovamedia.com',search:'?portal=owner'},localStorage:storage(local),sessionStorage:storage(tab),fetch:async(url,options)=>{calls.push({url,options});let data={ok:true};if(url.endsWith('/auth/v1/user'))data={id,email:'owner@example.test',email_confirmed_at:confirmed?new Date().toISOString():null,user_metadata:{full_name:'Avery Smith',email_first:emailFirst,...(options.method==='PUT'?{email_first_profile_complete:true}:{})}};else if(url==='/api/jovabook/billing/status')data=wrongPortal?{ok:true,access:'wrong_portal',role:'operator'}:{ok:true,access:'no_business',no_business:true,business:null};else if(url.includes('/region'))data={allowed:true};else if(url.includes('/signup'))data={user:{id}};return {ok:true,status:200,json:async()=>data};}});
  return {api:window.JovaAccounts.create(()=>state,()=>{}),local,tab,calls};
 }
 test('Google sessions are verified against Auth before storage and another portal cannot open business setup',async()=>{
@@ -22,4 +22,13 @@ test('PKCE callbacks require the recent same-tab flow, consume the code once and
   const r=await window.JovaGoogleAuth.callback();assert.equal(r.handled,true);assert.equal(r.ok,kind==='valid');assert.equal(calls.length,kind==='valid'?1:0);assert(history.every(x=>!x.includes('fixture-code')&&!x.includes('access_denied')));assert(!tab.has('jovabook-google-start'));
   if(kind==='valid'){await window.JovaGoogleAuth.callback();assert.equal(calls.length,1);}
  }
+});
+
+
+test('email-first entry sends verification before any profile and stores no usable password',async()=>{
+ const h=native(),result=await h.api.requestOwnerVerification('owner@example.test');assert.equal(result.verificationRequired,true);const payload=JSON.parse(h.calls.find(c=>c.url.includes('/signup')).options.body);assert.equal(payload.data.email_first,true);assert.equal(payload.data.signup_intent,'business');assert(!Object.hasOwn(payload.data,'owner_name'));assert(payload.password.length>=48);assert.equal(h.local.size,0);assert.equal(h.tab.size,0);
+});
+test('verified email owners set their password only through Auth, never the profile SQL payload',async()=>{
+ const h=native({emailFirst:true});await h.api.acceptGoogleSession({access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:Date.now()/1000+3600});assert.equal(h.api.needsOwnerPassword(),true);
+ const result=await h.api.completeOwnerProfile({first_name:'Avery',last_name:'Smith',mobile:'',country:'GB',password:'ActualPassword2026'});assert.equal(result.ok,true);const profile=h.calls.filter(c=>c.url.includes('/owner_onboarding_progress')).map(c=>JSON.parse(c.options.body)).find(x=>x.p_step==='profile');assert(!Object.hasOwn(profile.p_values,'password'));assert(h.calls.some(c=>c.url.endsWith('/auth/v1/user')&&c.options.method==='PUT'));assert.equal(h.api.needsOwnerPassword(),false);
 });

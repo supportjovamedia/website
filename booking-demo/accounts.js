@@ -401,11 +401,28 @@
         const checked=await call('/auth/v1/user',{method:'GET',token:session.access_token});
         if(!current(expected))return stale();const user=checked.data;
         if(!checked.ok||!user?.id||typeof user.email!=='string'||!Number.isFinite(Date.parse(user.email_confirmed_at||'')))return {ok:false,message:'Your Google email could not be verified. Try signing in again.'};
-        keep({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:session.expires_at,user});
+        keep({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:Number.isFinite(Number(session.expires_at))?Number(session.expires_at):Date.now()/1000+Math.max(1,Number(session.expires_in)||60),user});
         const saved=stamp(),access=await ownerAccess();if(!current(saved))return stale();
         if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!current(saved))return stale();if(!identity.ok){keep(null);return identity;}const entered=await rpc('owner_onboarding_progress',{p_step:'entry',p_values:{}},session.access_token);if(!current(saved))return stale();if(!entered.ok||entered.data?.ok!==true)return {ok:false,message:'We could not save your account progress. Please try signing in again.'};pendingBusinessOwner={...identity.profile,manualSetup:true};try{localStorage.removeItem(SIGNUP_DRAFT);sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}return {ok:true,needsBusiness:true};}
         if(!access.ok){if(access.wrongPortal)keep(null);return access;}
         return {ok:true,account:{salonId:access.data.business.id},access:access.data};
+      },
+      needsOwnerPassword(){const m=load()?.user?.user_metadata;return m?.email_first===true&&m.email_first_profile_complete!==true;},
+      async requestOwnerVerification(email){
+        const expected=intent(),e=String(email||'').trim();if(!EMAIL_RULE.test(e)||e.length>254)return {ok:false,message:'Enter a valid email address.'};
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+        try{const r=await fetch('https://www.jovamedia.com/api/jovabook/region',{cache:'no-store',signal:controller.signal}),region=r.ok?await r.json():null;if(!current(expected))return stale();if(region?.allowed!==true)return {ok:false,message:region?.allowed===false?'JovaBook is available in the UK, USA, Canada and Australia.':'We could not check signup availability. Please try again.'};}catch{return {ok:false,message:NET};}finally{clearTimeout(timer);}
+        // An unguessable, discarded credential reserves the unverified Auth account.
+        // The owner chooses their actual password only after proving inbox ownership.
+        const bytes=crypto.getRandomValues(new Uint8Array(24)),unusablePassword=Array.from(bytes,v=>v.toString(16).padStart(2,'0')).join('')+'A1';
+        const r=await call('/auth/v1/signup?redirect_to='+encodeURIComponent('https://book.jovamedia.com/?portal=owner#login'),{body:{email:e,password:unusablePassword,data:{signup_intent:'business',email_first:true}}});
+        if(!current(expected))return stale();return r.ok?{ok:true,verificationRequired:true}:{ok:false,message:r.status===429?'Please wait before requesting another verification email.':'We could not send verification. Try again, or sign in if you already have an account.'};
+      },
+      async completeOwnerProfile(values){
+        const required=this.needsOwnerPassword();if(required&&(passwordIssues(values.password).length||String(values.password||'').length>72))return {ok:false,message:'Use at least 8 characters, a capital letter and a number.'};
+        const {password,...profile}=values,result=await this.onboardingProgress('profile',profile);if(!result.ok||!required)return result;
+        const t=await token();if(!t)return authFailure();const expected=stamp(),changed=await call('/auth/v1/user',{method:'PUT',token:t,owner:true,body:{password,data:{email_first_profile_complete:true}}});
+        if(!current(expected))return stale();if(!changed.ok||changed.data?.id!==load()?.user?.id)return {ok:false,message:'Your password could not be saved. Please try again.'};keep({...load(),user:changed.data});return result;
       },
       async registerOwnerProfile({email,password,firstName,lastName,mobile='',country}) {
         const expected=intent(),first=String(firstName||'').trim(),last=String(lastName||'').trim(),e=String(email||'').trim(),phone=String(mobile||'').trim();
