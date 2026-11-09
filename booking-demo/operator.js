@@ -8,7 +8,7 @@
 (()=>{'use strict';
 const root=document.getElementById('operator-root'),cfg=window.JOVA_SUPABASE||{},base=String(cfg.url||'').replace(/\/$/,''),key='jovabook-operator-auth-v1';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let epoch=0,sequence=0,search='',selected=null,requestId=null,requestBody=null,unsaved=false,refreshing=null,overviewData=null,viewMode='overview',signupFlowData=null,signupStage='all',signupQuery='',ownerFlowEvents=null;
+let epoch=0,sequence=0,search='',selected=null,requestId=null,requestBody=null,unsaved=false,refreshing=null,overviewData=null,viewMode='overview',signupFlowData=null,signupStage='all',signupQuery='',ownerFlowEvents=null,activityQuery='';
 const saved=()=>{try{return JSON.parse(sessionStorage.getItem(key)||'null');}catch{return null;}};
 function keep(s){epoch++;try{s?sessionStorage.setItem(key,JSON.stringify(s)):sessionStorage.removeItem(key);return true;}catch{return false;}}
 const session=d=>d?.access_token&&d?.user?.id?{access_token:d.access_token,refresh_token:d.refresh_token||'',expires_at:Number(d.expires_at||Date.now()/1000+Number(d.expires_in||0)),user_id:d.user.id}:null;
@@ -34,10 +34,14 @@ function commissionStats(c={},compact=false){
 }
 function signupFlowMarkup(){return window.JovaOperatorSignupFlow?.render?.(signupFlowData,{esc,joined},{stage:signupStage,query:signupQuery})||'<section class="op-panel op-detail"><h2>Signups &amp; setup</h2><p role="status">Reload this page to load the updated signup view.</p></section>';}
 function renderSignupFlow(){const region=root.querySelector('[data-signup-flow]');if(region)region.outerHTML=signupFlowMarkup();}
+function activityMarkup(){return window.JovaOperatorSignupFlow?.renderEvents?.(ownerFlowEvents,{esc,joined},{query:activityQuery})||'';}
+function renderActivity(){const region=root.querySelector('[data-owner-activity]');if(region)region.outerHTML=activityMarkup();}
+root.addEventListener('submit',event=>{const form=event.target.closest('[data-form="activity-filter"]');if(!form)return;event.preventDefault();event.stopImmediatePropagation();activityQuery=String(new FormData(form).get('activity_search')||'').trim().slice(0,100);renderActivity();root.querySelector('#activity-search')?.focus();},true);
+root.addEventListener('click',event=>{if(!event.target.closest('[data-action="activity-clear"]'))return;event.preventDefault();event.stopImmediatePropagation();activityQuery='';renderActivity();root.querySelector('#activity-search')?.focus();},true);
 function overviewMarkup(){
  const d=overviewData||{},months=d.months||[],max=Math.max(1,...months.map(m=>Number(m.count)||0));
  const stats=d.offer_version==='2026-11-free-v1'?[['Total businesses',d.total??0,`${d.new_this_month??0} joined this month`],['On trial',d.trials_active??0,`${d.trials_cancelled??0} trials set to end`],['Free',d.starter??0,'Free businesses'],['Solo paid',d.standard??0,'Active paying businesses'],['Team paid',d.premium??0,'Active paying businesses']]:[['Total businesses',d.total??0,`${d.new_this_month??0} joined this month`],['On trial',d.trials_active??0,`${d.trials_ended??0} trials ended`],['Essential paid',d.essential??0,'Recorded paying businesses'],['Standard paid',d.standard??0,'Recorded paying businesses'],['Premium paid',d.premium??0,'Recorded paying businesses']];
- return `${signupFlowMarkup()}${window.JovaOperatorSignupFlow?.renderEvents?.(ownerFlowEvents,{esc,joined})||''}<section class="op-summary">${stats.map(([label,value,sub])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong><small>${esc(sub)}</small></div>`).join('')}</section>
+ return `${signupFlowMarkup()}${activityMarkup()}<section class="op-summary">${stats.map(([label,value,sub])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong><small>${esc(sub)}</small></div>`).join('')}</section>
  <div class="op-overview-grid"><section class="op-panel op-detail"><div class="op-chart-heading"><h2>Business signups</h2><span>Last 6 months</span></div><div class="op-bar-chart" role="img" aria-label="${esc('Business signups, last six months. '+months.map(m=>m.label+': '+m.count).join('. '))}">${months.map(m=>`<div><strong>${esc(m.count)}</strong><div class="op-bar-track"><span data-empty="${Number(m.count)===0}" style="height:${Math.round(Number(m.count)/max*100)}%"></span></div><span>${esc(m.label)}</span></div>`).join('')}</div></section>
  <div class="op-overview-side">${notificationsMarkup()}<section class="op-panel op-signin-panel"><div class="op-login-summary"><strong>${esc(d.owner_signins_today??0)}</strong><div>Business owners signed in today<span>Last recorded sign-in, UK time.</span></div></div></section></div></div>
  <section class="op-commission-overview"><div class="op-section-heading"><h2>Commission</h2><button data-action="commission">View commission</button></div>${commissionStats(d.commission,true)}</section>`;

@@ -27,6 +27,7 @@
    stage=h.directory.needsOwnerPassword?.()?'profile':result.data.completed_at?'ready':nextMissing();message='';h.render();
   }
   function page(){
+   if(!loading)window.JovaOwnerDiagnostics?.onboarding?.(stage);
    const owner=h.directory.sessionIdentity();
    if(owner!==identity){reset();identity=owner;}
    if(owner&&!loaded&&!loading)void load();
@@ -77,7 +78,7 @@
      else if(stage==='source')await finish(payload.heard_about);
      else{const result=await h.directory.onboardingProgress(stage,payload);if(!result.ok)throw Error(result.message);data=result.data.data;steps=result.data.steps;stage=stages[stages.indexOf(stage)+1];}
     }
-    if(h.directory.sessionIdentity()!==expected)return;message='';h.render();document.querySelector('.ob-panel h1')?.scrollIntoView({block:'start'});
+    if(h.directory.sessionIdentity()!==expected)return;window.JovaOwnerDiagnostics?.onboarding?.(submitted,submitted==='email'?'verification_requested':'step_saved');message='';h.render();document.querySelector('.ob-panel h1')?.scrollIntoView({block:'start'});
    }catch(error){if(h.directory.sessionIdentity()!==expected)return;message=error.message||'Your details could not be saved. Please try again.';const alert=form.querySelector('.ob-error');if(alert)alert.textContent=message;button.disabled=false;button.textContent=original;stage=submitted;}
    finally{pending=false;}
   }
