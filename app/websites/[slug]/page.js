@@ -14,7 +14,10 @@ export const dynamicParams = false;
 export function generateStaticParams() { return websiteTypes.map(({ slug }) => ({ slug })); }
 export async function generateMetadata({ params }) {
   const item = websiteBySlug((await params).slug);
-  return item ? pageMetadata(websitePath(item.slug), item.title, item.description) : {};
+  if (!item) return {};
+  const metadata=pageMetadata(websitePath(item.slug),item.title,item.description);
+  const image={url:'/share/websites/'+item.slug+'-2026-11-09.jpg',width:1200,height:630,alt:item.title+' by JovaMedia'};
+  return {...metadata,openGraph:{...metadata.openGraph,images:[image]},twitter:{...metadata.twitter,images:[image]}};
 }
 
 export default async function WebsiteTypePage({ params }) {
@@ -38,6 +41,7 @@ export default async function WebsiteTypePage({ params }) {
       <section className={s.planningBand} id="planning"><div className={`${s.shell} ${s.planningGrid}`}><div><h2>{item.planningTitle}</h2><p>A useful brief makes the quote clearer. Share what you have, what customers need to do and who will manage the website or system after launch.</p><div className={s.inlineLinks}><Link className={s.textLink} href="/products/pricing">See packages & inclusions</Link><Link className={s.textLink} href="/blog/small-business-website-cost-uk">Understand website costs</Link></div></div><div><ol className={s.planList}>{item.planning.map(text => <li key={text}>{text}</li>)}</ol><div className={s.costNote}><p>{item.cost}</p></div></div></div></section>
       <section className={s.questions} id="questions"><div className={`${s.shell} ${s.questionsGrid}`}><div className={s.questionsHeader}><h2>{item.faqTitle}</h2><p>Practical answers before you decide on the next step.</p></div><div className={s.questionList}>{item.faq.map(([question, answer]) => <details key={question} className={s.question}><summary><h3>{question}</h3><span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></div></section>
       {["business-websites", "ecommerce-websites"].includes(item.slug) && <WebsiteClientWork showImage={false} />}
+      {item.relatedGuides?.length>0 && <section className={s.planningBand} aria-labelledby="related-reading"><div className={s.shell}><h2 id="related-reading">{item.readingTitle}</h2><div className={s.inlineLinks}>{item.relatedGuides.map(([href,label])=><Link prefetch={false} className={s.textLink} key={href} href={href}>{label}</Link>)}</div></div></section>}
       <WebsiteRelated item={item} />
       <WebsiteFinalCta title={`Let's plan your ${item.group === "systems" ? "system" : "website"}.`} quote={quote} description="Share the requirement and your current setup. We can then agree the useful first version, the scope and the next step." />
     </MotionRegion>
