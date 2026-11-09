@@ -19,6 +19,7 @@ async function run(kind,editing=true,{rowChange=false,foreignConfirmation=false}
   requests.push({url,method:options.method||'POST'});
   if(url==='/api/jovabook/billing/status')return response(access);
   const name=new URL(url).pathname.split('/').at(-1);
+  if(name==='token')return response({access_token:'mock-access',refresh_token:'mock-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:owner}});
   if(name==='save_salon'){const p=JSON.parse(options.body);row={...row,name:p.p_name,email:p.p_email,phone:p.p_phone,address:p.p_address,settings:p.p_settings};return response(null);}
   if(name==='salons')return response([row]);
   if(name==='owner_capabilities')return response({plan:'essential'});
@@ -41,6 +42,7 @@ async function run(kind,editing=true,{rowChange=false,foreignConfirmation=false}
  if(foreignConfirmation)env.salonConfirmations.set(env.salonConfirmationKey(sid,'old-owner'),1);
  let result;
  if(kind==='loadDiary')result=await dir.loadDiary();
+ if(kind==='login'){const login=await dir.login('existing@example.test','FixtureOnly2026');assert.equal(login.ok,true);result=await env.loadLive({loginProof:login.diaryProof});}
  if(kind==='loadLive')result=await env.loadLive();
  if(kind==='business')result=await env.persistBusinessDetails({...current,name:'Changed'},sid,owner);
  if(kind==='website')result=await env.persistWebsite({headline:'Changed'},sid,owner);
@@ -72,4 +74,7 @@ test('an overlapping row mutation still receives its full authoritative refresh 
 });
 test('an old owner confirmation cannot suppress the current owner generic save refresh',async()=>{
  const r=await run('generic',false,{foreignConfirmation:true});assert.equal(r.total,14);assert(r.requests.some(x=>x.url.includes('/bookings?select=')));
+});
+test('password login has thirteen total calls and exactly two fresh billing access proofs',async()=>{
+ const r=await run('login',false);assert.equal(r.total,13);assert.equal(r.vercel,2);assert.equal(r.supabase,11);assert.equal(r.requests.filter(x=>x.url.includes('grant_type=password')).length,1);
 });

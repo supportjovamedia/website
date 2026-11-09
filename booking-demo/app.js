@@ -268,10 +268,10 @@ function installAccessOnly(access){
  return x;
 }
 // Load (or refresh) one owner's salon from the database and make it the active salon.
-async function loadLive({afterSave=false}={}){
+async function loadLive({afterSave=false,loginProof}={}){
  if(syncPending()&&!(afterSave&&syncBusy&&!syncDirty))return {ok:false,pending:true};
  const revision=saveRevision,identity=dir.sessionIdentity?.(),sequence=++liveLoadSequence,editingAtStart=hasUnsavedEditor();
- const d=await dir.loadDiary();
+ const d=await dir.loadDiary({loginProof});
  if(!d.ok){if(signedIn()&&!d.stale){ownerLoadError='We could not verify access to your business. Check your connection and refresh.';syncDirty=false;syncBlocked=true;clearTimeout(syncTimer);syncTimer=null;loadingOwner=false;closeModal();render();}return d;}
  if(identity!==dir.sessionIdentity?.()||sequence!==liveLoadSequence)return {ok:false,stale:true};
  if(d.billingOnly||d.setup){const x=installAccessOnly(d.access);if(d.setup){x.subscription.status='setup';onbSet(x.id);}return {ok:true,salon:x,access:d.access};}
@@ -720,7 +720,7 @@ async function authSubmit(type,form,data){
    if(!r.ok){idle();error(form,r.message);return;}
    if(r.needsBusiness){observedOwnerIdentity=dir.sessionIdentity?.();verifiedOwnerIdentity=null;onbSet(null);signIn();draft={};chat=[];go('signup');return;}
    let sal=state.salons.find(x=>x.id===r.account.salonId);
-   if(dir.remote&&r.salon){const L=await loadLive();if(!L.ok){idle();error(form,'We couldn’t load your business. Check your connection and try again.');return;}sal=L.salon;}
+   if(dir.remote&&r.salon){const L=await loadLive({loginProof:r.diaryProof});if(!L.ok){idle();error(form,'We couldn’t load your business. Check your connection and try again.');return;}sal=L.salon;}
    if(!sal){idle();error(form,'We couldn’t find that salon.');return;}
    noteOwnerLogin();if(dir.remote)purgeLive(sal.id);state.active=sal.id;save();draft={};chat=[];
    if(billingRestricted()){signIn();go('billing');return;}

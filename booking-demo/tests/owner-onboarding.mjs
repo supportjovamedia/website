@@ -2,9 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
+import vm from 'node:vm';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const sql=await readFile(new URL('../supabase/migrations/20261109115800_owner_onboarding_progress.sql',import.meta.url),'utf8');
 const categorySql=await readFile(new URL('../supabase/migrations/20261109151245_simple_primary_service.sql',import.meta.url),'utf8');
+const accountsSource=await readFile(new URL('../accounts.js',import.meta.url),'utf8'),controllerSource=await readFile(new URL('../owner-onboarding.js',import.meta.url),'utf8');
 const owner='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002',business='20000000-0000-4000-8000-000000000001';
 test('submitted onboarding is private, resumable and cannot grant a paid plan or skip verification',async()=>{
  const db=new PGlite();try{
@@ -50,6 +52,16 @@ test('submitted onboarding is private, resumable and cannot grant a paid plan or
   await assert.rejects(progress('source',{heard_about:''}),/Choose how/);await progress('source',{heard_about:'friend'});
   await assert.rejects(progress('complete'),/Finish your business details/);
   await db.exec(`reset role;insert into public.salons values('${business}','${owner}','Avery Studio','setup','{}','essential','avery-studio');set role authenticated;`);
+  // A create committed, but its following business-progress write never committed.
+  await db.exec('reset role');const original=(await db.query('select data,steps from jovabook_private.owner_onboarding where user_id=$1',[owner])).rows[0];
+  await db.query("update jovabook_private.owner_onboarding set data=data-'business_name'-'booking_slug',steps=steps-'business' where user_id=$1",[owner]);await db.exec('set role authenticated');
+  const resumed=await progress('read');assert.equal(resumed.business_id,business);assert.equal(resumed.steps.business,undefined);assert.equal(resumed.data.business_name,'Avery Studio');assert.equal(resumed.data.booking_slug,'avery-studio');
+  const auth=JSON.stringify({access_token:'mock-token',refresh_token:'mock-refresh',expires_at:Date.now()/1000+3600,user:{id:owner}}),window={JOVA_SUPABASE:{url:'https://mock.example.test',key:'public'}},requests=[];
+  const runtime={window,Date,Math,Uint8Array,AbortController,setTimeout,clearTimeout,setInterval,clearInterval,URLSearchParams,atob,localStorage:{getItem:key=>key==='jovabook-auth'?auth:null},sessionStorage:{getItem:()=>null,removeItem:()=>{}},location:{origin:'https://book.example.test'},document:{addEventListener:()=>{},querySelector:()=>null},fetch:async(url,options)=>{requests.push(url);assert(url.endsWith('/rpc/owner_onboarding_progress'));const body=JSON.parse(options.body);return {ok:true,status:200,json:async()=>progress(body.p_step,body.p_values)};}};
+  vm.createContext(runtime);vm.runInContext(accountsSource,runtime);const directory=window.JovaAccounts.create(()=>({salons:[],accounts:[],resets:[]}),()=>{});vm.runInContext(controllerSource,runtime);
+  let controller;controller=window.JovaOwnerOnboarding.create({directory,esc:String,render:()=>controller.page()});controller.page();await new Promise(resolve=>setImmediate(resolve));await new Promise(resolve=>setImmediate(resolve));
+  const html=controller.page();assert.match(html,/name="business_name"[^>]*value="Avery Studio"[^>]*readonly/);assert.match(html,/name="booking_slug"[^>]*value="avery-studio"[^>]*readonly/);assert.equal(requests.length,1,'Reload recovery uses the existing progress RPC only');
+  await db.exec('reset role');await db.query('update jovabook_private.owner_onboarding set data=$1::jsonb,steps=$2::jsonb where user_id=$3',[JSON.stringify(original.data),JSON.stringify(original.steps),owner]);await db.exec('set role authenticated');
   const overview=(await db.query('select public.operator_signup_flow() data')).rows[0].data;assert.equal(overview.recent[0].onboarding.profile.first_name,'Avery');assert(overview.recent[0].onboarding.steps.profile);
   assert.equal((await db.query('select public.claim_owner_welcome() claimed')).rows[0].claimed,false);
   const finished=await progress('complete');assert(finished.completed_at);assert.equal(finished.data.first_name,'Avery');assert(finished.steps.profile);assert(finished.steps.location);

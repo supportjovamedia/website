@@ -75,7 +75,7 @@ export async function verifyJovaBookRelease({expectedCommit,vercelToken=process.
     if(!response.ok){add('asset:'+job.file,false,{status:response.status,reason:'Critical release asset is unavailable.'});continue;}
     const type=response.headers.get('content-type')||'',wanted=job.file.endsWith('.html')?/text\/html/i:job.file.endsWith('.json')?/application\/json/i:job.file.endsWith('.css')?/text\/css/i:/(?:application|text)\/(?:java|ecma)script/i;
     if(!wanted.test(type)){add('asset:'+job.file,false,{reason:'Unexpected content type.',contentType:type});continue;}
-    if(/^assets\/(?:owner|operator)-(?:entry|app|styles)\./.test(job.file)){
+    if(/^assets\/(?:owner|operator)-(?:entry|app|styles)\./.test(job.file)||/^vendor\/supabase-[\d.]+\.js$/.test(job.file)){
      const cacheControl=response.headers.get('cache-control')||'';
      add('cache:'+job.file,/\bmax-age=31536000\b/i.test(cacheControl)&&/\bimmutable\b/i.test(cacheControl),{cacheControl,reason:'Content-hashed bundles must keep the approved one-year immutable browser cache.'});
     }

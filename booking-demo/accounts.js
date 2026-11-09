@@ -217,6 +217,8 @@
     const DEMO = normEmail('demo@jovamedia.com');
     const load = () => { try { return JSON.parse(localStorage.getItem(AUTH) || 'null'); } catch (e) { return null; } };
     let generation=0,refreshFlight=null,refreshFailure=null,verifiedSalon=null,verifiedAccess=null,pendingEmailVerification=null,pendingOwnerAdoption=null;
+    const diaryLoginProofs=new WeakMap();
+    let pendingCreatedBusiness=null,businessCreationIntent=0;
     const SIGNUP_DRAFT='jovabook-owner-signup-draft-v1';
     const EXISTING='jovabook-existing-business-v1';let pendingBusinessOwner=null;
     try{pendingBusinessOwner=JSON.parse(sessionStorage.getItem(EXISTING)||'null');}catch{}
@@ -227,9 +229,9 @@
     const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
     const stamp=()=>({raw:rawSession(),generation});
     const current=expected=>expected.generation===generation&&expected.raw===rawSession();
-    const keep = s => {if(!s)pendingOwnerAdoption=null;if(!s||load()?.user?.id!==s.user?.id){verifiedSalon=null;verifiedAccess=null;clearExisting();}generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} window.JovaOwnerDiagnostics?.setSession?.(s);};
+    const keep = s => {if(!s)pendingOwnerAdoption=null;if(!s||load()?.user?.id!==s.user?.id){pendingCreatedBusiness=null;businessCreationIntent++;verifiedSalon=null;verifiedAccess=null;clearExisting();}generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} window.JovaOwnerDiagnostics?.setSession?.(s);};
     window.JovaOwnerDiagnostics?.setSession?.(load());
-    const intent=()=>{pendingOwnerAdoption=null;clearExisting();generation++;refreshFlight=null;return stamp();};
+    const intent=()=>{pendingOwnerAdoption=null;pendingCreatedBusiness=null;businessCreationIntent++;clearExisting();generation++;refreshFlight=null;return stamp();};
     const stale=()=>({ok:false,stale:true,status:0,message:'Your session changed. Open this page again.'});
     const pendingAdoption=()=>{if(pendingOwnerAdoption&&(!current(pendingOwnerAdoption.expected)||Date.now()>pendingOwnerAdoption.until))pendingOwnerAdoption=null;return pendingOwnerAdoption;};
     const authFailure=()=>refreshFailure&&current(refreshFailure.expected)?refreshFailure.result:load()?stale():{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'};
@@ -533,7 +535,8 @@
         if(!current(r.authStamp))return stale();
         if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok){keep(null);clearExisting();return identity;}if(!current(r.authStamp))return stale();const matchingDraft=freshSignupDraft(identity.profile);if(!matchingDraft){window.JovaOwnerDiagnostics?.report('business_setup','setup_resumed',200,load()?.access_token);try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}}pendingBusinessOwner={...identity.profile,manualSetup:!matchingDraft};try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}const profile=existingBusinessContext();if(profile?.name?.trim()&&profile?.slug?.trim()){const created=await this.createBusinessForExistingUser(profile);if(created.ok)return {...created,salon:{id:created.account.salonId}};if(created.stale)return created;if(pendingBusinessOwner)pendingBusinessOwner.creationError=created.message||'We could not create your business. Try again.';}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
         if (!access.ok){if(access.wrongPortal){keep(null);clearExisting();}return access;}
-        clearSignupDraftFor(load()?.user?.id,email);void token().then(t=>{if(t)void window.JovaOwnerFunnel?.bind(t);}).catch(()=>{});return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id}};
+        const diaryProof={};diaryLoginProofs.set(diaryProof,{expected:stamp(),ownerId:load()?.user?.id,salonId:access.data.business.id,access,at:Date.now()});
+        clearSignupDraftFor(load()?.user?.id,email);void token().then(t=>{if(t)void window.JovaOwnerFunnel?.bind(t);}).catch(()=>{});return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id},diaryProof};
       },
       async requestReset(email) {
         if (isDemo(email)) return local.requestReset(email);
@@ -658,8 +661,12 @@
         const r = await rpc('owner_capabilities', {}, t);
         return r.ok && r.data ? r.data : null;
       },
-      async loadDiary() {
-        const access=await ownerAccess();if(!access.ok)return access;
+      async loadDiary({loginProof}={}) {
+        const proof=loginProof&&typeof loginProof==='object'?diaryLoginProofs.get(loginProof):null;
+        if(proof)diaryLoginProofs.delete(loginProof);
+        const age=proof?Date.now()-proof.at:-1;
+        const loginAccess=proof&&age>=0&&age<=5000&&current(proof.expected)&&proof.ownerId===load()?.user?.id&&proof.salonId===proof.access.data.business.id&&verifiedAccess?.data===proof.access.data?proof.access:null;
+        const access=loginAccess||await ownerAccess();if(!access.ok)return access;
         const onboarding=access.data.access==='setup'||(access.data.access==='active'&&access.data.business.status==='setup');if(access.data.access!=='active'||onboarding)return {ok:true,access:access.data,billingOnly:!onboarding,setup:onboarding};
         const t = await token(); if (!t) return authFailure();
         const expected=stamp();
@@ -740,7 +747,38 @@
       async claimReferralReward(reward){const identity=load()?.user?.id,t=await token();if(!t)return authFailure();const result=await rpc('claim_referral_reward',{p_reward:reward},t);if(identity!==load()?.user?.id)return stale();return {ok:result.ok&&result.data?.ok===true,message:result.ok?'':'Could not claim your reward. Refresh and try again.'};},
       ownerAccess,
       existingBusinessContext,
-      async createBusinessForExistingUser({name,slug,referralCode}){const context=existingBusinessContext();if(!context)return {ok:false,message:'Log in again before creating your business.'};const identity=load()?.user?.id,n=String(name||'').trim(),s=String(slug||'').trim().toLowerCase();if(!n||n.length>60)return {ok:false,field:'name',message:'Enter a business name up to 60 characters.'};if(s.length<3||s.length>30||!ADDRESS_RULE.test(s)||RESERVED.includes(s))return {ok:false,field:'slug',message:'Choose an available address with 3 to 30 letters, numbers or hyphens.'};const access=await ownerAccess();if(identity!==load()?.user?.id)return stale();if(!access.noBusiness)return {ok:false,message:access.ok?'This account already has a business. Log in to open it.':access.message};const verified=await verifiedBusinessIdentity();if(!verified.ok)return verified;if(identity!==load()?.user?.id||verified.profile.id!==identity)return stale();const t=await token();if(!t)return authFailure();const referral=String(referralCode===undefined?verified.profile.referralCode||'':referralCode).trim().toUpperCase();const result=await rpc(referral?'create_referred_business':'create_business_for_existing_user',{p_name:n,p_slug:s,p_owner:verified.profile.owner,...(referral?{p_referral_code:referral}:{})},t);if(result.stale||identity!==load()?.user?.id)return stale();if(!result.ok||result.data?.ok!==true||!websiteId(result.data.salon_id))return {ok:false,field:result.data?.field||'',message:result.data?.message||'We could not create your business. Try again.'};const checked=await ownerAccess();if(identity!==load()?.user?.id)return stale();if(!checked.ok||checked.data.business.id!==result.data.salon_id)return {ok:false,message:'Your business was created. Log in to verify its subscription and continue.'};try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}void window.JovaOwnerFunnel?.bind(t);return {ok:true,account:{salonId:result.data.salon_id},access:checked.data,profile:{owner:verified.profile.owner,email:verified.profile.email}};},
+      async createBusinessForExistingUser({name,slug,referralCode}){
+        const identity=load()?.user?.id,attempt=businessCreationIntent;
+        if(pendingCreatedBusiness&&(pendingCreatedBusiness.ownerId!==identity||pendingCreatedBusiness.intent!==attempt||Date.now()-pendingCreatedBusiness.at<0||Date.now()-pendingCreatedBusiness.at>600000))pendingCreatedBusiness=null;
+        const pending=pendingCreatedBusiness,context=existingBusinessContext();
+        if(!context&&!pending)return {ok:false,message:'Log in again before creating your business.'};
+        const n=String(name||'').trim(),s=String(slug||'').trim().toLowerCase();
+        if(!n||n.length>60)return {ok:false,field:'name',message:'Enter a business name up to 60 characters.'};
+        if(s.length<3||s.length>30||!ADDRESS_RULE.test(s)||RESERVED.includes(s))return {ok:false,field:'slug',message:'Choose an available address with 3 to 30 letters, numbers or hyphens.'};
+        if(pending&&(n!==pending.name||s!==pending.slug))return {ok:false,message:'Your business was created with the previous name and address. Restore those details to continue.'};
+        const unchanged=()=>identity===load()?.user?.id&&attempt===businessCreationIntent;
+        const access=await ownerAccess();if(!unchanged())return stale();
+        const completed=(salonId,checked,profile)=>{pendingCreatedBusiness=null;try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}void token().then(t=>{if(t&&unchanged())void window.JovaOwnerFunnel?.bind(t);}).catch(()=>{});return {ok:true,account:{salonId},access:checked.data,profile:{owner:profile.owner,email:profile.email}};};
+        if(pending){
+          if(!access.ok)return {ok:false,message:access.message||'We could not verify your created business. Please try again.'};
+          const business=access.data.business;
+          if(business.id!==pending.salonId||business.name!==pending.name||business.slug!==pending.slug||business.status!=='setup')return {ok:false,message:'Your business details changed. Sign in again to continue safely.'};
+          const verified=await verifiedBusinessIdentity();if(!unchanged())return stale();if(!verified.ok)return verified;
+          if(verified.profile.id!==identity)return stale();
+          return completed(pending.salonId,access,verified.profile);
+        }
+        if(!access.noBusiness)return {ok:false,message:access.ok?'This account already has a business. Log in to open it.':access.message};
+        const verified=await verifiedBusinessIdentity();if(!verified.ok)return verified;if(!unchanged()||verified.profile.id!==identity)return stale();
+        const t=await token();if(!t)return authFailure();if(!unchanged())return stale();
+        const referral=String(referralCode===undefined?verified.profile.referralCode||'':referralCode).trim().toUpperCase();
+        const result=await rpc(referral?'create_referred_business':'create_business_for_existing_user',{p_name:n,p_slug:s,p_owner:verified.profile.owner,...(referral?{p_referral_code:referral}:{})},t);
+        if(result.stale||!unchanged())return stale();
+        if(!result.ok||result.data?.ok!==true||!websiteId(result.data.salon_id))return {ok:false,field:result.data?.field||'',message:result.data?.message||'We could not create your business. Try again.'};
+        pendingCreatedBusiness={ownerId:identity,salonId:result.data.salon_id,name:n,slug:s,intent:attempt,at:Date.now()};
+        const checked=await ownerAccess();if(!unchanged())return stale();
+        if(!checked.ok||checked.data.business.id!==result.data.salon_id)return {ok:false,message:'Your business was created. We could not verify it yet. Please try again.'};
+        return completed(result.data.salon_id,checked,verified.profile);
+      },
       integrationCall,
       isTeamLogin(){return verifiedAccess?.ownerId===load()?.user?.id&&verifiedAccess?.data?.team===true;},
       async teamLogins(){

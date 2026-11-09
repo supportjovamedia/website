@@ -28,6 +28,7 @@ test('changing a script changes its bundle URL without invalidating unchanged CS
 test('only content-addressed bundles receive a year cache while HTML and private APIs keep their policies',async()=>{
  const config=JSON.parse(await read('vercel.json')),policy=url=>{let result;for(const rule of config.headers)if(pathToRegexp(rule.source).test(url))for(const header of rule.headers)if(header.key.toLowerCase()==='cache-control')result=header.value;return result;};
  for(const url of ['/assets/owner-app.1234567890abcdef1234.js','/assets/operator-styles.1234567890abcdef1234.css'])assert.equal(policy(url),'public, max-age=31536000, immutable');
+ assert.equal(policy('/vendor/supabase-2.117.3.js'),'public, max-age=31536000, immutable');
  for(const url of ['/app.js','/accounts.js','/config.js','/assets/unversioned.js'])assert.equal(policy(url),'public, max-age=300');
  assert.equal(policy('/'),'public, max-age=0, must-revalidate');assert.equal(policy('/api/jovabook/billing/status'),undefined);assert.equal(config.buildCommand,'node build-assets.mjs');assert.equal(config.outputDirectory,'dist');
 });

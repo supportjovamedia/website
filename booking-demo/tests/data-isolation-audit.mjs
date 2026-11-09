@@ -11,7 +11,7 @@ const accessFor=owner=>({ok:true,access:'active',reason:'paid',business:{id:owne
 const session=(id='owner-a',expired=false)=>({access_token:'access-'+id,refresh_token:'refresh-'+id,expires_at:Math.floor(Date.now()/1000)+(expired?-1:3600),user:{id}});
 const response=(data={},status=200)=>({ok:status>=200&&status<300,status,json:async()=>data});
 function deferred(){let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};}
-function harness({auth=session(),accessHandler,handler=async()=>response({plan:'essential'})}={}){const local=new Map(),tab=new Map(),requests=[],state={salons:[{id:'drink'}],accounts:[],resets:[]};if(auth)local.set(AUTH,JSON.stringify(auth));const store=map=>({getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)});const window={JOVA_SUPABASE:{url:'https://isolated.example.test',key:'mock-public'}};vm.runInNewContext(source,{window,crypto:webcrypto,Uint8Array,Date,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://booking.example.test'},localStorage:store(local),sessionStorage:store(tab),fetch:async(url,options)=>{requests.push({url,options});if(url==='/api/jovabook/billing/status'){assert.equal(options.method,'POST');assert.deepEqual(JSON.parse(options.body),{});const owner=options.headers.Authorization?.replace('Bearer access-','');if(accessHandler)return accessHandler(owner,options);return ['owner-a','owner-b'].includes(owner)?response(accessFor(owner)):response({ok:false},401);}return handler(url,options);}});return {api:window.JovaAccounts.create(()=>state,()=>{}),local,tab,requests,state};}
+function harness({auth=session(),accessHandler,clock=Date,handler=async()=>response({plan:'essential'})}={}){const local=new Map(),tab=new Map(),requests=[],state={salons:[{id:'drink'}],accounts:[],resets:[]};if(auth)local.set(AUTH,JSON.stringify(auth));const store=map=>({getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)});const window={JOVA_SUPABASE:{url:'https://isolated.example.test',key:'mock-public'}};vm.runInNewContext(source,{window,crypto:webcrypto,Uint8Array,Date:clock,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://booking.example.test'},localStorage:store(local),sessionStorage:store(tab),fetch:async(url,options)=>{requests.push({url,options});if(url==='/api/jovabook/billing/status'){assert.equal(options.method,'POST');assert.deepEqual(JSON.parse(options.body),{});const owner=options.headers.Authorization?.replace('Bearer access-','');if(accessHandler)return accessHandler(owner,options);return ['owner-a','owner-b'].includes(owner)?response(accessFor(owner)):response({ok:false},401);}return handler(url,options);}});return {api:window.JovaAccounts.create(()=>state,()=>{}),local,tab,requests,state};}
 const settle=()=>new Promise(r=>setImmediate(r));
 
 test('a pending refresh cannot restore the account after logout',async()=>{
@@ -37,6 +37,27 @@ test('an owner response already in flight is discarded after account change',asy
 });
 const tables=['categories','staff','services','customers','bookings','email_log','payments'];
 function diaryHandler({mixed=false,wrongOwner=false,failEmail=false}={}){return async url=>{const u=new URL(url),name=u.pathname.split('/').at(-1);if(name==='salons')return response([{id:sidA,owner_id:wrongOwner?'owner-b':'owner-a'}]);if(name==='email_log'&&failEmail)return response({},503);return response([{salon_id:mixed&&name==='customers'?sidB:sidA,id:name+'-one'}]);};}
+
+const passwordDiaryHandler=async(url,options)=>url.includes('grant_type=password')?response(session()):diaryHandler()(url,options);
+test('password login proof replaces only the immediately duplicated pre-read access check, once',async()=>{
+ const h=harness({handler:passwordDiaryHandler}),login=await h.api.login('owner@example.test','Example123');assert.equal(login.ok,true);assert(login.diaryProof);h.requests.length=0;
+ const result=await h.api.loadDiary({loginProof:login.diaryProof});assert.equal(result.ok,true);assert.equal(h.requests.length,9);assert.equal(h.requests.filter(x=>x.url==='/api/jovabook/billing/status').length,1);assert.equal(h.requests.at(-1).url,'/api/jovabook/billing/status');
+ h.requests.length=0;assert.equal((await h.api.loadDiary({loginProof:login.diaryProof})).ok,true);assert.equal(h.requests.length,10);assert.equal(h.requests[0].url,'/api/jovabook/billing/status');
+});
+test('forged, expired and rotated-session login proofs fall back to fresh pre-read verification',async()=>{
+ for(const mode of ['forged','expired','rotated']){
+  let now=Date.now();class Clock extends Date{static now(){return now;}}
+  const h=harness({clock:Clock,handler:passwordDiaryHandler}),login=await h.api.login('owner@example.test','Example123');let proof=login.diaryProof;
+  if(mode==='forged')proof={...proof,access:{ok:true,data:accessFor('owner-a')}};
+  if(mode==='expired')now+=5001;
+  if(mode==='rotated')h.local.set(AUTH,JSON.stringify({...session(),refresh_token:'rotated-refresh'}));
+  h.requests.length=0;assert.equal((await h.api.loadDiary({loginProof:proof})).ok,true,mode);assert.equal(h.requests.length,10,mode);assert.equal(h.requests[0].url,'/api/jovabook/billing/status',mode);
+ }
+});
+test('login proofs cannot authorize another owner or bypass a revoked final access check',async()=>{
+ const h=harness({handler:passwordDiaryHandler}),login=await h.api.login('owner@example.test','Example123');h.local.set(AUTH,JSON.stringify(session('owner-b')));h.requests.length=0;const changed=await h.api.loadDiary({loginProof:login.diaryProof});assert.equal(changed.ok,false);assert.equal(changed.salon,undefined);assert.equal(h.requests[0].url,'/api/jovabook/billing/status');assert(!h.requests.some(x=>x.url.includes('/customers?')));
+ let denied=false;const revoked=harness({accessHandler:async()=>denied?response({ok:false},401):response(accessFor('owner-a')),handler:passwordDiaryHandler}),signed=await revoked.api.login('owner@example.test','Example123');denied=true;revoked.requests.length=0;const result=await revoked.api.loadDiary({loginProof:signed.diaryProof});assert.equal(result.ok,false);assert.equal(result.auth,true);assert.equal(result.salon,undefined);assert.equal(result.rows,undefined);assert.equal(revoked.requests.at(-1).url,'/api/jovabook/billing/status');
+});
 test('diary queries use explicit salon filters and accept only the authorized salon rows',async()=>{
  const h=harness({handler:diaryHandler()}),r=await h.api.loadDiary();assert.equal(r.ok,true);assert.equal(r.salon.id,sidA);assert.equal(h.requests[0].url,'/api/jovabook/billing/status');assert.equal(h.requests.at(-1).url,'/api/jovabook/billing/status');assert.equal(h.requests.filter(x=>x.url==='/api/jovabook/billing/status').length,2);for(const table of tables){const req=h.requests.find(x=>new URL(x.url,'https://booking.example.test').pathname.endsWith('/'+table));assert.equal(new URL(req.url).searchParams.get('salon_id'),'eq.'+sidA);assert.equal(r.rows[table][0].salon_id,sidA);}
 });
