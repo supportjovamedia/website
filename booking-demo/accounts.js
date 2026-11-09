@@ -223,7 +223,7 @@
     const clearExisting=()=>{pendingBusinessOwner=null;try{sessionStorage.removeItem(EXISTING);}catch{}};
     function freshSignupDraft(identity){try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null'),age=Date.now()-saved?.savedAt;if(saved?.userId!==identity?.id||normEmail(saved?.email)!==normEmail(identity?.email)||!Number.isFinite(saved?.savedAt)||age<0||age>48*3600000||typeof saved.name!=='string'||!saved.name.trim()||saved.name.length>60||typeof saved.slug!=='string'||saved.slug.length<3||saved.slug.length>30||!ADDRESS_RULE.test(saved.slug)||RESERVED.includes(saved.slug))return null;return saved;}catch{return null;}}
     function clearSignupDraftFor(id,email){try{const saved=JSON.parse(localStorage.getItem(SIGNUP_DRAFT)||'null');if(saved?.userId===id||!saved?.userId&&normEmail(saved?.email)===normEmail(email))localStorage.removeItem(SIGNUP_DRAFT);}catch{}}
-    const existingBusinessContext=()=>{if(!pendingBusinessOwner?.id||pendingBusinessOwner.id!==load()?.user?.id)return null;const draft=freshSignupDraft(pendingBusinessOwner);if(!draft)return null;return {owner:pendingBusinessOwner.owner,email:pendingBusinessOwner.email,creationError:pendingBusinessOwner.creationError||'',name:draft.name,slug:draft.slug,referralCode:draft.referralCode||pendingBusinessOwner.referralCode||''};};
+    const existingBusinessContext=()=>{if(!pendingBusinessOwner?.id||pendingBusinessOwner.id!==load()?.user?.id)return null;const draft=freshSignupDraft(pendingBusinessOwner);if(!draft&&pendingBusinessOwner.manualSetup!==true)return null;return {owner:pendingBusinessOwner.owner,email:pendingBusinessOwner.email,creationError:pendingBusinessOwner.creationError||'',name:draft?.name||'',slug:draft?.slug||'',referralCode:draft?.referralCode||pendingBusinessOwner.referralCode||''};};
     const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
     const stamp=()=>({raw:rawSession(),generation});
     const current=expected=>expected.generation===generation&&expected.raw===rawSession();
@@ -283,8 +283,9 @@
           headers: Object.assign({ apikey: cfg.key, 'Content-Type': 'application/json' }, (token || /^eyJ/.test(cfg.key)) ? { Authorization: 'Bearer ' + (token || cfg.key) } : {}, headers || {}) });
         let data = null; try { data = await r.json(); } catch (e) {}
         if(expected&&!current(expected))return stale();
+        if(!r.ok||data?.ok===false)window.JovaOwnerDiagnostics?.failure(path,r.status,data,token);
         return { ok: r.ok, status: r.status, data };
-      } catch (e) { return expected&&!current(expected)?stale():{ ok: false, status: 0, data: null, network: true }; }
+      } catch (e) { if(expected&&!current(expected))return stale();window.JovaOwnerDiagnostics?.failure(path,0,null,token);return { ok: false, status: 0, data: null, network: true }; }
       finally { clearTimeout(timer); }
     }
     const rpc = (fn, args, token) => call('/rest/v1/rpc/' + fn, { body: args || {}, token,owner:!!token });
@@ -320,8 +321,8 @@
     }
     async function billingCall(action,body={}) {
       const t=await token();if(!t)return authFailure();const expected=stamp(),ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
-      try{const response=await fetch('/api/jovabook/billing/'+action,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)});let data=null;try{data=await response.json();}catch{}if(!current(expected))return stale();return {ok:response.ok&&data?.ok===true,status:response.status,data,auth:response.status===401,message:data?.message||'We could not verify your subscription. Try again.'};}
-      catch{return current(expected)?{ok:false,network:true,message:NET}:stale();}finally{clearTimeout(timer);}
+      try{const response=await fetch('/api/jovabook/billing/'+action,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)});let data=null;try{data=await response.json();}catch{}if(!current(expected))return stale();if(action==='status'&&(!response.ok||data?.ok!==true)&&!data?.no_business)window.JovaOwnerDiagnostics?.report('account_access',response.status>=500?'server_error':'request_rejected',response.status,t);return {ok:response.ok&&data?.ok===true,status:response.status,data,auth:response.status===401,message:data?.message||'We could not verify your subscription. Try again.'};}
+      catch{if(!current(expected))return stale();if(action==='status')window.JovaOwnerDiagnostics?.report('account_access','network_unavailable',0,t);return {ok:false,network:true,message:NET};}finally{clearTimeout(timer);}
     }
     async function integrationCall(action,body={}) {
       if(!['deposits/settings','integrations/status','integrations/connect','integrations/configure','integrations/oauth/start','integrations/oauth/complete','integrations/disconnect','recovery/preview','recovery/send'].includes(action))return {ok:false,message:'This connection action is unavailable.'};
@@ -404,7 +405,7 @@
         const referral=String(referralCode||'').trim().toUpperCase();
         if(referral){if(!/^[A-Z0-9]{10}$/.test(referral))return {ok:false,field:'referral_code',message:'Enter the 10-character referral code.'};const checked=await rpc('referral_code_valid',{p_code:referral});if(!current(expected))return stale();if(!checked.ok||checked.data!==true)return {ok:false,field:'referral_code',message:'Referral code could not be verified. Check it and try again.'};}
         // UK, USA, Canada and Australia only. Unknown eligibility never proceeds to Auth signup.
-        const regionUnavailable=()=>({ok:false,field:'',code:'region_unavailable',retryable:true,message:'We could not verify signup availability for your location. Please try again.'});
+        const regionUnavailable=()=>{window.JovaOwnerDiagnostics?.report('signup','region_unavailable',0);return {ok:false,field:'',code:'region_unavailable',retryable:true,message:'We could not verify signup availability for your location. Please try again.'};};
         const regionAbort=new AbortController(),regionTimer=setTimeout(()=>regionAbort.abort(),12000);
         try{
           const response=await fetch('https://www.jovamedia.com/api/jovabook/region',{cache:'no-store',signal:regionAbort.signal});
@@ -417,7 +418,7 @@
         }catch(_){return current(expected)?regionUnavailable():stale();}
         finally{clearTimeout(regionTimer);}
         const origin=String(location.origin||''),local=/^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::[0-9]+)?$/.test(origin),redirect=(local?origin:'https://book.jovamedia.com')+'/?portal=owner#login';
-        const r=await call('/auth/v1/signup?redirect_to='+encodeURIComponent(redirect),{body:{email:e,password,data:{owner_name:o,...(referral?{referral_code:referral}:{})}}});if(!current(expected))return stale();
+        const r=await call('/auth/v1/signup?redirect_to='+encodeURIComponent(redirect),{body:{email:e,password,data:{owner_name:o,business_name:n,booking_slug:s,signup_intent:'business',...(referral?{referral_code:referral}:{})}}});if(!current(expected))return stale();
         if(r.network)return {ok:false,field:'',message:NET};
         if(!r.ok||!r.data){const duplicate=/already|registered|exists/i.test(String(r.data?.msg||r.data?.message||''));return {ok:false,field:duplicate?'email':'',message:duplicate?'This email may already have an account. Log in with that account to create your business.':r.status===429?'Too many attempts. Wait a little before trying again.':'We could not request email verification. Please try again.'};}
         // Signup responses never establish an owner session or create a business.
@@ -433,7 +434,7 @@
         if (!r.ok) return {ok:false,message:/email_not_confirmed|email.*not confirmed/i.test(String(r.data?.error_code||r.data?.code||r.data?.msg||r.data?.message||''))?'Verify your email from the link you received, then log in.':'That email and password do not match.'};
         const access = await ownerAccess();
         if(!current(r.authStamp))return stale();
-        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok){keep(null);clearExisting();return identity;}if(!current(r.authStamp))return stale();if(!freshSignupDraft(identity.profile)){try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}keep(null);clearExisting();return {ok:false,noBusiness:true,message:'No business is linked to this account. Sign up to create one.'};}pendingBusinessOwner=identity.profile;try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}const profile=existingBusinessContext();if(profile?.name?.trim()&&profile?.slug?.trim()){const created=await this.createBusinessForExistingUser(profile);if(created.ok)return {...created,salon:{id:created.account.salonId}};if(created.stale)return created;if(pendingBusinessOwner)pendingBusinessOwner.creationError=created.message||'We could not create your business. Try again.';}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
+        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok){keep(null);clearExisting();return identity;}if(!current(r.authStamp))return stale();const matchingDraft=freshSignupDraft(identity.profile);if(!matchingDraft){window.JovaOwnerDiagnostics?.report('business_setup','setup_resumed',200,load()?.access_token);try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}}pendingBusinessOwner={...identity.profile,manualSetup:!matchingDraft};try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}const profile=existingBusinessContext();if(profile?.name?.trim()&&profile?.slug?.trim()){const created=await this.createBusinessForExistingUser(profile);if(created.ok)return {...created,salon:{id:created.account.salonId}};if(created.stale)return created;if(pendingBusinessOwner)pendingBusinessOwner.creationError=created.message||'We could not create your business. Try again.';}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
         if (!access.ok){if(access.wrongPortal){keep(null);clearExisting();}return access;}
         clearSignupDraftFor(load()?.user?.id,email);void token().then(t=>{if(t)void window.JovaOwnerFunnel?.bind(t);}).catch(()=>{});return {ok:true,account:{salonId:access.data.business.id},access:access.data,salon:{id:access.data.business.id}};
       },
@@ -445,7 +446,7 @@
         if(!r.ok)return {ok:false,message:'The password reset email could not be requested. Try again shortly.'};
         return { ok: true, sent: true };   // normal success stays the same whether or not the account exists
       },
-      consumeOwnerConfirmationCallback(hash){if(new URLSearchParams(location.search||'').get('portal')!=='owner')return {handled:false};const params=new URLSearchParams(String(hash||'').replace(/^#/,''));if(params.get('type')!=='signup'&&!params.has('error')&&!params.has('error_code'))return {handled:false};return {handled:true,notice:params.has('error')||params.has('error_code')?'Your verification link could not be confirmed. Log in to continue, or request a new verification link.':'Your verification link has been opened. Log in to continue setting up your business.'};},
+      consumeOwnerConfirmationCallback(hash){if(new URLSearchParams(location.search||'').get('portal')!=='owner')return {handled:false};const params=new URLSearchParams(String(hash||'').replace(/^#/,''));if(params.get('type')!=='signup'&&!params.has('error')&&!params.has('error_code'))return {handled:false};if(params.has('error')||params.has('error_code'))window.JovaOwnerDiagnostics?.report('verification','verification_failed',0);return {handled:true,notice:params.has('error')||params.has('error_code')?'Your verification link could not be confirmed. Log in to continue, or request a new verification link.':'Your verification link has been opened. Log in to continue setting up your business.'};},
       consumeRecoveryCallback(hash) {
         if(['customer','operator'].includes(new URLSearchParams(location.search||'').get('portal')))return {handled:false};
         const params=new URLSearchParams(String(hash||'').replace(/^#/,''));
