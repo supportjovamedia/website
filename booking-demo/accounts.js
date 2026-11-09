@@ -227,7 +227,8 @@
     const rawSession=()=>{try{return localStorage.getItem(AUTH);}catch{return null;}};
     const stamp=()=>({raw:rawSession(),generation});
     const current=expected=>expected.generation===generation&&expected.raw===rawSession();
-    const keep = s => {if(!s||load()?.user?.id!==s.user?.id){verifiedSalon=null;verifiedAccess=null;clearExisting();}generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} };
+    const keep = s => {if(!s||load()?.user?.id!==s.user?.id){verifiedSalon=null;verifiedAccess=null;clearExisting();}generation++;refreshFlight=null;refreshFailure=null;try { s ? localStorage.setItem(AUTH, JSON.stringify(s)) : localStorage.removeItem(AUTH); } catch (e) {} window.JovaOwnerDiagnostics?.setSession?.(s);};
+    window.JovaOwnerDiagnostics?.setSession?.(load());
     const intent=()=>{clearExisting();generation++;refreshFlight=null;return stamp();};
     const stale=()=>({ok:false,stale:true,status:0,message:'Your session changed. Open this page again.'});
     const authFailure=()=>refreshFailure&&current(refreshFailure.expected)?refreshFailure.result:load()?stale():{ok:false,auth:true,status:401,message:'Your session has ended. Log in again.'};

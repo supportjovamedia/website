@@ -694,6 +694,7 @@ if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingLeave=null;const re
  document.body.dataset.team=signedIn()&&teamMode()?'true':'false';
  // A team login only has the calendar, dashboard, bookings and customers.
  if(signedIn()&&teamMode()&&OWNER_ROUTES.includes(parts[0])&&!TEAM_ROUTES.includes(parts[0])){closeModal();history.replaceState(null,'',location.pathname+location.search+'#calendar');render();return;}
+ if(signedIn()&&!teamMode()&&isLive(salon()))window.JovaOwnerDiagnostics?.view?.(parts[0]);
  if(!OWNER_ROUTES.includes(parts[0]))window.JovaWorkspaceThemes?.apply(null);
  document.body.dataset.publicBooking=pubMode()&&['book','manage'].includes(parts[0])?'true':'false';document.body.dataset.publicWebsite=parts[0]==='website'?'true':'false';
  if(parts[0]==='website'&&!requestedSalon&&!demoBooking){$('#app').innerHTML=pubMsg('Website link missing','Open the website link shared by the business.');return;}

@@ -40,7 +40,7 @@ test('diagnostic writer has no read access, derives identity, validates input, d
 test('browser reporter sends only fixed classifications, never messages, form data, URLs or submitted email',async()=>{
  const calls=[],listeners={};
  const window={JOVA_SUPABASE:{url:'https://fixture.example.test',key:'public-key'},addEventListener:(key,fn)=>listeners[key]=fn};
- vm.runInNewContext(source,{window,location:{pathname:'/',hash:''},crypto:webcrypto,Date,Map,AbortController,setTimeout,clearTimeout,fetch:async(url,init)=>{calls.push({url,init});return {ok:true};}});
+ vm.runInNewContext(source,{window,location:{pathname:'/',hash:'',search:''},URLSearchParams,crypto:webcrypto,Date,Map,AbortController,setTimeout,clearTimeout,fetch:async(url,init)=>{calls.push({url,init});return {ok:true};}});
  const d=window.JovaOwnerDiagnostics;
  d.failure('/auth/v1/signup?redirect_to=SECRET_TOKEN',500,{message:'PASSWORD PRIVATE_EMAIL@example.test'},null);
  d.failure('/auth/v1/signup?redirect_to=OTHER_SECRET',500,{},null);
@@ -48,9 +48,28 @@ test('browser reporter sends only fixed classifications, never messages, form da
  d.failure('/rest/v1/rpc/save_private_customer_notes',500,{},'owner-token');
  d.report('login','PRIVATE_PASSWORD',500);
  assert.equal(calls.length,2);
- for(const c of calls){const body=JSON.parse(c.init.body);assert.deepEqual(Object.keys(body).sort(),['p_code','p_id','p_status','p_step']);assert(!c.init.body.includes('SECRET'));assert(!c.init.body.includes('PASSWORD'));assert(!c.init.body.includes('private'));assert.equal(c.init.referrerPolicy,'no-referrer');}
+ for(const c of calls){const body=JSON.parse(c.init.body);assert.deepEqual(Object.keys(body).sort(),['p_code','p_id','p_session','p_stage','p_status','p_step']);assert(!c.init.body.includes('SECRET'));assert(!c.init.body.includes('PASSWORD'));assert(!c.init.body.includes('private'));assert.equal(c.init.referrerPolicy,'no-referrer');}
  assert.equal(calls[1].init.headers.Authorization,'Bearer owner-token');
  assert(!calls[1].init.body.includes('owner-token'));
  for(let n=0;n<20;n++)d.report('runtime','runtime_error',n);
- assert.equal(calls.length,10);
+ assert.equal(calls.length,20);
+});
+
+test('visitor grouping survives reload, uses authenticated headers, and rotates on logout or account switch',()=>{
+ const storage=new Map(),calls=[];
+ function boot(search=''){
+  const window={JOVA_SUPABASE:{url:'https://fixture.example.test',key:'public-key'},addEventListener:()=>{}};
+  vm.runInNewContext(source,{window,location:{pathname:'/',hash:'',search},URLSearchParams,crypto:webcrypto,Date,Map,AbortController,setTimeout,clearTimeout,sessionStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},fetch:async(url,init)=>{calls.push({url,init,body:JSON.parse(init.body)});return {ok:true};}});
+  return window.JovaOwnerDiagnostics;
+ }
+ let d=boot();d.onboarding('email');const first=calls.at(-1).body.p_session;
+ d=boot();d.onboarding('profile');assert.equal(calls.at(-1).body.p_session,first);
+ d.setSession({user:{id:person},access_token:'session-secret',expires_at:Date.now()/1000+60});
+ assert.equal(calls.at(-1).init.headers.Authorization,'Bearer session-secret');assert.equal(calls.at(-1).body.p_session,first);
+ d.view('calendar');assert.equal(calls.at(-1).body.p_step,'calendar');assert(!JSON.stringify(calls.at(-1).body).includes('session-secret'));assert(!JSON.stringify(calls.at(-1).body).includes(person));
+ d.setSession(null);d.onboarding('email');const next=calls.at(-1).body.p_session;assert.notEqual(next,first);assert(!calls.at(-1).init.headers.Authorization);
+ d.setSession({user:{id:person},access_token:'session-secret',expires_at:Date.now()/1000+60});
+ d.setSession({user:{id:operator},access_token:'other-token',expires_at:Date.now()/1000+60});assert.notEqual(calls.at(-1).body.p_session,next);
+ const before=calls.length;d.view('customer/private-client');d.onboarding('password=SECRET');assert.equal(calls.length,before);
+ const excluded=boot('?portal=customer');excluded.onboarding('email');assert.equal(calls.length,before);
 });
