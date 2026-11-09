@@ -1,0 +1,25 @@
+/* Shared application typography. Customer-selected website fonts stay independent. */
+@font-face{font-family:"Inter Workspace";src:url("/fonts/inter-latin.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root),.ob-shell,.rf-auth,#operator-root{font-family:"Inter Workspace",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(h1,h2,h3,h4,button,input,select,textarea,label,summary,.btn),
+:is(.ob-shell,.rf-auth,#operator-root) :is(h1,h2,h3,h4,button,input,select,textarea,label,summary,.btn){font-family:inherit!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=file]),select,textarea,.jws-trigger),
+:is(.ob-shell,.rf-auth,#operator-root) :is(input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=file]),select,textarea){border-width:1.5px!important;border-style:solid!important;border-color:var(--theme-control-line,#a7a7ae)!important;border-radius:13px!important;font-weight:450!important;line-height:1.45;box-shadow:none}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(input,select,textarea):not([type=checkbox],[type=radio],[type=range],[type=color],[type=file]){font-size:15px}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(.field,label.ob-field){font-weight:600}
+:is(.ob-shell,.rf-auth,#operator-root) :is(input,select,textarea)::placeholder,
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(input,textarea)::placeholder{color:var(--theme-muted,#71717a);opacity:1;font-weight:400}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(input,select,textarea,.jws-trigger):focus-visible,
+:is(.ob-shell,.rf-auth,#operator-root) :is(input,select,textarea):focus-visible{outline:2px solid var(--theme-focus,#242424)!important;outline-offset:3px!important}
+html[data-workspace-theme] .jws-popover{font-family:"Inter Workspace",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important;border-width:1.5px!important}
+html[data-workspace-theme=classic] .jws-popover .jws-option[aria-selected=true]{background:#FFD700!important}
+/* Avoid horizontal focus artefacts from mouse clicks on full-width disclosures. */
+html[data-workspace-theme] .shell.jb-reference summary:focus:not(:focus-visible){outline:none!important}
+html[data-workspace-theme] .shell.jb-reference summary:focus-visible{outline:2px solid var(--theme-focus,#242424);outline-offset:-4px;border-radius:12px}
+@media(max-width:767px){html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(input,select,textarea,.jws-trigger):not([type=checkbox],[type=radio],[type=range],[type=color],[type=file]),:is(.ob-shell,.rf-auth) :is(input,select,textarea){font-size:16px!important}}
+html[data-input-mode=pointer] :is(.shell.jb-reference,#modal-root,dialog.df-unsaved-dialog) :focus{outline:none!important;outline-offset:0!important}
+html[data-input-mode=keyboard] :is(.shell.jb-reference,#modal-root) :focus-visible{outline-color:#64748b!important;outline-width:2px!important}
+/* Composite copy fields have one surface, not a second border around their input. */
+html[data-workspace-theme] #app .shell.jb-reference .jr-refreshed .jrr-copy-field{border:0!important;border-radius:24px!important;background:var(--theme-inset,#F5F5F5)!important}
+html[data-workspace-theme] #app .shell.jb-reference .jr-refreshed .jrr-copy-field>input{border:0!important;border-width:0!important;border-radius:0!important;outline:none!important;background:transparent!important;box-shadow:none!important}
+html[data-workspace-theme] .shell.jb-reference .ot-insights .ot-metric>span:not(.jg-insight-metric-icon){min-height:2.7em;display:flex;align-items:center;line-height:1.35!important}

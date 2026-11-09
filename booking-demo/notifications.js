@@ -64,7 +64,7 @@
    if(!nativePanel()||!document.querySelector('[data-notif-open]')){modal('Notifications',`<div class="nf-dialog" data-notifications-dialog>${body}</div>`);return;}
    if(!panel?.isConnected){panel=document.createElement('section');panel.id='nf-notification-popover';panel.className='nf-popover';panel.setAttribute('popover','auto');panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','false');panel.setAttribute('aria-labelledby','nf-popover-title');document.body.append(panel);panel.addEventListener('toggle',event=>{if(event.newState==='closed')document.querySelector('[data-notif-open]')?.setAttribute('aria-expanded','false');});}
    panelOwner=identity()+':'+salon().id;
-   panel.innerHTML=`<header class="nf-popover-header"><div><h2 id="nf-popover-title">Notifications</h2></div><button type="button" class="nf-popover-close" data-action="notif-close" aria-label="Close notifications" autofocus>×</button></header><div class="nf-dialog" data-notifications-dialog>${body}</div>`;
+   panel.innerHTML=`<header class="nf-popover-header"><div><h2 id="nf-popover-title">Notifications</h2></div><button type="button" class="nf-popover-close" data-action="notif-close" aria-label="Close notifications" autofocus><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><div class="nf-dialog" data-notifications-dialog>${body}</div>`;
    if(!panelOpen())panel.showPopover();positionPanel();document.querySelector('[data-notif-open]')?.setAttribute('aria-expanded','true');
   }
 

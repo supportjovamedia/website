@@ -180,3 +180,28 @@ window.addEventListener('beforeunload',e=>{if(unsaved){e.preventDefault();e.retu
 if(/access_token=|type=signup/.test(location.hash))history.replaceState(null,'',location.pathname);
 if(saved())void directory();else login();
 })();
+/* Save feedback is separate from support actions and never changes their requests. */
+(() => {
+ 'use strict';
+ const root=document.getElementById('operator-root');if(!root)return;
+ const forms=new WeakMap();
+ const signature=form=>JSON.stringify(Array.from(form.elements).filter(el=>el.name&&!['submit','button','reset','file'].includes(el.type)).map(el=>[el.name,el.type==='checkbox'||el.type==='radio'?el.checked:el.value]));
+ function refresh(form){
+  const record=forms.get(form);if(!record)return;
+  const changed=signature(form)!==record.baseline,message=changed?'Unsaved changes':'No unsaved changes';
+  record.status.classList.toggle('is-dirty',changed);if(record.status.textContent!==message)record.status.textContent=message;
+ }
+ function scan(){
+  root.querySelectorAll('form[data-form]').forEach(form=>{
+   if(forms.has(form))return;
+   const button=Array.from(form.querySelectorAll('button')).find(el=>/^(?:save\b|saving(?:\b|…))/i.test(el.textContent.trim()));if(!button)return;
+   const actions=document.createElement('div');actions.className='op-save-actions';button.before(actions);
+   const status=document.createElement('span');status.className='op-save-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');actions.append(status,button);
+   forms.set(form,{baseline:signature(form),status});refresh(form);
+  });
+ }
+ root.addEventListener('input',event=>refresh(event.target.closest('form[data-form]')));
+ root.addEventListener('change',event=>refresh(event.target.closest('form[data-form]')));
+ root.addEventListener('reset',event=>queueMicrotask(()=>refresh(event.target)));
+ scan();new MutationObserver(scan).observe(root,{childList:true,subtree:true});
+})();

@@ -1,0 +1,24 @@
+/* Customer surfaces use the business brand, independently of workspace themes. */
+body[data-public-booking=true]{background:#f3f3f2;color:#202020}
+body[data-public-booking=true] .book-header{background:#fff;border-bottom:1px solid #e3e3e1;box-shadow:0 3px 18px #17171705}
+body[data-public-booking=true] .book-header-inner{padding-block:18px;gap:20px}
+body[data-public-booking=true] .book-header .avatar{border-radius:12px}
+body[data-public-booking=true] .booking-flow{padding-block:30px 20px}
+body[data-public-booking=true] .booking-layout>.card{border:1px solid #dededb;border-radius:18px;box-shadow:0 6px 24px #17171707;padding:32px}
+body[data-public-booking=true] .booking-layout h1{font-size:clamp(26px,3vw,36px);line-height:1.18;letter-spacing:-.035em;margin-bottom:10px}
+body[data-public-booking=true] .booking-layout h1+p{color:#62625f;line-height:1.55;margin-bottom:28px}
+body[data-public-booking=true] .select-card{border:1px solid #dbdbd7!important;border-radius:12px!important;background:#fff!important;box-shadow:0 2px 6px #17171703;padding:20px!important;margin-bottom:12px;gap:20px;transition:border-color .15s,box-shadow .15s}
+body[data-public-booking=true] .select-card:hover{border-color:var(--blue,#242424)!important;box-shadow:0 3px 14px #17171709}
+body[data-public-booking=true] .select-card.chosen{border-color:var(--blue,#242424)!important;box-shadow:inset 0 0 0 1px var(--blue,#242424)}
+body[data-public-booking=true] .select-card strong{font-size:16px;line-height:1.4}
+body[data-public-booking=true] .select-card small{font-size:13px;line-height:1.5;color:#686865}
+body[data-public-booking=true] .select-card .money{font-size:16px;font-weight:650}
+body[data-public-booking=true] .cat-title{font-size:15px;letter-spacing:0;margin-block:28px 14px}
+body[data-public-booking=true] .booking-progress{margin-bottom:24px}
+body[data-public-booking=true] .booking-layout .empty{padding:48px 24px;text-align:center;background:#f6f6f4;border:0;border-radius:12px;color:#60605b}
+@media(max-width:700px){
+ body[data-public-booking=true] .booking-flow{padding-top:20px}
+ body[data-public-booking=true] .booking-layout>.card{padding:24px 20px;border-radius:16px}
+ body[data-public-booking=true] .select-card{padding:17px 15px!important;gap:12px}
+ body[data-public-booking=true] .book-header-inner{padding-block:14px}
+}

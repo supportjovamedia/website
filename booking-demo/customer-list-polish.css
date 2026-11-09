@@ -1,0 +1,84 @@
+/* Compact customer rows. Customer detail and editing stay in the existing drawers. */
+html[data-workspace-theme] .shell.jb-reference .rf-customers h1{display:flex!important;align-items:center!important;gap:10px!important}
+html[data-workspace-theme] .shell.jb-reference .rf-customers h1 .mg-count{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:24px!important;min-height:24px!important;box-sizing:border-box;padding:5px 9px!important;margin:0!important;border:0!important;border-radius:20px!important;background:var(--theme-inset)!important;color:var(--theme-muted)!important;font-size:12px!important;line-height:1!important;font-weight:550!important;letter-spacing:0!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-search{padding:0!important;margin:0 0 20px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-search>label{position:relative;display:block;width:100%;min-width:0;margin:0!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-search>label>svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--theme-muted);pointer-events:none}
+html[data-workspace-theme] .shell.jb-reference .jg-client-search input{display:block;box-sizing:border-box;width:100%!important;max-width:100%!important;min-width:0;height:48px!important;min-height:48px!important;padding:11px 16px 11px 44px!important;border:1px solid var(--theme-control-line)!important;border-radius:12px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;font-size:14px!important;line-height:1.5}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table{container-type:inline-size;min-width:0;width:100%;max-width:100%;border:1px solid var(--theme-line);border-radius:14px!important;background:var(--theme-panel);box-shadow:0 2px 4px #17171703,0 8px 24px #17171706!important;overflow:visible!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table table{display:table!important;table-layout:fixed!important;border-collapse:separate!important;border-spacing:0!important;min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table thead{display:table-header-group!important;position:static!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important;white-space:normal!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table tbody{display:table-row-group!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table tr{display:table-row!important;position:static!important;height:auto!important;padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td){display:table-cell!important;position:static!important;grid-area:auto!important;min-width:0!important;height:auto!important;padding:14px 18px!important;margin:0!important;border:0!important;border-bottom:1px solid var(--theme-line)!important;vertical-align:middle!important;text-align:left!important;font-size:13px!important;line-height:1.45!important;white-space:normal!important;overflow-wrap:anywhere!important;background:var(--theme-panel)!important;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table th{padding-block:14px!important;font-size:11px!important;font-weight:550!important;color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):before,
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):after{display:none!important;content:none!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(1){width:auto!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(2){width:140px!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(3){width:110px!important;text-align:right!important;font-variant-numeric:tabular-nums}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(4){width:172px!important;padding-inline:12px 18px!important;text-align:right!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table tbody tr:last-child td{border-bottom:0!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table thead th:first-child{border-top-left-radius:14px}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table thead th:last-child{border-top-right-radius:14px}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table tbody tr:last-child td:first-child{border-bottom-left-radius:14px}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table tbody tr:last-child td:last-child{border-bottom-right-radius:14px}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-name{display:flex!important;flex-direction:column;justify-content:center;gap:5px;width:100%!important;min-width:0!important;min-height:40px!important;height:auto!important;padding:0!important;margin:0!important;border:0!important;border-radius:4px!important;box-shadow:none!important;background:transparent!important;color:var(--theme-heading)!important;font-size:14px!important;font-weight:650!important;line-height:1.45!important;text-align:left!important;overflow:hidden}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-name strong{display:block;max-width:100%;font-size:14px!important;font-weight:650;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-name:hover strong{text-decoration:underline;text-underline-offset:3px}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-name{flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-avatar{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:50%;background:var(--theme-soft);color:var(--theme-heading);font-size:12px;line-height:1;font-weight:600}
+html[data-workspace-theme=classic] .shell.jb-reference .jg-client-table .jg-client-avatar{background:#F8D4EB;color:#292229}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-copy{display:block;flex:1;min-width:0;max-width:100%;overflow:hidden}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-contact{display:block!important;max-width:100%;font-size:12px!important;font-weight:400;line-height:1.45!important;color:var(--theme-muted)!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;margin:0!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .mg-actions{position:relative!important;margin:0!important;flex:none}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(.jg-client-contact-action,.mg-actions>summary){display:grid!important;place-items:center!important;flex:none;width:40px!important;min-width:0!important;height:40px!important;min-height:40px!important;padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;background:transparent!important;color:var(--theme-heading)!important;list-style:none!important;text-decoration:none}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .mg-actions>summary::-webkit-details-marker{display:none}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(.jg-client-contact-action,.mg-actions>summary):hover{background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(.jg-client-contact-action,.mg-actions>summary) svg{display:block;width:18px;height:18px}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .mg-actions>summary svg{fill:currentColor}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-contact-action{width:36px!important;height:36px!important;min-height:36px!important;border:1px solid var(--theme-line)!important;border-radius:8px!important;background:var(--theme-panel)!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-contact-action svg{width:19px!important;height:19px!important;stroke-width:1.7}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .mg-actions>summary{width:32px!important;height:36px!important;min-height:36px!important;border:0!important;border-radius:0!important;background:transparent!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table td[colspan]{width:auto!important;padding:24px 18px!important;color:var(--theme-muted)!important}
+@container (max-width:650px){
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table thead{display:none!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td){padding:16px 18px!important;font-size:12px!important;line-height:1.4!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(1){width:auto!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(2),
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(3){display:none!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(4){width:150px!important;padding-inline:8px 18px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-actions{gap:4px}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(.jg-client-contact-action,.mg-actions>summary){width:38px!important;height:40px!important;min-height:40px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-avatar{flex-basis:34px;width:34px;height:34px;font-size:11px}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-name{gap:10px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-contact-action{width:36px!important;height:36px!important;min-height:36px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .mg-actions>summary{width:32px!important;height:36px!important;min-height:36px!important}
+}
+@container (max-width:350px){
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td){padding:14px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(th,td):nth-child(4){width:124px!important;padding-inline:4px 8px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table :is(.jg-client-contact-action,.mg-actions>summary){width:36px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-name strong{font-size:13px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-contact{font-size:11px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-avatar{flex-basis:32px;width:32px;height:32px}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-name{gap:8px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-contact-action{width:34px!important;height:36px!important;min-height:36px!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .mg-actions>summary{width:32px!important;height:36px!important;min-height:36px!important}
+}
+
+html[data-workspace-theme] .shell.jb-reference .rf-customers .jg-client-search input#customer-search{padding-left:44px!important;font-size:14px!important}
+html[data-workspace-theme] .shell.jb-reference .rf-customers h1 span.mg-count{background:#eeeeef!important;color:#3c3c3c!important;min-width:24px!important;min-height:24px!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-actions a.jg-client-contact-action{border:1px solid #e0e0e3!important;background:var(--theme-panel)!important;border-radius:10px!important;box-shadow:0 1px 2px #17171703!important}
+
+/* Native tel links are offered in the phone layout, including emulated phones. */
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-actions a.jg-client-call{display:none!important}
+@media(max-width:767px){
+ html[data-workspace-theme] .shell.jb-reference .jg-client-table .jg-client-actions a.jg-client-call{display:grid!important}
+}
+
+html[data-workspace-theme] .shell.jb-reference .rf-customers{--list-soft:var(--theme-soft);--list-ink:var(--theme-heading)}
+html[data-workspace-theme=classic] .shell.jb-reference .rf-customers{--list-soft:#FFD700;--list-ink:#242424}
+html[data-workspace-theme] .shell.jb-reference .rf-customers h1 span.mg-count{background:var(--list-soft)!important;color:var(--list-ink)!important;font-weight:600!important}
+html[data-workspace-theme] .shell.jb-reference .jg-client-table .mg-actions>summary{background:var(--theme-inset)!important;border-radius:50%!important}

@@ -1,0 +1,48 @@
+/* Contextual explanations only. Short labels, validation and alerts stay unchanged. */
+:is(.shell.jb-reference,.jg-panel) .business-locale-fields>p.tiny,
+:is(.shell.jb-reference,.jg-panel) .st-business-settings .ws-help,
+:is(.shell.jb-reference,.jg-panel) .ws-simple-hours .ws-details>.ws-help,
+:is(.shell.jb-reference,.jg-panel) .bw-business-links>.bw-help,
+:is(.shell.jb-reference,.jg-panel) .bw-premium-controls>.bw-help,
+:is(.shell.jb-reference,.jg-panel) .bs-note:not(.error,.notice,[role=alert]),
+.ob-shell .ob-code-help,
+#operator-root :is(.op-record-note,.op-link-history-note,.op-activity-note):not(.error,.notice,[role=alert]){
+ --info-surface:var(--theme-inset,#F7F7F7);
+ --info-ink:var(--theme-body,#252525);
+ position:relative;display:block!important;box-sizing:border-box;
+ width:100%;min-width:0;max-width:none;
+ margin:18px 0!important;padding:16px 18px 16px 50px!important;
+ border:0!important;border-radius:14px!important;
+ background:var(--info-surface)!important;color:var(--info-ink)!important;
+ font-size:13px!important;font-weight:400!important;line-height:1.6!important;
+ overflow-wrap:anywhere;text-align:left!important;box-shadow:none!important;
+}
+:is(.shell.jb-reference,.jg-panel) .business-locale-fields>p.tiny::before,
+:is(.shell.jb-reference,.jg-panel) .st-business-settings .ws-help::before,
+:is(.shell.jb-reference,.jg-panel) .ws-simple-hours .ws-details>.ws-help::before,
+:is(.shell.jb-reference,.jg-panel) .bw-business-links>.bw-help::before,
+:is(.shell.jb-reference,.jg-panel) .bw-premium-controls>.bw-help::before,
+:is(.shell.jb-reference,.jg-panel) .bs-note:not(.error,.notice,[role=alert])::before,
+.ob-shell .ob-code-help::before,
+#operator-root :is(.op-record-note,.op-link-history-note,.op-activity-note):not(.error,.notice,[role=alert])::before{
+ content:"";position:absolute;left:18px;top:17px;width:20px;height:20px;
+ background:currentColor;opacity:.76;
+ -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6M12 7h.01'/%3E%3C/svg%3E") center/contain no-repeat;
+ mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6M12 7h.01'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+html[data-workspace-theme=classic] :is(.shell.jb-reference,.jg-panel) .business-locale-fields>p.tiny,
+html[data-workspace-theme=classic] :is(.shell.jb-reference,.jg-panel) :is(.ws-help,.bw-help,.bs-note){--info-surface:#F7F7F7;--info-ink:#252525}
+.ob-shell .ob-code-help{--info-surface:#F7F7F7;--info-ink:#252525}
+#operator-root :is(.op-record-note,.op-link-history-note,.op-activity-note){--info-surface:#F7F7F7;--info-ink:#252525}
+@media(max-width:600px){
+ :is(.shell.jb-reference,.jg-panel) .business-locale-fields>p.tiny,
+ :is(.shell.jb-reference,.jg-panel) .st-business-settings .ws-help,
+ :is(.shell.jb-reference,.jg-panel) .ws-simple-hours .ws-details>.ws-help,
+ :is(.shell.jb-reference,.jg-panel) .bw-business-links>.bw-help,
+ :is(.shell.jb-reference,.jg-panel) .bw-premium-controls>.bw-help,
+ :is(.shell.jb-reference,.jg-panel) .bs-note:not(.error,.notice,[role=alert]),
+ .ob-shell .ob-code-help,
+ #operator-root :is(.op-record-note,.op-link-history-note,.op-activity-note):not(.error,.notice,[role=alert]){
+  padding:15px 16px 15px 46px!important;font-size:12px!important;line-height:1.6!important;
+ }
+}

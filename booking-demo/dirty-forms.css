@@ -9,3 +9,40 @@
 .se-save-bar .se-save-status.is-dirty{color:#91594f}
 .se-save-bar .se-save-status.is-dirty .se-save-dot{background:#c45c4e}
 @media(max-width:600px){.df-save-bar,.se-save-bar{gap:10px;padding-top:17px}.df-save-status{font-size:11px;gap:6px}.df-save-bar>button,.df-save-bar>.btn{max-width:65%;font-size:12px;padding-left:15px;padding-right:15px}.df-save-bar>.df-save-status{font-size:10px}}
+
+/* The native top layer keeps this confirmation above both pages and drawers. */
+dialog.df-unsaved-dialog{position:fixed;inset:0;width:min(440px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 48px);height:max-content;margin:auto;padding:26px;border:1px solid var(--theme-line,#dededb);border-radius:18px;background:var(--theme-panel,#fff);color:var(--theme-heading,#242424);box-shadow:0 24px 80px #00000030;overflow:auto;overscroll-behavior:contain;font-family:inherit;box-sizing:border-box}
+dialog.df-unsaved-dialog::backdrop{background:#17171780}
+dialog.df-unsaved-dialog h2{font-size:22px;line-height:1.25;letter-spacing:-.025em;font-weight:650;margin:0 0 14px;color:var(--theme-heading,#242424)}
+dialog.df-unsaved-dialog .df-leave-warning{position:static;inset:auto;width:auto;max-width:none;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;box-shadow:none}
+dialog.df-unsaved-dialog .df-leave-warning>p{font-size:14px;line-height:1.6;margin:0 0 24px;color:var(--theme-body,#4a4a46)}
+dialog.df-unsaved-dialog .row{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:10px;margin:0;padding:0}
+dialog.df-unsaved-dialog button{min-height:44px;width:auto;max-width:none;flex:0 1 auto;margin:0;padding:11px 17px;border-radius:24px;border:1px solid var(--theme-control-line,#b8b8b1);background:var(--theme-panel,#fff);color:var(--theme-heading,#242424);font-family:inherit;font-weight:550;font-size:13px;line-height:1.4;cursor:pointer}
+dialog.df-unsaved-dialog button[data-action=unsaved-keep]{background:var(--theme-primary,#242424);color:var(--theme-on-primary,#fff);border-color:var(--theme-primary,#242424)}
+dialog.df-unsaved-dialog button[data-action=unsaved-discard]{background:var(--theme-panel,#fff);color:#a0362c;border-color:#d8b6b1}
+dialog.df-unsaved-dialog button:focus-visible{outline:2px solid var(--theme-focus,#555);outline-offset:3px}
+@media(max-width:400px){dialog.df-unsaved-dialog{padding:22px 20px}dialog.df-unsaved-dialog .row{display:grid;grid-template-columns:minmax(0,1fr)}dialog.df-unsaved-dialog button{width:100%}}
+.modal-backdrop.df-promoted-origin{visibility:hidden!important;pointer-events:none!important}
+
+/* Status belongs beside the action, never inside its button. */
+.df-save-indicator{display:inline-flex!important;align-items:center!important;gap:7px;min-width:0;max-width:100%;margin-right:auto;color:var(--theme-muted,#6a6a65);font-size:12px!important;line-height:1.4!important;font-weight:450;white-space:normal;overflow-wrap:normal;text-align:left}
+.df-save-indicator[hidden]{display:none!important}
+.df-save-indicator-dot{display:block;width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:var(--theme-line,#ccc)}
+.df-save-indicator.is-dirty{color:var(--theme-body,#4b4b47)}
+.df-save-indicator.is-dirty>.df-save-indicator-dot{background:#D9363E}
+.df-external-save-status :is(.df-save-status,.se-save-status,.bw-dirty-status,.sr-dirty){display:none!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) :is(.jg-page-save-actions,.jg-top-save-wrap,.bd-heading .df-save-bar,.bd-heading .se-save-bar,.form-footer,.ws-form-footer,.se-save-bar,.df-save-bar).df-save-actions{gap:14px!important;align-items:center!important}
+.jg-page-save-heading>.df-save-indicator{margin-left:auto;margin-right:0}
+.pp-heading>.df-save-indicator{margin-left:auto;margin-right:0}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) button.df-save-is-dirty::before{display:none!important;content:none!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) input[type=submit].df-save-is-dirty{background-image:none!important}
+@media(max-width:600px){
+ .df-save-indicator{font-size:11px!important;gap:6px;max-width:150px}
+ html[data-workspace-theme] .shell.jb-reference :is(.pp-heading,.bd-heading).df-save-actions{flex-wrap:wrap!important;gap:12px!important}
+ html[data-workspace-theme] .shell.jb-reference :is(.pp-heading,.bd-heading).df-save-actions>h1{flex:1 1 100%!important}
+ .pp-heading>.df-save-indicator{flex:1 1 120px;max-width:none;margin-left:0}
+ html[data-workspace-theme] .shell.jb-reference .bd-heading>.df-save-actions{flex:1 1 100%!important;justify-content:space-between!important;width:100%!important;max-width:100%!important}
+ html[data-workspace-theme] .shell.jb-reference .bd-heading:has(>.df-save-actions){flex-wrap:wrap!important}
+ html[data-workspace-theme] .shell.jb-reference .bd-heading:has(>.df-save-actions)>h1{flex:1 1 100%!important}
+ html[data-workspace-theme] #modal-root .jg-panel :is(.form-footer,.df-save-bar,.se-save-bar).df-save-actions>.df-save-indicator{flex:none!important;max-width:100%;margin:0!important;min-height:24px}
+}

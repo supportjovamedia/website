@@ -16,8 +16,8 @@ const seed=()=>({id:'salon-1',entitlements:{plan:'standard'},staff:[{id:'owner',
 ]});
 class FakeFormData {constructor(form){this.values=form.values;}get(key){return this.values[key]??null;}}
 function form(values={}) {
- const preview={innerHTML:''},attributes={},controls=[{disabled:false},{disabled:true}];
- return {values:{...values},preview,attributes,controls,isConnected:true,lastError:'',querySelector:selector=>selector==='[data-owner-series-preview]'?preview:null,querySelectorAll:()=>controls,setAttribute:(key,value)=>attributes[key]=value,removeAttribute:key=>delete attributes[key]};
+ const preview={innerHTML:'',dataset:{}},attributes={},controls=[{disabled:false},{disabled:true}];
+ return {values:{...values},dataset:{seriesStep:'details'},preview,attributes,controls,isConnected:true,lastError:'',querySelector:selector=>selector==='[data-owner-series-preview]'?preview:null,querySelectorAll:selector=>selector==='input,select,textarea,button'?controls:[],setAttribute:(key,value)=>attributes[key]=value,removeAttribute:key=>delete attributes[key]};
 }
 function harness(overrides={}) {
  const state=seed(),seen={modals:[],toasts:[],errors:[],requests:[],renders:0,closed:0};
@@ -69,24 +69,24 @@ test('series preview checks every date, and conflicts prevent any submission',as
 });
 test('valid series requires confirmation and submits one complete request',async()=>{
  const {tools,seen}=harness();tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);
- assert.equal(seen.requests.length,0);assert.match(f.preview.innerHTML,/Book 3 bookings/);
+ assert.equal(seen.requests.length,0);assert.equal(f.dataset.seriesStep,'dates');assert.match(f.preview.innerHTML,/Check and confirm dates/);tools.click('owner-series-review',element(f));assert.equal(f.dataset.seriesStep,'review');assert.match(f.preview.innerHTML,/Review your bookings/);
  assert.equal(tools.click('owner-series-confirm',element(f)),true);await settle();assert.equal(seen.requests.length,1);
  const request=seen.requests[0];assert.deepEqual(Array.from(request.dates),['2026-11-03','2026-11-17','2026-12-01']);
  assert.equal(request.staffId,'owner');assert.equal(request.customerId,'c1');assert.equal(request.notes,'Private note');assert.equal(seen.closed,1);assert.equal(f.attributes['aria-busy'],undefined);
  assert.equal(f.controls[0].disabled,false);assert.equal(f.controls[1].disabled,true);
 });
 test('changing form details after checking dates rejects a stale confirmation',async()=>{
- const {tools,seen}=harness();tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);f.values.time='09:00';
+ const {tools,seen}=harness();tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);tools.click('owner-series-review',element(f));f.values.time='09:00';
  tools.click('owner-series-confirm',element(f));await settle();assert.match(f.lastError,/details changed/);assert.equal(seen.requests.length,0);
 });
 test('new availability conflict is checked again before an atomic request',async()=>{
  let blocked=false;const {tools,seen}=harness({available:date=>blocked&&date==='2026-11-17'?[]:['10:00']});
- tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);blocked=true;tools.click('owner-series-confirm',element(f));await settle();
+ tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);tools.click('owner-series-review',element(f));blocked=true;tools.click('owner-series-confirm',element(f));await settle();
  assert.equal(seen.requests.length,0);assert.match(f.lastError,/no longer available/);assert.match(f.preview.innerHTML,/Unavailable/);
 });
 test('pending series cannot be double submitted and server failures stay visible',async()=>{
  let resolve;const {tools,seen}=harness({createSeries:request=>{seen.requests.push(request);return new Promise(done=>resolve=done);}});
- tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);tools.click('owner-series-confirm',element(f));tools.click('owner-series-confirm',element(f));
+ tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);tools.click('owner-series-review',element(f));tools.click('owner-series-confirm',element(f));tools.click('owner-series-confirm',element(f));
  assert.equal(seen.requests.length,1);assert.equal(f.attributes['aria-busy'],'true');assert(f.controls.every(control=>control.disabled));
  resolve({ok:false,message:'A date was booked by another client. Nothing was added.'});await settle();
  assert.match(f.lastError,/Nothing was added/);assert.equal(seen.closed,0);assert.equal(f.controls[0].disabled,false);assert.equal(f.attributes['aria-busy'],undefined);
@@ -96,4 +96,76 @@ test('series validates count, interval, staff and start date before preview',()=
  for(const [values,pattern] of [[{count:'13'},/2 and 12/],[{count:'1'},/2 and 12/],[{intervalWeeks:'0'},/1 to 52/],[{staffId:'other'},/offers it/],[{startDate:'2026-10-29'},/today or later/]]){
   const f=seriesForm(values);tools.submit('owner-series',f);assert.match(f.lastError,pattern);assert(!f.preview.innerHTML.includes('owner-series-confirm'));
  }
+});
+
+test('selected available dates are the only dates sent and require at least two sessions',async()=>{
+ const {tools,seen}=harness();tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);
+ const toggle=(date,checked)=>tools.change({name:'sessionDate',value:date,checked,matches:()=>false,closest:()=>f});
+ toggle('2026-11-17',false);tools.click('owner-series-review',element(f));assert.equal(f.dataset.seriesStep,'review');
+ tools.click('owner-series-back',element(f));assert.equal(f.dataset.seriesStep,'dates');assert.match(f.preview.innerHTML,/Session 2/);
+ toggle('2026-12-01',false);tools.click('owner-series-review',element(f));assert.equal(f.dataset.seriesStep,'dates');assert.match(f.lastError,/at least 2/);assert.equal(seen.requests.length,0);
+ toggle('2026-12-01',true);tools.click('owner-series-review',element(f));tools.click('owner-series-confirm',element(f));await settle();
+ assert.equal(seen.requests.length,1);assert.deepEqual(Array.from(seen.requests[0].dates),['2026-11-03','2026-12-01']);
+});
+
+test('unavailable and forged dates cannot be selected, but two remaining available sessions can be booked',async()=>{
+ const {tools,seen}=harness({available:date=>date==='2026-11-17'?[]:['10:00']});tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);
+ assert.match(f.preview.innerHTML,/<input[^>]*value="2026-11-17"[^>]* disabled/);
+ for(const date of ['2026-11-17','2027-01-01'])tools.change({name:'sessionDate',value:date,checked:true,matches:()=>false,closest:()=>f});
+ tools.click('owner-series-review',element(f));tools.click('owner-series-confirm',element(f));await settle();
+ assert.deepEqual(Array.from(seen.requests[0].dates),['2026-11-03','2026-12-01']);
+});
+
+test('Back preserves details and an unchecked review cannot skip to confirmation',async()=>{
+ const {tools,seen}=harness();tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);
+ tools.click('owner-series-confirm',element(f));await settle();assert.equal(seen.requests.length,0);assert.match(f.lastError,/Review your selected dates/);
+ tools.click('owner-series-back',element(f));assert.equal(f.dataset.seriesStep,'details');assert.equal(f.values.name,'QA Client');assert.equal(f.values.notes,'Private note');
+ tools.submit('owner-series',f);tools.click('owner-series-review',element(f));assert.equal(f.dataset.seriesStep,'review');
+});
+
+test('a slot becoming unavailable before Review returns to Dates without a write',()=>{
+ let blocked=false;const {tools,seen}=harness({available:date=>blocked&&date==='2026-11-17'?[]:['10:00']});tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);blocked=true;
+ tools.click('owner-series-review',element(f));assert.equal(f.dataset.seriesStep,'dates');assert.match(f.lastError,/no longer available/);assert.match(f.preview.innerHTML,/Unavailable/);assert.equal(seen.requests.length,0);
+});
+
+test('Details Back and Continue retain unchecked dates and intersect fresh availability',()=>{
+ let blocked=false;
+ const {tools}=harness({available:date=>blocked&&date==='2026-12-01'?[]:['10:00']});tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);
+ tools.change({name:'sessionDate',value:'2026-11-17',checked:false,matches:()=>false,closest:()=>f});
+ tools.click('owner-series-back',element(f));assert.equal(f.dataset.seriesStep,'details');
+ blocked=true;tools.submit('owner-series',f);
+ const input=date=>f.preview.innerHTML.match(new RegExp('<input[^>]*value="'+date+'"[^>]*>'))?.[0];
+ assert.match(input('2026-11-03'),/ checked/);
+ assert.doesNotMatch(input('2026-11-17'),/ checked/,'An intentionally removed date must stay removed');
+ assert.doesNotMatch(input('2026-12-01'),/ checked/);assert.match(input('2026-12-01'),/ disabled/);
+});
+
+test('a changed Details fingerprint creates a fresh date selection',()=>{
+ const {tools}=harness();tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);
+ tools.change({name:'sessionDate',value:'2026-11-17',checked:false,matches:()=>false,closest:()=>f});tools.click('owner-series-back',element(f));
+ f.values.time='09:00';tools.submit('owner-series',f);
+ assert.match(f.preview.innerHTML,/<input[^>]*value="2026-11-17"[^>]* checked/);
+});
+
+test('pending wizard advertises its exact owner scope to the shared busy guard',async()=>{
+ let resolve;const {tools,seen}=harness({ownerIdentity:()=> 'owner-a',createSeries:()=>new Promise(done=>resolve=done)});tools.click('owner-series',{});
+ assert.match(seen.modals.at(-1).html,/<form[^>]*data-owner="owner-a\|salon-1"/);
+ const f=seriesForm();tools.submit('owner-series',f);tools.click('owner-series-review',element(f));tools.click('owner-series-confirm',element(f));assert.equal(f.attributes['aria-busy'],'true');resolve({ok:true});await settle();assert.equal(f.attributes['aria-busy'],undefined);
+});
+
+test('late success and failure cannot change the new owner UI or show stale receipts',async()=>{
+ for(const result of [{ok:true},{ok:false,message:'Previous owner failure'}]){
+  let owner='owner-a',resolve;const {tools,seen}=harness({ownerIdentity:()=>owner,createSeries:()=>new Promise(done=>resolve=done)});tools.click('owner-series',{});const f=seriesForm();tools.submit('owner-series',f);tools.click('owner-series-review',element(f));tools.click('owner-series-confirm',element(f));
+  owner='owner-b';const errors=seen.errors.length,renders=seen.renders;resolve(result);await settle();
+  assert.equal(seen.closed,0);assert.equal(seen.renders,renders);assert.equal(seen.errors.length,errors);assert.equal(seen.toasts.length,0);
+  const old=seen.modals.length;tools.click('owner-series',{});assert.equal(seen.modals.length,old+1,'The old pending request releases its lock');
+ }
+});
+
+test('new-customer name and email limits match the series persistence contract',()=>{
+ const {tools,seen}=harness();tools.click('owner-series',{});assert.match(seen.modals.at(-1).html,/<input[^>]*name="name"[^>]*maxlength="80"/);
+ for(const values of [{name:'A'.repeat(81),email:'client@example.test'},{name:'Client',email:'client@example.c'}]){
+  const f=seriesForm({...values,customerId:''});tools.submit('owner-series',f);assert.equal(f.dataset.seriesStep,'details');assert.match(f.lastError,/80 characters and a valid email/);assert.equal(seen.requests.length,0);
+ }
+ const valid=seriesForm({name:'A'.repeat(80),email:'client@example.co',customerId:''});tools.submit('owner-series',valid);assert.equal(valid.dataset.seriesStep,'dates');assert.equal(valid.values.name.length,80,'Validation preserves the draft rather than truncating it');
 });

@@ -58,9 +58,31 @@
   const v=resolve(salon),disabled=locked?' disabled':'';
   return '<div class="business-locale-fields"><label class="field">Business country<select name="country" required'+disabled+'>'+Object.entries(countries).map(([code,c])=>'<option value="'+code+'"'+(code===v.country?' selected':'')+'>'+c.name+'</option>').join('')+'</select></label><div class="grid two"><label class="field">Business time zone<select name="timezone" required'+disabled+'>'+zoneOptions(v.country,v.timezone)+'</select></label><label class="field">Service currency<select name="currency" required'+disabled+'>'+currencies.map(code=>'<option value="'+code+'"'+(code===v.currency?' selected':'')+'>'+code+'</option>').join('')+'</select></label></div><p class="tiny">Opening hours and customer appointments use this time zone. Service prices use the selected currency. JovaBook subscriptions are billed in GBP.'+(locked?' Contact support to change country, time zone or currency once appointments exist.':' Changing currency does not convert service prices.')+'</p></div>';
  }
- const zoneOptions=(code,selected)=>zones[country(code)].map(zone=>'<option value="'+zone+'"'+(zone===selected?' selected':'')+'>'+esc(zone.replaceAll('_',' '))+'</option>').join('');
+ const zoneNames={
+  'Europe/London':'London (United Kingdom)',
+  'America/New_York':'New York (Eastern time)',
+  'America/Chicago':'Chicago (Central time)',
+  'America/Denver':'Denver (Mountain time)',
+  'America/Los_Angeles':'Los Angeles (Pacific time)',
+  'America/Phoenix':'Phoenix (Arizona)',
+  'America/Anchorage':'Anchorage (Alaska)',
+  'America/Adak':'Adak (Aleutian Islands)',
+  'Pacific/Honolulu':'Honolulu (Hawaii)',
+  'America/St_Johns':"St John's (Newfoundland)",
+  'America/Halifax':'Halifax (Atlantic time)',
+  'America/Toronto':'Toronto (Eastern time)',
+  'America/Winnipeg':'Winnipeg (Central time)',
+  'America/Regina':'Regina (Saskatchewan)',
+  'America/Edmonton':'Edmonton (Mountain time)',
+  'America/Vancouver':'Vancouver (Pacific time)',
+  'America/Whitehorse':'Whitehorse (Yukon)',
+  'Australia/Lord_Howe':'Lord Howe Island'
+ };
+ // Keep the saved IANA identifiers, including older aliases, as the option values.
+ const zoneName=zone=>zoneNames[zone]||zone.split('/').slice(1).reverse().map(part=>part.replaceAll('_',' ')).join(', ');
+ const zoneOptions=(code,selected)=>zones[country(code)].map(zone=>'<option value="'+zone+'"'+(zone===selected?' selected':'')+'>'+esc(zoneName(zone))+'</option>').join('');
  function read(data,salon){const current=resolve(salon);return validate({country:data.country??current.country,timezone:data.timezone??current.timezone,currency:data.currency??current.currency});}
- function countryChanged(select){if(select?.name!=='country'||!Object.hasOwn(countries,select.value)||!select.form)return false;const form=select.form,zone=form.elements.namedItem('timezone'),currency=form.elements.namedItem('currency'),defaults=countries[select.value];if(zone&&!zone.disabled)zone.innerHTML=zoneOptions(select.value,defaults.zone);if(currency&&!currency.disabled)currency.value=defaults.currency;return true;}
+ function countryChanged(select){if(select?.name!=='country'||!Object.hasOwn(countries,select.value)||!select.form)return false;const form=select.form,zone=form.elements.namedItem('timezone'),currency=form.elements.namedItem('currency'),defaults=countries[select.value];if(zone&&!zone.disabled){const selected=zones[select.value].includes(zone.value)?zone.value:defaults.zone;zone.innerHTML=zoneOptions(select.value,selected);}if(currency&&!currency.disabled)currency.value=defaults.currency;return true;}
  const api={countries,zones,currencies,validate,resolve,clock,instants,uniqueSlot,money,zoneLabel,fields,read,countryChanged};
  root.JovaBusinessLocale=api;if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -1,0 +1,34 @@
+/* The original select stays available to forms. This skin appears only after enhancement. */
+html[data-workspace-theme] .shell.jb-reference .jws-select,
+html[data-workspace-theme] #modal-root .jws-select{position:relative;display:block;min-width:0;width:100%;margin:0}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) .jws-select>select.jws-native{position:absolute!important;inset:0 auto auto 0!important;width:1px!important;min-width:0!important;max-width:1px!important;height:1px!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) .jws-select>.jws-trigger{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;width:100%!important;min-width:0!important;max-width:100%!important;min-height:46px!important;height:auto!important;box-sizing:border-box!important;padding:11px 14px!important;margin:0!important;border:1px solid var(--theme-control-line,#999)!important;border-radius:12px!important;background:var(--theme-panel,#fff)!important;box-shadow:none!important;color:var(--theme-heading,#202020)!important;font-family:inherit!important;font-size:14px!important;line-height:1.5!important;font-weight:450!important;text-align:left!important;letter-spacing:0!important;cursor:pointer}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) .jws-trigger:focus-visible{outline:2px solid var(--theme-primary,#242424)!important;outline-offset:3px!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) .jws-trigger[aria-expanded=true]{border-color:var(--theme-heading,#202020)!important;box-shadow:0 0 0 1px var(--theme-heading,#202020)!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) .jws-trigger:disabled{opacity:.55!important;cursor:not-allowed!important}
+html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) .jws-trigger[aria-invalid=true]{border-color:#A53A3A!important}
+.jws-select .jws-value{display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden}
+.jws-select .jws-value>.jws-option-text{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.jws-select .jws-chevron{display:block;flex:none;width:18px;height:18px;transition:transform .16s ease}
+.jws-select .jws-chevron>svg{display:block;width:18px;height:18px}
+.jws-select .jws-trigger[aria-expanded=true] .jws-chevron{transform:rotate(180deg)}
+.jws-flag{display:block;flex:none;width:26px;height:19px;overflow:hidden;border-radius:5px;box-shadow:0 0 0 1px #0000000A}
+.jws-flag>svg{display:block;width:100%;height:100%}
+html[data-workspace-theme] .jws-popover{position:fixed;inset:auto;margin:0!important;box-sizing:border-box;min-width:0;max-width:calc(100vw - 20px);padding:5px 0!important;border:1px solid var(--theme-line,#DEDEDE)!important;border-radius:14px!important;background:var(--theme-panel,#fff)!important;color:var(--theme-heading,#202020)!important;box-shadow:0 6px 14px #17171712,0 18px 40px #17171716!important;overflow:auto!important;overscroll-behavior:contain;scrollbar-width:thin;font-family:inherit;font-size:14px;line-height:1.45;isolation:isolate}
+.jws-popover:popover-open{display:block;animation:jws-enter .12s ease-out}
+.jws-popover .jws-option{display:flex;align-items:center;gap:12px;min-height:46px;box-sizing:border-box;padding:11px 15px;cursor:pointer;border-bottom:1px solid var(--theme-line,#eee);background:var(--theme-panel,#fff);color:var(--theme-heading,#202020);font-size:14px;line-height:1.5;user-select:none}
+.jws-popover .jws-option:last-child{border-bottom:0}
+.jws-popover .jws-option-text{min-width:0;flex:1;overflow-wrap:anywhere}
+.jws-popover .jws-option.is-active{background:var(--theme-inset,#F7F7F7)}
+.jws-popover .jws-option[aria-selected=true]{background:var(--theme-soft,#f3f3f3);font-weight:550}
+html[data-workspace-theme=classic] .jws-popover .jws-option[aria-selected=true]{background:color-mix(in srgb,#FFD700 26%,#fff);color:#202020}
+.jws-popover .jws-check{display:grid;place-items:center;flex:none;width:22px;height:22px;margin-left:auto;visibility:hidden;color:var(--theme-heading,#202020)}
+.jws-popover .jws-check>svg{display:block;width:22px;height:22px}
+.jws-popover .jws-option[aria-selected=true] .jws-check{visibility:visible}
+.jws-popover .jws-option[aria-disabled=true]{opacity:.45;cursor:not-allowed}
+.jws-popover .jws-group{padding:10px 15px 6px;font-size:11px;line-height:1.5;font-weight:650;color:var(--theme-muted,#666)}
+.jws-select .jws-error{display:block;margin-top:7px;color:#A53A3A;font-size:12px;line-height:1.4}
+.jws-select .jws-error[hidden]{display:none}
+@keyframes jws-enter{from{opacity:0;translate:0 -3px}to{opacity:1;translate:0}}
+@media(max-width:767px){html[data-workspace-theme] :is(.shell.jb-reference,#modal-root) .jws-select>.jws-trigger{font-size:16px!important}.jws-popover .jws-option{font-size:15px;min-height:48px}}
+@media(prefers-reduced-motion:reduce){.jws-select .jws-chevron{transition:none!important}.jws-popover:popover-open{animation:none!important}}

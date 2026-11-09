@@ -331,7 +331,7 @@ html[data-workspace-theme] .shell.jb-reference .rf-colour-swatches>button{displa
 
 /* Mobile authentication uses a straight header edge and space below the form. */
 /* The landing-page styles share the existing owner controls, routes and sidebar. */
-html[data-workspace-theme=liquid-glass] body{background:radial-gradient(ellipse at 5% 5%,#c7edf2 0,transparent 45%),radial-gradient(ellipse at 95% 95%,#c2cdec 0,transparent 45%),#e1eafa;background-attachment:fixed}
+html[data-workspace-theme=liquid-glass] body{background:radial-gradient(ellipse at 5% 5%,#e5ebf2 0,transparent 45%),radial-gradient(ellipse at 95% 95%,#dbe0e8 0,transparent 45%),#e9edf2;background-attachment:fixed}
 html[data-workspace-theme=liquid-glass] .shell :is(.workspace,.workspace-main,.workspace-header){background:transparent!important}
 html[data-workspace-theme=liquid-glass] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){box-shadow:inset 0 1px 0 #fff,0 8px 22px -18px #45679455;border-color:#ffffffd9!important}
 html[data-workspace-theme=liquid-glass] .shell .sidebar{border:1px solid #ffffffdc;box-shadow:inset 0 1px 1px #fff,0 12px 24px -20px #345f9b66;backdrop-filter:blur(16px)}
@@ -355,11 +355,11 @@ html[data-workspace-theme] .shell.jb-reference .rf-share-card :is(h2,p,.rf-copy-
 html[data-workspace-theme] .shell.jb-reference .rf-copy-link{background:transparent!important;border-color:color-mix(in srgb,var(--theme-rail-text) 30%,transparent)!important}
 html:is([data-workspace-theme=liquid-glass],[data-workspace-theme=editorial],[data-workspace-theme=porcelain]) .shell .sidebar :is(.jb-nav-section>a:hover,.jb-more-settings>summary:hover,.jb-more-settings[open]>summary,.jb-more-settings.is-current>summary){color:var(--theme-heading)!important}
 html:is([data-workspace-theme=liquid-glass],[data-workspace-theme=editorial],[data-workspace-theme=porcelain]) .shell .sidebar :is(a,summary):focus-visible{outline-color:var(--theme-focus)!important}
-.wt-choice:has(input[value=liquid-glass]) .wt-preview{background:linear-gradient(135deg,#c7edf2,#d7dff5);box-shadow:inset 0 1px #fff}
+.wt-choice:has(input[value=liquid-glass]) .wt-preview{background:linear-gradient(135deg,#e5ebf2,#eef1f5);box-shadow:inset 0 1px #fff}
 .wt-choice:has(input[value=liquid-glass]) .wt-preview :is(.wt-preview-rail,.wt-preview-stats i,.wt-preview-table){box-shadow:inset 0 1px #fff;border:1px solid #ffffffb8}
 .wt-choice:has(input[value=editorial]) .wt-preview :is(.wt-preview-rail,.wt-preview-table,.wt-preview-stats i){border-radius:1px}
 .wt-choice:has(input[value=porcelain]) .wt-preview :is(.wt-preview-table,.wt-preview-stats i){box-shadow:3px 3px 6px #cfcfdd,-3px -3px 6px #fff}
-.wt-choice:has(input[value=graphite]) .wt-preview-rail i:first-child{background:#d6b366}
+.wt-choice:has(input[value=graphite]) .wt-preview-rail i:first-child{background:var(--preview-primary)}
 @media(prefers-reduced-transparency:reduce){
  html[data-workspace-theme=liquid-glass] .shell .sidebar{backdrop-filter:none;background:#e9f1f9!important}
  html[data-workspace-theme=liquid-glass] .shell :is(.ws-panel,.db-metric,.ot-metric,.db-appointments,.db-diary,.sm-sidebar,.sm-groups,.mg-surface,.ot-panel,.ot-chart){background:#f8fbff!important}

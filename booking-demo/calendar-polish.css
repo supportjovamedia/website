@@ -1,0 +1,138 @@
+/* Calendar view controls and appointments, scoped to the business workspace. */
+.shell.jb-reference .db-calendar-page{width:100%;min-width:0}
+.shell.jb-reference .db-calendar-page .db-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.shell.jb-reference .db-calendar-page .db-heading>div:first-child{min-width:0}
+.shell.jb-reference .db-calendar-page .db-heading h1{margin:0;font-size:clamp(28px,3vw,36px);line-height:1.2}
+.shell.jb-reference .db-calendar-page .db-heading p{display:block!important;font-size:14px;margin:8px 0 0;line-height:1.45;color:var(--theme-muted)}
+.shell.jb-reference .jg-calendar-actions{display:flex;align-items:center;gap:8px;flex:none;margin:0}
+html[data-workspace-theme] .shell.jb-reference .jg-calendar-actions>.primary{display:flex!important;align-items:center;justify-content:center;gap:8px;width:auto!important;min-height:44px;padding:11px 18px!important;border-radius:24px!important;font-size:13px!important;margin:0!important}
+.shell.jb-reference .jg-calendar-actions>.primary svg{display:block;width:18px;height:18px;stroke:currentColor;stroke-width:1.8;fill:none;flex:none}
+.shell.jb-reference .jg-calendar-more{position:relative;flex:none;min-width:0}
+.shell.jb-reference .jg-calendar-more>summary{width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;color:var(--theme-heading);cursor:pointer;list-style:none;padding:0}
+.shell.jb-reference .jg-calendar-more>summary::-webkit-details-marker{display:none}
+.shell.jb-reference .jg-calendar-more>summary svg{display:block!important;width:20px!important;height:20px!important;min-width:20px;max-width:20px;flex:none;fill:currentColor!important;stroke:none!important;color:var(--theme-heading)!important;opacity:1!important;visibility:visible!important}
+.shell.jb-reference .jg-calendar-more>summary svg circle{fill:currentColor!important;stroke:none!important;opacity:1!important}
+html[data-workspace-theme=classic] .shell.jb-reference .jg-calendar-more>summary svg{color:#171717!important}
+.shell.jb-reference .jg-calendar-more>summary:hover{background:var(--theme-inset)}
+.shell.jb-reference .jg-calendar-more-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:30;min-width:190px;max-width:min(280px,80vw);padding:6px;background:var(--theme-panel);color:var(--theme-heading);border:1px solid var(--theme-line);border-radius:12px;box-shadow:0 8px 28px #17171714}
+.shell.jb-reference .jg-calendar-more-menu>button{display:block;width:100%;padding:12px 14px!important;min-height:44px;border:0!important;box-shadow:none!important;background:transparent!important;color:var(--theme-heading)!important;text-align:left;font-size:13px;border-radius:8px!important;line-height:1.4;white-space:normal}
+.shell.jb-reference .jg-calendar-more-menu>button:hover{background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .st-calendar-toolbar{display:grid!important;grid-template-columns:minmax(240px,1fr) minmax(290px,1fr);align-items:center;gap:16px;padding:20px!important;min-width:0;border-radius:14px 14px 0 0!important;background:var(--theme-panel)!important}
+.shell.jb-reference .db-calendar-page .st-calendar-date{display:contents!important}
+.shell.jb-reference .db-calendar-page .db-period-controls{display:block!important;grid-column:1;grid-row:1;width:100%;min-width:0;margin:0!important;order:0}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .db-toolbar .seg{display:flex!important;align-items:stretch;gap:0;padding:0!important;background:var(--theme-panel)!important;border:1px solid var(--theme-line)!important;border-radius:12px!important;box-shadow:none!important;width:100%;min-width:0;overflow:hidden}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .db-toolbar .seg button{display:block;flex:1;min-width:0;min-height:44px;height:44px;font-size:14px!important;padding:10px 12px!important;border:0!important;border-right:1px solid var(--theme-line)!important;border-radius:0!important;background:transparent!important;color:var(--theme-body)!important;box-shadow:none!important;font-weight:550;margin:0!important}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .db-toolbar .seg button:last-child{border-right:0!important}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .db-toolbar .seg button.active{background:var(--theme-primary)!important;color:var(--theme-on-primary)!important;font-weight:700}
+html[data-workspace-theme=classic] .shell.jb-reference .db-calendar-page .db-toolbar .seg button.active{background:#FFD700!important;color:#171717!important}
+.shell.jb-reference .db-calendar-page .jg-calendar-nav{display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px;grid-column:2;grid-row:1;align-items:center;gap:10px;width:100%;min-width:0;margin:0!important;order:0}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .jg-calendar-date-arrow{display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0!important;margin:0!important;border:1px solid var(--theme-line)!important;border-radius:12px!important;box-shadow:none!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important}
+.shell.jb-reference .db-calendar-page .jg-calendar-date-arrow svg{display:block;width:20px;height:20px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.shell.jb-reference .db-calendar-page .jg-calendar-date-picker{position:relative;display:flex!important;align-items:center;justify-content:center;gap:9px;min-width:0;height:44px;min-height:44px;box-sizing:border-box;border:1px solid var(--theme-line);border-radius:12px;margin:0!important;padding:8px 10px;background:var(--theme-panel);color:var(--theme-heading);cursor:pointer;flex:none}
+.shell.jb-reference .db-calendar-page .jg-calendar-date-picker>svg{display:block;width:19px;height:19px;stroke:currentColor;stroke-width:1.7;fill:none;flex:none}
+.shell.jb-reference .db-calendar-page .jg-calendar-date-label{font-size:14px;line-height:1.3;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.shell.jb-reference .db-calendar-page .jg-calendar-date-picker>.jg-date-chevron{width:15px;height:15px}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .jg-calendar-date-picker input[type=date]{position:absolute!important;inset:0;display:block;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;opacity:0;cursor:pointer;font-size:16px!important;box-sizing:border-box;border:0!important}
+.shell.jb-reference .db-calendar-page .jg-calendar-date-picker input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;cursor:pointer}
+.shell.jb-reference .db-calendar-page .jg-calendar-date-picker:focus-within{outline:2px solid var(--theme-heading);outline-offset:3px}
+.shell.jb-reference .db-calendar-page :is(.st-calendar-filter,.jg-calendar-access,.jb-calendar-owner){grid-column:1/-1;grid-row:2;margin:0!important;min-width:0;max-width:none!important;width:100%;align-self:stretch}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page :is(.st-calendar-filter,.jg-calendar-access)>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%!important;min-height:44px;padding:11px 14px!important;border:1px solid var(--theme-line)!important;border-radius:12px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;font-size:14px!important;font-weight:550;line-height:1.4;white-space:normal;box-sizing:border-box;list-style:none;margin:0!important}
+.shell.jb-reference .db-calendar-page :is(.st-calendar-filter,.jg-calendar-access)>summary::-webkit-details-marker{display:none}
+.shell.jb-reference .db-calendar-page .st-calendar-filter>summary:after{content:'';width:7px;height:7px;flex:none;margin-right:3px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+.shell.jb-reference .db-calendar-page .st-calendar-filter[open]>summary:after{transform:rotate(225deg)}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .st-calendar-filter>div{position:static!important;width:100%!important;max-width:none!important;box-sizing:border-box;margin-top:10px;padding:16px!important;border:1px solid var(--theme-line);border-radius:12px;background:var(--theme-panel)!important;box-shadow:none!important}
+.shell.jb-reference .db-calendar-page .st-calendar-filter :is(h2,legend){display:none!important}
+.shell.jb-reference .db-calendar-page .st-calendar-filter .jb-calendar-staff{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0!important;margin:0!important;min-width:0;border:0}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .st-calendar-filter .jb-staff-filter{display:flex!important;align-items:center;gap:10px!important;min-width:0;width:100%;height:44px;min-height:44px;padding:10px 0!important;margin:0!important;font-size:14px!important;line-height:1.4;box-sizing:border-box;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .st-calendar-filter .jb-staff-filter input{width:18px!important;height:18px!important;min-height:18px!important;flex:0 0 18px;margin:0!important;padding:0!important}
+.shell.jb-reference .db-calendar-page .st-calendar-filter .jb-staff-filter i{width:8px;height:8px;flex:0 0 8px;margin:0;border-radius:50%}
+.shell.jb-reference .db-calendar-page .db-calendar-footer{padding:14px 20px!important;line-height:1.5;font-size:12px}
+.shell.jb-reference .db-calendar-page .calendar-scroll{max-width:100%;overflow:auto;overscroll-behavior-inline:contain}
+.shell.jb-reference .db-calendar-page .jg-calendar-desktop-day .calendar-scroll{height:min(68dvh,740px);min-height:280px;overscroll-behavior:contain;scroll-behavior:auto}
+.shell.jb-reference .db-calendar-page .jg-calendar-desktop-day .dg-head{position:sticky;top:0;z-index:4;background:var(--theme-panel,#fff)}
+.shell.jb-reference .db-calendar-page .daygrid{--gutter:62px;min-width:calc(var(--gutter) + var(--cols)*156px)}
+.shell.jb-reference .db-calendar-page .dg-staff{gap:10px;min-width:0;padding:12px}
+.shell.jb-reference .db-calendar-page .dg-staff strong{font-size:13px;line-height:1.4}
+.shell.jb-reference .db-calendar-page .dg-staff small{font-size:11px;line-height:1.4}
+.shell.jb-reference .db-calendar-page .dg-times>span{font-size:12px;color:var(--theme-muted)}
+.shell.jb-reference .db-calendar-page .dg-times>.jg-day-end{transform:translateY(-100%)}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .jg-calendar-desktop-day .jb-calendar-slot.is-closed{background:color-mix(in srgb,var(--theme-inset,#f7f7f7) 80%,var(--theme-muted,#666) 20%)!important;opacity:1!important;cursor:not-allowed}
+html[data-workspace-theme=classic] .shell.jb-reference .db-calendar-page .jg-calendar-desktop-day .jb-calendar-slot.is-closed{background:#ededed!important}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .db-diary .dg-event{border-radius:9px!important;border-left-width:4px!important;padding:6px 8px!important;box-shadow:none!important;line-height:1.2;text-align:left;overflow:hidden}
+.shell.jb-reference .db-calendar-page .db-diary .dg-event strong{font-size:13px;font-weight:650;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shell.jb-reference .db-calendar-page .db-diary .dg-event small{font-size:11px;line-height:1.3;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shell.jb-reference .db-calendar-page .db-diary .dg-event.compact{padding:3px 8px!important}
+.shell.jb-reference .db-calendar-page .db-diary .dg-event.compact strong{font-size:12px;line-height:1.15}
+.shell.jb-reference .db-calendar-page .db-diary .dg-event.compact small{font-size:10px;line-height:1.15;margin-top:2px}
+.shell.jb-reference .db-calendar-page .db-diary .dg-event.compact small:last-child{display:none}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .mday .mnum{display:flex!important;align-items:center!important;justify-content:center!important;align-self:center!important;width:100%!important;height:22px!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:inherit!important;line-height:1!important;text-align:center!important;box-sizing:border-box}
+@container workspace (max-width:900px){
+ html[data-workspace-theme] .shell.jb-reference .db-calendar-page .st-calendar-toolbar{grid-template-columns:minmax(0,1fr)!important;padding:16px!important;gap:12px}
+ .shell.jb-reference .db-calendar-page .db-period-controls{grid-column:1;grid-row:1}
+ .shell.jb-reference .db-calendar-page .jg-calendar-nav{grid-column:1;grid-row:2}
+ .shell.jb-reference .db-calendar-page :is(.st-calendar-filter,.jg-calendar-access,.jb-calendar-owner){grid-column:1;grid-row:3}
+ .shell.jb-reference .db-calendar-page .db-heading{gap:12px;margin-bottom:20px}
+ .shell.jb-reference .db-calendar-page .db-heading p{display:none!important}
+ .shell.jb-reference .db-calendar-page .jg-calendar-actions{margin-left:auto}
+}
+@container workspace (max-width:420px){
+ html[data-workspace-theme] .shell.jb-reference .db-calendar-page .st-calendar-toolbar{padding:12px!important}
+ .shell.jb-reference .db-calendar-page .jg-calendar-nav{grid-template-columns:40px minmax(0,1fr) 40px;gap:8px}
+ html[data-workspace-theme] .shell.jb-reference .db-calendar-page .jg-calendar-date-arrow{width:40px}
+ .shell.jb-reference .db-calendar-page .jg-calendar-date-picker{gap:6px;padding:8px}
+ .shell.jb-reference .db-calendar-page .jg-calendar-date-label{font-size:12px}
+ .shell.jb-reference .db-calendar-page .jg-calendar-date-picker>svg{width:16px;height:16px}
+ .shell.jb-reference .db-calendar-page .jg-calendar-date-picker>.jg-date-chevron{width:12px;height:12px}
+ html[data-workspace-theme] .shell.jb-reference .jg-calendar-actions>.primary{padding:10px 13px!important;font-size:12px!important;gap:5px}
+ .shell.jb-reference .jg-calendar-more>summary{width:32px}
+}
+.shell.jb-reference :is(.jg-calendar-mobile-day,.jg-calendar-mobile-week,.jg-calendar-month-agenda){display:none}
+@media(max-width:1024px){
+ .shell.jb-reference :is(.jg-calendar-desktop-day,.jg-calendar-desktop-week){display:none!important}
+ .shell.jb-reference .jg-calendar-mobile-week{display:grid;gap:8px;padding:16px}
+ html[data-workspace-theme] .shell.jb-reference .jg-calendar-week-row{display:grid!important;grid-template-columns:68px minmax(0,1fr) 18px;align-items:center;gap:12px;width:100%;min-width:0;min-height:68px;padding:0 12px 0 0!important;margin:0!important;border:1px solid var(--theme-line)!important;border-radius:12px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;text-align:left;box-shadow:none!important;overflow:hidden}
+ .shell.jb-reference .jg-calendar-week-date{display:grid;align-content:center;gap:3px;min-height:68px;padding:10px 12px;border-right:1px solid var(--theme-line);box-sizing:border-box}
+ .shell.jb-reference .jg-calendar-week-date strong{font-size:14px;line-height:1.3;font-weight:650}
+ .shell.jb-reference .jg-calendar-week-date>span{font-size:12px;line-height:1.3;white-space:nowrap}
+ .shell.jb-reference .jg-calendar-week-summary{display:grid;gap:5px;min-width:0}
+ .shell.jb-reference .jg-calendar-week-summary strong{font-size:13px;line-height:1.3;font-weight:600}
+ .shell.jb-reference .jg-calendar-week-summary small{font-size:11px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--theme-muted)}
+ .shell.jb-reference .jg-calendar-week-row>svg{width:18px;height:18px;stroke:currentColor;fill:none}
+ html[data-workspace-theme=classic] .shell.jb-reference .jg-calendar-week-row.is-today{background:#fff9d6!important}
+ html[data-workspace-theme=classic] .shell.jb-reference .jg-calendar-week-row.is-today .jg-calendar-week-date{background:#FFD700;color:#171717}
+ .shell.jb-reference .jg-calendar-mobile-day{display:grid;grid-template-columns:48px minmax(0,1fr);position:relative;height:min(58dvh,620px);min-height:260px;margin:0 12px 16px;border:1px solid var(--theme-line);border-radius:12px;overflow:auto;overscroll-behavior:contain;scroll-behavior:auto}
+ .shell.jb-reference .jg-calendar-day-times{position:relative;min-width:0;border-right:1px solid var(--theme-line);background:var(--theme-panel)}
+ .shell.jb-reference .jg-calendar-day-times>span{position:absolute;left:0;right:0;padding-top:7px;text-align:center;font-size:11px;line-height:1.3;color:var(--theme-body)}
+ .shell.jb-reference .jg-calendar-day-times>.jg-day-end{padding-top:0;transform:translateY(-100%)}
+ .shell.jb-reference .jg-calendar-day-track{position:relative;min-width:0;background:repeating-linear-gradient(to bottom,var(--theme-panel) 0,var(--theme-panel) 77px,var(--theme-line) 77px,var(--theme-line) 78px)}
+ html[data-workspace-theme] .shell.jb-reference .jg-calendar-mobile-slot{position:absolute;left:0;right:0;width:100%;height:39px;min-height:0;padding:0!important;margin:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-calendar-mobile-slot.is-closed{background:color-mix(in srgb,var(--theme-inset,#f7f7f7) 80%,var(--theme-muted,#666) 20%)!important;opacity:1!important;cursor:not-allowed}
+ html[data-workspace-theme=classic] .shell.jb-reference .jg-calendar-mobile-slot.is-closed{background:#ededed!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-calendar-mobile-event{position:absolute;z-index:2;display:flex!important;align-items:center;justify-content:space-between;gap:5px;min-width:0;min-height:0;padding:4px 7px!important;margin:0!important;background:var(--event-fill,var(--theme-soft))!important;color:var(--event-ink,var(--theme-heading))!important;border:0!important;border-left:4px solid var(--event-edge,var(--ev))!important;border-radius:8px!important;box-shadow:none!important;text-align:left;overflow:hidden;box-sizing:border-box}
+ .shell.jb-reference .jg-calendar-mobile-event>span{display:grid;gap:2px;min-width:0}
+ .shell.jb-reference .jg-calendar-mobile-event strong{font-size:12px;font-weight:650;line-height:1.15;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+ .shell.jb-reference .jg-calendar-mobile-event small{font-size:10px;line-height:1.15;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+ .shell.jb-reference .jg-calendar-mobile-event>svg{display:block;width:15px;height:15px;flex:none;fill:none;stroke:currentColor}
+ .shell.jb-reference .db-calendar-page .month-head{padding:0 12px;grid-template-columns:repeat(7,minmax(0,1fr));min-width:0}
+ .shell.jb-reference .db-calendar-page .month{grid-template-columns:repeat(7,minmax(0,1fr));min-width:0;gap:0;margin:0 12px;border:1px solid var(--theme-line);border-radius:12px;overflow:hidden}
+ html[data-workspace-theme] .shell.jb-reference .db-calendar-page .mday{min-width:0;min-height:52px;height:52px;padding:6px 2px!important;margin:0!important;border:0!important;border-right:1px solid var(--theme-line)!important;border-bottom:1px solid var(--theme-line)!important;border-radius:0!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;display:block!important;text-align:center!important;box-shadow:none!important;overflow:hidden}
+ .shell.jb-reference .db-calendar-page .mday .mnum{font-size:12px}
+ .shell.jb-reference .db-calendar-page .mday .mchip{display:inline-block!important;width:4px;height:4px;border:0!important;border-radius:50%!important;font-size:0;line-height:0;padding:0!important;margin:0 1px!important;background:var(--event-edge,var(--ev))!important;vertical-align:top;overflow:hidden}
+ .shell.jb-reference .db-calendar-page .mday .mcount,.shell.jb-reference .db-calendar-page .mday .mmore{display:none!important}
+ html[data-workspace-theme] .shell.jb-reference .db-calendar-page .mday.out{color:var(--theme-muted)!important;opacity:.55}
+ html[data-workspace-theme=classic] .shell.jb-reference .db-calendar-page .mday.is-selected{background:#FFD700!important;color:#171717!important}
+ .shell.jb-reference .jg-calendar-month-agenda{display:block;margin:16px 12px;padding:14px;border:1px solid var(--theme-line);border-radius:12px;background:var(--theme-panel)}
+ .shell.jb-reference .jg-calendar-month-agenda h2{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px!important;font-size:12px!important;line-height:1.4;font-weight:650}
+ .shell.jb-reference .jg-calendar-month-agenda h2>span:last-child{font-size:11px;white-space:nowrap}
+ .shell.jb-reference .jg-calendar-month-agenda>p{font-size:12px;line-height:1.5;color:var(--theme-muted);margin:0!important}
+ html[data-workspace-theme] .shell.jb-reference .jg-calendar-agenda-event{display:flex!important;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;min-height:48px;padding:8px 10px!important;margin:8px 0 0!important;background:var(--event-fill,var(--theme-soft))!important;color:var(--event-ink,var(--theme-heading))!important;border:0!important;border-left:4px solid var(--event-edge,var(--ev))!important;border-radius:8px!important;text-align:left;box-shadow:none!important}
+ .shell.jb-reference .jg-calendar-agenda-event>span{display:grid;gap:3px;min-width:0}
+ .shell.jb-reference .jg-calendar-agenda-event strong{font-size:12px;line-height:1.3;font-weight:650}
+ .shell.jb-reference .jg-calendar-agenda-event small{font-size:10px;line-height:1.3}
+ .shell.jb-reference .jg-calendar-agenda-event>svg{display:block;width:16px;height:16px;flex:none;fill:none;stroke:currentColor}
+}
+
+/* Closed hours stay visible as a continuous hatched time range. */
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .jg-calendar-desktop-day .jb-calendar-slot.is-closed,
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .jb-week-day .jb-calendar-slot.is-closed,
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .jg-calendar-mobile-slot.is-closed{background:repeating-linear-gradient(135deg,transparent 0 5px,color-mix(in srgb,var(--theme-muted,#666) 16%,transparent) 5px 6px),var(--theme-panel,#fff)!important;border-radius:0!important;opacity:1!important;cursor:not-allowed}

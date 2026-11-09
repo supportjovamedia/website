@@ -1,0 +1,87 @@
+/* Services: compact controls and records, with editing kept in the side drawer. */
+.shell.jb-reference .sm-page .sm-heading{align-items:center!important;gap:16px!important;margin-bottom:24px!important}
+.shell.jb-reference .sm-page .sm-heading h1{display:flex;align-items:center;gap:10px}
+.shell.jb-reference .sm-page .sm-total{font-size:13px;font-weight:550;min-width:27px;height:27px;display:inline-grid;place-items:center;border-radius:50%;background:var(--theme-inset);color:var(--theme-muted);padding:0 7px}
+.shell.jb-reference .sm-page .sm-heading>.primary{width:auto!important;min-height:44px;padding:11px 19px!important;border-radius:24px!important;margin:0!important;font-size:13px!important}
+.shell.jb-reference .sm-page .jg-service-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;width:100%;min-width:0;margin-bottom:4px}
+.shell.jb-reference .sm-page .jg-service-search{position:relative;display:flex;align-items:center;margin:0;min-width:0;width:100%;color:var(--theme-muted)}
+.shell.jb-reference .sm-page .jg-service-search>svg{position:absolute;left:15px;top:50%;width:18px;height:18px;transform:translateY(-50%);pointer-events:none;z-index:1}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-search>input{display:block;width:100%!important;min-width:0;height:46px!important;min-height:46px!important;padding:11px 16px 11px 44px!important;margin:0!important;border:1px solid var(--theme-control-line)!important;border-radius:12px!important;box-shadow:none!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;font-size:14px!important;font-family:inherit;line-height:1.4}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-search>input::placeholder{color:var(--theme-muted);opacity:1}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-filter{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;width:auto!important;min-width:0}
+.shell.jb-reference .sm-page .jg-category-select{display:block;flex:0 1 260px;min-width:0;margin:0}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-category-select select{width:100%!important;height:46px!important;min-height:46px!important;min-width:0;padding:11px 38px 11px 14px!important;font-size:14px!important;border-radius:12px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;border:1px solid var(--theme-control-line)!important;line-height:1.4}
+.shell.jb-reference .sm-page .jg-service-filter>button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px!important;padding:11px 16px!important;border:1px solid var(--theme-line)!important;border-radius:24px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;font-size:13px!important;line-height:1.4;flex:none;box-shadow:none!important}
+.shell.jb-reference .sm-page .jg-service-filter>button>span{font-size:19px;line-height:1;font-weight:400}
+.shell.jb-reference .sm-page .sm-groups{gap:24px!important}
+html[data-workspace-theme] .shell.jb-reference .sm-page .sm-group{padding:16px!important;box-sizing:border-box;overflow:visible!important}
+.shell.jb-reference .sm-page .sm-group-heading{display:flex!important;align-items:center!important;justify-content:space-between;padding:0 0 12px!important;margin:0!important;gap:12px!important}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-group-toggle{display:flex;align-items:center;justify-content:flex-start;gap:10px;min-width:0;max-width:calc(100% - 48px);min-height:40px;margin:0;padding:4px 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--theme-heading)!important;box-shadow:none!important;font-size:17px!important;font-weight:650;text-align:left;line-height:1.4}
+.shell.jb-reference .sm-page .jg-service-group-toggle>svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.7;fill:none;flex:none;transform:none;transition:transform .15s ease}
+.shell.jb-reference .sm-page .jg-service-group-toggle[aria-expanded=false]>svg{transform:rotate(-90deg)}
+.shell.jb-reference .sm-page .jg-service-group-toggle>span{min-width:0;overflow-wrap:anywhere}
+.shell.jb-reference .sm-page .jg-service-group-toggle>small{display:inline-grid;place-items:center;min-width:23px;height:23px;padding:0 5px;flex:none;border-radius:50%;background:var(--theme-inset);color:var(--theme-muted);font-size:11px;font-weight:500}
+.shell.jb-reference .sm-page .jg-category-actions{margin-left:auto}
+.shell.jb-reference .sm-page .jg-category-actions>summary{width:36px;height:36px;min-height:36px;border:0!important;background:transparent!important}
+.shell.jb-reference .sm-page .jg-category-actions>summary:hover{background:var(--theme-inset)!important}
+.shell.jb-reference .sm-page .jg-service-list{grid-template-columns:repeat(auto-fill,minmax(min(100%,310px),1fr));gap:14px!important;margin:0!important;padding:0!important;list-style:none}
+.shell.jb-reference .sm-page :is(.jg-service-list,.sm-empty)[hidden]{display:none!important}
+.shell.jb-reference .sm-page .jg-service-record{border:1px solid var(--theme-line)!important;border-radius:14px!important;background:var(--theme-panel)!important;box-shadow:0 3px 14px #17171705;min-width:0;position:relative}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-open{display:flex!important;align-items:flex-start!important;gap:14px!important;padding:20px 52px 10px 20px!important;min-width:0;width:100%;border:0!important;border-radius:14px!important;background:transparent!important;color:var(--theme-heading)!important;text-align:left;box-shadow:none!important}
+.shell.jb-reference .sm-page .jg-service-open>.jg-service-symbol{display:grid!important;place-items:center;flex:none;width:40px;height:40px;border-radius:11px;background:var(--theme-panel);color:var(--theme-body)!important;border:1px solid var(--theme-line);margin:0!important;padding:0!important}
+.shell.jb-reference .sm-page .jg-service-symbol>svg{display:block;width:22px;height:22px}
+.shell.jb-reference .sm-page .jg-service-open>.jg-service-copy{display:block!important;min-width:0;flex:1;margin:0!important;padding:0!important}
+.shell.jb-reference .sm-page .jg-service-copy>strong{font-size:15px!important;font-weight:650!important;line-height:1.45!important;letter-spacing:-.01em;overflow-wrap:anywhere;margin:0;color:var(--theme-heading)!important}
+.shell.jb-reference .sm-page .jg-service-copy>.jg-service-meta{display:block;margin:7px 0 0!important;padding:0;font-size:13px!important;line-height:1.5!important;font-weight:450;color:var(--theme-muted)!important;white-space:normal}
+.shell.jb-reference .sm-page .jg-service-meta>span{padding-inline:3px}
+.shell.jb-reference .sm-page .jg-service-record>.sm-status{display:inline-flex;align-items:center;margin:0 18px 18px 74px!important;padding:3px 0!important;min-height:0!important;gap:6px;width:auto!important;background:transparent!important;border-radius:0!important;color:var(--theme-muted)!important;font-size:11px!important;font-weight:500;line-height:1.4}
+.shell.jb-reference .sm-page .sm-status.is-bookable>i{background:#45826b}
+.shell.jb-reference .sm-page .sm-status.needs-staff>i{background:#a37c32}
+.shell.jb-reference .sm-page .jg-record-actions{top:12px;right:9px}
+.shell.jb-reference .sm-page .jg-record-actions>summary{width:34px;height:34px;min-height:34px;border-radius:50%;background:transparent!important;color:var(--theme-heading)!important}
+.shell.jb-reference .sm-page .jg-record-actions>summary:hover{background:var(--theme-inset)!important}
+html[data-workspace-theme] .shell.jb-reference .sm-page .sm-empty{padding:24px!important;border:1px solid var(--theme-line)!important;border-radius:14px!important;background:var(--theme-panel)!important;text-align:left;min-height:0!important;box-shadow:0 3px 14px #17171704!important}
+.shell.jb-reference .sm-page .sm-empty h2,.shell.jb-reference .sm-page .sm-empty h3{font-size:17px!important;font-weight:600;line-height:1.4;margin:0!important}
+.shell.jb-reference .sm-page .sm-empty p{font-size:13px!important;line-height:1.6;max-width:55ch;margin:10px 0 0!important;color:var(--theme-muted)}
+@container workspace (max-width:860px){
+ .shell.jb-reference .sm-page .jg-service-controls{grid-template-columns:minmax(0,1fr);gap:12px}
+ html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-filter{justify-content:space-between}
+ .shell.jb-reference .sm-page .jg-category-select{flex:1;max-width:340px}
+}
+@container workspace (max-width:480px){
+ .shell.jb-reference .sm-page .sm-heading{gap:12px!important;margin-bottom:22px!important}
+ .shell.jb-reference .sm-page .sm-heading>.primary{font-size:12px!important;padding-inline:16px!important}
+ html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-search>input,
+ html[data-workspace-theme] .shell.jb-reference .sm-page .jg-category-select select{font-size:16px!important}
+ .shell.jb-reference .sm-page .jg-service-filter>button{padding-inline:14px!important;font-size:12px!important}
+ .shell.jb-reference .sm-page .jg-service-group-toggle{font-size:16px!important}
+ .shell.jb-reference .sm-page .jg-service-list{grid-template-columns:minmax(0,1fr);gap:12px!important}
+ html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-open{padding:18px 48px 9px 16px!important;gap:12px!important}
+ .shell.jb-reference .sm-page .jg-service-open>.jg-service-symbol{width:38px;height:38px}
+ .shell.jb-reference .sm-page .jg-service-record>.sm-status{margin-left:66px!important;margin-bottom:16px!important}
+}
+@media(prefers-reduced-motion:reduce){.shell.jb-reference .sm-page .jg-service-group-toggle>svg{transition:none}}
+
+/* Keep counts and availability distinct when shared button styles are applied. */
+html[data-workspace-theme] .shell.jb-reference .sm-page h1 .sm-total{display:inline-grid!important;place-items:center!important;flex:none;min-width:26px!important;height:26px!important;margin:0!important;padding:0 8px!important;border-radius:16px!important;background:var(--theme-inset)!important;color:var(--theme-muted)!important;font-size:12px!important;line-height:1!important}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-record>.sm-status{width:max-content!important;max-width:calc(100% - 94px);padding:5px 9px!important;border-radius:18px!important;background:var(--theme-inset)!important;color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-record>.sm-status.is-bookable{background:#EAF5EE!important;color:#286247!important}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-record>.sm-status.needs-staff{background:#FFF5DE!important;color:#805D1B!important}
+
+/* Quiet accents and the same inset record treatment across all list screens. */
+.shell.jb-reference .sm-page{--list-soft:var(--theme-soft);--list-ink:var(--theme-heading)}
+html[data-workspace-theme=classic] .shell.jb-reference .sm-page{--list-soft:#FFD700;--list-ink:#242424}
+html[data-workspace-theme] .shell.jb-reference .sm-page h1 .sm-total,
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-group-toggle>small{background:var(--list-soft)!important;color:var(--list-ink)!important;border:0!important;border-radius:50%!important;font-weight:600!important}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-group-toggle{flex:1;width:auto;max-width:none}
+.shell.jb-reference .sm-page .jg-service-group-toggle>span{order:1}
+.shell.jb-reference .sm-page .jg-service-group-toggle>small{order:2;margin-right:8px}
+.shell.jb-reference .sm-page .jg-service-group-toggle>svg{order:3;margin-left:auto;transform:rotate(180deg)}
+.shell.jb-reference .sm-page .jg-service-group-toggle[aria-expanded=false]>svg{transform:none}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-service-open>.jg-service-symbol{background:var(--list-soft)!important;color:var(--list-ink)!important;border-color:transparent!important}
+.shell.jb-reference .sm-page .jg-service-copy>strong{display:block}
+.shell.jb-reference .sm-page .jg-service-copy>.jg-service-meta{display:flex!important;align-items:center;flex-wrap:wrap;gap:8px 0;margin-top:8px!important}
+.shell.jb-reference .sm-page .jg-service-meta>span{display:inline-flex;align-items:center;gap:6px;padding:0!important;white-space:nowrap}
+.shell.jb-reference .sm-page .jg-service-meta>span>svg{width:15px;height:15px;flex:none}
+.shell.jb-reference .sm-page .jg-service-meta>.jg-service-price{margin-left:10px;padding-left:10px!important;border-left:1px solid var(--theme-line);color:var(--theme-heading);font-weight:550}
+html[data-workspace-theme] .shell.jb-reference .sm-page .jg-record-actions>summary{display:grid!important;place-items:center!important;padding:0!important;background:var(--theme-inset)!important;border-radius:50%!important}

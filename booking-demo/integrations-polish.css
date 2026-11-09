@@ -1,0 +1,111 @@
+/* Provider identity and connection readiness remain separate from feature activation. */
+html[data-workspace-theme] .shell.jb-reference .bi-page.bi-refreshed{width:100%;max-width:none;min-width:0;margin:0;color:var(--theme-body)}
+.shell.jb-reference .bi-refreshed .bi-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:0 0 24px}
+.shell.jb-reference .bi-refreshed .bi-heading h1{margin:0!important;color:var(--theme-heading)!important}
+.shell.jb-reference .bi-refreshed .bi-heading p{margin:10px 0 0!important;font-size:14px!important;line-height:1.5!important;color:var(--theme-muted)!important;max-width:65ch}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-heading>button{display:flex;align-items:center;justify-content:center;gap:8px;flex:none;min-height:44px;padding:10px 16px;border:1px solid var(--theme-line)!important;border-radius:24px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;font-size:13px!important;line-height:1.4!important;font-weight:500!important}
+.shell.jb-reference .bi-refreshed svg{display:block;width:22px;height:22px;flex:none}
+.shell.jb-reference .bi-refreshed .bi-heading>button>svg{width:18px;height:18px}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-account-note{display:flex;align-items:flex-start;gap:14px;box-sizing:border-box;max-width:none;min-width:0;margin:0 0 28px!important;padding:18px 20px!important;border:1px solid var(--theme-line)!important;border-radius:14px!important;background:var(--theme-inset)!important;color:var(--theme-body)!important;font-size:13px!important;line-height:1.6!important}
+.shell.jb-reference .bi-refreshed .bi-account-note>svg{margin-top:1px;width:20px;height:20px}
+.shell.jb-reference .bi-refreshed .bi-account-note>span{min-width:0;overflow-wrap:anywhere}
+.shell.jb-reference .bi-refreshed .bi-group{margin:0 0 28px;min-width:0}
+.shell.jb-reference .bi-refreshed .bi-group:last-child{margin-bottom:0}
+.shell.jb-reference .bi-refreshed .bi-group+.bi-group{padding-top:26px;border-top:1px solid var(--theme-line)}
+.shell.jb-reference .bi-refreshed .bi-group>header{display:flex;align-items:flex-start;gap:14px;margin:0 0 18px;min-width:0}
+.shell.jb-reference .bi-refreshed .bi-group-icon{flex:none;margin-top:2px;color:var(--theme-heading)}
+.shell.jb-reference .bi-refreshed .bi-group>header h2{font-size:21px!important;font-weight:650!important;line-height:1.3!important;margin:0!important;color:var(--theme-heading)!important}
+.shell.jb-reference .bi-refreshed .bi-group>header p{font-size:13px!important;line-height:1.55!important;margin:7px 0 0!important;color:var(--theme-muted)!important;max-width:85ch}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-cards{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:16px!important;min-width:0}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-card{display:grid!important;grid-template-columns:minmax(190px,.8fr) minmax(0,1.65fr) minmax(140px,auto);align-items:center;gap:24px;box-sizing:border-box;width:100%;min-width:0;margin:0!important;padding:24px!important;border:1px solid var(--theme-line)!important;border-radius:16px!important;background:var(--theme-panel)!important;box-shadow:0 2px 4px #17171703,0 8px 24px #17171705!important}
+.shell.jb-reference .bi-refreshed .bi-card-heading{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:14px!important;min-width:0;margin:0!important}
+.shell.jb-reference .bi-refreshed .bi-card-heading>div{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:8px!important;min-width:0}
+.shell.jb-reference .bi-refreshed .bi-brand{display:grid;place-items:center;width:48px;height:48px;flex:none;border-radius:13px!important;font-size:26px;font-weight:700;line-height:1}
+.shell.jb-reference .bi-refreshed .bi-brand-sms_works{font-size:12px;letter-spacing:-.06em}
+.shell.jb-reference .bi-refreshed .bi-card h3{margin:0!important;font-size:18px!important;line-height:1.3!important;font-weight:650!important;color:var(--theme-heading)!important;overflow-wrap:anywhere}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-status{display:inline-block;max-width:100%;padding:5px 9px!important;border:0;border-radius:16px!important;background:var(--theme-inset)!important;color:var(--theme-muted)!important;font-size:11px!important;line-height:1.4;white-space:normal}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-status[data-state=ready],html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-status[data-state=credentials_verified]{background:#EAF5EE!important;color:#286247!important}
+.shell.jb-reference .bi-refreshed .bi-card-content{min-width:0;padding-left:24px;border-left:1px solid var(--theme-line)}
+.shell.jb-reference .bi-refreshed .bi-card-content p{margin:0!important;font-size:13px!important;line-height:1.55!important;color:var(--theme-body)!important;overflow-wrap:anywhere}
+.shell.jb-reference .bi-refreshed .bi-card-content .bi-description{font-size:14px!important;line-height:1.4!important;font-weight:600!important;color:var(--theme-heading)!important}
+.shell.jb-reference .bi-refreshed .bi-card-content .bi-readiness{margin-top:9px!important;font-size:11px!important;font-weight:600!important;color:var(--theme-muted)!important}
+.shell.jb-reference .bi-refreshed .bi-card-content .bi-help{margin-top:6px!important;color:var(--theme-muted)!important}
+.shell.jb-reference .bi-refreshed .bi-card-content .bi-requirements{margin-top:12px!important;font-size:12px!important}
+.shell.jb-reference .bi-refreshed .bi-card-content .bi-plan-help{margin-top:12px!important}
+.shell.jb-reference .bi-refreshed .bi-card>.bi-actions{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:9px;min-width:0;max-width:220px;margin:0!important;padding:0!important;justify-self:end}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-actions>.btn{display:flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px!important;font-size:13px!important;line-height:1.4!important;border-radius:24px!important;text-align:center!important;white-space:normal}
+.shell.jb-reference .bi-refreshed .bi-actions>.quiet{min-height:36px;padding:7px 10px;font-size:12px;line-height:1.4;text-align:center}
+.shell.jb-reference .bi-refreshed .bi-notice{padding:20px!important;border-radius:14px!important;font-size:13px;line-height:1.6}
+.shell.jb-reference .bi-refreshed .bi-notice h2{font-size:17px!important;line-height:1.4;margin:0 0 8px}
+@container workspace (max-width:900px){
+ html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-card{grid-template-columns:minmax(0,1fr) auto;gap:18px;padding:20px!important}
+ .shell.jb-reference .bi-refreshed .bi-card-content{grid-column:1/-1;grid-row:2;padding:16px 0 0;border-left:0;border-top:1px solid var(--theme-line)}
+ .shell.jb-reference .bi-refreshed .bi-card>.bi-actions{grid-column:2;grid-row:1;max-width:190px}
+}
+@container workspace (max-width:480px){
+ .shell.jb-reference .bi-refreshed .bi-heading{gap:12px;flex-wrap:wrap;margin-bottom:20px}
+ .shell.jb-reference .bi-refreshed .bi-heading>div{flex:1 1 180px}
+ .shell.jb-reference .bi-refreshed .bi-heading>button{margin-left:auto;font-size:12px!important;padding-inline:13px!important}
+ .shell.jb-reference .bi-refreshed .bi-heading p{font-size:13px!important}
+ html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-account-note{padding:16px!important;gap:11px;font-size:12px!important;margin-bottom:24px!important}
+ .shell.jb-reference .bi-refreshed .bi-group>header{gap:12px;margin-bottom:16px}
+ .shell.jb-reference .bi-refreshed .bi-group>header h2{font-size:19px!important}
+ .shell.jb-reference .bi-refreshed .bi-group>header p{font-size:12px!important}
+ html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-card{grid-template-columns:minmax(0,1fr);gap:16px;padding:18px!important}
+ .shell.jb-reference .bi-refreshed .bi-card-heading{gap:12px!important}
+ .shell.jb-reference .bi-refreshed .bi-card h3{font-size:17px!important}
+ .shell.jb-reference .bi-refreshed .bi-brand{width:44px;height:44px;border-radius:12px!important;font-size:24px}
+ .shell.jb-reference .bi-refreshed .bi-brand-sms_works{font-size:11px}
+ .shell.jb-reference .bi-refreshed .bi-card-content{grid-column:1;grid-row:2;padding-top:15px}
+ .shell.jb-reference .bi-refreshed .bi-card>.bi-actions{grid-column:1;grid-row:3;justify-self:end;max-width:100%;align-items:flex-end}
+ .shell.jb-reference .bi-refreshed .bi-actions>.btn{flex-basis:auto!important;font-size:12px!important;min-width:120px}
+ .shell.jb-reference .bi-refreshed .bi-card-content .bi-description{font-size:13px!important}
+ .shell.jb-reference .bi-refreshed .bi-card-content .bi-help{font-size:12px!important}
+}
+
+/* Compact provider rows. Purposes, readiness and credential alternatives expand separately. */
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-card{display:block!important;padding:20px!important}
+.shell.jb-reference .bi-refreshed .bi-provider-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:22px;min-width:0}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-provider-details{min-width:0;padding:0!important;margin:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-provider-details>summary{display:flex!important;align-items:center;gap:16px;width:100%;min-width:0;min-height:52px;box-sizing:border-box;padding:0!important;margin:0!important;list-style:none;cursor:pointer;background:transparent!important;border:0!important;border-radius:8px!important}
+.shell.jb-reference .bi-refreshed .bi-provider-details>summary::-webkit-details-marker{display:none}
+.shell.jb-reference .bi-refreshed .bi-provider-details>summary:focus:not(:focus-visible){outline:none!important;box-shadow:none!important}
+.shell.jb-reference .bi-refreshed .bi-provider-details>summary:focus-visible{outline:2px solid var(--theme-heading)!important;outline-offset:4px}
+.shell.jb-reference .bi-refreshed .bi-provider-details .bi-card-heading{flex:1;min-width:0}
+.shell.jb-reference .bi-refreshed .bi-detail-chevron{display:block;flex:none;width:18px;height:18px;margin-left:auto;transition:transform .15s ease}
+.shell.jb-reference .bi-refreshed .bi-detail-chevron>svg{display:block;width:18px;height:18px}
+.shell.jb-reference .bi-refreshed .bi-provider-details[open] .bi-detail-chevron{transform:rotate(180deg)}
+.shell.jb-reference .bi-refreshed .bi-provider-details .bi-card-content{display:block;grid-area:auto;margin-top:16px;padding:16px 0 0;border-left:0;border-top:1px solid var(--theme-line);max-width:80ch}
+.shell.jb-reference .bi-refreshed .bi-provider-details:not([open])>.bi-card-content{display:none!important}
+.shell.jb-reference .bi-refreshed .bi-provider-row:has(>.bi-provider-details[open]){grid-template-columns:minmax(0,1fr);gap:16px}
+.shell.jb-reference .bi-refreshed .bi-provider-row:has(>.bi-provider-details[open])>.bi-actions{justify-self:end}
+.shell.jb-reference .bi-refreshed .bi-provider-row>.bi-actions{display:flex;align-items:center;justify-content:flex-end;gap:0;padding:0!important;margin:4px 0 0!important;max-width:none;min-width:0}
+html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-provider-row>.bi-actions>.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-width:108px;width:auto!important;min-height:44px;padding:11px 16px!important;white-space:nowrap;border-radius:24px!important}
+.shell.jb-reference .bi-refreshed .bi-provider-row>.bi-actions>.btn>svg{width:15px;height:15px}
+.shell.jb-reference .bi-refreshed .bi-detail-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}
+.shell.jb-reference .bi-refreshed .bi-detail-actions:empty{display:none}
+.shell.jb-reference .bi-refreshed .bi-detail-actions>.quiet{min-height:38px;padding:8px 12px;font-size:12px}
+.shell.jb-reference .bi-refreshed .bi-detail-actions>.btn{min-height:40px;padding:9px 14px;font-size:12px}
+@container workspace (max-width:480px){
+ html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-card{padding:17px!important}
+ .shell.jb-reference .bi-refreshed .bi-provider-row{gap:12px}
+ .shell.jb-reference .bi-refreshed .bi-card-heading{gap:10px!important}
+ .shell.jb-reference .bi-refreshed .bi-card-heading>div{gap:6px!important}
+ .shell.jb-reference .bi-refreshed .bi-card h3{font-size:15px!important}
+ .shell.jb-reference .bi-refreshed .bi-brand{width:40px;height:40px;font-size:23px}
+ .shell.jb-reference .bi-refreshed .bi-brand-sms_works{font-size:10px}
+ .shell.jb-reference .bi-refreshed .bi-provider-details>summary{gap:10px;min-height:50px}
+ .shell.jb-reference .bi-refreshed .bi-status{font-size:10px!important;padding:4px 8px!important}
+ html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-provider-row>.bi-actions>.btn{min-width:92px;gap:7px;padding:10px 12px!important;font-size:12px!important}
+ .shell.jb-reference .bi-refreshed .bi-provider-details .bi-card-content{margin-top:14px;padding-top:14px}
+}
+@container workspace (max-width:360px){
+ .shell.jb-reference .bi-refreshed .bi-provider-row{gap:10px}
+ .shell.jb-reference .bi-refreshed .bi-card-heading{gap:8px!important}
+ .shell.jb-reference .bi-refreshed .bi-brand{width:32px;height:36px;border-radius:10px!important;font-size:21px}
+ .shell.jb-reference .bi-refreshed .bi-brand-sms_works{font-size:9px}
+ .shell.jb-reference .bi-refreshed .bi-detail-chevron{width:14px;height:14px}
+ .shell.jb-reference .bi-refreshed .bi-detail-chevron>svg{width:14px;height:14px}
+ html[data-workspace-theme] .shell.jb-reference .bi-refreshed .bi-provider-row>.bi-actions>.btn{min-width:84px;padding-inline:10px!important;gap:4px}
+}
+@media(prefers-reduced-motion:reduce){.shell.jb-reference .bi-refreshed .bi-detail-chevron{transition:none}}

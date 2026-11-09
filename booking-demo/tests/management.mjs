@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const sources=await Promise.all(['scheduling-core.js','management.js'].map(file=>readFile(new URL('../'+file,import.meta.url),'utf8')));
+const sources=await Promise.all(['scheduling-core.js','list-pages.js','management.js'].map(file=>readFile(new URL('../'+file,import.meta.url),'utf8')));
 const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 function fixture(){
  const hours={start:'09:00',end:'17:00',days:[1,2,3,4,5],weekly:{'2':{closed:true,start:'09:00',end:'17:00'}}};
@@ -12,7 +12,7 @@ function setup({live=false,allowed=true,plan={name:'Standard',staffLimit:5}}={})
  const context={window:{}};sources.forEach(source=>vm.runInNewContext(source,context));let current=fixture(),renders=0,guardCalls=0;
  const api={salon:()=>current,esc:escape,today:()=> '2026-10-31',render:()=>{renders++;},isLive:()=>live,planFor:()=>plan,canAddStaff:()=>{guardCalls++;return allowed;}};
  const module=context.window.JovaManagement.create(api);
- return {module,get salon(){return current;},setSalon:value=>{current=value;},get renders(){return renders;},get guardCalls(){return guardCalls;}};
+ return {module,pagination:context.window.JovaListPages,get salon(){return current;},setSalon:value=>{current=value;},get renders(){return renders;},get guardCalls(){return guardCalls;}};
 }
 const row=(html,id)=>html.match(new RegExp('<tr data-mg-staff="'+id+'">([\\s\\S]*?)</tr>'))?.[1]||'';
 test('staff table uses actual services, upcoming bookings, initials and host CRUD actions',()=>{
@@ -27,6 +27,16 @@ test('working-day chips reflect daily closure and the intersection of business a
  const inherited=row(html,'a');assert(inherited.includes('Monday: 09:00 to 17:00'));assert(inherited.includes('Tuesday: Closed'));
  const custom=row(html,'c');assert(custom.includes('Monday: 10:00 to 16:00'));assert(custom.includes('Tuesday: Closed'));assert.equal((custom.match(/class="mg-day mg-day-open"/g)||[]).length,1);
  assert.equal((row(html,'b').match(/class="mg-day mg-day-open"/g)||[]).length,0,'Non-overlapping hours stay closed');
+});
+
+test('live staff search keeps the selected status and shows a full-width empty-state cell',()=>{
+ const s=setup();s.module.pages.staff();
+ s.module.change({dataset:{change:'mg-staff-status'},value:'inactive',closest:()=>({elements:{q:{value:''}}})});
+ assert.equal(s.module.input({id:'mg-staff-search',value:'Alex',selectionStart:4}),true);
+ let html=s.module.pages.staff();assert(row(html,'b'));assert(!row(html,'a'));assert(!html.includes('mg-search-button'));
+ s.module.input({id:'mg-staff-search',value:'Nobody',selectionStart:6});html=s.module.pages.staff();
+ assert(html.includes('<td colspan="6"><div class="mg-empty">'));assert(html.includes('No matching staff'));assert(!row(html,'b'));
+ assert.equal(s.module.input({id:'unrelated',value:'Sam'}),false);
 });
 test('search and status filters combine, accept inactive staff and do not create writes',()=>{
  const s=setup();s.module.pages.staff();
@@ -52,4 +62,13 @@ test('tenant changes reset filters and untrusted names remain escaped',()=>{
  const s=setup();s.module.pages.staff();s.module.submit('mg-staff-filter',{}, {q:'Sam',status:'active'});
  const next=fixture();next.id='salon-b';next.staff[0].name='<img src=x onerror=alert(1)>';s.setSalon(next);
  const html=s.module.pages.staff();assert(html.includes('Showing 3 of 3'));assert(html.includes('&lt;img src=x onerror=alert(1)&gt;'));assert(!html.includes('<img src=x'));
+});
+
+test('staff pagination shows at most twenty records and a filter starts at the first page',()=>{
+ const s=setup({plan:{name:'Team',staffLimit:100}}),base=fixture();
+ base.staff=Array.from({length:21},(_,i)=>({id:'staff-'+i,name:'Staff '+String(i+1).padStart(2,'0'),role:'Stylist',active:true,hours:null}));
+ base.services=[];base.bookings=[];s.setSalon(base);const before=structuredClone(base);
+ let html=s.module.pages.staff();assert.equal((html.match(/<tr data-mg-staff=/g)||[]).length,20);assert(html.includes('Staff pages'));assert(!row(html,'staff-20'));
+ assert.equal(s.pagination.move('Staff',1),true);html=s.module.pages.staff();assert.equal((html.match(/<tr data-mg-staff=/g)||[]).length,1);assert(row(html,'staff-20'));assert(!row(html,'staff-0'));assert(html.includes('Showing 21 to 21 of 21'));
+ s.module.submit('mg-staff-filter',{}, {q:'Staff 01',status:'all'});html=s.module.pages.staff();assert(row(html,'staff-0'));assert(!html.includes('Staff pages'));assert(html.includes('Showing 1 of 21'));assert.deepEqual(base,before);
 });

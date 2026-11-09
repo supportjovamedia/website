@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+const context={window:{}};
+vm.runInNewContext(await readFile(new URL('../setup-guide.js',import.meta.url),'utf8'),context);
+const {status,render}=context.window.JovaSetupGuide;
+const business=()=>({name:'Avery Studio',services:[],staff:[{id:'owner',active:true}],hours:{days:[],start:'09:00',end:'18:00'},about:'',phone:'',address:''});
+const fresh=business();assert.equal(status(fresh).completed,0);assert.equal(status(fresh).ready,false);
+const unassigned={...business(),services:[{id:'cut',staffIds:['missing']}]};assert.equal(status(unassigned).tasks[0].done,false);
+const inactive={...business(),staff:[{id:'owner',active:false}],services:[{staffIds:['owner']}]};assert.equal(status(inactive).tasks[0].done,false);
+const ready={...business(),services:[{staffIds:['owner']}],hours:{days:[1,2],start:'09:00',end:'18:00'},about:'Online tutoring.'};
+assert.equal(status(ready).ready,true,'Online businesses can finish without a street address or phone');assert.equal(render(ready),'');
+const malformed={...ready,hours:{days:[9],start:'25:00',end:'26:00'}};assert.equal(status(malformed).ready,false);
+assert.equal(status(ready,{hasHours:false}).ready,false,'Shared scheduling rules can reject unavailable staff hours');
+assert.equal(status({...ready,services:[]}).ready,false,'Removing the only service reopens setup');
+assert.equal(status({...ready,services:[{staffIds:['owner']}]},{bookable:()=>false}).tasks[0].done,false);
+console.log('PASS setup readiness: fresh, assigned staff, opening hours, online business, saved changes');
