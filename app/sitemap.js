@@ -38,7 +38,7 @@ export default function sitemap() {
       return { url: base + path, ...(modified ? { lastModified: modified } : {}) };
     }),
     ...services.filter(service => service.slug !== "web-design").map((service) => ({ url: `${base}/services/${service.slug}` })),
-    ...websiteTypes.map(item => ({ url: base + websitePath(item.slug), lastModified: "2026-10-19" })),
+    ...websiteTypes.map(item => ({ url: base + websitePath(item.slug), lastModified: item.updatedAt || "2026-10-19" })),
     ...articles.map(article => ({ url: `${base}/blog/${article.slug}`, lastModified: articleDates(article).updatedAt })),
     { url: `${base}/resources/google-visibility-checklist`, lastModified: '2026-11-07' },
   ];

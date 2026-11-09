@@ -19,8 +19,8 @@ export function WebsiteRelated({ item }) {
 
 export function WebsiteClientWork({ showImage = true }) {
   return <section className={s.workBand} id="website-work"><div className={`${s.shell} ${s.workGrid}`} data-text-only={!showImage || undefined}>
-    {showImage && <Link href="/work/qaiser-watches" className={s.workPhoto} aria-label="Explore the Qaiser Watches client website"><WebsitePhoto name="qaiser" sizes="(max-width:900px) 90vw, 46vw" /></Link>}
-    <div><h2>Qaiser Watches.<br />A website you can explore.</h2><p>A retail website built around a watchmaker&apos;s collection, product details and story. See the actual project, delivered scope and client feedback.</p><Link className={s.textLink} href="/work/qaiser-watches">Explore the client project</Link><small>Delivered scope: retail catalogue, product browsing and the watchmaker’s story. Explore the case study for the full project.</small></div>
+    {showImage && <a href="/insights/qaiser-website.webp" className={s.workPhoto} aria-label="View the Qaiser Watches website preview"><WebsitePhoto name="qaiser" sizes="(max-width:900px) 90vw, 46vw" /></a>}
+    <div><h2>Qaiser Watches.<br />A retail website in practice.</h2><p>A client website presenting a watchmaker&apos;s collection, product details and story. Open the project preview to see the retail presentation.</p><a className={s.textLink} href="/insights/qaiser-website.webp">View the project preview</a><small>Delivered scope: retail catalogue, product browsing and the watchmaker’s story.</small></div>
   </div></section>;
 }
 

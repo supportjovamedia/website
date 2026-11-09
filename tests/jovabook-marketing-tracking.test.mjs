@@ -2,6 +2,27 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {publicPage,replaySafeUrl,eventPayload,jovabookClickEvent} from '../lib/marketing-analytics.mjs';
 import {jovabookMarketingPlans,jovabookSignupHref} from '../lib/jovabook-marketing-plans.mjs';
+import {bookingIndustries} from '../lib/jovabook-industries.mjs';
+import {bookingIndustrySlugs} from '../lib/jovabook-industry-routes.mjs';
+
+test('industry and guide signup routes use existing signals while private destinations stay excluded',()=>{
+ assert.deepEqual(new Set(bookingIndustrySlugs),new Set(bookingIndustries.map(item=>item.slug)));
+ const signup=jovabookSignupHref('essential','monthly');
+ for(const path of ['/industries','/online-booking',...bookingIndustrySlugs.map(slug=>'/industries/'+slug),'/blog/photography-mini-session-booking-guide']){
+  const page='https://www.jovamedia.com'+path;
+  assert.equal(publicPage(path),true,path);
+  assert.equal(jovabookClickEvent(signup,page)?.name,'jovabook_plan_selected',path);
+  assert.equal(eventPayload('page_view',{},page)?.page_path,path);
+ }
+ for(const path of ['/industries/unknown','/industries/photographers/account','/online-booking/private','/account/login','/api/jovabook/funnel']){
+  assert.equal(publicPage(path),false,path);
+  assert.equal(jovabookClickEvent(signup,'https://www.jovamedia.com'+path),null,path);
+ }
+ assert.equal(replaySafeUrl('https://www.jovamedia.com/industries#professional-services'),true);
+ assert.equal(replaySafeUrl('https://www.jovamedia.com/#booking'),true);
+ assert.equal(replaySafeUrl('https://www.jovamedia.com/industries#private-token'),false);
+ assert.equal(replaySafeUrl('https://www.jovamedia.com/industries/photographers?email=private@example.com'),false);
+});
 test('public landing page is measurable but customer journeys and private URLs stay excluded',()=>{
  assert.equal(publicPage('/jovabook'),true);
  for(const path of ['/account/login','/operator.html','/jovabook/private'])assert.equal(publicPage(path),false);
