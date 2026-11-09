@@ -4,6 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const sql=await readFile(new URL('../supabase/migrations/20261109115800_owner_onboarding_progress.sql',import.meta.url),'utf8');
+const categorySql=await readFile(new URL('../supabase/migrations/20261109151245_simple_primary_service.sql',import.meta.url),'utf8');
 const owner='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002',business='20000000-0000-4000-8000-000000000001';
 test('submitted onboarding is private, resumable and cannot grant a paid plan or skip verification',async()=>{
  const db=new PGlite();try{
@@ -11,6 +12,8 @@ test('submitted onboarding is private, resumable and cannot grant a paid plan or
    create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
    create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
    create table public.salons(id uuid primary key,owner_id uuid,name text,status text,settings jsonb,plan text,slug text);
+   create table public.customers(salon_id uuid,id text,name text,email text,phone text,primary key(salon_id,id));
+   create table jovabook_private.owner_flow_events(id uuid,user_id uuid,step text,code text,http_status integer,browser_session uuid,setup_stage text,created_at timestamptz default now(),constraint owner_flow_events_stage_check check(setup_stage is null));
    create table jovabook_private.portal_roles(user_id uuid,role text);
    create table jovabook_private.team_logins(user_id uuid);
    create table jovabook_private.operators(email text);
@@ -19,6 +22,7 @@ test('submitted onboarding is private, resumable and cannot grant a paid plan or
    create function public.owner_account_access() returns jsonb language sql as $$select '{"access":"active","billing":{"plan":"essential"}}'::jsonb$$;
    insert into auth.users values('${owner}','owner@example.test',now(),'{}'),('${other}','other@example.test',null,'{}');`);
   await db.exec(sql);
+  await db.exec(categorySql);
   await db.exec('set role anon');await assert.rejects(db.query('select public.owner_onboarding_progress()'),/permission denied/);
   await db.exec('reset role;set role authenticated');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[other]);
   await assert.rejects(db.query('select public.owner_onboarding_progress()'),/verified business/);
@@ -27,20 +31,48 @@ test('submitted onboarding is private, resumable and cannot grant a paid plan or
   for(const values of [{password:'Secret2026'},{user_id:other},{plan:'premium'},{role:'operator'}])await assert.rejects(progress('profile',values),/Unsupported/);
   await assert.rejects(progress(null),/Invalid setup/);
   await assert.rejects(progress('profile',{first_name:'A',last_name:'B',country:'FR'}),/Check your name/);
-  await progress('profile',{first_name:'Avery',last_name:'Smith',mobile:'',country:'GB'});
-  await progress('business',{business_name:'Avery Studio',booking_slug:'avery-studio',referral_code:''});
-  await progress('category',{primary_category:'photography',related_categories:['professional']});
-  await progress('team',{team_size:'20+'});await progress('location',{service_location:'physical'});await assert.rejects(progress('source',{heard_about:''}),/Choose how/);await progress('source',{heard_about:'friend'});
+  await assert.rejects(progress('profile',{first_name:'Avery',last_name:'Smith',country:'GB',legal_accepted:'no'}),/Agree to the terms/);
+  const profile=await progress('profile',{first_name:'Avery',last_name:'Smith',mobile:'',country:'GB',legal_accepted:'accepted'});assert(profile.data.terms_accepted_at);
+  await assert.rejects(progress('business',{business_name:'Avery Studio',booking_slug:'avery-studio',existing_website:'javascript:alert(1)'}),/valid website/);
+  await progress('business',{business_name:'Avery Studio',booking_slug:'avery-studio',referral_code:'',existing_website:'https://example.test'});
+  await assert.rejects(progress('category',{primary_category:'other'}),/Tell us your primary service/);
+  await assert.rejects(progress('category',{primary_category:'other',other_category:' '}),/Tell us your primary service/);
+  await assert.rejects(progress('category',{primary_category:'other',other_category:'a'.repeat(81)}),/80 characters/);
+  await assert.rejects(progress('category',{primary_category:'photography',password:'PRIVATE'}),/Choose your primary service/);
+  const custom=await progress('category',{primary_category:'other',other_category:'  Mobile car detailing  '});assert.equal(custom.data.other_category,'Mobile car detailing');
+  const primary=await progress('category',{primary_category:'photography'});assert.equal(primary.data.primary_category,'photography');assert(!Object.hasOwn(primary.data,'other_category'));assert(!Object.hasOwn(primary.data,'related_categories'));
+  const legacy=await progress('category',{primary_category:'photography',related_categories:['professional']});assert(!Object.hasOwn(legacy.data,'related_categories'));
+  await progress('team',{team_size:'20+'});await progress('location',{service_location:'physical'});
+  for(const locations of [[],['unknown'],['physical',3],'physical'])await assert.rejects(progress('location',{service_locations:locations}),/service locations/);
+  const locations=await progress('location',{service_locations:['physical','online']});assert.deepEqual(locations.data.service_locations,['online','physical']);
+  await assert.rejects(progress('software',{current_software:'invented'}),/current system/);await assert.rejects(progress('software',{current_software:'other',other_software:''}),/current system/);
+  await progress('software',{current_software:'other',other_software:'Old calendar'});const software=await progress('software',{current_software:'none'});assert(!Object.hasOwn(software.data,'other_software'));
+  await assert.rejects(progress('source',{heard_about:''}),/Choose how/);await progress('source',{heard_about:'friend'});
   await assert.rejects(progress('complete'),/Finish your business details/);
   await db.exec(`reset role;insert into public.salons values('${business}','${owner}','Avery Studio','setup','{}','essential','avery-studio');set role authenticated;`);
   const overview=(await db.query('select public.operator_signup_flow() data')).rows[0].data;assert.equal(overview.recent[0].onboarding.profile.first_name,'Avery');assert(overview.recent[0].onboarding.steps.profile);
+  assert.equal((await db.query('select public.claim_owner_welcome() claimed')).rows[0].claimed,false);
   const finished=await progress('complete');assert(finished.completed_at);assert.equal(finished.data.first_name,'Avery');assert(finished.steps.profile);assert(finished.steps.location);
+  assert.equal((await db.query('select public.claim_owner_welcome() claimed')).rows[0].claimed,true);assert.equal((await db.query('select public.claim_owner_welcome() claimed')).rows[0].claimed,false);
+  const client={name:'Taylor Client',email:'taylor@example.test',phone:''};
+  const imported=async rows=>(await db.query('select public.owner_import_clients($1::jsonb) data',[JSON.stringify(rows)])).rows[0].data;
+  await assert.rejects(imported([{...client,salon_id:other}]),/Only name/);await assert.rejects(imported([client,{name:'Bad',email:'',phone:''}]),/client details/);
+  await db.exec('reset role');assert.equal((await db.query('select count(*)::int n from public.customers')).rows[0].n,0);await db.exec('set role authenticated');
+  assert.equal((await imported([client,client])).imported,1);assert.equal((await imported([client])).imported,0);
+  const recorded=await db.query("select public.report_owner_activity('40000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001','setup','step_viewed',0,'software') data");assert.equal(recorded.rows[0].data.stored,true);
   const access=(await db.query('select public.owner_account_access() data')).rows[0].data;assert.equal(access.onboarding_completed,true);assert.equal(access.billing.plan,'essential');
   await assert.rejects(db.query('select * from jovabook_private.owner_onboarding'),/permission denied/);
   await db.exec('reset role');const row=(await db.query('select * from public.salons')).rows[0];assert.equal(row.status,'active');assert.equal(row.plan,'essential');assert.deepEqual(row.settings.hours.days,[]);assert.equal(row.settings.currency,'GBP');
   await db.exec(`update auth.users set email_confirmed_at=now() where id='${other}';set role authenticated;`);await db.query("select set_config('request.jwt.claim.sub',$1,false)",[other]);
   const blank=await progress('read');assert.equal(blank.data.first_name,undefined);assert.deepEqual(blank.steps,{});assert.equal(blank.business_id,null);
   await db.exec(`reset role;insert into jovabook_private.portal_roles values('${other}','customer');set role authenticated;`);await assert.rejects(progress('read'),/verified business/);
+  await assert.rejects(imported([client]),/verified business/);
+  await db.exec('reset role;set role anon');
+  const reserve=async email=>(await db.query('select public.reserve_owner_verification($1) data',[email])).rows[0].data;
+  assert.equal((await reserve('new@example.test')).remaining,2);assert.equal((await reserve(' NEW@example.test ')).ok,false);
+  for(const remaining of [1,0]){await db.exec("reset role;update jovabook_private.owner_code_budget set requested_at=array(select t-interval '61 seconds' from unnest(requested_at) t);set role anon;");assert.equal((await reserve('new@example.test')).remaining,remaining);}
+  const capped=await reserve('new@example.test');assert.equal(capped.ok,false);assert.equal(capped.limited,true);
+  await assert.rejects(db.query('select * from jovabook_private.owner_code_budget'),/permission denied/);
  }finally{await db.close();}
 });
 

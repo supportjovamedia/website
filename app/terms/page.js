@@ -32,7 +32,7 @@ export default function Page() {
           We aim to keep website information current, but service descriptions,
           availability and pricing guidance may change.
         </p>
-        <h2>JovaBook plans and billing</h2>
+        <h2 id="jovabook-terms">JovaBook plans and billing</h2>
         <p>Offer version: 2026-11-free-v1. The Free plan is free, requires no payment card, and includes one staff calendar, 20 bookings and 50 emails per calendar month.</p>
         <p>Solo costs £20 per month or £192 per year, paid upfront. Team costs £25 per month or £240 per year including one staff seat. Each additional Team seat costs £6 per month or £57.60 per year. Paid annual plans save 20% against twelve monthly payments.</p>
         <p>There is no free trial. The Free plan is free and requires no payment card. Solo and Team require a card, are charged when you subscribe, and renew at the selected frequency. Subscription controls are in the business dashboard.</p>

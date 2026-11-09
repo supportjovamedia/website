@@ -2,10 +2,10 @@ import test from 'node:test';import assert from 'node:assert/strict';import vm f
 const accounts=await readFile(new URL('../accounts.js',import.meta.url),'utf8'),google=await readFile(new URL('../google-auth.js',import.meta.url),'utf8');
 const id='30000000-0000-4000-8000-000000000001';
 const storage=map=>({getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)});
-function native({confirmed=true,wrongPortal=false,emailFirst=false}={}){
- const local=new Map(),tab=new Map(),calls=[],state={salons:[],accounts:[],resets:[]},window={JOVA_SUPABASE:{url:'https://fixture.example.test',key:'public-fixture'}};
- vm.runInNewContext(accounts,{window,crypto:webcrypto,Uint8Array,Date,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://book.jovamedia.com',search:'?portal=owner'},localStorage:storage(local),sessionStorage:storage(tab),fetch:async(url,options)=>{calls.push({url,options});let data={ok:true};if(url.endsWith('/auth/v1/user'))data={id,email:'owner@example.test',email_confirmed_at:confirmed?new Date().toISOString():null,user_metadata:{full_name:'Avery Smith',email_first:emailFirst,...(options.method==='PUT'?{email_first_profile_complete:true}:{})}};else if(url==='/api/jovabook/billing/status')data=wrongPortal?{ok:true,access:'wrong_portal',role:'operator'}:{ok:true,access:'no_business',no_business:true,business:null};else if(url.includes('/region'))data={allowed:true};else if(url.includes('/signup'))data={user:{id}};return {ok:true,status:200,json:async()=>data};}});
- return {api:window.JovaAccounts.create(()=>state,()=>{}),local,tab,calls};
+function native({confirmed=true,wrongPortal=false,emailFirst=false,verifyStatus=200,verifiedEmail='owner@example.test',adoptionFailures=0,budgetLimited=false}={}){
+ const local=new Map(),tab=new Map(),calls=[],reports=[],state={salons:[],accounts:[],resets:[]},window={JovaOwnerDiagnostics:{failure:()=>{},setSession:()=>{},report:(...args)=>reports.push(args)},JOVA_SUPABASE:{url:'https://fixture.example.test',key:'public-fixture'}};
+ vm.runInNewContext(accounts,{window,crypto:webcrypto,Uint8Array,Date,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://book.jovamedia.com',search:'?portal=owner'},localStorage:storage(local),sessionStorage:storage(tab),fetch:async(url,options)=>{calls.push({url,options});let data={ok:true},status=200;if(url.endsWith('/reserve_owner_verification'))data=budgetLimited?{ok:false,limited:true,remaining:0}:{ok:true,remaining:2};else if(url.endsWith('/auth/v1/verify')){status=verifyStatus;data=status===200?{access_token:'otp-fixture-token',refresh_token:'otp-fixture-refresh',expires_in:3600}:{message:'PRIVATE_123456'};}else if(url.endsWith('/auth/v1/user')){if(adoptionFailures-->0)throw Error('Fixture connection failure');data={id,email:verifiedEmail,email_confirmed_at:confirmed?new Date().toISOString():null,user_metadata:{full_name:'Avery Smith',email_first:emailFirst,...(options.method==='PUT'?{email_first_profile_complete:true}:{})}};}else if(url==='/api/jovabook/billing/status')data=wrongPortal?{ok:true,access:'wrong_portal',role:'operator'}:{ok:true,access:'no_business',no_business:true,business:null};else if(url.includes('/region'))data={allowed:true};else if(url.includes('/signup'))data={user:{id}};return {ok:status<400,status,json:async()=>data};}});
+ return {api:window.JovaAccounts.create(()=>state,()=>{}),local,tab,calls,reports};
 }
 test('Google sessions are verified against Auth before storage and another portal cannot open business setup',async()=>{
  for(const options of [{confirmed:false},{wrongPortal:true}]){const h=native(options),result=await h.api.acceptGoogleSession({access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:Date.now()/1000+3600,user:{id:'forged'}});assert.equal(result.ok,false);assert.equal(h.local.has('jovabook-auth'),false);assert(!h.calls.some(c=>c.url.includes('create_business')));}
@@ -31,4 +31,21 @@ test('email-first entry sends verification before any profile and stores no usab
 test('verified email owners set their password only through Auth, never the profile SQL payload',async()=>{
  const h=native({emailFirst:true});await h.api.acceptGoogleSession({access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:Date.now()/1000+3600});assert.equal(h.api.needsOwnerPassword(),true);
  const result=await h.api.completeOwnerProfile({first_name:'Avery',last_name:'Smith',mobile:'',country:'GB',password:'ActualPassword2026'});assert.equal(result.ok,true);const profile=h.calls.filter(c=>c.url.includes('/owner_onboarding_progress')).map(c=>JSON.parse(c.options.body)).find(x=>x.p_step==='profile');assert(!Object.hasOwn(profile.p_values,'password'));assert(h.calls.some(c=>c.url.endsWith('/auth/v1/user')&&c.options.method==='PUT'));assert.equal(h.api.needsOwnerPassword(),false);
+});
+
+
+test('OTP rejects malformed, expired, unconfirmed and wrong-account codes without signing in',async()=>{
+ for(const options of [{verifyStatus:400},{verifyStatus:429},{confirmed:false},{verifiedEmail:'other@example.test'},{wrongPortal:true}]){
+  const h=native(options);const result=await h.api.verifyOwnerCode('owner@example.test','123456');assert.equal(result.ok,false);assert.equal(h.local.has('jovabook-auth'),false);assert(!JSON.stringify(h.reports).includes('123456'));
+ }
+ const h=native();assert.equal((await h.api.verifyOwnerCode('owner@example.test','123')).ok,false);assert.equal(h.calls.length,0);
+});
+test('OTP adopts only native verified identity and retries transient adoption without reusing the code',async()=>{
+ const h=native({adoptionFailures:1,emailFirst:true});assert.equal((await h.api.verifyOwnerCode('owner@example.test','123456')).ok,false);assert.equal((await h.api.verifyOwnerCode('owner@example.test','123456')).ok,true);
+ assert.equal(h.calls.filter(c=>c.url.endsWith('/auth/v1/verify')).length,1);assert.equal(h.api.needsOwnerPassword(),true);assert(![...h.local.values(),...h.tab.values()].some(v=>v.includes('123456')));
+ const payload=JSON.parse(h.calls.find(c=>c.url.endsWith('/auth/v1/verify')).options.body);assert.equal(payload.type,'email');assert.equal(payload.token,'123456');
+});
+test('code requests fail closed at the shared budget and resend uses the native signup route',async()=>{
+ const h=native({budgetLimited:true});assert.equal((await h.api.requestOwnerVerification('owner@example.test')).limited,true);assert.equal((await h.api.resendOwnerVerification('owner@example.test')).limited,true);assert(!h.calls.some(c=>c.url.includes('/signup')||c.url.includes('/resend')));
+ const allowed=native();assert.equal((await allowed.api.resendOwnerVerification('owner@example.test')).ok,true);const payload=JSON.parse(allowed.calls.find(c=>c.url.endsWith('/auth/v1/resend')).options.body);assert.equal(payload.type,'signup');
 });
