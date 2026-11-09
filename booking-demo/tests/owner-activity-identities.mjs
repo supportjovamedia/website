@@ -6,7 +6,7 @@ import {webcrypto} from 'node:crypto';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const before=await readFile(new URL('../supabase/migrations/20261109033558_owner_flow_errors.sql',import.meta.url),'utf8');
-const sql=await readFile(new URL('../supabase/migrations/20261109132553_owner_activity_identities.sql',import.meta.url),'utf8');
+const sql=await readFile(new URL('../supabase/migrations/20261109134538_owner_activity_identities.sql',import.meta.url),'utf8');
 const script=await readFile(new URL('../operator-signup-flow.js',import.meta.url),'utf8');
 const owner='10000000-0000-4000-8000-000000000001',operator='10000000-0000-4000-8000-000000000002';
 test('activity identities derive from authentication, private reads stay guarded, and full-window counts are separate from latest rows',async()=>{

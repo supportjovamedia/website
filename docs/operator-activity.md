@@ -12,7 +12,7 @@ There is no polling, retry queue, external analytics script or Vercel logging en
 
 ## Release order
 
-Apply `booking-demo/supabase/migrations/20261109132553_owner_activity_identities.sql` before deploying the browser files. It adds a new bounded writer and updates the existing operator reader, preserving the old writer for cached clients. Direct table privileges remain revoked and the reader retains the existing operator guard. No production data or account entitlement is changed by this feature.
+Apply `booking-demo/supabase/migrations/20261109134538_owner_activity_identities.sql` before deploying the browser files. It adds a new bounded writer and updates the existing operator reader, preserving the old writer for cached clients. Direct table privileges remain revoked and the reader retains the existing operator guard. No production data or account entitlement is changed by this feature.
 
 ## Validation
 
