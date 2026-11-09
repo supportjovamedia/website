@@ -395,6 +395,34 @@
         if (!r.ok) return { ok: false, reason: 'network' };
         return r.data === true ? { ok: true } : { ok: false, reason: 'taken' };
       },
+      async acceptGoogleSession(session) {
+        const expected=intent();
+        if(!session?.access_token||!session?.refresh_token)return {ok:false,message:'Google sign-in could not be confirmed.'};
+        const checked=await call('/auth/v1/user',{method:'GET',token:session.access_token});
+        if(!current(expected))return stale();const user=checked.data;
+        if(!checked.ok||!user?.id||typeof user.email!=='string'||!Number.isFinite(Date.parse(user.email_confirmed_at||'')))return {ok:false,message:'Your Google email could not be verified. Try signing in again.'};
+        keep({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:session.expires_at,user});
+        const saved=stamp(),access=await ownerAccess();if(!current(saved))return stale();
+        if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!current(saved))return stale();if(!identity.ok){keep(null);return identity;}const entered=await rpc('owner_onboarding_progress',{p_step:'entry',p_values:{}},session.access_token);if(!current(saved))return stale();if(!entered.ok||entered.data?.ok!==true)return {ok:false,message:'We could not save your account progress. Please try signing in again.'};pendingBusinessOwner={...identity.profile,manualSetup:true};try{localStorage.removeItem(SIGNUP_DRAFT);sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}return {ok:true,needsBusiness:true};}
+        if(!access.ok){if(access.wrongPortal)keep(null);return access;}
+        return {ok:true,account:{salonId:access.data.business.id},access:access.data};
+      },
+      async registerOwnerProfile({email,password,firstName,lastName,mobile='',country}) {
+        const expected=intent(),first=String(firstName||'').trim(),last=String(lastName||'').trim(),e=String(email||'').trim(),phone=String(mobile||'').trim();
+        if(!first||!last||first.length>40||last.length>40)return {ok:false,message:'Enter your first and last name.'};
+        if(!EMAIL_RULE.test(e)||e.length>254||!['GB','US','CA','AU'].includes(country))return {ok:false,message:'Check your email and country.'};
+        if(phone&&(!/^\+?[0-9 ()-]{7,24}$/.test(phone)||phone.replace(/\D/g,'').length<7||phone.replace(/\D/g,'').length>15))return {ok:false,message:'Check your mobile number, or leave it blank.'};
+        if(passwordIssues(password).length||String(password||'').length>72)return {ok:false,message:'Use 8 to 72 characters, a capital letter and a number.'};
+        const regionAbort=new AbortController(),regionTimer=setTimeout(()=>regionAbort.abort(),12000);try{const region=await fetch('https://www.jovamedia.com/api/jovabook/region',{cache:'no-store',signal:regionAbort.signal});if(!current(expected))return stale();const d=region.ok?await region.json():null;if(d?.allowed!==true)return {ok:false,message:d?.allowed===false?'JovaBook is currently available in the UK, USA, Canada and Australia.':'We could not check signup availability. Please try again.'};}catch{return current(expected)?{ok:false,message:NET}:stale();}finally{clearTimeout(regionTimer);}
+        const origin=String(location.origin||''),local=/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::[0-9]+)?$/.test(origin),redirect=(local?origin:'https://book.jovamedia.com')+'/?portal=owner#login';
+        const r=await call('/auth/v1/signup?redirect_to='+encodeURIComponent(redirect),{body:{email:e,password,data:{owner_name:first+' '+last,first_name:first,last_name:last,mobile:phone,country,signup_intent:'business'}}});
+        if(!current(expected))return stale();if(!r.ok||!r.data)return {ok:false,message:r.status===429?'Too many attempts. Please try again later.':'We could not create the account. If you already have one, sign in instead.'};
+        return {ok:true,verificationRequired:true};
+      },
+      async onboardingProgress(step='read',values={}) {
+        const t=await token();if(!t)return authFailure();const r=await rpc('owner_onboarding_progress',{p_step:step,p_values:values},t);
+        return r.stale?r:{ok:r.ok&&r.data?.ok===true,data:r.data,message:r.data?.message||'Your progress could not be saved. Please try again.'};
+      },
       async register({name,slug,owner,email,password,referralCode=''}) {
         const expected=intent(),n=String(name||'').trim(),s=String(slug||'').trim().toLowerCase(),o=String(owner||'').trim(),e=String(email||'').trim();
         if(!n||n.length>60)return {ok:false,field:'name',message:'Enter a business name up to 60 characters.'};

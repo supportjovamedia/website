@@ -22,7 +22,7 @@
   }
   function failure(path,status,data,token){
     const route=String(path).split('?')[0];
-    const step=route==='/auth/v1/signup'?'signup':route==='/auth/v1/token'?'login':route==='/auth/v1/user'?'verification':['/rest/v1/rpc/create_business_for_existing_user','/rest/v1/rpc/create_referred_business'].includes(route)?'business_setup':route==='/rest/v1/rpc/save_setup'?'setup':null;
+    const step=route==='/auth/v1/signup'?'signup':route==='/auth/v1/token'?'login':route==='/auth/v1/user'?'verification':['/rest/v1/rpc/create_business_for_existing_user','/rest/v1/rpc/create_referred_business'].includes(route)?'business_setup':['/rest/v1/rpc/save_setup','/rest/v1/rpc/owner_onboarding_progress'].includes(route)?'setup':null;
     if(!step)return;
     const code=status===0?'network_unavailable':status===429?'rate_limited':status>=500?'server_error':data?.error_code==='email_not_confirmed'||data?.code==='email_not_confirmed'?'email_not_confirmed':'request_rejected';
     report(step,code,status,token);
