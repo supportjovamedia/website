@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Signup and Save regression fixture</title>
+<script>
+window.fixtureStylesReady=fetch('/index.html').then(r=>r.text()).then(async html=>{
+ const shell=new DOMParser().parseFromString(html,'text/html');
+ await Promise.all([...shell.querySelectorAll('link[rel="stylesheet"]')].map(source=>new Promise(resolve=>{const link=source.cloneNode();link.onload=link.onerror=resolve;document.head.append(link);})));
+});
+</script></head><body><div id="app"><div class="ob-shell"><header class="ob-header"><a class="ob-logo">JovaBook<span>.</span></a><button class="ob-logout">Log out</button></header><div class="ob-steps"><div class="ob-progress"><span class="is-done"></span><span class="is-done"></span><span></span><span></span></div><p>Step 4 of 6</p></div><main class="ob-main"><section class="ob-panel"><h1>What’s your business called?</h1><form data-form="owner-onboarding" data-stage="business"><label class="ob-field">Business name<input name="business_name" value="Fixture Beauty"></label><label class="ob-field">Your booking page<div class="ob-address"><span>book.jovamedia.com/</span><input name="booking_slug" value="fixture-beauty"></div></label><label class="ob-field">Existing website (optional)<input name="existing_website" placeholder="https://"></label><label class="ob-field">Referral code (optional)<input name="referral_code"></label><div class="ob-error" role="alert"></div><button class="btn primary wide">Continue</button></form></section></main></div></div><div id="modal-root"></div><script src="/dirty-forms.js"></script></body></html>

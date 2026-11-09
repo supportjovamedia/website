@@ -8,11 +8,11 @@
  const categories=[['hair','Hair salon'],['barber','Barber'],['nails','Nails'],['lashes','Brows & lashes'],['beauty','Beauty'],['aesthetics','Aesthetics'],['massage','Massage'],['spa','Spa'],['waxing','Waxing'],['tattoo','Tattoo & piercing'],['tanning','Tanning'],['fitness','Fitness'],['physio','Physiotherapy'],['health','Health practice'],['pets','Pet grooming'],['tutoring','Tutoring'],['photography','Photography'],['driving','Driving lessons'],['professional','Professional services'],['other','Other']];
  const countries=[['GB','United Kingdom'],['US','United States'],['CA','Canada'],['AU','Australia']];
  window.JovaOwnerOnboarding={create(h){
-  let identity=null,stage='email',email='',data={},steps={},loaded=false,loading=false,message='',businessId=null,pending=false,lastCodeSentAt=0,codeLimit=false,codeTimer=null,importRows=null;
+  let identity=null,stage='email',email='',data={},steps={},loaded=false,loading=false,message='',businessId=null,pending=false,lastCodeSentAt=0,codeLimit=false,codeTimer=null,importRows=null,operationVersion=0;
   const esc=h.esc;
   const field=(label,name,value='',type='text',extra='')=>`<label class="ob-field">${label}<input name="${name}" type="${type}" value="${type==='password'?'':esc(value||'')}" ${extra}></label>`;
   const options=(name,list,value)=>`<div class="ob-options">${list.map(([key,label])=>`<label class="ob-option"><input type="radio" name="${name}" value="${key}" ${value===key?'checked':''} required><span>${label}</span></label>`).join('')}</div>`;
-  function reset(){identity=null;stage='email';email='';data={};steps={};loaded=false;loading=false;message='';businessId=null;importRows=null;clearInterval(codeTimer);}
+  function reset(){operationVersion++;pending=false;identity=null;stage='email';email='';data={};steps={};loaded=false;loading=false;message='';businessId=null;importRows=null;clearInterval(codeTimer);}
   function nextMissing(){return ['profile','business','category','team','location'].find(s=>!steps[s])||(!steps.source?(!steps.software?'software':'source'):'ready');}
   function countdown(){
    clearInterval(codeTimer);const update=()=>{const button=document.querySelector('[data-onb="resend"]');if(stage!=='check-email'||!button){clearInterval(codeTimer);return;}
@@ -20,9 +20,9 @@
    update();codeTimer=setInterval(update,1000);
   }
   async function load(){
-   if(loading)return;loading=true;const expected=identity;
+   if(loading)return;loading=true;const expected=identity,version=operationVersion;
    let result;try{result=await h.directory.onboardingProgress();}catch{result={ok:false,message:'We could not load your progress. Please try again.'};}
-   if(identity!==expected||h.directory.sessionIdentity()!==expected)return;
+   if(version!==operationVersion||identity!==expected||h.directory.sessionIdentity()!==expected)return;
    loading=false;loaded=true;
    if(!result.ok){message=result.message;stage='load-error';h.render();return;}
    data=result.data.data||{};steps=result.data.steps||{};email=result.data.email;businessId=result.data.business_id;
@@ -58,41 +58,44 @@
    const form=!loading&&!['load-error','ready'].includes(stage);
    return `<div class="ob-shell"><header class="ob-header"><a href="https://www.jovamedia.com/jovabook" class="ob-logo" aria-label="JovaBook home">JovaBook<span aria-hidden="true">.</span></a>${owner?'<button type="button" class="ob-logout" data-onb="logout">Log out</button>':'<a href="#login">Sign in</a>'}</header>${progress}<main class="ob-main ${stage==='category'?'ob-main-categories':''}">${back}<section class="ob-panel ${stage==='ready'?'ob-ready':''}"><h1 tabindex="-1">${title}</h1>${sub?`<p class="ob-intro">${esc(sub)}</p>`:''}${form?`<form data-form="owner-onboarding" data-stage="${stage}">`:''}${content}<div class="ob-error" role="alert">${esc(message)}</div>${form&&stage!=='email'?`<button class="btn primary wide" ${stage==='check-email'?'disabled':''}>${button}</button>`:''}${stage==='check-email'?'<div class="ob-code-actions"><p>Didn’t receive a code? <button type="button" data-onb="resend" disabled>Resend in 1:00</button></p><p class="ob-code-help">Can’t find the code? Check your spam or junk folder.</p><button type="button" data-onb="change-email">Change email</button><a href="https://www.jovamedia.com/contact" target="_blank" rel="noopener">Contact us</a></div>':''}${form?'</form>':''}</section></main></div>`;
   }
-  async function finish(source){
-   let result=await h.directory.onboardingProgress('source',{heard_about:source});if(!result.ok)throw Error(result.message);
-   result=await h.directory.onboardingProgress('complete');if(!result.ok)throw Error(result.message);
+  async function finish(source,guard){
+   let result=await h.directory.onboardingProgress('source',{heard_about:source});guard();if(!result.ok)throw Error(result.message);
+   result=await h.directory.onboardingProgress('complete');guard();if(!result.ok)throw Error(result.message);
    steps=result.data.steps;stage='ready';
   }
   async function submit(form){
-   if(form.dataset.stage!==stage||pending)return;pending=true;const expected=identity,values=new FormData(form),submitted=stage;
-   const button=form.querySelector('button.primary');button.disabled=true;const original=button.textContent;button.textContent='Saving...';message='';
+   if(form.dataset.stage!==stage||pending)return;pending=true;const version=++operationVersion,submitted=stage;
+   let expected=identity;const button=form.querySelector('button.primary'),original=button?.textContent;
+   const guard=()=>{if(version===operationVersion&&identity===expected&&h.directory.sessionIdentity()===expected)return;if(version===operationVersion){reset();identity=h.directory.sessionIdentity();h.render();}throw Object.assign(Error('Your account changed. Continue with the current account.'),{stale:true});};
    try{
-    if(stage==='email'){email=String(values.get('email')||'').trim();const result=await h.directory.requestOwnerVerification(email);if(!result.ok)throw Error(result.message);lastCodeSentAt=Date.now();codeLimit=result.remaining===0;data={};stage='check-email';}
+    guard();const values=new FormData(form);if(!button)throw Error('Your details could not be saved. Please try again.');button.disabled=true;button.textContent='Saving...';form.setAttribute('aria-busy','true');message='';
+    if(stage==='email'){email=String(values.get('email')||'').trim();const result=await h.directory.requestOwnerVerification(email);guard();if(!result.ok)throw Error(result.message);lastCodeSentAt=Date.now();codeLimit=result.remaining===0;data={};stage='check-email';}
     else if(stage==='check-email'){
-     const result=await h.directory.verifyOwnerCode(email,values.get('verification_code'));if(!result.ok)throw Error(result.message);
-     form.elements.verification_code.value='';identity=h.directory.sessionIdentity();loaded=false;loading=false;data={};steps={};stage='profile';message='';h.render();return;
+     const result=await h.directory.verifyOwnerCode(email,values.get('verification_code'));if(version!==operationVersion)return;if(!result.ok){guard();throw Error(result.message);}
+     form.elements.verification_code.value='';identity=h.directory.sessionIdentity();expected=identity;loaded=false;loading=false;data={};steps={};stage='profile';message='';h.render();return;
     }
     else if(stage==='profile'&&!identity){
      const result=await h.directory.registerOwnerProfile({email,firstName:values.get('first_name'),lastName:values.get('last_name'),mobile:values.get('mobile'),country:values.get('country'),password:values.get('password')});
-     form.elements.password.value='';if(!result.ok)throw Error(result.message);stage='check-email';
+     guard();form.elements.password.value='';if(!result.ok)throw Error(result.message);stage='check-email';
     }
     else{
      let payload=Object.fromEntries(values);
      if(stage==='profile'){payload={first_name:values.get('first_name'),last_name:values.get('last_name'),country:values.get('country'),mobile:String(values.get('mobile')||'').trim()?String(values.get('calling_code'))+String(values.get('mobile')).trim().replace(/^0/,''):'',legal_accepted:values.get('legal_accepted')};if(values.has('password'))payload.password=values.get('password');}
      if(stage==='location'){payload={service_locations:values.getAll('service_locations')};if(!payload.service_locations.length)throw Error('Choose at least one service location.');}
-     if(stage==='software'){payload={current_software:values.get('current_software')};if(payload.current_software==='other')payload.other_software=String(values.get('other_software')||'').trim();if(importRows){const imported=await h.directory.importOwnerClients(importRows);if(!imported.ok)throw Error(imported.message);importRows=null;}}
+     if(stage==='software'){payload={current_software:values.get('current_software')};if(payload.current_software==='other')payload.other_software=String(values.get('other_software')||'').trim();if(importRows){const imported=await h.directory.importOwnerClients(importRows);guard();if(!imported.ok)throw Error(imported.message);importRows=null;}}
      if(stage==='category'){payload={primary_category:values.get('primary_category')};if(payload.primary_category==='other'){payload.other_category=String(values.get('other_category')||'').trim();if(!payload.other_category)throw Error('Tell us your primary service.');}}
      if(stage==='business'){
-      payload.booking_slug=payload.booking_slug.trim().toLowerCase();payload.referral_code=payload.referral_code.trim().toUpperCase();
-      if(!businessId){const created=await h.directory.createBusinessForExistingUser({name:payload.business_name,slug:payload.booking_slug,referralCode:payload.referral_code});if(!created.ok)throw Error(created.message);businessId=created.account.salonId;}
+      payload.booking_slug=String(payload.booking_slug||'').trim().toLowerCase();payload.referral_code=String(payload.referral_code||'').trim().toUpperCase();
      }
-     if(stage==='profile'&&identity&&h.directory.needsOwnerPassword?.()){const result=await h.directory.completeOwnerProfile(payload);if(!result.ok)throw Error(result.message);form.elements.password.value='';data=result.data.data;steps=result.data.steps;stage='business';}
-     else if(stage==='source')await finish(payload.heard_about);
-     else{const result=await h.directory.onboardingProgress(stage,payload);if(!result.ok)throw Error(result.message);data=result.data.data;steps=result.data.steps;stage=stages[stages.indexOf(stage)+1];}
+     const {password,...draft}=payload;data={...data,...draft};
+     if(stage==='business'&&!businessId){const created=await h.directory.createBusinessForExistingUser({name:payload.business_name,slug:payload.booking_slug,referralCode:payload.referral_code});guard();if(!created.ok)throw Error(created.message);businessId=created.account.salonId;}
+     if(stage==='profile'&&identity&&h.directory.needsOwnerPassword?.()){const result=await h.directory.completeOwnerProfile(payload);guard();if(!result.ok)throw Error(result.message);form.elements.password.value='';data=result.data.data;steps=result.data.steps;stage='business';}
+     else if(stage==='source')await finish(payload.heard_about,guard);
+     else{const result=await h.directory.onboardingProgress(stage,payload);guard();if(!result.ok)throw Error(result.message);data=result.data.data;steps=result.data.steps;stage=stages[stages.indexOf(stage)+1];}
     }
-    if(h.directory.sessionIdentity()!==expected)return;window.JovaOwnerDiagnostics?.onboarding?.(submitted,submitted==='email'?'verification_requested':'step_saved');message='';h.render();const heading=document.querySelector('.ob-panel h1');heading?.focus({preventScroll:true});heading?.scrollIntoView({block:'start'});
-   }catch(error){if(h.directory.sessionIdentity()!==expected)return;message=error.message||'Your details could not be saved. Please try again.';const alert=form.querySelector('.ob-error');if(alert)alert.textContent=message;button.disabled=false;button.textContent=original;stage=submitted;}
-   finally{pending=false;}
+    guard();window.JovaOwnerDiagnostics?.onboarding?.(submitted,submitted==='email'?'verification_requested':'step_saved');message='';h.render();const heading=document.querySelector('.ob-panel h1');heading?.focus({preventScroll:true});heading?.scrollIntoView({block:'start'});
+   }catch(error){if(error.stale||version!==operationVersion)return;if(h.directory.sessionIdentity()!==expected){reset();identity=h.directory.sessionIdentity();h.render();return;}message=error.message||'Your details could not be saved. Please try again.';const alert=form.querySelector('.ob-error');if(alert)alert.textContent=message;stage=submitted;}
+   finally{if(version===operationVersion){pending=false;if(button&&form.isConnected){button.disabled=false;button.textContent=original;form.removeAttribute('aria-busy');}}}
   }
   document.addEventListener('submit',event=>{const form=event.target.closest('[data-form="owner-onboarding"]');if(!form)return;event.preventDefault();event.stopImmediatePropagation();void submit(form);},true);
   document.addEventListener('input',event=>{if(event.target.name!=='business_name')return;const slug=event.target.form?.elements.booking_slug;if(slug&&!slug.dataset.edited)slug.value=event.target.value.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,30).replace(/-$/,'');});
