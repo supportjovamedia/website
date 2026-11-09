@@ -1,4 +1,7 @@
 {
+  "buildCommand": "node build-assets.mjs",
+  "installCommand": "",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/jovabook/:path*",
@@ -95,6 +98,24 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/operator.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:file((?:owner|operator)-(?:entry|app|styles)\\.[a-f0-9]{20}\\.(?:js|css))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }

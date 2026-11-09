@@ -40,6 +40,24 @@ function diaryHandler({mixed=false,wrongOwner=false,failEmail=false}={}){return 
 test('diary queries use explicit salon filters and accept only the authorized salon rows',async()=>{
  const h=harness({handler:diaryHandler()}),r=await h.api.loadDiary();assert.equal(r.ok,true);assert.equal(r.salon.id,sidA);assert.equal(h.requests[0].url,'/api/jovabook/billing/status');assert.equal(h.requests.at(-1).url,'/api/jovabook/billing/status');assert.equal(h.requests.filter(x=>x.url==='/api/jovabook/billing/status').length,2);for(const table of tables){const req=h.requests.find(x=>new URL(x.url,'https://booking.example.test').pathname.endsWith('/'+table));assert.equal(new URL(req.url).searchParams.get('salon_id'),'eq.'+sidA);assert.equal(r.rows[table][0].salon_id,sidA);}
 });
+
+test('single salon confirmation reads exact owner and tenant then rechecks fresh access',async()=>{
+ const h=harness({handler:async()=>response([{id:sidA,owner_id:'owner-a',name:'Canonical studio'}])});await h.api.ownerAccess();h.requests.length=0;
+ const result=await h.api.verifySalon(sidA);assert.equal(result.ok,true);assert.equal(result.salon.name,'Canonical studio');assert.equal(h.requests.length,2);
+ const query=new URL(h.requests[0].url);assert.equal(query.searchParams.get('id'),'eq.'+sidA);assert.equal(query.searchParams.get('owner_id'),'eq.owner-a');assert.equal(query.searchParams.get('limit'),'2');assert.equal(h.requests[1].url,'/api/jovabook/billing/status');
+});
+
+test('single salon confirmation never accepts mixed, foreign, missing or unavailable rows',async()=>{
+ for(const rows of [[],[{id:sidB,owner_id:'owner-a'}],[{id:sidA,owner_id:'owner-b'}],[{id:sidA,owner_id:'owner-a'},{id:sidB,owner_id:'owner-b'}]]){
+  const h=harness({handler:async()=>response(rows)});await h.api.ownerAccess();h.requests.length=0;const result=await h.api.verifySalon(sidA);assert.equal(result.ok,false);assert.equal(result.salon,undefined);assert.equal(h.requests.length,1);
+ }
+ for(const status of [401,403,503]){const h=harness({handler:async()=>response({},status)});await h.api.ownerAccess();const result=await h.api.verifySalon(sidA);assert.equal(result.ok,false);assert.equal(result.auth,status===401||status===403);assert.equal(result.salon,undefined);}
+});
+
+test('single salon confirmation discards late owner responses and blocked final access',async()=>{
+ const pending=deferred(),h=harness({handler:async()=>pending.promise});await h.api.ownerAccess();const request=h.api.verifySalon(sidA);await settle();h.local.set(AUTH,JSON.stringify(session('owner-b')));pending.resolve(response([{id:sidA,owner_id:'owner-a'}]));const result=await request;assert.equal(result.ok,false);assert.equal(result.stale,true);assert.equal(result.salon,undefined);
+ for(const access of ['billing_only','deleting']){let blocked=false;const other=harness({accessHandler:async()=>response({...accessFor('owner-a'),access:blocked?access:'active'}),handler:async()=>response([{id:sidA,owner_id:'owner-a'}])});await other.api.ownerAccess();blocked=true;const denied=await other.api.verifySalon(sidA);assert.equal(denied.ok,false);assert.equal(denied.salon,undefined);}
+});
 test('mixed tenant rows and a salon belonging to a different owner are rejected',async()=>{
  assert.equal((await harness({handler:diaryHandler({mixed:true})}).api.loadDiary()).invalidTenant,true);const h=harness({handler:diaryHandler({wrongOwner:true})}),r=await h.api.loadDiary();assert.equal(r.invalidTenant,true);assert.equal(h.requests.length,2);assert.equal(h.requests.filter(r=>r.url.includes('/rest/v1/')).length,1);
 });

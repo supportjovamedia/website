@@ -2,6 +2,8 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {readFile} from 'node:fs/promises';
+import {bundlePage} from '../booking-demo/build-assets.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 export const RELEASE_TARGETS=Object.freeze({
@@ -29,25 +31,28 @@ export async function verifyJovaBookRelease({expectedCommit,vercelToken=process.
  if(typeof vercelToken!=='string'||!vercelToken.trim())throw Error('VERCEL_TOKEN must be supplied securely through the environment for read-only deployment checks. No release was verified.');
  const commit=expectedCommit.toLowerCase(),checks=[],add=(name,ok,details={})=>checks.push({name,ok,...details});
  let html;
- try{html=readSource(commit,'index.html');}catch{throw Error('The expected commit or its booking-demo/index.html is not available in this checkout. No release was verified.');}
- const assets=new Map([...html.matchAll(/(?:src|href)=["']([^"']+)["']/g)].flatMap(match=>{
-  try{const url=new URL(match[1],'https://'+RELEASE_TARGETS.booking.host);return url.origin==='https://'+RELEASE_TARGETS.booking.host?[[url.pathname.slice(1),url.pathname+url.search]]:[];}catch{return [];}
- }));
- const jobs=[{file:'index.html',url:'/?portal=owner',expected:html}];
- for(const file of CRITICAL_ASSETS){
-  if(!assets.has(file)){add('source:'+file,false,{reason:'Critical asset is missing from the expected HTML.'});continue;}
-  try{jobs.push({file,url:assets.get(file),expected:readSource(commit,file)});}catch{add('source:'+file,false,{reason:'Critical asset is missing from the expected commit.'});}
+ try{html=await readSource(commit,'index.html');}catch{throw Error('The expected commit or its booking-demo/index.html is not available in this checkout. No release was verified.');}
+ const jobs=[],pages={};
+ try{const approved=await readSource(commit,'build-assets.mjs'),local=await readFile(new URL('../booking-demo/build-assets.mjs',import.meta.url),'utf8');add('source:build-assets.mjs',hash(approved)===hash(local),{reason:hash(approved)===hash(local)?undefined:'The verifier bundler differs from the approved commit. Check out the approved release before verification.'});}
+ catch{add('source:build-assets.mjs',false,{reason:'Approved bundle builder source is unavailable.'});}
+ for(const [page,document,required] of [['owner','index.html',CRITICAL_ASSETS],['operator','operator.html',OPERATOR_ASSETS]]){
+  try{
+   const sourceHtml=page==='owner'?html:await readSource(commit,document),result=await bundlePage({html:sourceHtml,page,readSource:file=>readSource(commit,file)});
+   if(typeof result.html!=='string'||!Array.isArray(result.assets)||!result.assets.length)throw Error('Invalid bundle result');
+   const included=new Set(result.assets.flatMap(asset=>asset.sources.map(source=>source.file)));
+   for(const file of required)if(file!=='config.js'&&!included.has(file))add('source:'+file,false,{reason:'Critical source is missing from generated bundles.'});
+   pages[page]={document,assets:result.assets};
+   jobs.push({file:document,url:page==='owner'?'/?portal=owner':'/operator.html',expected:result.html});
+   for(const asset of result.assets)jobs.push({file:asset.file,url:asset.url,expected:asset.body});
+  }catch{add('source:'+document,false,{reason:'The approved page and all bundle sources must be available and build successfully.'});}
  }
+ const manifest={version:1,pages:Object.fromEntries(Object.entries(pages).map(([page,{document,assets}])=>[page,{document,assets:assets.map(({body,...metadata})=>metadata)}]))};
+ jobs.push({file:'asset-manifest.json',url:'/asset-manifest.json',expected:JSON.stringify(manifest,null,2)+'\n'});
+ try{jobs.push({file:'config.js',url:'/config.js',expected:await readSource(commit,'config.js')});}catch{add('source:config.js',false,{reason:'Public configuration source is missing from the approved commit.'});}
  try{
-  const operatorHtml=readSource(commit,'operator.html'),operatorBase='https://'+RELEASE_TARGETS.booking.host+'/operator.html';
-  const operatorAssets=new Map([...operatorHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)].flatMap(match=>{try{const url=new URL(match[1],operatorBase);return url.origin==='https://'+RELEASE_TARGETS.booking.host?[[url.pathname.slice(1),url.pathname+url.search]]:[];}catch{return [];}}));
-  jobs.push({file:'operator.html',url:'/operator.html',expected:operatorHtml});
-  for(const file of OPERATOR_ASSETS){if(!operatorAssets.has(file))add('source:'+file,false,{reason:'Critical asset is missing from the expected Operator HTML.'});else try{jobs.push({file,url:operatorAssets.get(file),expected:readSource(commit,file)});}catch{add('source:'+file,false,{reason:'Critical Operator asset is missing from the expected commit.'});}}
- }catch{add('source:operator.html',false,{reason:'Operator entry point is missing from the expected commit.'});}
- try{
-  const google=readSource(commit,'google-auth.js'),sdk=google.match(/script\.src\s*=\s*['"]([^'"]+\/supabase-[^'"]+\.js)['"]/);
+  const google=await readSource(commit,'google-auth.js'),sdk=google.match(/script\.src\s*=\s*['"]([^'"]+\/supabase-[^'"]+\.js)['"]/);
   if(!sdk||!/^\/vendor\/[a-z0-9._-]+\.js$/i.test(sdk[1]))add('source:google-sdk',false,{reason:'The self-hosted Google authentication SDK path could not be verified.'});
-  else jobs.push({file:sdk[1].slice(1),url:sdk[1],expected:readSource(commit,sdk[1].slice(1))});
+  else jobs.push({file:sdk[1].slice(1),url:sdk[1],expected:await readSource(commit,sdk[1].slice(1))});
  }catch{add('source:google-sdk',false,{reason:'Google authentication SDK source is missing from the expected commit.'});}
  const get=(url,headers={})=>fetcher(url,{method:'GET',headers:{'Cache-Control':'no-cache',...headers},redirect:'error',signal:AbortSignal.timeout(15000)});
  await Promise.all(Object.entries(RELEASE_TARGETS).filter(([,target])=>target?.host).map(async([name,target])=>{
@@ -68,8 +73,12 @@ export async function verifyJovaBookRelease({expectedCommit,vercelToken=process.
    try{
     const response=await get('https://'+RELEASE_TARGETS.booking.host+job.url);
     if(!response.ok){add('asset:'+job.file,false,{status:response.status,reason:'Critical release asset is unavailable.'});continue;}
-    const type=response.headers.get('content-type')||'',wanted=job.file.endsWith('.html')?/text\/html/i:job.file.endsWith('.css')?/text\/css/i:/(?:application|text)\/(?:java|ecma)script/i;
+    const type=response.headers.get('content-type')||'',wanted=job.file.endsWith('.html')?/text\/html/i:job.file.endsWith('.json')?/application\/json/i:job.file.endsWith('.css')?/text\/css/i:/(?:application|text)\/(?:java|ecma)script/i;
     if(!wanted.test(type)){add('asset:'+job.file,false,{reason:'Unexpected content type.',contentType:type});continue;}
+    if(/^assets\/(?:owner|operator)-(?:entry|app|styles)\./.test(job.file)){
+     const cacheControl=response.headers.get('cache-control')||'';
+     add('cache:'+job.file,/\bmax-age=31536000\b/i.test(cacheControl)&&/\bimmutable\b/i.test(cacheControl),{cacheControl,reason:'Content-hashed bundles must keep the approved one-year immutable browser cache.'});
+    }
     const body=await response.text(),expectedHash=hash(job.expected),actualHash=hash(body);
     add('asset:'+job.file,expectedHash===actualHash,{expectedHash,actualHash,reason:expectedHash===actualHash?undefined:'Live bytes differ from the approved commit.'});
    }catch(error){add('asset:'+job.file,false,{reason:safeError(error)});}

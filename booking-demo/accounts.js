@@ -707,6 +707,18 @@
         const r = await call('/rest/v1/' + table + '?salon_id=eq.' + salonId + '&id=in.(' + encodeURIComponent(list) + ')', { method: 'DELETE', token: t,owner:true, headers: { Prefer: 'return=minimal' } });
         return { ok: r.ok,stale:r.stale,auth:r.auth, network: r.network, status: r.status };
       },
+      async verifySalon(salonId) {
+        if(verifiedAccess?.data?.team===true||!writeScope(salonId))return scopeFailure();
+        const t=await token();if(!t)return authFailure();if(!writeScope(salonId))return scopeFailure();
+        const expected=stamp(),ownerId=load()?.user?.id;
+        const r=await call('/rest/v1/salons?select=*&id=eq.'+encodeURIComponent(salonId)+'&owner_id=eq.'+encodeURIComponent(ownerId)+'&limit=2',{method:'GET',token:t,owner:true});
+        if(!current(expected)||r.stale)return stale();
+        if(!r.ok)return {...r,auth:r.status===401||r.status===403};
+        if(!Array.isArray(r.data)||r.data.length!==1||r.data[0].id!==salonId||r.data[0].owner_id!==ownerId)return scopeFailure();
+        const checked=await ownerAccess();if(!current(expected)||checked.stale)return stale();if(!checked.ok)return checked;
+        if(!['active','setup'].includes(checked.data.access)||checked.data.business.id!==salonId||!writeScope(salonId))return scopeFailure();
+        return {ok:true,salon:r.data[0],access:checked.data};
+      },
       async saveSalon(a,expectedSalonId) {
         if(verifiedAccess?.data?.team===true)return {ok:false,status:403,message:'Only the business owner can change business settings.'};
         if(!writeScope(expectedSalonId))return scopeFailure();
