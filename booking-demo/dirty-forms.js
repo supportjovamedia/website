@@ -2,15 +2,36 @@
 (() => {
  'use strict';
  const types=new Set(['settings','jd-settings','service','category','customer','workspace-appearance','ws-business-hours','ws-staff-hours','ws-booking-page','deposit','manual-booking','edit-booking','reschedule','portal','onboard-business','onboard-owner','owner-series','sb-provider-change','sb-plan-change']);
- const records=new WeakMap(),saveIndicators=new WeakMap();let queued=false,leaveDialog=null,lastEditorFocus=null;
+ const records=new WeakMap(),saveIndicators=new WeakMap(),saveIntents=new WeakMap(),saveDisabled=new WeakMap();let queued=false,leaveDialog=null,lastEditorFocus=null;
  function serialize(elements){return JSON.stringify(Array.from(elements).filter(e=>e.name&&!['button','submit','reset','file','image'].includes(e.type)).map(e=>[e.name,e.type||e.tagName,e.type==='checkbox'||e.type==='radio'?!!e.checked:e.multiple?Array.from(e.selectedOptions||[],option=>option.value):String(e.value??'')]));}
  function signature(form){return serialize(form.elements);}
  const saveLabel=control=>/^(?:save\b|saving(?:\b|…)|apply theme\b|applying(?:\b|…))/i.test(String(control.tagName==='INPUT'?control.value:control.textContent||'').trim());
+ const excludedForm=form=>['owner-onboarding','onboard-owner','onboard-business','login','signup','register','forgot'].includes(form?.dataset?.form);
+ const originalSaveIntent=control=>{const label=String(control.tagName==='INPUT'?control.value:control.textContent||'').trim();if(/^(?:save\b|apply theme\b)/i.test(label))saveIntents.set(control,true);return saveIntents.get(control)===true;};
  const indicatorDirty=form=>!!form&&(dirty(form)||form.dataset.dirty==='true');
+ function syncSaveDisabled(control,form,changed){
+  let state=saveDisabled.get(control);
+  if(!state){
+   state={hostDisabled:!!control.disabled,observer:null};saveDisabled.set(control,state);
+   if(typeof MutationObserver!=='undefined'){
+    state.observer=new MutationObserver(()=>{state.hostDisabled=!!control.disabled;schedule();});
+    state.observer.observe(control,{attributes:true,attributeFilter:['disabled']});
+   }
+  }
+  // Drain host writes before applying our own pristine lock. Disconnecting only for
+  // our write also distinguishes a host's repeated disabled=true from our lock.
+  if(state.observer?.takeRecords().length)state.hostDisabled=!!control.disabled;
+  const busy=form?.getAttribute?.('aria-busy')==='true'||control.getAttribute?.('aria-busy')==='true'||/^(?:saving|applying)(?:\b|…)/i.test(String(control.tagName==='INPUT'?control.value:control.textContent||'').trim());
+  const disabled=state.hostDisabled||!changed||busy;
+  if(control.disabled!==disabled){
+   state.observer?.disconnect();control.disabled=disabled;
+   state.observer?.observe(control,{attributes:true,attributeFilter:['disabled']});
+  }
+ }
  function syncSaveIndicator(control,form){
   control.classList.remove('df-save-is-dirty');
   let status=saveIndicators.get(control);
-  if(!saveLabel(control)){if(status)status.hidden=true;return;}
+  if(excludedForm(form)||!originalSaveIntent(control)||!saveLabel(control)){if(status&&status.hidden!==true)status.hidden=true;return;}
   if(!status){
    status=document.createElement('span');status.className='df-save-indicator';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
    const dot=document.createElement('span');dot.className='df-save-indicator-dot';dot.setAttribute('aria-hidden','true');
@@ -19,12 +40,13 @@
   if(status.nextElementSibling!==control)control.before(status);
   control.parentElement?.classList.add('df-save-actions');form?.classList.add('df-external-save-status');
   const changed=indicatorDirty(form),message=changed?'Unsaved changes':'No unsaved changes';
-  status.hidden=false;status.classList.toggle('is-dirty',changed);
+  syncSaveDisabled(control,form,changed);
+  if(status.hidden!==false)status.hidden=false;status.classList.toggle('is-dirty',changed);
   if(status.lastElementChild.textContent!==message)status.lastElementChild.textContent=message;
  }
  function refreshSaveIndicators(root=document){
   root.querySelectorAll('form[data-form]').forEach(form=>{
-   if(!form.closest('#app,#modal-root'))return;
+   if(excludedForm(form)||!form.closest('#app,#modal-root'))return;
    const controls=new Set([...form.querySelectorAll('button,input[type=submit]'),...Array.from(form.elements||[])]);
    for(const control of controls)if(control.matches?.('button,input[type=submit]'))syncSaveIndicator(control,form);
   });
@@ -35,10 +57,11 @@
  }
  function update(form){const record=records.get(form);if(!record)return;const dirty=signature(form)!==record.baseline;form.dataset.dirty=String(dirty);record.status.classList.toggle('is-dirty',dirty);record.status.setAttribute('aria-hidden',String(!dirty));const message=dirty?'Unsaved changes':'';if(record.text.textContent!==message)record.text.textContent=message;}
  function register(form){
-  if(records.has(form)||['staff','bw-website'].includes(form.dataset.form))return;
+  if(records.has(form)||excludedForm(form)||['staff','bw-website','sr-settings','sr-message'].includes(form.dataset.form))return;
   const submit=Array.from(form.querySelectorAll('button.primary,input[type=submit]')).find(button=>button.type==='submit');if(!submit)return;
-  if(!types.has(form.dataset.form)&&!saveLabel(submit))return;
-  const navigation=/^(?:continue|next|back)\b/i.test(String(submit.textContent||submit.value||'').trim());
+  const saveIntent=originalSaveIntent(submit);
+  if(!types.has(form.dataset.form)&&!saveIntent)return;
+  const navigation=!saveIntent;
   let footer=navigation?null:submit.closest('.form-footer,.ws-form-footer,.se-save-bar');
   if(!navigation&&(!footer||!form.contains(footer))){footer=document.createElement('div');submit.parentNode.insertBefore(footer,submit);footer.appendChild(submit);}
   footer?.classList.add('se-save-bar','df-save-bar');
@@ -94,7 +117,7 @@
    const first=buttons[0],last=buttons.at(-1),active=document.activeElement;
    if(event.shiftKey&&(active===first||!leaveDialog.dialog.contains(active))){event.preventDefault();last.focus();}else if(!event.shiftKey&&(active===last||!leaveDialog.dialog.contains(active))){event.preventDefault();first.focus();}
   },true);
-  scan();new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-dirty','hidden','data-save-placement']});
+  scan();new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-dirty','hidden','data-save-placement','aria-busy']});
  }
  const hasChanges=(root=document)=>Array.from(root.querySelectorAll('form[data-form]')).some(form=>dirty(form)||form.dataset.dirty==='true');
  function discard(root=document){root.querySelectorAll('form[data-form]').forEach(form=>{saved(form);form.dataset.dirty='false';});refreshSaveIndicators();}

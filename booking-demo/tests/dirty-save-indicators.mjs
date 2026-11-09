@@ -26,11 +26,11 @@ function harness(){
 const indicator=button=>button.parentElement?.children.find(node=>node.className==='df-save-indicator'&&node.nextElementSibling===button);
 const dotted=button=>indicator(button)?.classList.contains('is-dirty')===true;
 test('external Save status reflects actual edits, reverting, failure and successful save',()=>{
- const h=harness(),{f,input,button}=h.form();h.api.scan();assert(!dotted(button));
+ const h=harness(),{f,input,button}=h.form();h.api.scan();assert(!dotted(button));assert.equal(button.disabled,true);
  input.value='Changed';f.handlers.input();h.api.refreshSaveIndicators();assert(dotted(button));assert(h.api.isDirty(f));assert.equal(indicator(button).lastElementChild.textContent,'Unsaved changes');assert.equal(button.classList.contains('df-save-is-dirty'),false);assert.equal(button.children.length,0,'Status must be outside the button');
- h.api.refreshSaveIndicators();assert(dotted(button),'A failed save that has no successful baseline update stays dirty');
- input.value='Saved value';f.handlers.input();h.api.refreshSaveIndicators();assert(!dotted(button),'Reverting the field clears the dot');
- input.value='Another change';f.handlers.change();h.api.refreshSaveIndicators();assert(dotted(button));h.api.saved(f);assert(!dotted(button));assert(!h.api.isDirty(f));
+ h.api.refreshSaveIndicators();assert(dotted(button),'A failed save that has no successful baseline update stays dirty');assert.equal(button.disabled,false);
+ input.value='Saved value';f.handlers.input();h.api.refreshSaveIndicators();assert(!dotted(button),'Reverting the field clears the dot');assert.equal(button.disabled,true);
+ input.value='Another change';f.handlers.change();h.api.refreshSaveIndicators();assert(dotted(button));h.api.saved(f);assert(!dotted(button));assert(!h.api.isDirty(f));assert.equal(button.disabled,true);
  button.textContent='Saving…';h.api.refreshSaveIndicators();assert(!dotted(button),'A label change alone cannot make the form dirty');
 });
 test('self-managed website drafts, header proxy and discard reuse existing dirty state',()=>{
