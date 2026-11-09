@@ -88,3 +88,5 @@
 @media(max-width:359px){.homeEditorial .guideGrid a{grid-template-columns:86px minmax(0,1fr);gap:12px;padding:12px}.homeEditorial .guideGrid h3{font-size:16px}}
 
 .phpSecurity,.aiSecurity,.bookingSecurity{background:#0c2948}
+
+.articleAnswer{max-width:68ch;margin:0 0 26px;font-size:clamp(1rem,1.3vw,1.125rem);line-height:1.65;color:var(--ed-ink);text-wrap:pretty}
