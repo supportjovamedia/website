@@ -4,7 +4,7 @@ import { quoteProducts, quoteWebsiteOptions } from "@/lib/quote-fields.mjs";
 import { pageMetadata } from "@/lib/seo";
 import s from "./quote.module.css";
 
-export const metadata = pageMetadata("/get-a-quote", "Get a Quote | JovaMedia", "Request a quote for your website, branding or digital project. We’ll discuss your requirements and confirm the right scope before quoting.");
+export const metadata = pageMetadata("/get-a-quote", "Small Business Website & Digital Project Quotes | JovaMedia", "Tell us what your small business website or digital project needs to do. Get a scoped quote from JovaMedia with the work and costs explained.");
 export default async function QuotePage({ searchParams }) {
   const params = await searchParams;
   const product = quoteProducts.some(option => option.value === params?.product) ? params.product : "";
