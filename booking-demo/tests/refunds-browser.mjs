@@ -1,4 +1,4 @@
-/** Actual refund panel rendering, polling and recovery with fictional data only. */
+/** Actual refund panel rendering, manual refresh and recovery with fictional data only. */
 import {readFile} from 'node:fs/promises';
 const fixtureURL=new URL('./public-experience-browser.mjs',import.meta.url);
 let source=(await readFile(fixtureURL,'utf8')).replaceAll('\r\n','\n');
@@ -15,8 +15,8 @@ try{
    await page.evaluate(()=>{current='succeeded';});await page.getByRole('button',{name:'Refresh',exact:true}).click();await expect(page.locator('.db-refund-row')).toContainText('Refunded');
    await page.evaluate(()=>{failed=true;});await page.getByRole('button',{name:'Refresh',exact:true}).click();await expect(page.getByRole('alert')).toContainText('unavailable');await expect(page.locator('.db-refund-row')).toContainText('Refunded');
    await page.evaluate(()=>{failed=false;current='pending';});await page.getByRole('button',{name:'Refresh',exact:true}).click();await expect(page.locator('.db-refund-row')).toContainText('Processing');await expect(page.getByRole('alert')).toHaveCount(0);
-   await page.evaluate(()=>{current='succeeded';});await page.clock.fastForward(31000);await expect(page.locator('.db-refund-row')).toContainText('Refunded');await fit(page);
-   await page.screenshot({path:path.join(root,'../output/salon-refunds-'+width+'.png'),fullPage:true});console.log('PASS refund status, refresh, error recovery, polling and layout '+width);
+   await page.evaluate(()=>{current='succeeded';});const beforeIdle=await page.evaluate(()=>calls);await page.clock.fastForward(31000);await page.evaluate(()=>{dispatchEvent(new Event('focus'));document.dispatchEvent(new Event('visibilitychange'));api.render();});await expect(page.locator('.db-refund-row')).toContainText('Processing');assert.equal(await page.evaluate(()=>calls),beforeIdle);await page.getByRole('button',{name:'Refresh',exact:true}).click();await expect(page.locator('.db-refund-row')).toContainText('Refunded');await fit(page);
+   await page.screenshot({path:path.join(root,'../output/salon-refunds-'+width+'.png'),fullPage:true});console.log('PASS refund status, refresh, error recovery, manual-only refresh and layout '+width);
   }finally{await context.close();}
  }
  assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);

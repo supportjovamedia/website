@@ -2,10 +2,10 @@ import test from 'node:test';import assert from 'node:assert/strict';import vm f
 const accounts=await readFile(new URL('../accounts.js',import.meta.url),'utf8'),google=await readFile(new URL('../google-auth.js',import.meta.url),'utf8');
 const id='30000000-0000-4000-8000-000000000001';
 const storage=map=>({getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)});
-function native({confirmed=true,wrongPortal=false,emailFirst=false,verifyStatus=200,verifiedEmail='owner@example.test',adoptionFailures=0,budgetLimited=false}={}){
+function native({confirmed=true,wrongPortal=false,emailFirst=false,verifyStatus=200,verifiedEmail='owner@example.test',adoptionFailures=0,budgetLimited=false,service={}}={}){
  const local=new Map(),tab=new Map(),calls=[],reports=[],state={salons:[],accounts:[],resets:[]},window={JovaOwnerDiagnostics:{failure:()=>{},setSession:()=>{},report:(...args)=>reports.push(args)},JOVA_SUPABASE:{url:'https://fixture.example.test',key:'public-fixture'}};
- vm.runInNewContext(accounts,{window,crypto:webcrypto,Uint8Array,Date,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://book.jovamedia.com',search:'?portal=owner'},localStorage:storage(local),sessionStorage:storage(tab),fetch:async(url,options)=>{calls.push({url,options});let data={ok:true},status=200;if(url.endsWith('/reserve_owner_verification'))data=budgetLimited?{ok:false,limited:true,remaining:0}:{ok:true,remaining:2};else if(url.endsWith('/auth/v1/verify')){status=verifyStatus;data=status===200?{access_token:'otp-fixture-token',refresh_token:'otp-fixture-refresh',expires_in:3600}:{message:'PRIVATE_123456'};}else if(url.endsWith('/auth/v1/user')){if(adoptionFailures-->0)throw Error('Fixture connection failure');data={id,email:verifiedEmail,email_confirmed_at:confirmed?new Date().toISOString():null,user_metadata:{full_name:'Avery Smith',email_first:emailFirst,...(options.method==='PUT'?{email_first_profile_complete:true}:{})}};}else if(url==='/api/jovabook/billing/status')data=wrongPortal?{ok:true,access:'wrong_portal',role:'operator'}:{ok:true,access:'no_business',no_business:true,business:null};else if(url.includes('/region'))data={allowed:true};else if(url.includes('/signup'))data={user:{id}};return {ok:status<400,status,json:async()=>data};}});
- return {api:window.JovaAccounts.create(()=>state,()=>{}),local,tab,calls,reports};
+ vm.runInNewContext(accounts,{window,crypto:webcrypto,Uint8Array,Date,Math,AbortController,setTimeout,clearTimeout,URLSearchParams,atob,location:{origin:'https://book.jovamedia.com',search:'?portal=owner'},localStorage:storage(local),sessionStorage:storage(tab),fetch:async(url,options)=>{calls.push({url,options});const stage=url.endsWith('/auth/v1/user')?'user':url==='/api/jovabook/billing/status'?'access':url.endsWith('/owner_onboarding_progress')?'onboarding':null,failure=service[stage];if(failure==='network')throw Error('Fixture network failure');if(failure?.promise)await failure.promise;let data={ok:true},status=200;if(url.endsWith('/reserve_owner_verification'))data=budgetLimited?{ok:false,limited:true,remaining:0}:{ok:true,remaining:2};else if(url.endsWith('/auth/v1/verify')){status=verifyStatus;data=status===200?{access_token:'otp-fixture-token',refresh_token:'otp-fixture-refresh',expires_in:3600}:{message:'PRIVATE_123456'};}else if(url.endsWith('/auth/v1/user')){if(adoptionFailures-->0)throw Error('Fixture connection failure');data={id,email:verifiedEmail,email_confirmed_at:confirmed?new Date().toISOString():null,user_metadata:{full_name:'Avery Smith',email_first:emailFirst,...(options.method==='PUT'?{email_first_profile_complete:true}:{})}};}else if(url==='/api/jovabook/billing/status')data=wrongPortal?{ok:true,access:'wrong_portal',role:'operator'}:{ok:true,access:'no_business',no_business:true,business:null};else if(url.includes('/region'))data={allowed:true};else if(url.includes('/signup'))data={user:{id}};if(typeof failure==='number')status=failure;if(failure==='malformed')data={};return {ok:status<400,status,json:async()=>data};}});
+ return {api:window.JovaAccounts.create(()=>state,()=>{}),local,tab,calls,reports,service};
 }
 test('Google sessions are verified against Auth before storage and another portal cannot open business setup',async()=>{
  for(const options of [{confirmed:false},{wrongPortal:true}]){const h=native(options),result=await h.api.acceptGoogleSession({access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:Date.now()/1000+3600,user:{id:'forged'}});assert.equal(result.ok,false);assert.equal(h.local.has('jovabook-auth'),false);assert(!h.calls.some(c=>c.url.includes('create_business')));}
@@ -48,4 +48,38 @@ test('OTP adopts only native verified identity and retries transient adoption wi
 test('code requests fail closed at the shared budget and resend uses the native signup route',async()=>{
  const h=native({budgetLimited:true});assert.equal((await h.api.requestOwnerVerification('owner@example.test')).limited,true);assert.equal((await h.api.resendOwnerVerification('owner@example.test')).limited,true);assert(!h.calls.some(c=>c.url.includes('/signup')||c.url.includes('/resend')));
  const allowed=native();assert.equal((await allowed.api.resendOwnerVerification('owner@example.test')).ok,true);const payload=JSON.parse(allowed.calls.find(c=>c.url.endsWith('/auth/v1/resend')).options.body);assert.equal(payload.type,'signup');
+});
+
+const googleSession=()=>({access_token:'google-exchanged-token',refresh_token:'google-exchanged-refresh',expires_at:Date.now()/1000+3600,user:{id:'untrusted-provider-hint'}});
+test('transient native identity verification remains resumable without persisting an unverified Google identity',async()=>{
+ for(const failure of ['network',429,500,'malformed']){
+  const service={user:failure},h=native({service}),result=await h.api.acceptGoogleSession(googleSession());
+  assert.equal(result.resumable,true,String(failure));assert.equal(result.adoptionPending,true);assert.equal(result.stage,'verify_session');assert.equal(h.local.has('jovabook-auth'),false);assert.equal(h.api.hasPendingOwnerSessionAdoption(),true);
+  delete service.user;const retried=await h.api.retryOwnerSessionAdoption();assert.equal(retried.ok,true);assert.equal(retried.needsBusiness,true);assert.equal(h.api.hasPendingOwnerSessionAdoption(),false);assert.equal(JSON.parse(h.local.get('jovabook-auth')).user.id,id);
+  assert.equal(h.calls.filter(call=>call.url.endsWith('/auth/v1/user')).length,2);assert(!h.calls.some(call=>call.url.includes('grant_type=pkce')||call.url.includes('grant_type=password')));
+ }
+});
+
+test('verified Google tokens survive transient access and onboarding failures but tenant access stays unverified until retry succeeds',async()=>{
+ for(const stage of ['access','onboarding'])for(const failure of ['network',429,503,'malformed']){
+  const service={[stage]:failure},h=native({service}),result=await h.api.acceptGoogleSession(googleSession());
+  assert.equal(result.resumable,true,stage+' '+failure);assert.equal(result.stage,stage==='access'?'account_access':'onboarding');assert.equal(h.api.hasPendingOwnerSessionAdoption(),true);
+  const kept=JSON.parse(h.local.get('jovabook-auth'));assert.equal(kept.access_token,'google-exchanged-token');assert.equal(kept.user.id,id);assert.equal(h.api.canWrite('unverified-business'),false);assert.equal(h.api.existingBusinessContext(),null);
+  delete service[stage];const retried=await h.api.retryOwnerSessionAdoption();assert.equal(retried.ok,true);assert.equal(retried.needsBusiness,true);assert.equal(h.api.existingBusinessContext().email,'owner@example.test');assert.equal(h.api.hasPendingOwnerSessionAdoption(),false);assert(!h.calls.some(call=>call.url.includes('create_business')));
+ }
+});
+
+test('revoked, forbidden, unconfirmed, wrong-email and wrong-portal adoptions cannot become resumable authenticated sessions',async()=>{
+ for(const stage of ['user','access','onboarding'])for(const status of [401,403]){
+  const h=native({service:{[stage]:status}}),result=await h.api.acceptGoogleSession(googleSession());assert.equal(result.ok,false,stage+' '+status);assert.notEqual(result.resumable,true);assert.equal(h.local.has('jovabook-auth'),false);assert.equal(h.api.hasPendingOwnerSessionAdoption(),false);
+ }
+ for(const options of [{confirmed:false},{wrongPortal:true}]){const h=native(options),result=await h.api.acceptGoogleSession(googleSession());assert.equal(result.ok,false);assert.notEqual(result.resumable,true);assert.equal(h.api.hasPendingOwnerSessionAdoption(),false);assert.equal(h.local.has('jovabook-auth'),false);}
+ const wrong=native(),result=await wrong.api.acceptOwnerSession(googleSession(),'another@example.test');assert.equal(result.ok,false);assert.equal(wrong.local.has('jovabook-auth'),false);assert.equal(wrong.api.hasPendingOwnerSessionAdoption(),false);
+});
+
+test('pending Google adoption is invalidated by another account or logout and late native verification cannot overwrite another session',async()=>{
+ const h=native({service:{user:'network'}});await h.api.acceptGoogleSession(googleSession());
+ const other={...googleSession(),access_token:'other-token',user:{id:'other-owner'}};h.local.set('jovabook-auth',JSON.stringify(other));const before=h.calls.length;assert.equal(h.api.hasPendingOwnerSessionAdoption(),false);assert.equal((await h.api.retryOwnerSessionAdoption()).stale,true);assert.equal(h.calls.length,before);assert.equal(JSON.parse(h.local.get('jovabook-auth')).user.id,'other-owner');
+ const logout=native({service:{access:503}});await logout.api.acceptGoogleSession(googleSession());await logout.api.logout();assert.equal(logout.api.hasPendingOwnerSessionAdoption(),false);assert.equal((await logout.api.retryOwnerSessionAdoption()).stale,true);assert.equal(logout.local.has('jovabook-auth'),false);
+ let release;const gate={promise:new Promise(resolve=>release=resolve)},late=native({service:{user:gate}}),adopting=late.api.acceptGoogleSession(googleSession());await new Promise(resolve=>setImmediate(resolve));late.local.set('jovabook-auth',JSON.stringify(other));release();assert.equal((await adopting).stale,true);assert.equal(JSON.parse(late.local.get('jovabook-auth')).user.id,'other-owner');assert.equal(late.api.hasPendingOwnerSessionAdoption(),false);
 });

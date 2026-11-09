@@ -61,6 +61,42 @@
           "value": "public, max-age=300"
         }
       ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/login",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/:salon((?!.*[/]$)(?!(?:www|app|admin|support|salon|api|bookings|book|mail|help|billing|status|blog|login|signup|dashboard|jova|jovamedia|jovabook|staging|test|demo|owner|operator|customer|auth|callback|recovery|reset|forgot|register|index|assets|fonts|images|scripts|styles|config|health|robots|favicon|sitemap|jova-demo)(?:/|$))(?=[a-z0-9-]{3,30}(?:/|$))[a-z0-9]+(?:-[a-z0-9]+)*)/:page(book(?:/(?:service|time|choice|details|payment|confirmation))?|account(?:/(?:login|register|forgot|reset|bookings|payments|profile))?|about|contact)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
   ]
 }

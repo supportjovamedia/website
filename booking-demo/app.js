@@ -117,7 +117,21 @@ var snap={};            // salonId -> { table -> { rowId -> json } } = what the 
 var salonSnap={};       // salonId -> json of salon-level fields last saved
 var syncDirty=false,syncBusy=false,syncFail=0,syncTimer=null,liveLoadSequence=0;
 var verifiedOwnerIdentity=null,ownerLoadError='',observedOwnerIdentity=dir.sessionIdentity?.(),ownerAccessState=null,accessRefreshTimer=null;
-function scheduleAccessCheck(access){clearTimeout(accessRefreshTimer);accessRefreshTimer=null;const serverDeadline=Date.parse(access.full_until),serverNow=Date.parse(access.server_now),end=access.access==='active'?(Number.isFinite(serverDeadline)&&Number.isFinite(serverNow)?Date.now()+serverDeadline-serverNow:access.business.status==='trialing'?Date.parse(access.lifecycle.trialEndsAt):NaN):NaN;if(!Number.isFinite(end))return;const identity=dir.sessionIdentity?.(),sid=access.business.id;accessRefreshTimer=setTimeout(()=>{if(!signedIn()||dir.sessionIdentity?.()!==identity||salon().id!==sid)return;syncDirty=false;syncBlocked=true;clearTimeout(syncTimer);syncTimer=null;loadingOwner=true;closeModal();render();void reloadOwner();},Math.max(1000,Math.min(2147483647,end-Date.now())));}
+var restoringOwnerSession=false,ownerRestoreRoute='',ownerRestoreAttempt=0;
+const accessDeadlineAttempts=new Set();
+function scheduleAccessCheck(access){
+ clearTimeout(accessRefreshTimer);accessRefreshTimer=null;
+ const serverDeadline=Date.parse(access.full_until),serverNow=Date.parse(access.server_now),deadline=Number.isFinite(serverDeadline)&&Number.isFinite(serverNow)?serverDeadline:Date.parse(access.lifecycle.trialEndsAt),end=access.access==='active'?(Number.isFinite(serverDeadline)&&Number.isFinite(serverNow)?Date.now()+serverDeadline-serverNow:access.business.status==='trialing'?deadline:NaN):NaN;
+ if(!Number.isFinite(end))return;
+ const identity=dir.sessionIdentity?.(),sid=access.business.id,key=identity+'|'+sid+'|'+deadline;
+ if(accessDeadlineAttempts.has(key))return;
+ accessRefreshTimer=setTimeout(()=>{
+  if(!signedIn()||dir.sessionIdentity?.()!==identity||salon().id!==sid)return;
+  // Re-read a deadline once. A stale active response must not create a 1-second loop.
+  if(end<=Date.now()+1000)accessDeadlineAttempts.add(key);
+  syncDirty=false;syncBlocked=true;clearTimeout(syncTimer);syncTimer=null;loadingOwner=true;closeModal();render();void reloadOwner();
+ },Math.max(1000,Math.min(2147483647,end-Date.now())));
+}
 const TEAM_ROUTES=['dashboard','calendar','bookings','customers'];
 const teamMode=()=>ownerAccessState?.team===true;
 const billingRestricted=()=>isLive(salon())&&ownerAccessState?.business?.id===salon().id&&['billing_only','deleting'].includes(ownerAccessState.access);
@@ -266,16 +280,16 @@ async function loadLive({afterSave=false}={}){
  const [capabilities,emailInfo]=team?[{offer_version:'2026-11-free-v1',plan:'premium',staff_limit:Math.max(2,d.rows.staff.length),version:1},{ok:false}]:await Promise.all([dir.ownerCapabilities(),dir.emailDeliveryInfo().catch(()=>({ok:false}))]);
  x.plan=d.access?.business.plan||d.salon.plan||'essential';x.capabilities=capabilities;x.entitlements={...x.capabilities,plan:x.capabilities?.plan||x.plan};x.emailDelivery=emailInfo.ok?{available:true,...emailInfo.data}:{available:false};
  if(sequence!==liveLoadSequence||revision!==saveRevision||identity!==dir.sessionIdentity?.()||(!editingAtStart&&hasUnsavedEditor()))return {ok:false,stale:true};delete x.__fresh;
- purgeLive(x.id);
+ purgeLive(x.id,{persist:false});
  const i=state.salons.findIndex(y=>y.id===x.id);if(i>=0)state.salons[i]=x;else state.salons.push(x);
  state.active=x.id;verifiedOwnerIdentity=identity;observedOwnerIdentity=identity;ownerLoadError='';
  if(fresh){snap[x.id]={};TABLES.forEach(t=>{snap[x.id][t]={};});salonSnap[x.id]='';}else markSynced(x);
- try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+ try{const serialized=JSON.stringify(state);if(localStorage.getItem(KEY)!==serialized)localStorage.setItem(KEY,serialized);}catch(e){}
  if(fresh)queueSync();
  return {ok:true,salon:x,row:d.salon};
 }
 // Take other people's salons (and cached copies) out of this browser when the owner logs out.
-function purgeLive(keep){state.salons=state.salons.filter(x=>!isUuid(x.id)||x.id===keep);if(!state.salons.some(x=>x.id===state.active))state.active=(state.salons[0]||{}).id;Object.keys(snap).forEach(k=>{if(k!==keep){delete snap[k];delete salonSnap[k];}});try{localStorage.removeItem(KEY+'-unsaved');localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function purgeLive(keep,{persist=true}={}){state.salons=state.salons.filter(x=>!isUuid(x.id)||x.id===keep);if(!state.salons.some(x=>x.id===state.active))state.active=(state.salons[0]||{}).id;Object.keys(snap).forEach(k=>{if(k!==keep){delete snap[k];delete salonSnap[k];}});try{localStorage.removeItem(KEY+'-unsaved');if(persist){const serialized=JSON.stringify(state);if(localStorage.getItem(KEY)!==serialized)localStorage.setItem(KEY,serialized);}}catch(e){}}
 let loadingOwner=false;
 // Public booking page: read the salon from the database through the public view.
 async function loadPublic(){
@@ -742,7 +756,7 @@ if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingLeave=null;const re
  if(pubMode()){if(!PUB){loadPublic();$('#app').innerHTML=loadingPage();return;}
   if(PUB.status==='loading'){$('#app').innerHTML=loadingPage();return;}
   if(PUB.status!=='ok'){$('#app').innerHTML=pubMsg(PUB.status==='network'?'We couldn’t load this page':'This salon isn’t taking bookings',PUB.status==='network'?'Check your connection and try again.':'The booking link may be wrong, or the salon has paused online booking. Please contact the salon directly.');return;}}
- else if(signedIn()&&OWNER_ROUTES.includes(parts[0])&&(loadingOwner||ownerLoadError)){$('#app').innerHTML=ownerLoadError?`${pubHeader()}<main class="container narrow"><section class="card"><h1>We couldn’t load your business</h1><p>${esc(ownerLoadError)}</p><button class="btn primary" data-action="retry-business">Try again</button> <button data-action="signout">Log out</button></section></main>`:loadingPage();return;}
+ else if((signedIn()||restoringOwnerSession)&&OWNER_ROUTES.includes(parts[0])&&(loadingOwner||ownerLoadError)){$('#app').innerHTML=ownerLoadError?`${pubHeader()}<main class="container narrow"><section class="card"><h1>We couldn’t load your business</h1><p>${esc(ownerLoadError)}</p><button class="btn primary" data-action="retry-business">Try again</button> <button data-action="signout">Log out</button></section></main>`:loadingPage();return;}
  if(dir.remote&&signedIn()&&OWNER_ROUTES.includes(parts[0])&&isLive(salon())&&(!verifiedOwnerIdentity||verifiedOwnerIdentity!==dir.sessionIdentity?.()||salon().ownerId!==verifiedOwnerIdentity)){invalidateOwnerView();return;}
  const s=salon();const demoBar=document.querySelector('.demo-bar>span');if(demoBar){demoBar.innerHTML=JovaDemoData.isBuiltIn(s)?'<b>Sample workspace · Standard preview</b> Fictional clients and bookings. Changes stay in this browser. No messages or payments are sent.':'<b>JovaBook</b> Your business workspace.';}document.body.dataset.view=parts[0];document.documentElement.style.setProperty('--salon',/^#[0-9a-f]{6}$/i.test(s.color||'')?s.color:'#235789');if(['book','manage'].includes(parts[0])){document.body.dataset.bookingFont=publicConfig().font;const brand=/^#[0-9a-f]{6}$/i.test(s.color||'')?s.color:'#235789';const rgb=brand.slice(1).match(/../g).map(v=>parseInt(v,16)/255),luma=values=>values.map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);document.documentElement.style.setProperty('--booking-on-brand',luma(rgb)>.179?'#17232d':'#ffffff');let link=[...rgb];while(luma(link)>.183)link=link.map(v=>v*.9);document.documentElement.style.setProperty('--booking-link','#'+link.map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join(''));}else{delete document.body.dataset.bookingFont;}let html;
  const admin={dashboard:overview,referrals:()=>referrals.page(),calendar,bookings:appointmentsPage,customers,services,payments,onboarding,notifications:essentialNotifications,...extraPages,staff:staffRoute,settings:businessSettings,availability:businessSettings};
@@ -1093,27 +1107,64 @@ document.addEventListener('click',event=>{
  if(/^customer\//.test(nextRoute)){if(!link.hasAttribute('data-booking-auth'))return;checkpointBookingAuth(current.slug);}event.preventDefault();if(target.href!==location.href)history.pushState(null,'',target.href);workspaceRouteChanged();
 });
 function invalidateOwnerView(){
+ restoringOwnerSession=false;ownerRestoreRoute='';ownerRestoreAttempt++;
  liveLoadSequence++;clearTimeout(accessRefreshTimer);accessRefreshTimer=null;verifiedOwnerIdentity=null;ownerAccessState=null;ownerLoadError='';loadingOwner=false;syncDirty=false;syncBlocked=false;
  clearTimeout(syncTimer);syncTimer=null;signOut();onbSet(null);$('#app').replaceChildren();purgeLive();draft={};chat=[];lastBooking=null;closeModal();showSync('');
  if(admin_route())go('login');else render();
 }
-async function reloadOwner(){
- const identity=dir.sessionIdentity?.(),sequence=liveLoadSequence;
- const result=await loadLive();
- if(identity!==dir.sessionIdentity?.()||sequence+1!==liveLoadSequence||result.stale)return;
+async function restoreOwnerSession(){
+ if(customerScope()||pubMode()||/^(?:book|manage|website|salon|customer)(?:\/|$)/.test(route()))return;
+ restoringOwnerSession=true;ownerRestoreRoute=OWNER_ROUTES.includes(route().split('/')[0])?route():'dashboard';
+ loadingOwner=true;ownerLoadError='';
+ if(!OWNER_ROUTES.includes(route().split('/')[0]))history.replaceState(null,'',location.pathname+location.search+'#dashboard');
+ render();await reloadOwner();
+}
+async function reloadOwner({staleRetries=1}={}){
+ const attempt=++ownerRestoreAttempt;
+ let identity=dir.sessionIdentity?.();
+ if(dir.hasPendingOwnerSessionAdoption?.()){
+  const adopted=await dir.retryOwnerSessionAdoption();
+  if(attempt!==ownerRestoreAttempt)return;
+  if(adopted.stale){
+   if(dir.hasSession()&&staleRetries>0){await reloadOwner({staleRetries:staleRetries-1});return;}
+   loadingOwner=false;ownerLoadError='Your sign-in changed while loading. Please try again.';render();return;
+  }
+  if(!adopted.ok){
+   loadingOwner=false;
+   if(adopted.auth||adopted.wrongPortal){invalidateOwnerView();return;}
+   ownerLoadError=adopted.message||'Check your connection and try again. Your sign-in has been kept for another attempt.';render();return;
+  }
+  identity=dir.sessionIdentity?.();
+  if(adopted.needsBusiness){loadingOwner=false;ownerLoadError='';restoringOwnerSession=false;ownerRestoreRoute='';observedOwnerIdentity=identity;purgeLive();signIn();history.replaceState(null,'',location.pathname+location.search+'#signup');render();return;}
+ }
+ const sequence=liveLoadSequence,result=await loadLive();
+ if(attempt!==ownerRestoreAttempt||identity!==dir.sessionIdentity?.()||sequence+1!==liveLoadSequence)return;
+ if(result.stale){
+  if((loadingOwner||restoringOwnerSession)&&dir.hasSession()&&staleRetries>0){await reloadOwner({staleRetries:staleRetries-1});return;}
+  loadingOwner=false;ownerLoadError='Your session refreshed while loading. Please try again.';render();return;
+ }
  loadingOwner=false;
- if(result.ok){state.active=result.salon.id;ownerLoadError='';}
- else if(result.auth){invalidateOwnerView();return;}
- else if(!result.pending)ownerLoadError='Check your connection and try again. Your saved business data has not been replaced.';
+ if(result.ok){
+  state.active=result.salon.id;ownerLoadError='';
+  if(restoringOwnerSession){
+   signIn();observedOwnerIdentity=identity;
+   const target=billingRestricted()?'billing':ownerAccessState?.access==='setup'||ownerAccessState?.business.status==='setup'?'signup':ownerRestoreRoute||'dashboard';
+   restoringOwnerSession=false;ownerRestoreRoute='';history.replaceState(null,'',location.pathname+location.search+'#'+target);
+  }
+ }
+ else if(result.auth||result.wrongPortal||result.invalidTenant){invalidateOwnerView();return;}
+ else if(!result.pending)ownerLoadError=result.message||'Check your connection and try again. Your saved business data has not been replaced.';
  render();
 }
 window.addEventListener('storage',e=>{
  if(customerScope())return;
- if(e.key==='jovabook-auth'||e.key===null){const identity=dir.sessionIdentity?.(),changed=identity!==observedOwnerIdentity;observedOwnerIdentity=identity;if(changed){if(!pubMode()&&(signedIn()||loadingOwner))invalidateOwnerView();else purgeLive();}return;}
+ if(e.key==='jovabook-auth'||e.key===null){const identity=dir.sessionIdentity?.(),changed=identity!==observedOwnerIdentity;observedOwnerIdentity=identity;if(changed){if(!pubMode()&&(signedIn()||loadingOwner||restoringOwnerSession))invalidateOwnerView();else purgeLive();}return;}
  if(e.key!==KEY||!e.newValue)return;
  if(dir.remote&&dir.hasSession()){
-  if(verifiedOwnerIdentity!==dir.sessionIdentity?.()){if(signedIn())invalidateOwnerView();return;}
-  if(!syncPending()&&!hasUnsavedEditor())setTimeout(()=>{if(!syncPending()&&!hasUnsavedEditor()&&signedIn())loadLive().then(r=>{if(r.ok)render();});},750);
+  const identity=dir.sessionIdentity?.();
+  if(identity!==observedOwnerIdentity){observedOwnerIdentity=identity;if(signedIn()||loadingOwner||restoringOwnerSession)invalidateOwnerView();else purgeLive();return;}
+  // This key contains a local cache snapshot, not a remote-change notification.
+  // Reloading here would echo our next cache write back into another open tab.
   return;
  }
  try{const incoming=JSON.parse(e.newValue);if(!Array.isArray(incoming.salons))return;const local=incoming.salons.filter(x=>!isUuid(x.id));if(!local.length)return;const previous=state.active;state={...incoming,salons:local,accounts:(incoming.accounts||[]).filter(a=>!isUuid(a.salonId)),resets:incoming.resets||[]};state.active=local.some(x=>x.id===previous)?previous:local[0].id;draft={};render();}catch{}
@@ -1123,7 +1174,7 @@ window.addEventListener('storage',e=>{
   const google=await window.JovaGoogleAuth.callback();
   if(google.handled){
    const result=google.ok?await dir.acceptGoogleSession(google.session):google;
-   if(!result.ok){signOut();history.replaceState(null,'',location.pathname+location.search+'#login');render();const alert=document.querySelector('[data-form="login"] .error');if(alert)alert.textContent=result.message||'Google sign-in could not be confirmed.';return;}
+   if(!result.ok){if(result.resumable&&(dir.hasSession()||dir.hasPendingOwnerSessionAdoption?.())){restoringOwnerSession=true;ownerRestoreRoute='dashboard';loadingOwner=false;ownerLoadError=result.message||'Your sign-in could not finish. Check your connection and try again.';history.replaceState(null,'',location.pathname+location.search+'#dashboard');render();return;}signOut();history.replaceState(null,'',location.pathname+location.search+'#login');render();const alert=document.querySelector('[data-form="login"] .error');if(alert)alert.textContent=result.message||'Google sign-in could not be confirmed.';return;}
    signIn();
    if(result.needsBusiness){history.replaceState(null,'',location.pathname+location.search+'#signup');render();return;}
    const loaded=await loadLive();if(!loaded.ok){ownerLoadError='We could not load your business. Please try again.';history.replaceState(null,'',location.pathname+location.search+'#dashboard');render();return;}
@@ -1131,48 +1182,52 @@ window.addEventListener('storage',e=>{
   }
  }
 
- if(dir.remote&&!customerScope()&&!dir.existingBusinessContext?.()){
+ if(dir.remote&&!customerScope()&&!pubMode()&&!/^(?:book|manage|website|salon|customer)(?:\/|$)/.test(route())&&!dir.existingBusinessContext?.()&&!['forgot','reset'].includes(route().split('/')[0])){
   const hasSession=dir.hasSession();
   if(!hasSession&&isLive(salon()))signOut();
-  if(!hasSession||!signedIn())purgeLive(onbGet());
-  if(hasSession&&signedIn()&&!pubMode()){
-   loadingOwner=true;
-   reloadOwner();
-  }
+  if(!hasSession)purgeLive(onbGet());
+  if(hasSession){await restoreOwnerSession();return;}
  }
  render();
 })();
 function admin_route(){return OWNER_ROUTES.includes(route().split('/')[0]);}
-// Pick up changes made elsewhere (customer bookings, another device) when the owner comes back to this tab.
-let lastRefresh=Date.now();
-document.addEventListener('visibilitychange',()=>{
- if(document.hidden||!dir.remote||!signedIn()||!dir.hasSession()||pubMode()||customerScope()||syncPending())return;
- if(Date.now()-lastRefresh<15000)return;
- if(hasUnsavedEditor())return;
- lastRefresh=Date.now();loadLive().then(r=>{if(r.ok&&!syncPending()){state.active=r.salon.id;render();}});
-});
-let pollingActivity=false;
-setInterval(async()=>{
- if(pollingActivity||document.hidden||!signedIn()||!isLive(salon())||!dir.hasSession()||pubMode()||customerScope()||syncPending())return;
- pollingActivity=true;const sid=salon().id,identity=dir.sessionIdentity?.(),revision=saveRevision;
- try{
-  const access=await dir.ownerAccess();if(!access.ok){ownerLoadError='Your subscription could not be verified. Refresh before making changes.';closeModal();render();return;}if(!['active','setup'].includes(access.data.access)){installAccessOnly(access.data);render();return;}
-  if(!hasUnsavedEditor()){const loaded=await loadLive();if(loaded.ok&&identity===dir.sessionIdentity?.()&&salon().id===sid&&!syncPending())render();return;}
-  const latest=JovaEmailDelivery.latest(salon().emails);
-  const result=await dir.loadActivity(sid,latest);
-  if(!signedIn()||salon().id!==sid||dir.sessionIdentity?.()!==identity||saveRevision!==revision)return;
-  const current=salon(),wasUnavailable=current.emailActivityUnavailable;current.emailActivityUnavailable=!result.ok;
-  if(!result.ok){if(!wasUnavailable&&route().split('/')[0]==='notifications'&&!$('#modal-root').innerHTML)render();return;}
-  const fresh=JovaEmailDelivery.changed(current.emails,result.rows);
-  if(!fresh){if(wasUnavailable&&route().split('/')[0]==='notifications'&&!$('#modal-root').innerHTML)render();return;}
-  const editing=hasUnsavedEditor();
-  if(!editing){const loaded=await loadLive();if(loaded.ok&&salon().id===sid&&!syncPending())render();return;}
-  const incoming=result.rows.map(JovaEmailDelivery.fromRow);
-  const merged=new Map(current.emails.map(e=>[e.id,e]));incoming.forEach(e=>merged.set(e.id,e));current.emails=[...merged.values()].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
-  if(snap[sid])rowsOf(current).email_log.forEach(row=>snap[sid].email_log[row.id]=JSON.stringify(row));
-  try{localStorage.setItem(KEY,JSON.stringify(state));}catch{}
-  const bell=$('[data-notif-open]');if(bell)bell.outerHTML=notifications.header();
- }finally{pollingActivity=false;}
-},30000);
+// Background work updates notifications only. Diary data changes on open, reload or an owner action.
+let notificationFlight=null,notificationScope='',notificationFailures=0,notificationRetryAt=0;
+function notificationPollAllowed(){return !document.hidden&&!(typeof navigator!=='undefined'&&navigator.onLine===false)&&dir.remote&&signedIn()&&isLive(salon())&&dir.hasSession()&&!pubMode()&&!customerScope()&&!syncPending()&&!loadingOwner&&!restoringOwnerSession;}
+async function refreshOwnerNotifications(){
+ if(!notificationPollAllowed())return {ok:false,skipped:true};
+ const scope=String(dir.sessionIdentity?.())+'|'+salon().id;
+ if(notificationFlight?.scope===scope)return notificationFlight.promise;
+ if(notificationScope!==scope){notificationScope=scope;notificationFailures=0;notificationRetryAt=0;}
+ if(Date.now()<notificationRetryAt)return {ok:false,skipped:true};
+ const flight={scope,promise:null};
+ flight.promise=(async()=>{
+  let result;
+  try{result=await pollOwnerNotifications();}catch{result={ok:false,network:true};}
+  if(notificationScope===scope&&scope===String(dir.sessionIdentity?.())+'|'+salon().id){
+   if(result.ok){notificationFailures=0;notificationRetryAt=0;}
+   else if(!result.stale&&!result.skipped){notificationFailures++;notificationRetryAt=Date.now()+Math.min(300000,30000*2**Math.min(notificationFailures,4));}
+  }
+  return result;
+ })();
+ notificationFlight=flight;
+ try{return await flight.promise;}finally{if(notificationFlight===flight)notificationFlight=null;}
+}
+async function pollOwnerNotifications(){
+ const sid=salon().id,identity=dir.sessionIdentity?.(),result=await dir.loadActivity(sid,JovaEmailDelivery.latest(salon().emails));
+ if(!signedIn()||salon().id!==sid||dir.sessionIdentity?.()!==identity||result.stale)return {ok:false,stale:true};
+ if(result.auth||result.invalidTenant){invalidateOwnerView();return result;}
+ const current=salon();current.emailActivityUnavailable=!result.ok;
+ if(!result.ok)return result;
+ if(!JovaEmailDelivery.changed(current.emails,result.rows))return {ok:true};
+ const incoming=result.rows.map(JovaEmailDelivery.fromRow),merged=new Map(current.emails.map(event=>[event.id,event]));incoming.forEach(event=>merged.set(event.id,event));current.emails=[...merged.values()].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
+ if(snap[sid])rowsOf(current).email_log.forEach(row=>snap[sid].email_log[row.id]=JSON.stringify(row));
+ try{const serialized=JSON.stringify(state);if(localStorage.getItem(KEY)!==serialized)localStorage.setItem(KEY,serialized);}catch{}
+ const bell=$('[data-notif-open]');if(bell)bell.outerHTML=notifications.header();
+ const feed=document.querySelector('.workspace-main>.nf-page');if(feed)feed.outerHTML=notifications.pages.activity();
+ return {ok:true};
+}
+setInterval(()=>void refreshOwnerNotifications(),60000);
+
 
 })();
