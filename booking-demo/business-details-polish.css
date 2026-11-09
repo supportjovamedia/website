@@ -1,0 +1,106 @@
+/* Four clear entry points, with one unchanged settings form behind them. */
+html[data-workspace-theme] .shell.jb-reference .workspace-main .bd-settings{display:block!important;width:100%;max-width:1060px;min-width:0;margin:0 auto}
+html[data-workspace-theme] .shell.jb-reference .bd-settings [hidden]{display:none!important}
+.shell.jb-reference .bd-settings>form{min-width:0;width:100%}
+.shell.jb-reference .bd-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 24px}
+.shell.jb-reference .bd-heading h1{min-width:0;margin:0!important;font-size:32px!important;line-height:1.25;letter-spacing:-.035em}
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading>[data-bd-save]{min-width:90px;width:auto!important;flex:none;min-height:44px!important;padding:10px 20px!important;border-radius:24px!important;font-size:14px!important}
+html[data-workspace-theme] .shell.jb-reference .bd-back{display:inline-flex;align-items:center;gap:9px;min-height:40px;width:auto!important;padding:4px 0!important;border:0!important;background:transparent!important;box-shadow:none!important;color:var(--theme-body)!important;font-size:13px!important;margin:0 0 18px}
+.shell.jb-reference .bd-back svg{width:20px;height:20px}
+.shell.jb-reference .bd-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+html[data-workspace-theme] .shell.jb-reference .bd-option{display:grid;grid-template-columns:44px minmax(0,1fr) 18px;align-items:center;gap:16px;width:100%!important;min-height:110px;padding:22px!important;text-align:left!important;border:1px solid var(--theme-line)!important;border-radius:14px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;box-shadow:0 3px 14px #00000004!important;white-space:normal!important}
+.shell.jb-reference .bd-option>span:nth-child(2){display:grid;gap:7px;min-width:0}
+.shell.jb-reference .bd-option strong{font-size:17px!important;line-height:1.3;font-weight:650}
+.shell.jb-reference .bd-option>span:nth-child(2)>span{font-size:13px!important;line-height:1.5;color:var(--theme-muted)!important}
+.shell.jb-reference .bd-option-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:11px;background:var(--theme-primary);color:var(--theme-on-primary)}
+html[data-workspace-theme=classic] .shell.jb-reference .bd-option-icon{background:#FFD700;color:#242424}
+.shell.jb-reference .bd-option-icon svg{width:25px;height:25px}
+.shell.jb-reference .bd-option>svg{width:18px;height:18px}
+.shell.jb-reference .bd-option:hover{border-color:var(--theme-control-line)!important;box-shadow:0 5px 18px #00000008!important}
+.shell.jb-reference .bd-export{display:block!important;width:auto!important;min-height:40px;margin:20px 0 0 auto!important;padding:8px 0!important;font-size:12px!important;background:transparent!important;color:var(--theme-muted)!important;border:0!important}
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bs-fields{min-width:0;margin:0;padding:0;border:0;display:block!important}
+html[data-workspace-theme] .shell.jb-reference .bd-information,
+html[data-workspace-theme] .shell.jb-reference .bd-rules,
+html[data-workspace-theme] .shell.jb-reference .bd-settings #business-hours .ws-panel{min-width:0;width:100%;margin:0!important;padding:24px!important;border:1px solid var(--theme-line)!important;border-radius:14px!important;background:var(--theme-panel)!important;box-shadow:0 3px 14px #00000004!important}
+.shell.jb-reference .bd-description{margin:0 0 24px!important;color:var(--theme-muted);font-size:14px;line-height:1.5}
+.shell.jb-reference .bd-information .field{margin:0 0 22px!important;gap:9px;font-size:14px!important;line-height:1.5}
+.shell.jb-reference .bd-information .field:last-child{margin-bottom:0!important}
+.shell.jb-reference .bd-information .business-locale-fields>.tiny{margin:4px 0 24px!important}
+.shell.jb-reference .bd-information textarea{min-height:100px}
+.shell.jb-reference .bd-settings .business-locale-fields>.grid.two{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.shell.jb-reference .bd-settings #business-hours{margin:0!important;padding:0!important;border:0!important}
+.shell.jb-reference .bd-settings #business-hours .ws-daily{margin:0}
+.shell.jb-reference .bd-settings .bd-rules-fields>.ws-two{margin:0!important;gap:22px}
+.shell.jb-reference .bd-settings .bd-rules-fields .field{margin:0;font-size:14px;gap:9px}
+.shell.jb-reference .bd-settings .bd-rules-fields>.ws-help{margin-bottom:0!important}
+.shell.jb-reference .bd-settings .error:empty{display:none}
+.shell.jb-reference .bd-settings .error:not(:empty){margin-top:20px}
+.shell.jb-reference .bd-booking{max-width:720px;margin-inline:auto;min-width:0}
+html[data-workspace-theme] .shell.jb-reference .bd-booking-preview{display:flex;flex-direction:column;align-items:center;gap:16px;padding:38px 24px;margin-bottom:24px;text-align:center;border:1px solid var(--theme-line);border-radius:16px;background:var(--theme-panel);box-shadow:0 3px 14px #00000004}
+.shell.jb-reference .bd-preview-mark{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:var(--theme-inset);color:var(--theme-heading);font-size:23px;font-weight:650}
+.shell.jb-reference .bd-booking-preview h2{margin:0!important;font-size:25px!important;line-height:1.3}
+.shell.jb-reference .bd-booking-preview p{max-width:42ch;margin:0!important;font-size:14px;line-height:1.6;color:var(--theme-muted)}
+.shell.jb-reference .bd-booking-preview .btn{margin-top:6px;width:auto!important}
+.shell.jb-reference .bd-share-link{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.shell.jb-reference .bd-share-link>input{min-width:0;text-overflow:ellipsis;font-size:13px}
+.shell.jb-reference .bd-share-link>button{min-width:92px;width:auto!important;white-space:nowrap;font-size:13px}
+.shell.jb-reference .bd-booking-actions{display:grid;gap:12px;margin-top:22px}
+html[data-workspace-theme] .shell.jb-reference .bd-booking-actions>.btn{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:54px;width:100%;padding:14px 18px;border:1px solid var(--theme-line);border-radius:12px;background:var(--theme-panel);color:var(--theme-heading);font-size:14px;text-align:left}
+.shell.jb-reference .bd-booking-actions svg{width:19px;height:19px}
+@container workspace (max-width:700px){
+ .shell.jb-reference .bd-menu{grid-template-columns:minmax(0,1fr);gap:13px}
+ html[data-workspace-theme] .shell.jb-reference .bd-option{min-height:90px;padding:18px!important;gap:14px}
+ .shell.jb-reference .bd-option strong{font-size:16px!important}
+ .shell.jb-reference .bd-option>span:nth-child(2)>span{font-size:12px!important}
+ .shell.jb-reference .bd-heading{gap:12px;margin-bottom:22px}
+ .shell.jb-reference .bd-heading h1{font-size:26px!important}
+ html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading>[data-bd-save]{min-width:76px;min-height:40px!important;padding:9px 14px!important;font-size:12px!important}
+ html[data-workspace-theme] .shell.jb-reference .bd-information,html[data-workspace-theme] .shell.jb-reference .bd-rules,html[data-workspace-theme] .shell.jb-reference .bd-settings #business-hours .ws-panel{padding:20px!important}
+ .shell.jb-reference .bd-settings .business-locale-fields>.grid.two,.shell.jb-reference .bd-information>.grid.two,.shell.jb-reference .bd-settings .bd-rules-fields>.ws-two{grid-template-columns:minmax(0,1fr)!important}
+ .shell.jb-reference .bd-information .field input,.shell.jb-reference .bd-information .field textarea,.shell.jb-reference .bd-settings .bd-rules-fields input{font-size:16px!important}
+}
+
+/* Reference-led compact settings screens, using the original stored fields. */
+html[data-workspace-theme] .shell.jb-reference .workspace-main .bd-settings{max-width:880px}
+.shell.jb-reference .bd-settings[data-business-view=information],.shell.jb-reference .bd-settings[data-business-view=hours],.shell.jb-reference .bd-settings[data-business-view=rules],.shell.jb-reference .bd-settings[data-business-view=booking]{max-width:720px!important}
+.shell.jb-reference .bd-heading h1{font-size:30px!important;line-height:1.2!important;letter-spacing:-.04em}
+.shell.jb-reference .bd-information .field,.shell.jb-reference .bd-rules-fields .field{color:var(--theme-heading)!important;font-weight:550}
+.shell.jb-reference .bd-information .field :is(input,textarea,select),.shell.jb-reference .bd-rules-fields select{font-weight:400!important}
+.shell.jb-reference .bd-settings #business-hours .ws-simple-hours{width:100%;max-width:none!important}
+.shell.jb-reference .bd-settings #business-hours .ws-daily-labels{display:none!important}
+html[data-workspace-theme] .shell.jb-reference .bd-settings #business-hours .ws-daily-row{display:grid!important;grid-template-columns:42px 48px minmax(0,1fr)!important;gap:12px!important;align-items:center;padding:10px 0!important;min-height:62px!important;border-bottom:1px solid var(--theme-line)!important}
+.shell.jb-reference .bd-settings #business-hours .ws-daily-row:last-child{border-bottom:0!important}
+.shell.jb-reference .bd-settings #business-hours .ws-daily-row>b{grid-column:auto!important;grid-row:auto!important;font-size:14px!important;line-height:1.4!important;font-weight:600!important;color:var(--theme-heading)!important}
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-day-toggle{display:block!important;position:relative;width:48px!important;min-width:48px;max-width:48px;height:40px!important;min-height:40px!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.shell.jb-reference .bd-day-toggle::before{content:"";position:absolute;width:38px;height:22px;left:5px;top:9px;border-radius:15px;background:var(--theme-line)}
+.shell.jb-reference .bd-day-toggle::after{content:"";position:absolute;width:16px;height:16px;left:8px;top:12px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform .15s}
+.shell.jb-reference .bd-day-toggle[aria-checked=true]::before{background:var(--theme-primary)}
+.shell.jb-reference .bd-day-toggle[aria-checked=true]::after{transform:translateX(16px)}
+html[data-workspace-theme=classic] .shell.jb-reference .bd-day-toggle[aria-checked=true]::before{background:#FFD700}
+.shell.jb-reference .bd-day-toggle:disabled{opacity:.5}
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-day-range{display:inline-flex;align-items:center;justify-content:center;gap:12px;justify-self:end;min-height:40px!important;width:auto!important;min-width:154px;max-width:100%;margin:0!important;padding:9px 14px!important;border:1px solid var(--theme-line)!important;border-radius:12px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;box-shadow:none!important;font-size:13px!important;line-height:1.45!important;font-variant-numeric:tabular-nums}
+.shell.jb-reference .bd-day-range::after{content:"";display:block;width:6px;height:6px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);flex:none}
+.shell.jb-reference .bd-day-range[aria-expanded=true]::after{transform:rotate(135deg)}
+.shell.jb-reference .bd-day-closed{grid-column:3;justify-self:end;width:154px;max-width:100%;font-size:13px;color:var(--theme-muted);text-align:center}
+.shell.jb-reference .bd-settings .bd-day-times{grid-column:1/-1;display:grid!important;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr)!important;gap:10px;padding:4px 0 12px;margin-top:4px}
+.shell.jb-reference .bd-settings .bd-day-times .ws-daily-time{grid-column:auto!important;grid-row:auto!important;min-width:0}
+.shell.jb-reference .bd-settings .bd-day-times .ws-time-to{grid-column:auto!important;grid-row:auto!important;align-self:center;font-size:12px;text-align:center;color:var(--theme-muted)}
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-day-times input{height:44px!important;min-height:44px!important;font-size:14px!important;padding:9px 12px!important;border:1px solid var(--theme-control-line)!important;border-radius:10px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important}
+.shell.jb-reference .bd-rules-fields>.ws-two{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:24px!important}
+.shell.jb-reference .bd-rules-fields .field select{min-height:46px;padding:12px 14px;font-size:14px;border-radius:12px}
+.shell.jb-reference .bd-booking-preview{padding-block:28px!important}
+.shell.jb-reference .bd-share-link>button{border-radius:12px!important}
+@container workspace (max-width:600px){
+ .shell.jb-reference .bd-heading h1{font-size:25px!important}
+ html[data-workspace-theme] .shell.jb-reference .bd-information,html[data-workspace-theme] .shell.jb-reference .bd-rules,html[data-workspace-theme] .shell.jb-reference .bd-settings #business-hours .ws-panel{padding:18px!important}
+ html[data-workspace-theme] .shell.jb-reference .bd-settings #business-hours .ws-daily-row{grid-template-columns:34px 44px minmax(0,1fr)!important;gap:8px!important}
+ html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-day-range{min-width:0!important;padding:9px 11px!important;gap:9px;font-size:12px!important}
+ .shell.jb-reference .bd-day-closed{width:auto;min-width:120px}
+ .shell.jb-reference .bd-settings .bd-day-times input{font-size:16px!important;padding:9px!important}
+ .shell.jb-reference .bd-information .field{font-size:14px!important;margin-bottom:20px!important}
+}
+@media(prefers-reduced-motion:reduce){.shell.jb-reference .bd-day-toggle::after{transition:none}}
+/* The dirty-state wrapper is not a second toolbar or divider. */
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;min-height:42px;margin:0 0 22px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-back{min-height:32px!important;padding:4px 0!important;margin:0 0 12px!important}
+html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading :is(.df-save-bar,.se-save-bar){margin:0!important;padding:0!important;border:0!important;min-height:0!important;flex:none!important;background:transparent!important;box-shadow:none!important}

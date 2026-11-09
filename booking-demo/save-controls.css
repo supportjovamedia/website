@@ -1,0 +1,25 @@
+/* Page saves sit beside their heading. Drawers keep their own action controls. */
+.shell.jb-reference .workspace-main :is(.jg-page-save-heading,.jg-page-save-actions){display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:0;margin:0 0 24px}
+.shell.jb-reference .workspace-main .jg-page-save-actions{justify-content:flex-end}
+.shell.jb-reference .workspace-main .jg-page-save-heading>h2,
+.shell.jb-reference .workspace-main .jg-page-save-heading>h3{margin:0!important;min-width:0;line-height:1.3}
+html[data-workspace-theme] .shell.jb-reference .workspace-main [data-save-placement=top]{position:static!important;flex:0 0 auto!important;width:auto!important;max-width:none!important;min-width:86px;min-height:44px!important;margin:0!important;padding:10px 20px!important;border-radius:24px!important;background:var(--theme-primary,#242424)!important;color:var(--theme-on-primary,#fff)!important;font-size:14px!important;line-height:1.4;font-weight:600!important;box-shadow:none!important}
+html[data-workspace-theme] .shell.jb-reference .workspace-main [data-save-placement=top]:disabled{opacity:.5;cursor:wait}
+.shell.jb-reference .workspace-main .jg-save-relocated-footer{position:static!important;min-height:0!important;height:auto!important;margin:16px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}
+.shell.jb-reference .workspace-main .jg-save-relocated-footer:empty{display:none!important}
+/* The Personalise header already submits the active original form. */
+html[data-workspace-theme] .shell.jb-reference .jg-personalise .jg-save-proxy-footer{display:none!important}
+@media(max-width:600px){
+ .shell.jb-reference .workspace-main :is(.jg-page-save-heading,.jg-page-save-actions){gap:12px;margin-bottom:22px}
+ html[data-workspace-theme] .shell.jb-reference .workspace-main [data-save-placement=top]{min-width:72px;min-height:40px!important;padding:9px 16px!important;font-size:13px!important}
+ .shell.jb-reference .workspace-main .jg-page-save-heading>h2{font-size:20px!important}
+}
+/* Dirty tracking can wrap an existing top Save. It must remain an inline action. */
+html[data-workspace-theme] .shell.jb-reference .workspace-main :is(.jg-top-save-wrap,.bd-heading .df-save-bar,.bd-heading .se-save-bar){position:static!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex:0 0 auto!important;gap:0!important;min-width:0!important;min-height:0!important;height:auto!important;margin:0 0 0 auto!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;clear:none!important}
+.shell.jb-reference .workspace-main :is(.jg-top-save-wrap,.bd-heading .df-save-bar,.jg-save-relocated-footer)>.df-save-status{position:absolute!important;width:1px!important;min-width:0!important;height:1px!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+html[data-workspace-theme] .shell.jb-reference .workspace-main :is(.jg-top-save-wrap,.bd-heading .df-save-bar,.bd-heading .se-save-bar){width:auto!important;max-width:none!important}
+@media(max-width:600px){
+ html[data-workspace-theme] .shell.jb-reference .workspace-main .bd-heading>.df-save-bar.df-save-actions,
+ html[data-workspace-theme] .shell.jb-reference .workspace-main .bd-heading>.se-save-bar.df-save-actions{width:100%!important;max-width:100%!important;flex:1 1 100%!important;justify-content:space-between!important;margin:0!important;gap:14px!important}
+ html[data-workspace-theme] .shell.jb-reference .workspace-main .pp-heading.df-save-actions>.df-save-indicator{flex:1 1 auto!important;max-width:none!important;margin:0 auto 0 0!important}
+}

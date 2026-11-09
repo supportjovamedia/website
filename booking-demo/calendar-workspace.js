@@ -55,5 +55,35 @@
       return `<button type="button" class="jb-calendar-slot ${working?'':'is-closed'}" style="top:${i*34}px" data-action="calendar-slot" data-date="${date}" data-time="${time(start)}" data-staff="${esc(staff.id)}" aria-label="New booking ${esc(dayText(date))} at ${time(start)} with ${esc(staff.name)}" ${!working||date<today?'disabled':''}><span>+ ${time(start)}</span></button>`;
     }).join('');
   }
-  window.JovaCalendar={mini,week,daySlots};
+  const arrow='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg>';
+  function selectedEvents(s,date,staff){const ids=staff==null||staff==='all'?null:Array.isArray(staff)?staff:[staff];return s.bookings.filter(b=>b.date===date&&b.status!=='cancelled'&&(ids===null||ids.includes(b.staffId))).slice().sort((a,b)=>a.time.localeCompare(b.time));}
+  function dayStart({salon:s,date,staff=null}){
+    const events=selectedEvents(s,date,staff),times=events.map(b=>minutes(b.time)).filter(Number.isFinite);
+    if(times.length)return Math.max(0,Math.min(...times)-60);
+    const ids=staff==null||staff==='all'?null:Array.isArray(staff)?staff:[staff],opening=s.staff.filter(m=>ids===null||ids.includes(m.id)).map(m=>JovaSchedule.hoursFor(s,m,date)).filter(h=>!h.closed).map(h=>minutes(h.start)).filter(Number.isFinite);
+    return opening.length?Math.min(...opening):480;
+  }
+  function dayViewport({salon:s,date,staff=null,unit=68}){const ids=staff==null||staff==='all'?'all':(Array.isArray(staff)?[...staff]:[staff]).sort().join(',');return `data-jg-day-key="${esc((s.id||'business')+'|'+date+'|'+ids)}" data-jg-day-minute="${dayStart({salon:s,date,staff})}" data-jg-day-unit="${unit}"`;}
+  function weekList({salon:s,date,staff=null,today}){
+    const monday=plus(date,-((new Date(date+'T12:00:00').getDay()+6)%7));
+    return `<div class="jg-calendar-mobile-week">${Array.from({length:7},(_,i)=>{const dt=plus(monday,i),items=selectedEvents(s,dt,staff);return `<button type="button" class="jg-calendar-week-row ${dt===today?'is-today':''}" data-action="cal-goto" data-date="${dt}"><span class="jg-calendar-week-date"><strong>${names[i]}</strong><span>${new Date(dt+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span></span><span class="jg-calendar-week-summary"><strong>${items.length?`${items.length} booking${items.length===1?'':'s'}`:'No bookings'}</strong>${items.length?`<small>${items.map(b=>`${esc(b.time)} to ${esc(time(minutes(b.time)+Number(b.duration)))}`).join(', ')}</small>`:''}</span>${arrow}</button>`;}).join('')}</div>`;
+  }
+  function agendaCards(s,items){return items.map(b=>{const m=s.staff.find(x=>x.id===b.staffId);return `<button type="button" class="jg-calendar-agenda-event" data-action="booking-details" data-id="${esc(b.id)}" style="--ev:${safeColor(m?.color)};${window.JovaBookingPalette?.style(b,s)||''}"><span><strong>${esc(b.serviceName)}</strong><small>${esc(b.time)} to ${esc(time(minutes(b.time)+Number(b.duration)))} · ${esc(b.name)}</small></span>${arrow}</button>`;}).join('');}
+  function dayAgenda({salon:s,date,staff=null}){const items=selectedEvents(s,date,staff);return `<section class="jg-calendar-month-agenda"><h2><span>${esc(dayText(date))}</span><span>${items.length} booking${items.length===1?'':'s'}</span></h2>${items.length?agendaCards(s,items):'<p>No bookings on this day.</p>'}</section>`;}
+  function dayMobile({salon:s,date,staff=null,today}){
+    const ids=staff==null||staff==='all'?null:Array.isArray(staff)?staff:[staff],members=s.staff.filter(m=>(ids===null||ids.includes(m.id))&&m.active!==false),events=selectedEvents(s,date,staff);
+    const from=0,to=24*60,unit=78,y=n=>n/60*unit;
+    return `<div class="jg-calendar-mobile-day" ${dayViewport({salon:s,date,staff,unit})} style="--jg-hour:78px"><div class="jg-calendar-day-times">${Array.from({length:25},(_,i)=>`<span class="${i===24?'jg-day-end':''}" style="top:${i*unit}px">${time(i*60)}</span>`).join('')}</div><div class="jg-calendar-day-track" style="height:${y(to)}px">${Array.from({length:(to-from)/30},(_,i)=>{const t=from+i*30,working=members.some(m=>{const h=JovaSchedule.hoursFor(s,m,date);return !h.closed&&t>=minutes(h.start)&&t<minutes(h.end)&&(!window.JovaBusinessLocale||window.JovaBusinessLocale.uniqueSlot(s,date,time(t),30));});return `<button type="button" class="jg-calendar-mobile-slot ${working?'':'is-closed'}" style="top:${i*unit/2}px" data-action="calendar-slot" data-date="${date}" data-time="${time(t)}" aria-label="New booking at ${time(t)}" ${!working||date<today?'disabled':''}></button>`;}).join('')}${layout(events).map(b=>{const m=s.staff.find(x=>x.id===b.staffId);return `<button type="button" class="jg-calendar-mobile-event" data-action="booking-details" data-id="${esc(b.id)}" style="--ev:${safeColor(m?.color)};${window.JovaBookingPalette?.style(b,s)||''};top:${y(b._start)+3}px;height:${Math.max(y(b._end)-y(b._start)-6,32)}px;left:calc(${b._lane/b._lanes*100}% + 5px);width:calc(${100/b._lanes}% - 10px)" aria-label="${esc(b.serviceName)}, ${esc(b.name)}, ${esc(b.time)}"><span><strong>${esc(b.serviceName)}</strong><small>${esc(b.name)} · ${esc(b.time)} to ${esc(time(b._end))}</small></span>${arrow}</button>`;}).join('')}</div></div>`;
+  }
+  // Keep a manual scroll during the same Day, then anchor fresh dates at their first booking.
+  if(typeof document!=='undefined'&&typeof MutationObserver!=='undefined'){
+    const positions=new Map();let frame=0,activeKey='';
+    const remember=event=>{const el=event.target;if(el?.dataset?.jgDayKey&&el.clientHeight&&el.scrollHeight>el.clientHeight)positions.set(el.dataset.jgDayKey,{minute:el.scrollTop/Number(el.dataset.jgDayUnit)*60,left:el.scrollLeft});};
+    const restore=()=>{frame=0;const el=[...document.querySelectorAll('.db-calendar-page [data-jg-day-key]')].find(node=>node.getClientRects().length&&node.clientHeight);if(!el){activeKey='';return;}const nextKey=el.dataset.jgDayKey,previous=activeKey===nextKey?positions.get(nextKey):null,minute=previous?.minute??Number(el.dataset.jgDayMinute);activeKey=nextKey;el.scrollTop=Math.max(0,minute/60*Number(el.dataset.jgDayUnit));el.scrollLeft=previous?.left||0;};
+    const schedule=()=>{if(!frame)frame=requestAnimationFrame(restore);};
+    document.addEventListener('scroll',remember,{capture:true,passive:true});
+    const app=document.getElementById('app');if(app)new MutationObserver(schedule).observe(app,{childList:true});
+    window.addEventListener('resize',schedule,{passive:true});schedule();
+  }
+  window.JovaCalendar={mini,week,daySlots,weekList,dayAgenda,dayMobile,dayStart,dayViewport};
 })();

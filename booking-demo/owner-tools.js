@@ -77,7 +77,8 @@
    if(preset==='last30')return {start:addDays(today(),-29),end:today()};
    return currentMonth();
   }
-  let filter={preset:'month',...currentMonth(),staff:'all'},preview=null,seriesSalonId='',pending=false,compareMetric='value';
+  let filter={preset:'month',...currentMonth(),staff:'all'},preview=null,seriesSalonId='',seriesOwner='',pending=false,compareMetric='value';
+  const seriesIdentity=()=>String(api.ownerIdentity?.()||'demo')+'|'+salon().id;
   const activeStaff=()=>salon().staff.filter(member=>member.active!==false);
   const eligible=service=>activeStaff().filter(member=>(service?.staffIds||[]).includes(member.id));
   const services=()=>salon().services.filter(service=>eligible(service).length);
@@ -112,10 +113,9 @@
    const highest=Math.max(1,...data.services.map(service=>service.count));
    return `<ol class="ot-service-list ot-service-ranking">${data.services.map((service,index)=>`<li data-service-count="${service.count}"><div class="ot-service-heading"><span class="ot-service-number">${index+1}</span><div><b>${esc(service.name)}</b><small>${service.count} booking${service.count===1?'':'s'}</small></div><strong>${money(service.value)}</strong></div><span class="ot-service-track" aria-hidden="true"><i style="width:${(service.count/highest*100).toFixed(2)}%"></i></span></li>`).join('')}</ol>`;
   }
-  function clientVisitsPanel() {
-   const now=new Intl.DateTimeFormat('en-GB',{timeZone:window.JovaBusinessLocale?.resolve(salon()).timezone||'Europe/London',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
-   const data=clientVisits(salon(),filter,{date:today(),time:now}),firstWidth=data.total?data.firstRecorded/data.total*100:0;
-   return `<section class="ot-panel ot-client-visits" data-client-visits><div class="ot-panel-heading"><div><h2>Clients and repeat visits</h2><p>Completed visits in your selected period${filter.staff==='all'?'':' and team member'}. Each linked client is counted once.</p></div></div><div class="ot-client-columns"><div class="ot-client-mix"><h3>Client mix</h3>${data.total?`<div class="ot-client-bar" role="img" aria-label="${data.firstRecorded} first recorded clients and ${data.returning} returning clients"><span style="width:${firstWidth.toFixed(2)}%"></span></div><dl class="ot-client-counts"><div><dt><i class="ot-client-dot ot-client-dot-first" aria-hidden="true"></i>First recorded</dt><dd data-client-first>${data.firstRecorded}</dd></div><div><dt><i class="ot-client-dot" aria-hidden="true"></i>Returning</dt><dd data-client-returning>${data.returning}</dd></div></dl>`:'<p class="ot-client-empty">No linked clients with completed visits in this period.</p>'}<p class="ot-client-note">Returning means a completed visit before this period, with any team member. First recorded means no earlier completed visit in your saved history.</p></div><div class="ot-client-next"><div class="ot-client-next-heading"><h3>No next booking</h3><strong data-client-without-next>${data.withoutNext.length}</strong></div><p class="ot-client-note">Clients in this group with no upcoming confirmed booking, across any team member. Checked as of today.</p>${data.withoutNext.length?`<ul class="ot-client-followup">${data.withoutNext.slice(0,5).map(c=>`<li><div><button type="button" class="ot-client-link" data-action="customer" data-id="${esc(c.id)}">${esc(c.name)}</button><span>Last completed visit in this period: ${esc(human(c.date))}</span></div><span class="ot-client-record-hint" aria-hidden="true">View client</span></li>`).join('')}</ul>${data.withoutNext.length>5?`<p class="ot-client-note">Showing 5 of ${data.withoutNext.length}, most recent visits first.</p>`:''}`:data.total?'<p class="ot-client-empty">All these clients have an upcoming confirmed booking.</p>':''}</div></div><p class="ot-client-footnote">Based on saved booking history. Cancelled and no-show visits are excluded.${data.unlinkedVisits?` ${data.unlinkedVisits} completed visit${data.unlinkedVisits===1?' was':'s were'} excluded because the client record is missing or unlinked.`:''}</p></section>`;
+  function clientVisitsPanel(data) {
+   const firstWidth=data.total?data.firstRecorded/data.total*100:0;
+   return `<section class="ot-panel ot-client-visits" data-client-visits><div class="ot-panel-heading"><div><h2>Clients and repeat visits</h2></div></div><div class="ot-client-columns ${data.total?'':'is-empty'}"><div class="ot-client-mix"><h3>Client mix</h3>${data.total?`<div class="ot-client-bar" role="img" aria-label="${data.firstRecorded} first recorded clients and ${data.returning} returning clients"><span style="width:${firstWidth.toFixed(2)}%"></span></div><dl class="ot-client-counts"><div><dt><i class="ot-client-dot ot-client-dot-first" aria-hidden="true"></i>First recorded</dt><dd data-client-first>${data.firstRecorded}</dd></div><div><dt><i class="ot-client-dot" aria-hidden="true"></i>Returning</dt><dd data-client-returning>${data.returning}</dd></div></dl>`:'<p class="ot-client-empty">No linked clients with completed visits in this period.</p>'}</div>${data.total?`<div class="ot-client-next"><div class="ot-client-next-heading"><h3>No next booking</h3><strong data-client-without-next>${data.withoutNext.length}</strong></div>${data.withoutNext.length?`<ul class="ot-client-followup">${data.withoutNext.slice(0,5).map(c=>`<li><div><button type="button" class="ot-client-link" data-action="customer" data-id="${esc(c.id)}">${esc(c.name)}</button><span>Last visit: ${esc(human(c.date))}</span></div><span class="ot-client-record-hint" aria-hidden="true">View client</span></li>`).join('')}</ul>${data.withoutNext.length>5?`<p class="ot-client-note">Showing 5 of ${data.withoutNext.length}, most recent visits first.</p>`:''}`:'<p class="ot-client-empty">All these clients have an upcoming confirmed booking.</p>'}</div>`:''}</div></section>`;
   }
   const compareDate=date=>new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(date+'T12:00:00Z'));
   function comparisonChart(data) {
@@ -151,63 +151,124 @@
    if(insightsSalonId!==salon().id)resetInsights();
    if(filter.staff!=='all'&&!salon().staff.some(m=>m.id===filter.staff))filter.staff='all';
    const data=insightData(),formatHours=value=>new Intl.NumberFormat('en-GB',{maximumFractionDigits:1}).format(value);
-   return `<div class="ot-insights"><div class="ot-heading"><div><h1>Insights</h1><p>See when clients book and which services they choose.</p></div></div>
-   <form data-form="owner-insights" class="ot-filters"><label class="field">Period<select name="period" data-owner-period>${options([['month','This month'],['week','This week'],['last30','Last 30 days'],['custom','Custom dates']],filter.preset)}</select></label><div class="ot-custom-dates" data-owner-custom ${filter.preset==='custom'?'':'hidden'}>${input('From','start',filter.start,'date','required')}${input('To','end',filter.end,'date','required')}</div><label class="field">Team member<select name="staff">${options([['all','All team members'],...salon().staff.map(m=>[m.id,m.name])],filter.staff)}</select></label><button class="btn primary">Apply</button><div class="error" role="alert"></div></form>
+   const now=new Intl.DateTimeFormat('en-GB',{timeZone:window.JovaBusinessLocale?.resolve(salon()).timezone||'Europe/London',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
+   const clients=clientVisits(salon(),filter,{date:today(),time:now});
+   const metricIcons=[
+    '<rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16"/>',
+    '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 4 14 4 14 0V6M5 11v5c0 4 14 4 14 0v-5M5 16v3c0 4 14 4 14 0v-3"/>',
+    '<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',
+    '<circle cx="12" cy="7" r="3"/><path d="M6 20v-2c0-6 12-6 12 0v2H6ZM5 5a3 3 0 0 0 0 6m14-6a3 3 0 0 1 0 6M3 19v-2c0-2 1-3 3-4m15 6v-2c0-2-1-3-3-4"/>'
+   ];
+   return `<div class="ot-insights"><div class="ot-heading"><div><h1>Insights</h1></div></div>
+   <form data-form="owner-insights" class="ot-filters"><label class="field">Period<select name="period" data-owner-period>${options([['month','This month'],['week','This week'],['last30','Last 30 days'],['custom','Custom dates']],filter.preset)}</select></label><div class="ot-custom-dates" data-owner-custom ${filter.preset==='custom'?'':'hidden'}>${input('From','start',filter.start,'date','required')}${input('To','end',filter.end,'date','required')}</div><label class="field">Team member<select name="staff">${options([['all','All team members'],...salon().staff.map(m=>[m.id,m.name])],filter.staff)}</select></label><button class="btn primary">Update view</button><div class="error" role="alert"></div></form>
    <p class="ot-range">${esc(human(filter.start))} to ${esc(human(filter.end))}, inclusive</p>
-   <div class="ot-metrics">${[['Bookings',data.rows.length,'All booking statuses'],['Scheduled value',money(data.value),'Confirmed and completed bookings'],['Booked hours',formatHours(data.hours),'Confirmed and completed bookings'],['Clients booked',data.clients,'Clients with bookings in this period']].map(([title,value,note])=>`<section class="ot-metric"><span>${title}</span><strong>${esc(value)}</strong><small>${note}</small></section>`).join('')}</div>
-   <p class="ot-accounting">Scheduled value is the saved booking price, not collected cash. Cancelled bookings, no-shows, deposits, refunds and fees are excluded.</p>
-   <div class="ot-statuses" aria-label="Booking status counts">${[['confirmed','Confirmed'],['completed','Completed'],['cancelled','Cancelled'],['no-show','No-shows']].map(([key,label])=>`<div><span class="ot-status-dot ot-status-${key}"></span><span>${label}</span><strong>${data.counts[key]}</strong></div>`).join('')}</div>
-   <div class="ot-columns"><section class="ot-panel ot-volume-panel"><div class="ot-panel-heading"><div><h2>Bookings by day</h2><p>All statuses, including cancellations and no-shows.</p></div><span class="ot-chart-key"><i></i>Bookings</span></div>${data.rows.length?bookingChart(data):'<div class="ot-empty"><h3>No bookings in this period</h3><p>Try another date range or team member. Your diary records will appear here.</p></div>'}</section>
-   <section class="ot-panel ot-ranking-panel"><div class="ot-panel-heading"><div><h2>Top services</h2><p>Ranked by confirmed and completed bookings.</p></div></div>${data.services.length?serviceRanking(data):'<div class="ot-empty"><p>No confirmed or completed services in this period.</p></div>'}</section></div>${clientVisitsPanel()}${comparisonPanel()}</div>`;
+   <div class="ot-metrics">${[['Bookings',data.rows.length],['Scheduled value',money(data.value)],['Booked hours',formatHours(data.hours)],['Clients booked',data.clients]].map(([title,value],index)=>`<section class="ot-metric" style="--jg-value-length:${Math.max(3,String(value).length)}"><span class="jg-insight-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${metricIcons[index]}</svg></span><span>${title}</span><strong>${esc(value)}</strong></section>`).join('')}</div>
+   <section class="jg-insight-totals"><details class="jg-totals-help"><summary>How totals work</summary><div class="jg-totals-explanation"><p>Bookings includes all statuses. Scheduled value and hours count confirmed and completed bookings. Scheduled value is the saved service price, not collected cash, and excludes deposits, refunds and fees.</p><p>Top services are ranked by confirmed and completed bookings. Clients and repeat visits use completed visits in the selected period${filter.staff==='all'?'':' and team member'}, counting each linked client once.</p><p class="ot-client-note">Returning means a completed visit before this period, with any team member. First recorded means no earlier completed visit in your saved history. No next booking means no upcoming confirmed booking across any team member, checked as of today.</p><p class="ot-client-footnote">Based on saved booking history. Cancelled and no-show visits are excluded.${clients.unlinkedVisits?` ${clients.unlinkedVisits} completed visit${clients.unlinkedVisits===1?' was':'s were'} excluded because the client record is missing or unlinked.`:''}</p></div></details>
+   <div class="ot-statuses" aria-label="Booking status counts">${[['confirmed','Confirmed'],['completed','Completed'],['cancelled','Cancelled'],['no-show','No-shows']].map(([key,label])=>`<div><span class="ot-status-dot ot-status-${key}"></span><span>${label}</span><strong>${data.counts[key]}</strong></div>`).join('')}</div></section>
+   <div class="ot-columns"><section class="ot-panel ot-volume-panel"><div class="ot-panel-heading"><div><h2>Bookings by day</h2></div>${data.rows.length?'<span class="ot-chart-key"><i></i>Bookings</span>':''}</div>${data.rows.length?bookingChart(data):'<div class="ot-empty"><p>No bookings in this period.</p></div>'}</section>
+   <section class="ot-panel ot-ranking-panel"><div class="ot-panel-heading"><div><h2>Top services</h2></div></div>${data.services.length?serviceRanking(data):'<div class="ot-empty"><p>No confirmed or completed services in this period.</p></div>'}</section></div>${clientVisitsPanel(clients)}${comparisonPanel()}</div>`;
   }
+
   function initialDate(service,staffId) {
    for(let i=1;i<=28;i++){const date=addDays(today(),i);if(available(date,service.id,null,staffId).length)return date;}
    return addDays(today(),1);
   }
+  const sessionIcon=path=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+  const sessionIcons={customer:sessionIcon('<circle cx="12" cy="7" r="4"/><path d="M5 21v-2c0-8 14-8 14 0v2H5Z"/>'),service:sessionIcon('<path d="m12 3 10 6-10 6L2 9l10-6ZM2 13l10 6 10-6M2 17l10 6 10-6"/>'),calendar:sessionIcon('<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 11h16"/>'),notes:sessionIcon('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/>')};
   function seriesModal() {
    if(pending){toast('Your bookings are still saving. Please wait.');return;}
    if(!supported()){modal('Multiple sessions',`<p>This salon needs the multiple-session booking update before a series can be saved. Individual bookings are still available.</p><p class="ot-help">Ask your account administrator to finish the booking setup.</p>`);return;}
    const list=services();if(!list.length){modal('Multiple sessions','<p>Add a service and assign an active team member before creating multiple sessions.</p><a class="btn" href="#services" data-action="close-modal">Open services</a>');return;}
-   preview=null;seriesSalonId=salon().id;
-   const service=list[0],staff=eligible(service)[0],date=initialDate(service,staff.id),times=available(date,service.id,null,staff.id);
-   modal('Book multiple sessions',`<p>Choose one service and a regular time. Check every date before adding the bookings together.</p><form data-form="owner-series" class="ot-series"><label class="field">Customer<select name="customerId"><option value="">New customer</option>${options(salon().customers.map(c=>[c.id,c.name+' · '+(c.email||'')]),'')}</select></label><div class="ot-form-grid">${input('Customer name','name','','text','required maxlength="100"')}${input('Customer email','email','','email','required maxlength="254"')}</div>${input('Phone (optional)','phone','','tel','maxlength="40"')}<label class="field">Service<select name="serviceId">${options(list.map(s=>[s.id,s.name+' · '+money(s.price)+' · '+s.duration+' min']),service.id)}</select></label><div class="ot-form-grid"><label class="field">Team member<select name="staffId">${options(eligible(service).map(m=>[m.id,m.name]),staff.id)}</select></label>${input('First booking','startDate',date,'date',`required min="${today()}"`)}</div><div class="ot-form-grid"><label class="field">Time<select name="time" required>${times.length?options(times.map(time=>[time,time]),times[0]):'<option value="">No times available</option>'}</select></label>${input('Repeat every (weeks)','intervalWeeks',1,'number','required min="1" max="52" step="1"')}${input('Number of sessions','count',2,'number','required min="2" max="12" step="1"')}</div><label class="field">Notes (optional)<textarea name="notes" rows="2" maxlength="500"></textarea></label><div class="error" role="alert"></div><button class="btn" type="submit">Check dates</button><div data-owner-series-preview aria-live="polite" class="ot-series-preview"><p class="ot-help">Nothing is booked until you confirm the checked dates.</p></div></form>`,'large');
+   preview=null;seriesSalonId=salon().id;seriesOwner=seriesIdentity();
+   const service=list[0],staff=eligible(service)[0],date=initialDate(service,staff.id),times=available(date,service.id,null,staff.id),existing=salon().customers.length>0;
+   modal('Book multiple sessions',`<form data-form="owner-series" class="ot-series ot-series-wizard" data-owner="${esc(seriesOwner)}" data-series-step="details" data-customer-mode="${existing?'existing':'new'}" novalidate>
+    <p class="ot-series-intro">Create recurring bookings for the same service.</p>
+    <ol class="ot-series-steps" aria-label="Booking progress">${[['details','Details'],['dates','Dates'],['review','Review']].map(([id,label],index)=>`<li data-series-step-marker="${id}" ${index===0?'aria-current="step"':''}><span>${index+1}</span><b>${label}</b></li>`).join('')}</ol>
+    <div data-series-section="details">
+     <section class="ot-session-card"><h3>${sessionIcons.customer}Customer</h3><div class="ot-customer-modes" role="group" aria-label="Customer type"><button type="button" data-action="owner-series-customer-mode" data-mode="existing" aria-pressed="${existing}" ${existing?'':'disabled'}>Existing customer</button><button type="button" data-action="owner-series-customer-mode" data-mode="new" aria-pressed="${!existing}">New customer</button></div>
+      <input type="hidden" name="customerId" value=""><div class="ot-existing-customer" ${existing?'':'hidden'}><label class="field"><span class="ot-sr-only">Search customer name</span><input type="search" name="customerSearch" data-owner-customer-search placeholder="Search customer name" autocomplete="off" aria-label="Search customer name" aria-controls="ot-series-customer-results"></label><div id="ot-series-customer-results" class="ot-series-customer-results" aria-label="Matching customers">${salon().customers.map(c=>`<button type="button" data-action="owner-series-customer" data-id="${esc(c.id)}" data-customer-name="${esc(c.name.toLowerCase())}"><strong>${esc(c.name)}</strong><span>${esc(c.email||'No email saved')}</span></button>`).join('')}</div><p class="ot-series-customer-empty" hidden>No customers match that name.</p></div>
+      <div class="ot-new-customer" ${existing?'hidden':''}><div class="ot-form-grid">${input('Customer name','name','','text','required maxlength="80"')}${input('Customer email','email','','email','required maxlength="254"')}</div>${input('Phone (optional)','phone','','tel','maxlength="40"')}</div>
+     </section>
+     <section class="ot-session-card"><h3>${sessionIcons.service}Service</h3><label class="field"><span class="ot-sr-only">Service</span><select name="serviceId">${options(list.map(s=>[s.id,s.name+' · '+money(s.price)+' · '+s.duration+' min']),service.id)}</select></label></section>
+     <section class="ot-session-card"><h3>${sessionIcons.customer}Team member</h3><label class="field"><span class="ot-sr-only">Team member</span><select name="staffId">${options(eligible(service).map(m=>[m.id,m.name]),staff.id)}</select></label></section>
+     <section class="ot-session-card"><h3>${sessionIcons.calendar}Schedule</h3><div class="ot-form-grid">${input('First booking','startDate',date,'date',`required min="${today()}"`)}<label class="field">Time<select name="time" required>${times.length?options(times.map(time=>[time,time]),times[0]):'<option value="">No times available</option>'}</select></label><label class="field">Repeat every<select name="intervalWeeks">${options(Array.from({length:52},(_,i)=>[String(i+1),(i+1)+' week'+(i?'s':'')]),'1')}</select></label><label class="field">Number of sessions<select name="count">${options(Array.from({length:11},(_,i)=>[String(i+2),String(i+2)]),'2')}</select></label></div></section>
+     <section class="ot-session-card"><h3>${sessionIcons.notes}Notes <span>(optional)</span></h3><label class="field"><span class="ot-sr-only">Notes (optional)</span><textarea name="notes" rows="3" maxlength="500" placeholder="Add any notes..."></textarea></label></section>
+    </div>
+    <section data-owner-series-preview data-series-section="dates" class="ot-series-preview" aria-live="polite" hidden></section><div class="error" role="alert"></div>
+    <footer class="ot-series-footer"><button type="button" class="btn" data-action="owner-series-back" hidden>Back</button><button class="btn primary" type="submit" data-stage-action="details">Continue</button><button type="button" class="btn primary" data-action="owner-series-review" data-stage-action="dates" hidden>Continue to review</button><button type="button" class="btn primary" data-action="owner-series-confirm" data-stage-action="review" hidden>Confirm bookings</button></footer>
+   </form>`,'large');
   }
+  function setSeriesStep(form,step){
+   form.dataset.seriesStep=step;
+   form.querySelectorAll('[data-series-section]').forEach(section=>section.hidden=section.dataset.seriesSection!==step);
+   form.querySelectorAll('[data-stage-action]').forEach(button=>button.hidden=button.dataset.stageAction!==step);
+   const back=form.querySelector('[data-action="owner-series-back"]');if(back)back.hidden=step==='details';
+   const order=['details','dates','review'],current=order.indexOf(step);
+   form.querySelectorAll('[data-series-step-marker]').forEach((marker,index)=>{if(index===current)marker.setAttribute('aria-current','step');else marker.removeAttribute('aria-current');marker.classList.toggle('is-complete',index<current);marker.querySelector('span').textContent=index<current?'✓':String(index+1);});
+   const scroller=form.closest?.('.modal');if(scroller)scroller.scrollTop=0;
+  }
+  function seriesSummary(request,selected){
+   const service=services().find(s=>s.id===request.serviceId),member=salon().staff.find(m=>m.id===request.staffId);
+   return `<section class="ot-series-summary"><h3>Summary</h3><dl>${[['Customer',request.name],['Service',service?.name||'Service'],['Team member',member?.name||'Team member'],['Total sessions',selected.length],['Duration (each)',service?.duration+' minutes'],['Total service value',money((service?.price||0)*selected.length)]].map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl></section>`;
+  }
+  function selectedSeriesRequest(form){
+   const request=readSeries(form);
+   if(!preview||preview.salonId!==salon().id||preview.signature!==JSON.stringify(request))throw Error('Your details changed. Check the dates again before booking.');
+   const dates=request.dates.filter(date=>preview.selected.has(date));
+   if(dates.length<2)throw Error('Select at least 2 available session dates.');
+   return {...request,dates};
+  }
+  function renderSeriesDates(form){
+   if(!preview)return;
+   const request=preview.request,target=form.querySelector('[data-owner-series-preview]'),service=services().find(s=>s.id===request.serviceId),end=Number(request.time.slice(0,2))*60+Number(request.time.slice(3))+(service?.duration||0),endTime=String(Math.floor(end/60)).padStart(2,'0')+':'+String(end%60).padStart(2,'0'),selected=request.dates.filter(date=>preview.selected.has(date));
+   target.dataset.seriesSection='dates';target.innerHTML=`<h3 class="ot-series-dates-title">${sessionIcons.calendar}Check and confirm dates</h3><p class="ot-series-description">Here are the sessions based on your schedule. Select at least 2 available dates.</p><ol class="ot-session-dates">${preview.checks.map((check,index)=>`<li class="${check.free?'is-free':'is-conflict'}"><label><input type="checkbox" name="sessionDate" value="${check.date}" ${preview.selected.has(check.date)?'checked':''} ${check.free?'':'disabled'}><span><strong>${esc(new Date(check.date+'T12:00:00Z').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}))}</strong><small>${esc(request.time)} to ${endTime}${check.free?'':' · Unavailable'}</small></span><b>Session ${index+1}</b></label></li>`).join('')}</ol><p class="ot-conflict-note" ${preview.checks.every(check=>check.free)?'hidden':''}>Unavailable dates cannot be selected. Go Back to change the schedule, or leave them out.</p>${seriesSummary(request,selected)}<p class="ot-help">Nothing is booked yet. Availability is checked again before confirmation.</p>`;
+   const next=form.querySelector('[data-action="owner-series-review"]');if(next)next.disabled=selected.length<2;
+   setSeriesStep(form,'dates');
+  }
+  function showPreview(form,request,checks){
+   const signature=JSON.stringify(request),previous=preview?.salonId===salon().id&&preview.signature===signature?preview.selected:null;
+   preview={salonId:salon().id,signature,request,checks,selected:new Set(checks.filter(check=>check.free&&(!previous||previous.has(check.date))).map(check=>check.date))};renderSeriesDates(form);return checks.every(check=>check.free);
+  }
+  function reviewSeries(form){
+   try{
+    const request=selectedSeriesRequest(form),checks=checkDates(request);
+    if(checks.some(check=>!check.free)){preview.checks=checkDates(preview.request);preview.selected=new Set([...preview.selected].filter(date=>preview.checks.some(check=>check.date===date&&check.free)));renderSeriesDates(form);throw Error('A date is no longer available. Review your selected dates.');}
+    const target=form.querySelector('[data-owner-series-preview]');target.dataset.seriesSection='review';target.innerHTML=`<h3 class="ot-series-dates-title">Review your bookings</h3><p class="ot-series-description">Check these details before confirming ${request.dates.length} sessions.</p>${seriesSummary(request,request.dates)}<ol class="ot-series-review-dates">${request.dates.map(date=>`<li>${esc(human(date))}<strong>${esc(request.time)}</strong></li>`).join('')}</ol>${request.notes?`<div class="ot-series-review-notes"><h3>Notes</h3><p>${esc(request.notes)}</p></div>`:''}<p class="ot-help">All sessions are saved together. If a slot is taken, no series is confirmed.</p>`;error(form,'');setSeriesStep(form,'review');
+   }catch(caught){error(form,caught.message);}
+  }
+
   function readSeries(form) {
    const data=new FormData(form),s=salon(),service=services().find(v=>v.id===data.get('serviceId')),staffId=String(data.get('staffId')||''),start=String(data.get('startDate')||''),count=Number(data.get('count')),interval=Number(data.get('intervalWeeks'));
-   if(s.id!==seriesSalonId)throw Error('Your salon changed. Open multiple sessions again.');
+   if(s.id!==seriesSalonId||seriesIdentity()!==seriesOwner)throw Error('Your salon changed. Open multiple sessions again.');
    if(!service||!eligible(service).some(m=>m.id===staffId))throw Error('Choose a service and a team member who offers it.');
    if(!validDate(start)||start<today())throw Error('Choose a first booking today or later.');
    if(!Number.isInteger(count)||count<2||count>12)throw Error('Choose between 2 and 12 bookings.');
    if(!Number.isInteger(interval)||interval<1||interval>52)throw Error('Choose a repeat interval from 1 to 52 weeks.');
    const request={serviceId:service.id,staffId,dates:Array.from({length:count},(_,i)=>addDays(start,i*interval*7)),time:String(data.get('time')||''),name:String(data.get('name')||'').trim(),email:String(data.get('email')||'').trim(),phone:String(data.get('phone')||'').trim(),notes:String(data.get('notes')||'').trim(),customerId:String(data.get('customerId')||'')};
-   if(!request.name||request.name.length>100||request.email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(request.email))throw Error('Enter a client name and valid email address.');
+   if(!request.name||request.name.length>80||request.email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(request.email))throw Error('Enter a client name of up to 80 characters and a valid email address.');
    if(request.phone.length>40||request.notes.length>500)throw Error('Keep the phone number to 40 characters and notes to 500.');
    if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(request.time))throw Error('Choose a time for your bookings.');
    if(request.customerId&&!s.customers.some(c=>c.id===request.customerId))throw Error('Choose an existing client or select New customer.');
    return request;
   }
   const checkDates=request=>request.dates.map(date=>({date,free:available(date,request.serviceId,null,request.staffId).includes(request.time)}));
-  function showPreview(form,request,checks) {
-   const allFree=checks.every(check=>check.free),target=form.querySelector('[data-owner-series-preview]');
-   target.innerHTML=`<h3>${allFree?'Your dates are available':'Some dates need a different time'}</h3><ol class="ot-date-list">${checks.map(check=>`<li class="${check.free?'is-free':'is-conflict'}"><span>${esc(human(check.date))} at ${esc(request.time)}</span><b>${check.free?'Available':'Unavailable'}</b></li>`).join('')}</ol>${allFree?`<p class="ot-help">${checks.length} bookings with the same service and team member. Availability is checked again when you save.</p><button type="button" class="btn primary" data-action="owner-series-confirm">Book ${checks.length} bookings</button>`:'<p class="ot-conflict-note">No bookings will be added until every date is available. Change the first date, time or repeat interval, then check again.</p>'}`;
-   preview=allFree?{salonId:salon().id,signature:JSON.stringify(request)}:null;
-   return allFree;
-  }
   async function confirmSeries(form) {
    if(pending)return;
+   const requestOwner=seriesOwner,sameOwner=()=>requestOwner===seriesOwner&&requestOwner===seriesIdentity();
    try {
     if(!supported())throw Error('Multiple sessions are not enabled for this salon yet.');
-    const request=readSeries(form);
-    if(!preview||preview.salonId!==salon().id||preview.signature!==JSON.stringify(request))throw Error('Your details changed. Check the dates again before booking.');
-    if(!showPreview(form,request,checkDates(request)))throw Error('A date is no longer available. Review the dates and try again.');
+    if(form.dataset.seriesStep!=='review')throw Error('Review your selected dates before confirming bookings.');
+    const request=selectedSeriesRequest(form);
+    if(checkDates(request).some(check=>!check.free)){preview.checks=checkDates(preview.request);preview.selected=new Set([...preview.selected].filter(date=>preview.checks.some(check=>check.date===date&&check.free)));renderSeriesDates(form);throw Error('A date is no longer available. Review the dates and try again.');}
     pending=true;error(form,'');form.setAttribute('aria-busy','true');
     const controls=[...form.querySelectorAll('input,select,textarea,button')],disabled=controls.map(control=>control.disabled);controls.forEach(control=>{control.disabled=true;});
     try {
      const result=await api.createSeries(request);
+     if(!sameOwner())return;
      if(!result?.ok)throw Error(result?.message||'The bookings could not be saved. No series was confirmed.');
      preview=null;if(form.isConnected){closeModal();render();}toast(result.message||'Your bookings were created.');
-    } finally {controls.forEach((control,index)=>{control.disabled=disabled[index];});form.removeAttribute('aria-busy');pending=false;}
-   } catch(caught) {if(form.isConnected)error(form,caught.message||'Please check the details and try again.');else toast(caught.message||'Your bookings could not be saved.');}
+    } finally {if(sameOwner()){controls.forEach((control,index)=>{control.disabled=disabled[index];});form.removeAttribute('aria-busy');}pending=false;}
+   } catch(caught) {if(!sameOwner())return;if(form.isConnected)error(form,caught.message||'Please check the details and try again.');else toast(caught.message||'Your bookings could not be saved.');}
   }
   function click(action,el) {
    if(action==='premium-compare-metric'){
@@ -218,6 +279,10 @@
     if(typeof document!=='undefined')document.querySelector(`[data-action="premium-compare-metric"][data-metric="${value}"]`)?.focus({preventScroll:true});
     return true;
    }
+   if(action==='owner-series-back'){const form=el.closest('[data-form="owner-series"]');if(form&&!pending){error(form,'');form.dataset.seriesStep==='review'?renderSeriesDates(form):setSeriesStep(form,'details');}return true;}
+   if(action==='owner-series-review'){const form=el.closest('[data-form="owner-series"]');if(form&&!pending&&form.dataset.seriesStep==='dates')reviewSeries(form);return true;}
+   if(action==='owner-series-customer-mode'){const form=el.closest('[data-form="owner-series"]');if(!form||pending||!['existing','new'].includes(el.dataset.mode))return true;const existing=el.dataset.mode==='existing';if(existing&&!salon().customers.length)return true;form.dataset.customerMode=el.dataset.mode;form.querySelector('.ot-existing-customer').hidden=!existing;form.querySelector('.ot-new-customer').hidden=existing;form.querySelectorAll('[data-action="owner-series-customer-mode"]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===el.dataset.mode)));['customerId','name','email','phone','customerSearch'].forEach(name=>form.elements[name].value='');form.querySelectorAll('[data-action="owner-series-customer"]').forEach(button=>button.hidden=false);preview=null;error(form,'');return true;}
+   if(action==='owner-series-customer'){const form=el.closest('[data-form="owner-series"]'),client=salon().customers.find(c=>c.id===el.dataset.id);if(!form||!client||pending)return true;form.elements.customerId.value=client.id;['name','email','phone'].forEach(name=>form.elements[name].value=client[name]||'');form.elements.customerSearch.value=client.name;form.querySelectorAll('[data-action="owner-series-customer"]').forEach(button=>button.hidden=button.dataset.id!==client.id);form.querySelector('.ot-new-customer').hidden=!!client.email;preview=null;error(form,'');return true;}
    if(action==='owner-series'){seriesModal();return true;}
    if(action==='owner-series-confirm'){const form=el.closest('[data-form="owner-series"]');if(form)void confirmSeries(form);return true;}
    return false;
@@ -228,13 +293,14 @@
     if(insightsSalonId!==salon().id)resetInsights();
     try {const data=new FormData(form),preset=String(data.get('period')||'month'),range=preset==='custom'?{start:String(data.get('start')||''),end:String(data.get('end')||'')}:periodRange(preset);if(!validDate(range.start)||!validDate(range.end)||range.start>range.end||dateDifference(range.start,range.end)>365)throw Error('Choose a valid date range of up to one year.');const staff=String(data.get('staff')||'all');if(staff!=='all'&&!salon().staff.some(m=>m.id===staff))throw Error('Choose a team member from this salon.');filter={preset:['month','week','last30','custom'].includes(preset)?preset:'month',...range,staff};render();}catch(caught){error(form,caught.message);}return true;
    }
-   if(type==='owner-series') {try {if(pending)return true;if(!supported())throw Error('Multiple sessions are not enabled for this salon yet.');const request=readSeries(form);error(form,'');showPreview(form,request,checkDates(request));}catch(caught){preview=null;error(form,caught.message);}return true;}
+   if(type==='owner-series') {try {if(pending||form.dataset.seriesStep&&form.dataset.seriesStep!=='details')return true;if(!supported())throw Error('Multiple sessions are not enabled for this salon yet.');const request=readSeries(form);error(form,'');showPreview(form,request,checkDates(request));}catch(caught){preview=null;error(form,caught.message);}return true;}
    return false;
   }
   function change(el) {
    if(el.matches('[data-owner-period]')&&!insightsAllowed()){resetInsights();render();return true;}
    if(el.matches('[data-owner-period]')){const form=el.closest('form'),custom=el.value==='custom';form.querySelector('[data-owner-custom]').hidden=!custom;if(!custom){const range=periodRange(el.value);form.elements.start.value=range.start;form.elements.end.value=range.end;}return true;}
    const form=el.closest('[data-form="owner-series"]');if(!form)return false;
+   if(el.name==='sessionDate'){if(preview&&form.dataset.seriesStep==='dates'&&preview.checks.some(check=>check.date===el.value&&check.free)){el.checked?preview.selected.add(el.value):preview.selected.delete(el.value);const selected=preview.request.dates.filter(date=>preview.selected.has(date)),summary=form.querySelector('.ot-series-summary');if(summary)summary.outerHTML=seriesSummary(preview.request,selected);const next=form.querySelector('[data-action="owner-series-review"]');if(next)next.disabled=selected.length<2;}return true;}
    preview=null;form.querySelector('[data-owner-series-preview]').innerHTML='<p class="ot-help">Check the dates again after making changes.</p>';error(form,'');
    if(el.name==='customerId'){const client=salon().customers.find(c=>c.id===el.value);['name','email','phone'].forEach(key=>{form.elements[key].value=client?.[key]||'';});}
    if(['serviceId','staffId','startDate'].includes(el.name)){
@@ -245,6 +311,7 @@
    }
    return true;
   }
+  if(typeof document!=='undefined')document.addEventListener('input',event=>{const el=event.target;if(!el.matches?.('[data-owner-customer-search]'))return;const form=el.closest('[data-form="owner-series"]');if(!form||pending||salon().id!==seriesSalonId)return;const query=el.value.trim().toLowerCase();['customerId','name','email','phone'].forEach(name=>form.elements[name].value='');let count=0;form.querySelectorAll('[data-action="owner-series-customer"]').forEach(button=>{button.hidden=!button.dataset.customerName.includes(query);if(!button.hidden)count++;});const empty=form.querySelector('.ot-series-customer-empty');if(empty)empty.hidden=count>0;preview=null;});
   return {routes:['insights'],pages:{insights},click,submit,change};
  }};
 })();

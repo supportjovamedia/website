@@ -1,0 +1,130 @@
+/* Referrals use the workspace palette. Qualification and reward rules remain unchanged. */
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed{--ref-soft:var(--theme-soft);--ref-accent:var(--theme-primary);--ref-ink:var(--theme-heading);display:grid;grid-template-columns:minmax(0,1fr);gap:20px;min-width:0;width:100%;color:var(--theme-body)}
+html[data-workspace-theme=classic] .shell.jb-reference .jr-refreshed{--ref-soft:#FFD700;--ref-accent:#FFD700;--ref-ink:#202020}
+.shell.jb-reference .jr-refreshed .page-heading{margin:0 0 4px!important}
+.shell.jb-reference .jr-refreshed .page-heading h1{margin:0!important}
+.shell.jb-reference .jr-refreshed .page-heading p{font-size:14px!important;line-height:1.5!important;margin:10px 0 0!important;color:var(--theme-muted)!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-panel{box-sizing:border-box;min-width:0;padding:24px;border:1px solid var(--theme-line)!important;border-radius:16px!important;background:var(--theme-panel)!important;box-shadow:0 2px 4px #17171703,0 8px 22px #17171705!important}
+.shell.jb-reference .jr-refreshed svg{display:block;width:22px;height:22px;flex:none}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed :is(h2,h3){font-family:inherit;color:var(--theme-heading)!important;letter-spacing:-.02em;line-height:1.35;margin:0}
+.shell.jb-reference .jr-refreshed h2{font-size:19px!important;font-weight:650!important}
+.shell.jb-reference .jr-refreshed h3{font-size:14px!important;font-weight:650!important}
+.shell.jb-reference .jr-refreshed p{font-size:13px!important;color:var(--theme-muted)!important;line-height:1.55!important;margin:10px 0 0}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-banner{position:relative;display:flex;align-items:center;gap:22px;min-width:0;overflow:hidden;padding:26px 28px;border-radius:16px!important;background:color-mix(in srgb,var(--ref-soft) 65%,var(--theme-panel))!important;border:1px solid color-mix(in srgb,var(--ref-accent) 15%,var(--theme-line))!important}
+.shell.jb-reference .jr-refreshed .jrr-banner:after{content:"";position:absolute;right:-34px;bottom:-64px;width:205px;height:150px;border-radius:100% 0 0 0;background:var(--ref-accent);opacity:.26;pointer-events:none;transform:rotate(-12deg)}
+.shell.jb-reference .jr-refreshed .jrr-banner-icon{display:grid;place-items:center;width:64px;height:64px;flex:none;border-radius:17px;background:var(--ref-accent);color:var(--ref-ink)}
+.shell.jb-reference .jr-refreshed .jrr-banner-icon>svg{width:38px;height:38px}
+.shell.jb-reference .jr-refreshed .jrr-banner h2{position:relative;z-index:1;font-size:clamp(23px,2.4vw,34px)!important;line-height:1.2!important;font-weight:650!important}
+.shell.jb-reference .jr-refreshed .jrr-top-grid{min-width:0}
+.shell.jb-reference .jr-refreshed .jrr-invite{display:grid;gap:18px}
+.shell.jb-reference .jr-refreshed .jrr-link{display:grid;gap:10px;min-width:0;margin:0;font-size:14px;font-weight:550;color:var(--theme-heading)}
+.shell.jb-reference .jr-refreshed .jrr-copy-field{display:flex;align-items:center;min-width:0;height:48px;border:1px solid var(--theme-control-line);border-radius:12px;background:var(--theme-inset);overflow:hidden}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-copy-field>input{box-sizing:border-box;flex:1;min-width:0;width:100%;height:46px!important;min-height:46px!important;padding:12px 14px!important;border:0!important;box-shadow:none!important;background:transparent!important;color:var(--theme-heading)!important;border-radius:0!important;font-family:inherit;font-size:14px!important;text-overflow:ellipsis}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed :is(.jrr-copy-field,.jrr-code)>button,
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-code>span>button{display:grid!important;place-items:center!important;width:46px!important;min-width:46px!important;height:46px!important;min-height:46px!important;padding:0!important;margin:0!important;border:0!important;border-radius:10px!important;background:transparent!important;color:var(--theme-heading)!important;box-shadow:none!important}
+.shell.jb-reference .jr-refreshed .jrr-code{display:flex;align-items:center;gap:18px;min-width:0;font-size:14px;color:var(--theme-heading)}
+.shell.jb-reference .jr-refreshed .jrr-code>span:first-child{flex:none}
+.shell.jb-reference .jr-refreshed .jrr-code>span:last-child{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:1;min-width:0;padding-left:16px;background:var(--theme-inset);border-radius:24px}
+.shell.jb-reference .jr-refreshed .jrr-code strong{font-size:15px;font-weight:650;letter-spacing:.025em;overflow-wrap:anywhere}
+.shell.jb-reference .jr-refreshed .jrr-share{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:2px}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-share>.btn{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;min-width:0;min-height:46px!important;padding:11px 14px!important;font-size:13px!important;line-height:1.3!important;border-radius:24px!important;text-decoration:none;white-space:nowrap}
+.shell.jb-reference .jr-refreshed .jrr-share svg{width:19px;height:19px}
+.shell.jb-reference .jr-refreshed .jrr-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;min-width:0}
+.shell.jb-reference .jr-refreshed .jrr-metrics>.jrr-panel{padding:20px!important}
+.shell.jb-reference .jr-refreshed .jrr-metrics h2{font-size:13px!important;font-weight:550!important;letter-spacing:0;margin:0 0 12px}
+.shell.jb-reference .jr-refreshed .jrr-stat-icon{display:grid;place-items:center;width:36px;height:36px;margin-bottom:8px;border-radius:11px;background:var(--ref-soft);color:var(--ref-ink)}
+.shell.jb-reference .jr-refreshed .jrr-stat-icon>svg{width:21px;height:21px}
+.shell.jb-reference .jr-refreshed .jrr-metrics strong{display:block;font-size:27px;font-weight:650;letter-spacing:-.025em;line-height:1.2;color:var(--theme-heading);font-variant-numeric:tabular-nums}
+.shell.jb-reference .jr-refreshed .jrr-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;list-style:none;padding:0;margin:22px 0 0}
+.shell.jb-reference .jr-refreshed .jrr-steps>li{position:relative;min-width:0;text-align:center}
+.shell.jb-reference .jr-refreshed .jrr-steps>li>span{display:grid;place-items:center;width:34px;height:34px;margin:0 auto 12px;border-radius:50%;background:var(--ref-soft);color:var(--ref-ink);font-size:16px;font-weight:650}
+.shell.jb-reference .jr-refreshed .jrr-steps>li:not(:last-child):after{content:"";position:absolute;top:17px;left:calc(50% + 30px);width:calc(100% - 40px);height:1px;background:var(--theme-line)}
+.shell.jb-reference .jr-refreshed .jrr-steps p{font-size:12px!important;margin:7px auto 0;max-width:29ch}
+.shell.jb-reference .jr-refreshed .jrr-rewards>header{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.shell.jb-reference .jr-refreshed .jrr-rewards h2{display:flex;align-items:center;gap:12px}
+.shell.jb-reference .jr-refreshed .jrr-rewards>header>strong{display:grid;place-items:center;min-width:36px;height:30px;padding:0 9px;border-radius:20px;background:var(--ref-soft);color:var(--ref-ink);font-size:20px;line-height:1}
+.shell.jb-reference .jr-refreshed .jr-progress{display:flex;gap:10px;margin:18px 0 8px}
+.shell.jb-reference .jr-refreshed .jr-progress i{display:block;flex:1;height:8px;border-radius:5px;background:var(--theme-inset)}
+.shell.jb-reference .jr-refreshed .jr-progress i.filled{background:var(--ref-accent)}
+.shell.jb-reference .jr-refreshed .jrr-rewards>.btn{margin-top:16px}
+.shell.jb-reference .jr-refreshed :is(.jrr-good,.jrr-register){padding:0!important;overflow:hidden}
+.shell.jb-reference .jr-refreshed :is(.jrr-good,.jrr-register)>summary{display:flex;align-items:center;gap:12px;min-height:66px;padding:18px 24px;box-sizing:border-box;cursor:pointer;list-style:none;font-size:18px;font-weight:650;color:var(--theme-heading)}
+.shell.jb-reference .jr-refreshed summary::-webkit-details-marker{display:none}
+.shell.jb-reference .jr-refreshed summary>svg:last-child{margin-left:auto;transition:transform .16s ease}
+.shell.jb-reference .jr-refreshed details[open]>summary>svg:last-child{transform:rotate(180deg)}
+.shell.jb-reference .jr-refreshed .jrr-good>div{padding:0 24px 24px;border-top:1px solid var(--theme-line)}
+.shell.jb-reference .jr-refreshed .jrr-good h3{margin-top:20px}
+.shell.jb-reference .jr-refreshed .jrr-good .btn{margin-top:18px}
+.shell.jb-reference .jr-refreshed .jrr-total{display:grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:20px;background:var(--ref-soft);font-size:12px;font-weight:550;color:var(--ref-ink)}
+.shell.jb-reference .jr-refreshed .jrr-register-content{padding:0 24px 20px}
+.shell.jb-reference .jr-refreshed .jr-filters{display:flex;gap:8px;flex-wrap:wrap;padding-block:0 16px}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jr-filters [aria-pressed=true]{background:var(--theme-primary)!important;color:var(--theme-on-primary)!important;border-color:var(--theme-primary)!important}
+.shell.jb-reference .jr-refreshed .jrr-records{display:grid;gap:12px}
+.shell.jb-reference .jr-refreshed .jrr-record{min-width:0;padding:16px;border:1px solid var(--theme-line);border-radius:12px;background:var(--theme-panel)}
+.shell.jb-reference .jr-refreshed .jrr-record>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.shell.jb-reference .jr-refreshed .jrr-record strong{min-width:0;font-size:14px;overflow-wrap:anywhere;color:var(--theme-heading)}
+.shell.jb-reference .jr-refreshed .jr-status{flex:none;max-width:55%;font-size:11px;line-height:1.4}
+.shell.jb-reference .jr-refreshed .jrr-record dl{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin:15px 0 0;padding-top:12px;border-top:1px solid var(--theme-line);font-size:12px;line-height:1.5}
+.shell.jb-reference .jr-refreshed .jrr-record dt{color:var(--theme-muted);margin-bottom:4px}
+.shell.jb-reference .jr-refreshed .jrr-record dd{margin:0;color:var(--theme-body);overflow-wrap:anywhere}
+.shell.jb-reference .jr-refreshed .jrr-register footer{display:flex;justify-content:flex-end;margin-top:16px}
+.shell.jb-reference .jr-refreshed .jrr-empty{padding:20px 0}
+@container workspace (max-width:640px){
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed{gap:16px}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-panel{padding:18px}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-banner{padding:22px 20px;gap:18px}
+ .shell.jb-reference .jr-refreshed .jrr-banner-icon{width:50px;height:50px;border-radius:14px}
+ .shell.jb-reference .jr-refreshed .jrr-banner-icon>svg{width:31px;height:31px}
+ .shell.jb-reference .jr-refreshed .jrr-banner h2{font-size:23px!important}
+ .shell.jb-reference .jr-refreshed .jrr-metrics{gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .shell.jb-reference .jr-refreshed .jrr-metrics>.jrr-panel{padding:16px!important}
+ .shell.jb-reference .jr-refreshed .jrr-metrics strong{font-size:26px}
+ .shell.jb-reference .jr-refreshed .jrr-code{gap:12px;font-size:12px}
+ .shell.jb-reference .jr-refreshed .jrr-code strong{font-size:13px}
+ .shell.jb-reference .jr-refreshed .jrr-share{gap:8px}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-share>.btn{gap:6px!important;padding:10px 8px!important;font-size:12px!important}
+ .shell.jb-reference .jr-refreshed .jrr-share svg{width:17px;height:17px}
+ .shell.jb-reference .jr-refreshed :is(.jrr-good,.jrr-register)>summary{padding:17px 18px;font-size:17px}
+ .shell.jb-reference .jr-refreshed :is(.jrr-good>div,.jrr-register-content){padding:0 18px 18px}
+ .shell.jb-reference .jr-refreshed .jrr-steps{gap:16px;grid-template-columns:minmax(0,1fr);margin-top:18px}
+ .shell.jb-reference .jr-refreshed .jrr-steps>li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 12px;text-align:left}
+ .shell.jb-reference .jr-refreshed .jrr-steps>li>span{grid-row:1/3;margin:0}
+ .shell.jb-reference .jr-refreshed .jrr-steps h3{align-self:center}
+ .shell.jb-reference .jr-refreshed .jrr-steps p{grid-column:2;max-width:none;margin:0}
+ .shell.jb-reference .jr-refreshed .jrr-steps>li:after{display:none}
+}
+@container workspace (max-width:360px){
+ .shell.jb-reference .jr-refreshed .jrr-share{grid-template-columns:1fr 1fr}
+ .shell.jb-reference .jr-refreshed .jrr-share>.btn:last-child{grid-column:1/-1}
+ .shell.jb-reference .jr-refreshed .jrr-code{align-items:flex-start;flex-direction:column}
+ .shell.jb-reference .jr-refreshed .jrr-code>span:last-child{width:100%;box-sizing:border-box}
+ .shell.jb-reference .jr-refreshed .jrr-banner h2{font-size:21px!important}
+ .shell.jb-reference .jr-refreshed .jrr-record>div{align-items:flex-start;flex-direction:column}
+ .shell.jb-reference .jr-refreshed .jr-status{max-width:100%}
+}
+@media(prefers-reduced-motion:reduce){.shell.jb-reference .jr-refreshed summary>svg{transition:none!important}}
+
+/* Compact stat lockups and disclosure spacing. */
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-metrics>.jrr-panel{display:grid!important;grid-template-columns:36px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;gap:4px 12px;padding:18px!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-metrics h2{grid-column:2;grid-row:1;min-width:0;margin:0!important;align-self:end;line-height:1.4!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-stat-icon{grid-column:1;grid-row:1/3;align-self:center;margin:0!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-metrics strong{grid-column:2;grid-row:2;min-width:0;line-height:1.15;margin:0;white-space:nowrap}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-good>div{padding:20px 24px 24px!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-good>div>h3{margin:20px 0 0!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-good>div>h3:first-child{margin-top:0!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed :is(.jrr-good,.jrr-register)>summary:focus:not(:focus-visible){outline:none!important;box-shadow:none!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed :is(.jrr-good,.jrr-register)>summary:focus-visible{outline:2px solid var(--theme-heading)!important;outline-offset:-5px!important;border-radius:12px!important;box-shadow:none!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-register-content{padding-top:16px!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-empty{padding:12px 0 8px!important;min-height:0!important}
+html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-register footer{display:flex!important;justify-content:flex-end!important;min-height:0!important;margin:0!important;padding:8px 0 0!important;border:0!important}
+@container workspace (max-width:640px){
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-metrics>.jrr-panel{padding:16px!important;gap:4px 10px}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-good>div{padding:18px!important}
+}
+@container workspace (max-width:360px){
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-metrics>.jrr-panel{grid-template-columns:30px minmax(0,1fr);padding:12px!important;gap:4px 8px}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-stat-icon{width:30px;height:30px;border-radius:9px}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-stat-icon>svg{width:18px;height:18px}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-metrics h2{font-size:12px!important}
+ html[data-workspace-theme] .shell.jb-reference .jr-refreshed .jrr-metrics strong{font-size:20px!important}
+}

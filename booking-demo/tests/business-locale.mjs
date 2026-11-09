@@ -79,6 +79,44 @@ test('locale controls lock after appointments exist and preserve a valid busines
  assert.equal(currency.value,'USD');
 });
 
+test('all four business countries offer runtime-valid zones accepted by the database',async()=>{
+ const migration=await readFile(new URL('../supabase/migrations/20261106170125_international_business_locale.sql',import.meta.url),'utf8');
+ for(const [code,zones] of Object.entries(locale.zones)){
+  const defaults=locale.countries[code],html=locale.fields(business(code,defaults.zone,defaults.currency));
+  const options=html.match(/name="timezone"[^>]*>(.*?)<\/select>/)[1];
+  assert.equal((options.match(/<option /g)||[]).length,zones.length);
+  for(const zone of zones){
+   assert.equal(locale.validate(business(code,zone,defaults.currency)).timezone,zone);
+   assert.ok(migration.includes("'"+zone+"'"),zone+' is accepted server-side');
+   assert.ok(options.includes('value="'+zone+'"'),zone+' can be selected');
+  }
+  if(code!=='GB')assert.ok(zones.length>5,code+' covers multiple regional time zones');
+ }
+ assert.match(locale.fields({}),/value="Europe\/London" selected>London \(United Kingdom\)/);
+ assert.match(locale.fields(business('US','America/Los_Angeles','USD')),/>Los Angeles \(Pacific time\)<\/option>/);
+});
+
+test('refreshing country choices keeps a saved regional zone and switching countries uses local defaults',()=>{
+ const zone={disabled:false,value:'America/Los_Angeles',innerHTML:''},currency={disabled:false,value:'USD'};
+ const select={name:'country',value:'US',form:{elements:{namedItem:name=>name==='timezone'?zone:currency}}};
+ locale.countryChanged(select);
+ assert.match(zone.innerHTML,/value="America\/Los_Angeles" selected/);
+ select.value='AU';locale.countryChanged(select);
+ assert.match(zone.innerHTML,/value="Australia\/Sydney" selected/);
+ assert.equal(currency.value,'AUD');
+ zone.value='America/Nipigon';select.value='CA';locale.countryChanged(select);
+ assert.match(zone.innerHTML,/value="America\/Nipigon" selected/);
+ zone.disabled=true;const previous=zone.innerHTML;select.value='US';locale.countryChanged(select);
+ assert.equal(zone.innerHTML,previous);
+});
+
+test('regional exceptions keep local time stable without inventing daylight saving',()=>{
+ for(const [code,zone,currency] of [['US','America/Phoenix','USD'],['CA','America/Regina','CAD'],['AU','Australia/Brisbane','AUD']]){
+  const s=business(code,zone,currency);
+  assert.equal(locale.clock(s,Date.parse('2026-01-15T12:00:00Z')).minutes,locale.clock(s,Date.parse('2026-07-15T12:00:00Z')).minutes);
+ }
+});
+
 test('browser and server timezone database disagreements block availability rather than shift a booking',()=>{
  const serverNow='2026-01-01T12:00:00Z',saved={today:'2026-01-01',max_date:'2026-03-17',days:75,timezone:'America/New_York',server_now:serverNow,utc_offset_minutes:-300,receivedTick:0};
  assert.equal(schedule.onlineBookingWindow({bookingWindow:saved},{now:0,tick:0}).valid,true);

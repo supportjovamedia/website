@@ -1,0 +1,108 @@
+/* Staff: one readable desktop table, individual compact records on smaller screens. */
+.shell.jb-reference .mg-page.mg-redesigned{--mg-day-active:var(--theme-primary,#242424);--mg-day-on-active:var(--theme-on-primary,#fff);width:100%;min-width:0}
+html[data-workspace-theme=classic] .shell.jb-reference .mg-page.mg-redesigned{--mg-day-active:#FFD700;--mg-day-on-active:#202020}
+.shell.jb-reference .mg-page.mg-redesigned .mg-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 24px}
+.shell.jb-reference .mg-page.mg-redesigned .mg-heading h1{display:flex;align-items:center;gap:10px;margin:0;line-height:1.2}
+.shell.jb-reference .mg-page.mg-redesigned .mg-heading p{display:none}
+.shell.jb-reference .mg-page.mg-redesigned .mg-add{flex:none;width:auto;min-height:44px;padding:11px 18px;border-radius:24px;white-space:nowrap}
+.shell.jb-reference .mg-page.mg-redesigned .mg-count{display:inline-grid;place-items:center;min-width:27px;height:27px;padding:0 7px;font-size:12px;line-height:1;border-radius:8px;background:var(--theme-panel);color:var(--theme-muted);border:1px solid var(--theme-line)}
+.shell.jb-reference .mg-page.mg-redesigned .mg-roster{font-size:12px;gap:12px;line-height:1.5;margin:0 0 20px}
+.shell.jb-reference .mg-page.mg-redesigned .mg-roster>a{font-size:12px}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-surface{background:var(--theme-panel);border:1px solid var(--theme-line);border-radius:14px!important;box-shadow:0 2px 4px #17171703,0 8px 24px #17171706!important;overflow:visible}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-toolbar{display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(130px,170px);gap:12px;padding:20px!important;align-items:center;border:0;border-bottom:1px solid var(--theme-line);border-radius:14px 14px 0 0!important;background:var(--theme-panel);box-shadow:none!important;min-width:0}
+.shell.jb-reference .mg-page.mg-redesigned .mg-search{grid-column:1;display:block;position:relative;min-width:0;width:100%;max-width:none;flex:none;margin:0}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-search>input{width:100%!important;max-width:100%;height:44px!important;min-height:44px!important;padding:11px 14px 11px 42px!important;border-radius:10px!important;font-size:14px!important;line-height:1.4;background:var(--theme-panel)!important;color:var(--theme-heading)!important;border:1px solid var(--theme-control-line)!important;box-sizing:border-box}
+.shell.jb-reference .mg-page.mg-redesigned .mg-search>svg{display:block!important;position:absolute;width:18px;height:18px;left:14px;top:50%;transform:translateY(-50%);color:var(--theme-muted);pointer-events:none;z-index:1}
+.shell.jb-reference .mg-page.mg-redesigned .mg-search-button{grid-column:2;grid-row:1;min-height:44px;height:44px;padding:10px 16px;border-radius:22px;border:1px solid var(--theme-control-line);background:var(--theme-panel);color:var(--theme-heading);font-size:13px}
+.shell.jb-reference .mg-page.mg-redesigned .mg-status-filter{grid-column:3;grid-row:1;display:block;width:100%;min-width:0;margin:0}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-status-filter>select{width:100%!important;min-width:0;max-width:none;height:44px;min-height:44px;padding:11px 30px 11px 13px!important;border:1px solid var(--theme-control-line)!important;border-radius:10px!important;background:var(--theme-panel)!important;color:var(--theme-heading)!important;font-size:13px!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-clear{grid-column:1/-1;justify-self:end;padding:6px 10px;height:auto;min-height:36px;color:var(--theme-muted);background:transparent;border:0;font-size:12px}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-scroll{contain:none;min-width:0;width:100%;overflow:visible!important;background:var(--theme-panel);box-shadow:none;border:0;border-radius:0!important;padding:0!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table{display:table!important;min-width:0!important;max-width:100%;width:100%!important;table-layout:fixed;border-collapse:collapse}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table thead{display:table-header-group!important;position:static!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important;white-space:normal!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table tbody{display:table-row-group!important;padding:0!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table tr{display:table-row!important;padding:0!important;border:0!important;box-shadow:none!important;background:var(--theme-panel)!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table :is(th,td){display:table-cell!important;position:static!important;min-width:0!important;padding:20px 14px!important;border:0!important;border-bottom:1px solid var(--theme-line)!important;text-align:left!important;vertical-align:middle;overflow-wrap:anywhere;background:var(--theme-panel)!important;line-height:1.5}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table th{font-size:11px!important;font-weight:600!important;color:var(--theme-muted)!important;background:var(--theme-panel)!important;padding-block:16px!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td{font-size:13px!important;color:var(--theme-body)!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td:before{display:none!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-staff-table :is(th,td):nth-child(1){width:25%!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-staff-table :is(th,td):nth-child(2){width:24%!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-staff-table :is(th,td):nth-child(3){width:22%!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-staff-table :is(th,td):nth-child(4){width:10%!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-staff-table :is(th,td):nth-child(5){width:14%!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-staff-table :is(th,td):nth-child(6){width:5%!important;padding-left:0!important;padding-right:8px!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-person{display:flex;align-items:center;gap:12px;min-width:0}
+.shell.jb-reference .mg-page.mg-redesigned .mg-avatar{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:12px!important;border:1px solid var(--theme-line);background:var(--theme-panel)!important;color:var(--theme-heading)!important;font-size:12px!important;font-weight:650}
+.shell.jb-reference .mg-page.mg-redesigned .mg-person>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.shell.jb-reference .mg-page.mg-redesigned .mg-person strong{font-size:14px!important;line-height:1.4;color:var(--theme-heading);font-weight:650!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-person>div>span{font-size:12px!important;line-height:1.4;color:var(--theme-muted)!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-days{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-start;min-width:0}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-day{width:24px!important;height:24px!important;min-height:24px;display:inline-grid;place-items:center;border-radius:50%!important;border:1px solid var(--theme-line);background:var(--theme-panel)!important;color:var(--theme-muted)!important;font-size:10px!important;font-weight:550;line-height:1;flex:none}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-day.mg-day-open{background:var(--mg-day-active)!important;color:var(--mg-day-on-active)!important;border-color:var(--mg-day-active)!important;font-weight:650}
+.shell.jb-reference .mg-page.mg-redesigned .mg-services{max-width:none!important;font-size:12px!important;line-height:1.6;color:var(--theme-body)!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-upcoming{min-width:0;height:auto;border-radius:0;background:transparent!important;color:var(--theme-heading)!important;font-size:14px!important;font-weight:650;font-variant-numeric:tabular-nums}
+.shell.jb-reference .mg-page.mg-redesigned .mg-status{width:max-content!important;max-width:100%;padding:6px 9px!important;border-radius:8px;font-size:11px!important;line-height:1.4;white-space:normal;color:var(--theme-muted);background:var(--theme-panel);border:1px solid var(--theme-line)}
+.shell.jb-reference .mg-page.mg-redesigned .mg-status-active{background:#EAF5EE!important;color:#286247!important;border-color:#DAEADF}
+.shell.jb-reference .mg-page.mg-redesigned .mg-status-active i{background:#39845D}
+.shell.jb-reference .mg-page.mg-redesigned .mg-actions summary{display:grid;place-items:center;width:36px;height:36px;min-height:36px;list-style:none;border-radius:50%;color:var(--theme-heading);background:transparent}
+.shell.jb-reference .mg-page.mg-redesigned .mg-actions summary:hover{background:var(--theme-inset)}
+.shell.jb-reference .mg-page.mg-redesigned .mg-actions summary svg{width:18px;height:18px;fill:currentColor}
+.shell.jb-reference .mg-page.mg-redesigned .mg-action-list[popover]{border-color:var(--theme-line);background:var(--theme-panel);color:var(--theme-heading);font-family:inherit;box-shadow:0 12px 30px #00000018}
+.shell.jb-reference .mg-page.mg-redesigned .mg-action-list[popover] button{color:var(--theme-heading);font-size:13px;min-height:42px;font-weight:500}
+.shell.jb-reference .mg-page.mg-redesigned .mg-action-list[popover] button:hover{background:var(--theme-inset)}
+.shell.jb-reference .mg-page.mg-redesigned .mg-action-list[popover] .mg-delete{color:#A0362C}
+.shell.jb-reference .mg-page.mg-redesigned .mg-footer{display:block;text-align:right!important;padding:18px 20px!important;font-size:12px;color:var(--theme-muted);border-top:0;margin-top:auto}
+.shell.jb-reference .mg-page.mg-redesigned .jg-pagination{margin-top:auto}
+@container workspace (max-width:760px){
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-surface{min-height:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-toolbar{grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:16px!important;border:1px solid var(--theme-line)!important;border-radius:14px!important;margin-bottom:16px!important;box-shadow:0 4px 16px #17171705!important}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-search{grid-column:1/-1;grid-row:1}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-search-button{grid-column:2;grid-row:2}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-status-filter{grid-column:1;grid-row:2;max-width:170px}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-clear{grid-row:3}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-search>input{font-size:16px!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-scroll{background:transparent!important;overflow:visible!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table{display:block!important;width:100%!important;table-layout:auto}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table thead{display:none!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table tbody{display:grid!important;grid-template-columns:minmax(0,1fr);gap:14px;padding:0!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table tr{display:block!important;position:relative;padding:20px!important;width:100%!important;border:1px solid var(--theme-line)!important;border-radius:14px!important;background:var(--theme-panel)!important;box-shadow:0 4px 16px #17171705!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td{display:flex!important;align-items:center;justify-content:space-between;gap:16px;width:100%!important;padding:15px 0!important;border:0!important;border-bottom:1px solid var(--theme-line)!important;text-align:right!important;min-width:0!important;background:transparent!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td:before{content:attr(data-label);display:block!important;flex:none;text-align:left;font-size:12px;line-height:1.5;color:var(--theme-muted)}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td:first-child{display:block!important;padding:0 36px 20px 0!important;text-align:left!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td:first-child:before{display:none!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td:nth-last-child(2){border-bottom:0!important;padding-bottom:0!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td:last-child{position:absolute!important;top:13px;right:12px;width:36px!important;height:36px;padding:0!important;border:0!important;justify-content:center!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td:last-child:before{display:none!important}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-days{justify-content:flex-end}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-services{max-width:65%!important}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-footer{padding:20px 0 0!important;margin-top:0}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-roster{margin-bottom:18px}
+}
+@container workspace (max-width:360px){
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td[data-label="Working days"]{align-items:flex-start;flex-direction:column;gap:10px;text-align:left!important}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-days{justify-content:flex-start}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-day{width:25px!important;height:25px!important}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-services{max-width:60%!important}
+}
+@media(max-width:400px){.shell.jb-reference .mg-page.mg-redesigned .mg-add{font-size:12px!important;padding-inline:14px!important}.shell.jb-reference .mg-page.mg-redesigned .mg-roster a{flex-basis:100%;margin:0}}
+
+.shell.jb-reference .mg-page.mg-redesigned{--list-soft:var(--theme-soft);--list-ink:var(--theme-heading)}
+html[data-workspace-theme=classic] .shell.jb-reference .mg-page.mg-redesigned{--list-soft:#FFD700;--list-ink:#242424}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-count{border:0!important;border-radius:50%!important;background:var(--list-soft)!important;color:var(--list-ink)!important;font-weight:600!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-toolbar{grid-template-columns:minmax(0,1fr) minmax(150px,220px)}
+.shell.jb-reference .mg-page.mg-redesigned .mg-status-filter{grid-column:2}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-actions summary{display:grid!important;place-items:center!important;background:var(--theme-inset)!important;border-radius:50%!important;padding:0!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td[colspan]{position:static!important;width:auto!important;height:auto!important;padding:0!important;text-align:center!important;border:0!important}
+html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td[colspan]:before{display:none!important;content:none!important}
+.shell.jb-reference .mg-page.mg-redesigned .mg-empty{min-width:0;width:100%;padding:28px 20px;box-sizing:border-box}
+.shell.jb-reference .mg-page.mg-redesigned .mg-empty h2{color:var(--theme-heading);font-size:17px;line-height:1.4;margin:0 0 8px}
+.shell.jb-reference .mg-page.mg-redesigned .mg-empty p{color:var(--theme-muted);font-size:13px;line-height:1.5;margin:0}
+@container workspace (max-width:760px){
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-toolbar{grid-template-columns:minmax(0,1fr);gap:12px;padding:18px!important}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-status-filter{grid-column:1;grid-row:2;max-width:none}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-roster{gap:8px 12px}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-avatar{border-radius:50%!important;background:var(--theme-inset)!important}
+ html[data-workspace-theme] .shell.jb-reference .mg-page.mg-redesigned .mg-staff-table td[colspan]{display:block!important;width:100%!important;top:auto!important;right:auto!important;padding:0!important}
+ .shell.jb-reference .mg-page.mg-redesigned .mg-empty{padding:16px 4px}
+}

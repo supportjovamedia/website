@@ -4,6 +4,8 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const source=await readFile(new URL('../owner-tools.js',import.meta.url),'utf8');
 const scheduling=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
+const workspace=await readFile(new URL('../workspace.js',import.meta.url),'utf8');
+const reference=workspace.slice(workspace.indexOf('/* Reference-led owner presentation.'),workspace.indexOf('/* vanilla-colorful'));
 const plain=value=>JSON.parse(JSON.stringify(value));
 const context={window:{},Date,Intl};vm.runInNewContext(source,context);
 const calculate=(salon,filter={start:'2026-10-01',end:'2026-10-31',staff:'all'},asOf={date:'2026-10-15',time:'12:00'})=>plain(context.window.JovaOwnerTools.comparePerformance(salon,filter,asOf));
@@ -61,7 +63,7 @@ test('comparison is tenant-scoped, immutable and uncached across businesses',()=
 function harness(plan='premium'){
  const state={...seed(),plan,entitlements:{plan},services:[],customers:[],workspace:{plan:'premium',appearance:{plan:'premium'}}},seen={renders:0,errors:[],writes:0};
  class FormData{constructor(form){this.form=form;}get(key){return this.form[key];}}
- const ctx={window:{},Date,Intl,FormData};vm.runInNewContext(scheduling,ctx);vm.runInNewContext(source,ctx);
+ const ctx={window:{},Date,Intl,FormData};vm.runInNewContext(scheduling,ctx);vm.runInNewContext(reference,ctx);vm.runInNewContext(source,ctx);
  const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const tools=ctx.window.JovaOwnerTools.create({salon:()=>state,render:()=>seen.renders++,esc:escape,money:n=>'£'+Number(n).toFixed(2),today:()=> '2026-10-15',addDays:(date,n)=>{const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);},error:(_,text)=>seen.errors.push(text),save:()=>seen.writes++});
  return {state,seen,tools};
