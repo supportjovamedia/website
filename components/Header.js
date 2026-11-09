@@ -4,7 +4,7 @@ import Image from "next/image";
 /* Main navigation uses native links so an old client router or interrupted route fetch cannot swallow a click. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-const links = [["Home","/"],["About","/about"],["Pricing","/pricing"],["Resources","/resources"],["Contact","/contact"]];
+const links = [["Home","/"],["Industries","/industries"],["Pricing","/pricing"],["Resources","/resources"],["Contact","/contact"]];
 const resourceLinks=[['All resources','/resources'],['Blogs','/blog'],['Tips & tricks','/resources/tips-and-tricks'],['Guides','/resources/guides']];
 const startHref = "https://book.jovamedia.com/?portal=owner&plan=essential&cadence=monthly#signup";
 const loginHref = "https://book.jovamedia.com/login";
