@@ -7,3 +7,6 @@ window.JOVA_SUPABASE = {
 
 // Display version only. Entitlements are verified by the server.
 window.JOVA_OFFER_VERSION="2026-11-free-v1";
+
+// Google web OAuth configured in Supabase. No client secret is published.
+window.JOVA_GOOGLE_AUTH_ENABLED=true;

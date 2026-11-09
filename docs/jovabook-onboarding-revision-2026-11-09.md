@@ -9,7 +9,7 @@ Use JovaMedia branding and a restrained, responsive progress flow inspired by th
 3. Native email verification for email signup. Persist submitted profile fields in Auth/SQL before verification. Google identity must be verified server-side, never by trusting callback or browser claims.
 4. Business details: business name, generated editable booking address, optional referral code. Availability and referral validity remain server checked. No subscription/seat grants from submitted metadata.
 5. Business profile: primary category with optional related categories, team size, physical/mobile/online service location. Include actual JovaBook service audiences beyond beauty: tutors, photography, personal training and appointment-based professional services. Team size describes the business only and does not choose/charge a plan.
-6. Optional final attribution: How did you hear about JovaBook? Search engine, Instagram, Facebook, Nextdoor, other social media, AI assistant (ChatGPT/Claude/Gemini/other), friend or colleague, review/directory, other. Allow skipping. Keep self-report separate from measured campaign attribution.
+6. Required final attribution: How did you hear about JovaBook? Search engine, Instagram, Facebook, Nextdoor, other social media, AI assistant (ChatGPT/Claude/Gemini/other), friend or colleague, review/directory, other. The final question is required, following the owner revision. Keep self-report separate from measured campaign attribution.
 7. Success: Your workspace is ready. Add your services, address and opening hours from your dashboard. CTA: Open dashboard. Account/business creation is complete, not a claim that the booking page is ready for clients.
 
 ## Dashboard entry
@@ -30,4 +30,4 @@ From the supplied screenshots: Acuity, Booksy, Faces, Goldie, Kitomba, Mindbody,
 
 ## Status
 
-This file records the agreed flow. The new email-first wizard and Google OAuth are not implemented or live yet. Separate work in this branch implements the returning verified-owner repair, signup Overview and bounded operational diagnostics; those also await PR review/release.
+This file records the agreed flow. The new email-first wizard and Google OAuth are implemented in this branch. Operator and diagnostics were released in PR #185. This release adds submitted onboarding steps in private SQL, operator setup details, closed initial availability and a free dashboard entry. Google Cloud web OAuth is in production with openid, email and profile only. Supabase Google provider is enabled. No client secret is committed. Email and Google share existing server verification and tenant checks. The UK is preselected; email passwords need 8 characters, a capital and a number, with live checks. The last attribution question cannot be skipped.
