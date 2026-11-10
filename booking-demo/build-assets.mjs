@@ -47,7 +47,7 @@ export async function build({output=path.join(ROOT,'dist')}={}){
  const resolved=path.resolve(output);if(path.dirname(resolved)!==ROOT||path.basename(resolved)!=='dist')throw Error('Build output must be the local booking-demo/dist directory');
  // Rebuild generated output only; source and deployed asset URLs are never deleted.
  await rm(resolved,{recursive:true,force:true});await mkdir(resolved,{recursive:true});
- const allowed=/\.(?:html|css|js|json|svg|png|jpe?g|webp|avif|gif|ico|woff2?|ttf|csv|txt|webmanifest)$/i;
+ const allowed=/\.(?:html|css|c?js|json|svg|png|jpe?g|webp|avif|gif|ico|woff2?|ttf|csv|txt|webmanifest)$/i;
  async function copy(directory,relative=''){
   for(const entry of await readdir(directory,{withFileTypes:true})){
    if(entry.name.startsWith('.')||['dist','node_modules','tests','supabase','output'].includes(entry.name))continue;
