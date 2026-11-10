@@ -16,8 +16,8 @@ export function enhancePricing(root,{onPlanSelect,onSeatsChange}={}){
   details.append(summary,note);pricing.querySelector('.js-plan-grid').after(details);
  }
  const annualButton=pricing.querySelector('[data-cadence="annual"]');
- if(!annualButton.querySelector('.sw-yearly-saving')){
-  annualButton.textContent='Yearly';const tag=document.createElement('span');tag.className='sw-yearly-saving';tag.textContent='Save 20%';annualButton.append(tag);
+ if(!annualButton.querySelector('.sw-yearly-badge')){
+  annualButton.textContent='Yearly';const wrap=document.createElement('span'),tag=document.createElement('span');wrap.className='sw-yearly-badge';tag.className='sw-yearly-saving';tag.textContent='Save 20%';wrap.append(tag);annualButton.append(wrap);
  }
  const readSeats=()=>Math.max(1,Math.min(100,Math.trunc(Number(q('nv-team-count').value)||1)));
  const update=()=>{

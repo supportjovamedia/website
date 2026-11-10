@@ -31,7 +31,8 @@
 .jovabook-story #jova-story-concept #ex-film .ex-play > span:last-child {
   position: absolute;
   left: 50%;
-  bottom: clamp(12px, 3vw, 30px);
+  top: calc(50% + clamp(26px, 3vw, 38px) + 12px);
+  bottom: auto;
   translate: -50% 0;
   white-space: nowrap;
   padding: 7px 12px;

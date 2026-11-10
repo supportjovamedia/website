@@ -25,6 +25,11 @@ test('desktop and mobile demo plays inline under the hero without idle video req
      return Math.abs(a.x+a.width/2-b.x-b.width/2)<2&&Math.abs(a.y+a.height/2-b.y-b.height/2)<2;
    });
    assert.equal(centred,true,'Play icon must sit in the centre of the thumbnail');
+   const labelGap=await page.locator('#ex-film .ex-play').evaluate(el=>{
+     const disc=el.querySelector('.ex-play-disc').getBoundingClientRect(),label=el.lastElementChild.getBoundingClientRect();
+     return label.top-disc.bottom;
+   });
+   assert(labelGap>=10&&labelGap<=14,'Demo label must sit just below the play button');
    await page.screenshot({path:`output/demo-v15/thumbnail-${viewport.width}.png`});
    await page.getByRole('button',{name:'Watch the demo',exact:true}).click();
    const video=page.locator('#jovabook-demo-player');

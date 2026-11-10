@@ -10,6 +10,6 @@ export const contentType = "image/png";
 export default async function Image() {
   // Keep the filesystem path literal. A computed public path makes the server
   // file tracer copy unrelated website images into the function bundle.
-  const image = await readFile(path.join(process.cwd(), "public/share/jovabook-hero-8a6fcfa82401.png"));
+  const image = await readFile(path.join(process.cwd(), "public/share/jovabook-hero-1a0202841e1d.png"));
   return new Response(image, { headers: { "Content-Type": contentType } });
 }
