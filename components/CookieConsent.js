@@ -62,7 +62,7 @@ export default function CookieConsent() {
     {enabled && consent === "accepted" && <Analytics beforeSend={beforeSend} />}
     <button type="button" className="cookie-settings" onClick={() => { configure(); setEditing(true); }}>Cookie settings</button>
     {pendingChoice && createPortal(<section className={styles.notice} role="region" aria-label="Cookie choices" data-nosnippet>
-      <p><strong>Optional analytics &amp; session replays.</strong> Allow Google Analytics and Microsoft Clarity? <Link href="/privacy-policy">Privacy Policy</Link>.</p>
+      <p><strong>Optional analytics &amp; session replays.</strong> Allow Google Analytics and Microsoft Clarity? <Link prefetch={false} href="/privacy-policy">Privacy Policy</Link>.</p>
       <div className={styles.noticeActions}>
         <button type="button" onClick={() => save("accepted")}>Accept all</button>
         <button type="button" onClick={() => save("rejected")}>Reject all</button>
@@ -72,14 +72,14 @@ export default function CookieConsent() {
     </section>, document.body)}
     <dialog ref={dialog} className={styles.panel} aria-labelledby="cookie-title" aria-describedby="cookie-description" data-nosnippet onCancel={event => { event.preventDefault(); setEditing(false); dialog.current.close(); }}>
       <h2 id="cookie-title">{configuring ? "Cookies configuration" : "Cookies Policy"}</h2>
-      <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits, clicks and the consented business registration, trial and subscription-payment journey, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept. Our short links also measure daily estimated reach without analytics cookies. Reject all stops future short-link statistics for this browser; you can also turn them off in our <Link href="/privacy-policy#link-statistics">Privacy Policy</Link>.</p>
+      <p id="cookie-description">We remember your privacy choice. With your permission, Google Analytics measures visits, clicks and the consented business registration, trial and subscription-payment journey, and Microsoft Clarity creates heatmaps and replays of activity on this website to help us improve it. Optional tracking only loads after you accept. Our short links also measure daily estimated reach without analytics cookies. Reject all stops future short-link statistics for this browser; you can also turn them off in our <Link prefetch={false} href="/privacy-policy#link-statistics">Privacy Policy</Link>.</p>
       {configuring ? <div className={styles.options}>
         <div className={styles.row}><span>Necessary storage</span><span className={styles.active}>Always active</span></div>
         <div className={styles.row}>
           <label htmlFor="cookie-analytics">Analytics and session replays</label>
           <button id="cookie-analytics" className={styles.toggle} type="button" role="switch" aria-checked={analytics} aria-label="Analytics and session replays" onClick={() => setAnalytics(!analytics)}><span /></button>
         </div>
-      </div> : <p>You can accept, reject or manage your preferences below, and change them any time through Cookie settings. Read more in our <Link href="/privacy-policy">Privacy Policy</Link>.</p>}
+      </div> : <p>You can accept, reject or manage your preferences below, and change them any time through Cookie settings. Read more in our <Link prefetch={false} href="/privacy-policy">Privacy Policy</Link>.</p>}
       <div className={styles.actions}>
         <button className={styles.accept} type="button" onClick={() => save("accepted")}>Accept all</button>
         <div className={styles.secondary}>
