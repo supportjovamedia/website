@@ -12,7 +12,7 @@ export default function WebsiteShowcase(){
   <div className="ws-showcase-inner">
    <header className="ws-showcase-heading"><h2>Your website. Included.</h2><p>A one-page website personalised to your business, connected to your booking page.</p></header>
    <div className="ws-design-options" role="group" aria-label="Website designs">{choices.map(([id,name,description])=><button key={id} type="button" aria-pressed={selected===id} onClick={()=>{setSelected(id);preview.current?.scrollTo({top:0});}}><b>{name}</b><span>{description}</span></button>)}</div>
-   <div className="ws-website-browser" ref={preview} inert role="img" aria-label={designs.names[selected]+' interactive website preview'} dangerouslySetInnerHTML={{__html:html}}/>
+   <div className="ws-website-browser" ref={preview} role="img" aria-label={designs.names[selected]+' website design preview'}><div inert dangerouslySetInnerHTML={{__html:html}}/></div>
    <div className="ws-share-benefit"><strong>One link to share.</strong><p>Put it on your website, Instagram bio or WhatsApp.</p></div>
   </div>
  </section>;

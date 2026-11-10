@@ -7,7 +7,7 @@ try{for(const width of [360,390,768,1440]){
  const context=await browser.newContext({viewport:{width,height:width>700?1000:844},deviceScaleFactor:1});await context.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin+'/');
  for(const design of ['Evergreen','Cobalt','Terracotta','Olive']){
-  await page.getByRole('button',{name:new RegExp('^'+design+' ')}).click();const preview=page.locator('.ws-website-browser');assert(await preview.evaluate(el=>el.inert));assert.equal(await page.locator('.ws-example-label').count(),0);
+  await page.getByRole('button',{name:new RegExp('^'+design+' ')}).click();const preview=page.locator('.ws-website-browser');assert(await preview.evaluate(el=>!el.inert&&el.firstElementChild.inert));assert.equal(await page.locator('.ws-example-label').count(),0);
   assert(await preview.locator('.wd-photo').evaluate(img=>img.complete&&img.naturalWidth>0));
   if(design==='Evergreen')assert.equal(await preview.locator('.wd-title').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
