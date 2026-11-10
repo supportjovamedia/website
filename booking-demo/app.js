@@ -9,8 +9,9 @@ function essentialPurchaseIntent(){try{const v=JSON.parse(localStorage.getItem(P
 function claimEssentialPurchase(){if(!signedIn()||!isLive(salon())||route().split('/')[0]!=='billing'||!essentialPurchaseIntent())return null;const intent=essentialPurchaseIntent();try{localStorage.removeItem(PURCHASE_INTENT);}catch{}const url=new URL(location.href);url.searchParams.delete('plan');url.searchParams.delete('cadence');history.replaceState(null,'',url);return {plan:intent.plan,cadence:intent.cadence,seats:intent.seats||1};}
 
 const signedIn=()=>{if(window.__owner===true)return true;try{return sessionStorage.getItem(SESSION)==='1';}catch(e){return false;}};
-const signIn=()=>{window.__owner=true;try{sessionStorage.setItem(SESSION,'1');}catch(e){}};
-const signOut=()=>{window.__owner=false;try{sessionStorage.removeItem(SESSION);}catch(e){}};
+var ownerIdle=null;
+const signIn=({interactive=false}={})=>{window.__owner=true;try{sessionStorage.setItem(SESSION,'1');}catch(e){}ownerIdle?.start({interactive});};
+const signOut=()=>{ownerIdle?.stop();window.__owner=false;try{sessionStorage.removeItem(SESSION);}catch(e){}};
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function localeBusiness(){try{return salon();}catch{try{return state.salons.find(s=>s.id===state.active)||state.salons[0]||{};}catch{return {};}}}
@@ -127,9 +128,12 @@ function scheduleAccessCheck(access){
  if(accessDeadlineAttempts.has(key))return;
  accessRefreshTimer=setTimeout(()=>{
   if(!signedIn()||dir.sessionIdentity?.()!==identity||salon().id!==sid)return;
-  // Re-read a deadline once. A stale active response must not create a 1-second loop.
+  // An expired deadline locks locally once. It must not create an idle network loop.
   if(end<=Date.now()+1000)accessDeadlineAttempts.add(key);
-  syncDirty=false;syncBlocked=true;clearTimeout(syncTimer);syncTimer=null;loadingOwner=true;closeModal();render();void reloadOwner();
+  // Expiry changes what can be displayed, not a reason to fetch a diary on idle.
+  syncBlocked=true;clearTimeout(syncTimer);syncTimer=null;loadingOwner=false;
+  ownerLoadError=syncDirty?'Your access needs verification. Your unsaved changes have been kept. Retry the save to verify access.':'Your access needs verification. Refresh to continue.';
+  closeModal();render();
  },Math.max(1000,Math.min(2147483647,end-Date.now())));
 }
 const TEAM_ROUTES=['dashboard','calendar','bookings','customers'];
@@ -151,14 +155,27 @@ const salonFields=x=>({p_name:x.name,p_email:x.email||'',p_phone:x.phone||'',p_a
 function markSynced(x){snap[x.id]={};const r=rowsOf(x);TABLES.forEach(t=>{snap[x.id][t]={};r[t].forEach(row=>{snap[x.id][t][row.id]=JSON.stringify(row);});});salonSnap[x.id]=JSON.stringify(salonFields(x));}
 function showSync(kind){ // kind: '' | 'saving' | 'saved' | 'error'
  let el=document.getElementById('sync-status');if(!el){el=document.createElement('div');el.id='sync-status';el.setAttribute('role','status');document.body.appendChild(el);}
- const t={saving:'Saving…',saved:'Saved',error:'Not saved yet. Retrying…',rejected:'Change not saved. Please review your last change.'}[kind]||'';el.textContent=t;el.className='sync-status '+(kind||'');
- if(kind==='saved'){clearTimeout(showSync.t);showSync.t=setTimeout(()=>{el.className='sync-status';},1800);}
+ clearTimeout(showSync.t);showSync.t=null;
+ const stopped=kind==='unsaved'||kind==='paused',t={saving:'Saving…',saved:'Saved',error:'Changes unsaved. Retrying…',unsaved:'Changes unsaved',paused:'Changes unsaved',rejected:'Change not saved. Please review your last change.'}[kind]||'';el.textContent=t;el.className='sync-status '+(stopped?'error':kind||'');
+ if(stopped){const scope=syncScope,button=document.createElement('button');button.type='button';button.className='btn small';button.textContent='Retry';button.setAttribute('aria-label','Retry saving changes');button.style.pointerEvents='auto';button.style.marginLeft='10px';button.addEventListener('click',()=>retrySync(scope));el.appendChild(button);}
+ if(kind==='saved')showSync.t=setTimeout(()=>{el.className='sync-status';},1800);
+}
+function hasRemoteChanges(current){
+ const previous=snap[current.id];if(!previous)return true;
+ if(!teamMode()&&salonSnap[current.id]!==JSON.stringify(salonFields(current)))return true;
+ const rows=rowsOf(current);
+ return (teamMode()?['customers','bookings']:WRITE_TABLES).some(table=>{
+  const known=previous[table]||{},seen=new Set();
+  for(const row of rows[table]){seen.add(String(row.id));if(known[row.id]!==JSON.stringify(row))return true;}
+  return !teamMode()&&Object.keys(known).some(id=>!seen.has(id));
+ });
 }
 function queueSync(){
  if(!dir.remote||!snap)return;
  const current=state.salons.find(x=>x.id===state.active);
  if(current?.subscription?.status==='setup'||!isLive(current)||!snap[current.id]||current.ownerId!==dir.sessionIdentity?.()||!dir.canWrite?.(current.id)||billingRestricted())return;
- syncBlocked=false;syncDirty=true;if(syncBusy||syncTimer)return;syncTimer=setTimeout(()=>{syncTimer=null;pump();},350);
+ if(!syncBusy&&!hasRemoteChanges(current)){clearTimeout(syncTimer);syncTimer=null;syncDirty=false;syncBlocked=false;showSync('');return;}
+ syncAttempt++;syncScope={owner:dir.sessionIdentity?.(),sid:current.id};syncFail=0;syncBlocked=false;syncDirty=true;clearTimeout(syncTimer);syncTimer=null;if(!syncBusy)scheduleSync(350);
 }
 async function flushSync(){if(!dir.remote||!snap)return;clearTimeout(syncTimer);syncTimer=null;await Promise.race([(async()=>{if(syncDirty&&!syncBusy)await pump();while(syncBusy)await new Promise(r=>setTimeout(r,100));})(),new Promise(r=>setTimeout(r,5000))]);}
 async function persistWebsite(website,sid,expectedIdentity){
@@ -180,16 +197,32 @@ async function persistWebsite(website,sid,expectedIdentity){
  return {ok:true};
  }finally{finishConfirmation();}
 }
-var syncBlocked=false,salonConfirmations=new Map();
+var syncBlocked=false,salonConfirmations=new Map(),syncAttempt=0,syncScope=null;
 function salonConfirmationKey(sid,identity=dir.sessionIdentity?.()||'demo'){return JSON.stringify([identity,sid]);}
 function beginSalonConfirmation(sid){const key=salonConfirmationKey(sid);salonConfirmations.set(key,(salonConfirmations.get(key)||0)+1);return ()=>{const remaining=salonConfirmations.get(key)-1;if(remaining>0)salonConfirmations.set(key,remaining);else salonConfirmations.delete(key);};}
+function syncUnavailable(){return typeof document!=='undefined'&&document.hidden||typeof navigator!=='undefined'&&navigator.onLine===false;}
+function syncScopeCurrent(scope){return !!scope&&scope.owner===dir.sessionIdentity?.()&&scope.sid===state.active;}
+function scheduleSync(delay){
+ if(syncTimer||syncBlocked||!syncDirty||!syncScopeCurrent(syncScope))return;
+ if(syncUnavailable()){syncBlocked=true;showSync('paused');return;}
+ const attempt=syncAttempt,scope=syncScope;
+ const timer=setTimeout(()=>{if(syncTimer!==timer)return;syncTimer=null;if(attempt!==syncAttempt||!syncScopeCurrent(scope))return;void pump();},delay);syncTimer=timer;
+}
+function retrySync(scope){if(!syncDirty||scope!==syncScope||!syncScopeCurrent(scope)||!dir.canWrite?.(scope.sid))return;queueSync();}
 async function pump(){
- if(syncBusy||syncBlocked)return;syncBusy=true;let retry=false,onlySalonChanges=true;
- const identity=dir.sessionIdentity?.();
+ if(syncBusy||syncBlocked)return;
+ const identity=dir.sessionIdentity?.(),sid=state.active,attempt=syncAttempt;
+ if(!syncScope)syncScope={owner:identity,sid};if(!syncScopeCurrent(syncScope))return;
+ const current=state.salons.find(x=>x.id===sid);
+ if(!current||!isLive(current)||current.ownerId!==identity||!dir.canWrite?.(sid))return;
+ if(!hasRemoteChanges(current)){syncDirty=false;showSync('');return;}
+ if(syncUnavailable()){syncBlocked=true;showSync('paused');return;}
+ syncBusy=true;let retry=false,onlySalonChanges=true;
+ const sameScope=()=>identity===dir.sessionIdentity?.()&&sid===state.active;
  const reject=(result,sid)=>{if(result.stale)throw {sessionChanged:true};throw {syncRejected:true,sid,message:result.message||'The booking system refused this change.',transient:result.network||result.auth||result.status>=500};};
  const assertOwner=x=>{if(!identity||dir.sessionIdentity?.()!==identity||x.ownerId!==identity||x.id!==state.active||!dir.canWrite?.(x.id))throw {sessionChanged:true};};
  try{
-  const access=await dir.ownerAccess();if(!access.ok){syncDirty=false;syncBlocked=true;ownerLoadError='Your subscription could not be verified. Refresh before making changes.';loadingOwner=false;closeModal();render();return;}if(!['active','setup'].includes(access.data.access)){installAccessOnly(access.data);render();return;}ownerAccessState=access.data;
+  const access=await dir.ownerAccess('save-verify');if(!sameScope())throw {sessionChanged:true};if(!access.ok){syncDirty=false;syncBlocked=true;ownerLoadError='Your subscription could not be verified. Refresh before making changes.';loadingOwner=false;closeModal();render();return;}if(!['active','setup'].includes(access.data.access)){installAccessOnly(access.data);render();return;}ownerAccessState=access.data;
   while(syncDirty){
    syncDirty=false;
    for(const x of state.salons.filter(y=>isLive(y)&&snap[y.id]&&y.id===state.active&&y.ownerId===identity)){
@@ -214,8 +247,8 @@ async function pump(){
    if(loaded.ok&&identity===dir.sessionIdentity?.()&&!syncDirty)render();
   }
  }catch(problem){
-  if(problem.sessionChanged){if(dir.sessionIdentity?.()===identity)syncDirty=false;showSync('');return;}
-  if(problem.transient){syncDirty=true;syncFail++;retry=true;showSync('error');return;}
+  if(problem.sessionChanged){if(sameScope()){syncDirty=false;showSync('');}return;}
+  if(problem.transient){if(!sameScope())return;syncDirty=true;if(attempt!==syncAttempt){retry=true;return;}syncFail++;retry=syncFail<=2;syncBlocked=!retry;showSync(retry?'error':'unsaved');return;}
   syncBlocked=true;syncDirty=true;showSync('rejected');
   const sid=problem.sid,revision=saveRevision,failed=state.salons.find(x=>x.id===sid);
   if(failed)try{localStorage.setItem(KEY+'-unsaved',JSON.stringify({salonId:sid,at:new Date().toISOString(),salon:failed}));}catch{}
@@ -230,12 +263,25 @@ async function pump(){
   toast('Change not saved: '+(problem.message||'Check your connection and try again.'));
  }finally{
   syncBusy=false;
-  if((retry||(syncDirty&&dir.sessionIdentity?.()!==identity))&&!syncTimer)syncTimer=setTimeout(()=>{syncTimer=null;pump();},retry?Math.min(30000,2000*syncFail):0);
+  if(syncDirty&&!syncTimer&&syncScopeCurrent(syncScope)){if(attempt!==syncAttempt)scheduleSync(350);else if(retry)scheduleSync(2000*syncFail);}
  }
 }
 window.addEventListener('beforeunload',e=>{if(syncDirty||syncBusy){e.preventDefault();e.returnValue='';}});
 const syncPending=()=>syncDirty||syncBusy;
 const hasUnsavedEditor=()=>!!$('#modal-root').innerHTML||!!document.querySelector('form[data-dirty="true"]')||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
+function expireOwnerIdle(identity){
+ if(!identity||identity!==dir.sessionIdentity?.())return;
+ const current=salon(),dirtyForms=[...document.querySelectorAll('form[data-dirty="true"]')];let kept=false;
+ if(syncDirty||dirtyForms.length){
+  const forms=dirtyForms.map(form=>({type:form.dataset.form,id:form.dataset.id||'',fields:[...form.elements].filter(el=>el.name&&!['password','file'].includes(el.type)).map(el=>({name:el.name,type:el.type,value:el.value,checked:el.checked}))}));
+  try{localStorage.setItem(KEY+'-idle-draft:'+identity,JSON.stringify({ownerId:identity,salonId:current.id,at:new Date().toISOString(),salon:current,forms}));kept=true;}catch{}
+ }
+ ownerIdle?.stop();clearTimeout(syncTimer);syncTimer=null;clearTimeout(accessRefreshTimer);accessRefreshTimer=null;
+ syncDirty=false;syncBusy=false;syncBlocked=true;liveLoadSequence++;ownerRestoreAttempt++;verifiedOwnerIdentity=null;ownerAccessState=null;
+ signOut();void dir.logout();purgeLive();closeModal();loadingOwner=false;restoringOwnerSession=false;ownerLoadError='';
+ history.replaceState(null,'',location.pathname+location.search+'#login');render();
+ toast(kept?'Signed out after 10 minutes. Your unsaved draft has been kept on this device.':'Signed out after 10 minutes of inactivity.');
+}
 function buildLive(row,rows){
  const st=row.settings||{},base=seedSalon(row.id,row.name,row.slug,st.color||'#77504e');
  const x=Object.assign(base,{...JovaBusinessLocale.resolve({settings:st}),ownerId:row.owner_id,name:row.name,owner:row.owner_name,email:row.email||'',phone:row.phone||'',address:row.address||'',color:st.color||base.color,initials:initials(row.name),workspace:st.workspace||{},about:st.about??'',hours:st.hours||base.hours,buffer:Number(st.buffer)||0,notice:Number(st.notice)||0,emails:[],bookings:[],customers:[]});
@@ -268,10 +314,10 @@ function installAccessOnly(access){
  return x;
 }
 // Load (or refresh) one owner's salon from the database and make it the active salon.
-async function loadLive({afterSave=false,loginProof}={}){
+async function loadLive({afterSave=false,loginProof,reason='restore'}={}){
  if(syncPending()&&!(afterSave&&syncBusy&&!syncDirty))return {ok:false,pending:true};
  const revision=saveRevision,identity=dir.sessionIdentity?.(),sequence=++liveLoadSequence,editingAtStart=hasUnsavedEditor();
- const d=await dir.loadDiary({loginProof});
+ const d=await dir.loadDiary({loginProof,reason});
  if(!d.ok){if(signedIn()&&!d.stale){ownerLoadError='We could not verify access to your business. Check your connection and refresh.';syncDirty=false;syncBlocked=true;clearTimeout(syncTimer);syncTimer=null;loadingOwner=false;closeModal();render();}return d;}
  if(identity!==dir.sessionIdentity?.()||sequence!==liveLoadSequence)return {ok:false,stale:true};
  if(d.billingOnly||d.setup){const x=installAccessOnly(d.access);if(d.setup){x.subscription.status='setup';onbSet(x.id);}return {ok:true,salon:x,access:d.access};}
@@ -688,7 +734,8 @@ async function refreshEmailDelivery(){
  if(activity.ok){const merged=new Map(current.emails.map(e=>[e.id,e]));activity.rows.map(JovaEmailDelivery.fromRow).forEach(e=>merged.set(e.id,e));current.emails=[...merged.values()].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));if(snap[sid])rowsOf(current).email_log.forEach(row=>snap[sid].email_log[row.id]=JSON.stringify(row));}
  try{localStorage.setItem(KEY,JSON.stringify(state));}catch{}
 }
-const hostApi={teamLoginsAvailable:s=>!!dir.remote&&isLive(s)&&!teamMode()&&staffManagementAllowed(s)&&!!dir.teamLogin,teamLogins:()=>dir.teamLogins(),teamLogin:(action,salonId,staffId,fields)=>dir.teamLogin(action,salonId,staffId,fields),chooseStarterCalendar:staff=>dir.chooseStarterCalendar(staff),offerBilling:(action,body)=>dir.offerBilling(action,{...body,salon_id:salon().id}),commissionAllowance:()=>dir.commissionAllowance?.(),disputeCommission:(booking,reason)=>dir.disputeCommission?.(booking,reason),refundActivity:()=>dir.refundActivity?.(),isDashboardVisible:()=>signedIn()&&route()==='dashboard',claimPurchaseIntent:claimEssentialPurchase,integrationRequest:(action,body)=>dir.integrationCall(action,body),isIntegrationsVisible:()=>signedIn()&&route().split('/')[0]==='integrations',changeBilling:(plan,sid,requestId,termsVersion,frequency)=>dir.billingChange(plan,sid,requestId,termsVersion,frequency),cancelBillingChange:(sid,requestId)=>dir.billingCancelChange(sid,requestId),cancelBilling:(sid,requestId)=>dir.billingCancel(sid,requestId),accessInfo:()=>ownerAccessState,refreshAccess:async()=>{const r=await loadLive();if(r.ok)render();return r;},checkoutBilling:(plan,sid,requestId,termsVersion,frequency,trial)=>dir.billingCheckout?.(plan,sid,requestId,termsVersion,frequency,trial),refreshSmsReminders,setSmsReminders,setSmsMessage,smsConsentChanged:value=>{draft.smsConsent=value;},persistWebsite,uploadWebsiteImage:(file,sid)=>dir.uploadWebsiteImage?.(file,sid)||Promise.resolve({ok:false,message:'Image uploads are unavailable. Please try again later.'}),refreshEmailDelivery,salon,save,render,esc,field,money,planFor,canAddStaff,uid,today,addDays,humanDate,modal,closeModal,toast,error,isLive,bookingLink,available,schedulingSupported,seriesSupported,createSeries,loadSubscription,requestPlan,cancelPlan,isBillingVisible:()=>signedIn()&&['billing','checkout'].includes(route().split('/')[0]),openBooking:bookingDetails,ownerIdentity:()=>dir.sessionIdentity?.()||'demo'};
+const hostApi={teamLoginsAvailable:s=>!!dir.remote&&isLive(s)&&!teamMode()&&staffManagementAllowed(s)&&!!dir.teamLogin,teamLogins:()=>dir.teamLogins(),teamLogin:(action,salonId,staffId,fields)=>dir.teamLogin(action,salonId,staffId,fields),chooseStarterCalendar:staff=>dir.chooseStarterCalendar(staff),offerBilling:(action,body)=>dir.offerBilling(action,{...body,salon_id:salon().id}),commissionAllowance:()=>dir.commissionAllowance?.(),disputeCommission:(booking,reason)=>dir.disputeCommission?.(booking,reason),refundActivity:()=>dir.refundActivity?.(),isDashboardVisible:()=>signedIn()&&route()==='dashboard',claimPurchaseIntent:claimEssentialPurchase,integrationRequest:(action,body)=>dir.integrationCall(action,body),isIntegrationsVisible:()=>signedIn()&&route().split('/')[0]==='integrations',changeBilling:(plan,sid,requestId,termsVersion,frequency)=>dir.billingChange(plan,sid,requestId,termsVersion,frequency),cancelBillingChange:(sid,requestId)=>dir.billingCancelChange(sid,requestId),cancelBilling:(sid,requestId)=>dir.billingCancel(sid,requestId),accessInfo:()=>ownerAccessState,refreshAccess:async()=>{const r=await loadLive({reason:'manual-refresh'});if(r.ok)render();return r;},checkoutBilling:(plan,sid,requestId,termsVersion,frequency,trial)=>dir.billingCheckout?.(plan,sid,requestId,termsVersion,frequency,trial),refreshSmsReminders,setSmsReminders,setSmsMessage,smsConsentChanged:value=>{draft.smsConsent=value;},persistWebsite,uploadWebsiteImage:(file,sid)=>dir.uploadWebsiteImage?.(file,sid)||Promise.resolve({ok:false,message:'Image uploads are unavailable. Please try again later.'}),refreshEmailDelivery,salon,save,render,esc,field,money,planFor,canAddStaff,uid,today,addDays,humanDate,modal,closeModal,toast,error,isLive,bookingLink,available,schedulingSupported,seriesSupported,createSeries,loadSubscription,requestPlan,cancelPlan,isBillingVisible:()=>signedIn()&&['billing','checkout'].includes(route().split('/')[0]),openBooking:bookingDetails,ownerIdentity:()=>dir.sessionIdentity?.()||'demo'};
+ownerIdle=window.JovaOwnerIdleSession?.create({identity:()=>dir.sessionIdentity?.(),hasSession:()=>dir.hasSession?.(),liveActive:()=>signedIn()&&dir.remote&&!pubMode()&&!customerScope()&&OWNER_ROUTES.includes(route().split('/')[0]),expire:expireOwnerIdle});
 const ownerOnboarding=JovaOwnerOnboarding.create({directory:dir,esc,render,logout:async()=>{await dir.logout();signOut();go('login');},openDashboard:async()=>{const result=await loadLive();if(!result.ok)return result;onbSet(null);signIn();go('dashboard');return {ok:true};}});
 const ownerWelcome=JovaOwnerWelcome.create({directory:dir,visible:()=>signedIn()&&!teamMode()&&isLive(salon())&&route()==='dashboard'&&ownerAccessState?.onboarding_completed===true});
 const deposits=JovaDeposits.create({...hostApi,isPublic:pubMode,publicSlug:()=>requestedSalon,goDeposit:()=>go('book/deposit'),depositsSaved:(sid,payments)=>{const current=salon();if(current.id!==sid||!isLive(current))return;current.payments={...current.payments,...payments};if(salonSnap[sid]){const snapshot=JSON.parse(salonSnap[sid]);snapshot.p_payments={enabled:!!payments.enabled,deposit:Number(payments.deposit)||0,...(payments.deposit_percent!==undefined?{deposit_percent:Number(payments.deposit_percent)}:{}),stage:payments.stage||0};salonSnap[sid]=JSON.stringify(snapshot);}save();},depositConfirmed:(booking,refunded)=>{if(!pubMode())return;if(!PUB||PUB.status!=='ok'){go('book/deposit');render();return;}PUB.bk[booking.id]=booking;if(booking.status==='confirmed'&&!PUB.salon.bookings.some(b=>b.id==='busy_'+booking.id.slice(0,8)))PUB.salon.bookings.push({id:'busy_'+booking.id.slice(0,8),date:booking.date,time:booking.time,duration:booking.duration,staffId:booking.staffId,status:'confirmed'});lastBooking=booking.id;draft.smsResult=null;if(refunded){go('book/deposit-refund');toast('The slot could not be confirmed. Your deposit refund has been requested.');}else{go('book/confirmation');toast('Deposit paid. Your booking is confirmed.');}}});
@@ -718,6 +765,7 @@ async function authSubmit(type,form,data){
    if(isUuid(sid)){n.ownerId=dir.sessionIdentity?.();verifiedOwnerIdentity=n.ownerId;purgeLive(sid);}state.salons.push(n);state.active=sid;if(dir.remote){snap[sid]={};TABLES.forEach(t=>{snap[sid][t]={};});salonSnap[sid]='';}save();draft={};chat=[];onbSet(sid);signIn();go('setup');return;}
   if(type==='login'){busy('Logging in…');ownerAccessState=null;clearTimeout(syncTimer);syncTimer=null;syncDirty=false;purgeLive();if(JovaAccounts.normEmail(data.email)==='demo@jovamedia.com')ensureDemo(true);const r=await dir.login(data.email,data.password);
    if(!r.ok){idle();error(form,r.message);return;}
+   ownerIdle?.start({interactive:true});
    if(r.needsBusiness){observedOwnerIdentity=dir.sessionIdentity?.();verifiedOwnerIdentity=null;onbSet(null);signIn();draft={};chat=[];go('signup');return;}
    let sal=state.salons.find(x=>x.id===r.account.salonId);
    if(dir.remote&&r.salon){const L=await loadLive({loginProof:r.diaryProof});if(!L.ok){idle();error(form,'We couldn’t load your business. Check your connection and try again.');return;}sal=L.salon;}
@@ -775,7 +823,7 @@ if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingLeave=null;const re
  $('#app').innerHTML=html;const nextWorkspaceLocation=document.querySelector('.shell')?location.pathname+location.search+location.hash:'';if(nextWorkspaceLocation&&nextWorkspaceLocation!==workspaceLocation)window.scrollTo(0,0);const contentViewport=document.querySelector('.workspace-main');if(contentViewport&&nextWorkspaceLocation===workspaceLocation)contentViewport.scrollTop=retainedContentScroll;workspaceLocation=nextWorkspaceLocation;restoreBusinessSettingsDrafts(retainedBusinessDrafts);if(['settings','availability'].includes(parts[0])){businessSettingsScroll();}if(parts[0]==='website'){const header=$('.bw-public-header>.bw-public-container');if(header)header.insertAdjacentHTML('beforeend',customerPublicNav(s));}document.title=`${({'settings':'Business details','availability':'Business details','map':'Sitemap','home':'Online booking for salons','plans':'Online booking for salons','signup':'Register','setup':'Salon setup','checkout':'Start free trial','login':'Log in','forgot':'Reset password','reset':'Reset password','book':'Customer booking','manage':'Manage booking','salon':'Premium website preview','website':s.name}[parts[0]]||parts[0][0].toUpperCase()+parts[0].slice(1))} · ${realEntry()||pubMode()?'JovaBook':'JovaBook Essential preview'}`;
  if(parts[0]==='website'||pubMode()&&s.offerVersion==='2026-11-free-v1'&&s.brandingRequired===false)document.title=s.name+' · Book online';
  if($('#chat-log'))$('#chat-log').scrollTop=$('#chat-log').scrollHeight;
- ownerWelcome.leave();if(parts[0]==='dashboard')void ownerWelcome.check();
+ ownerIdle?.start();ownerWelcome.leave();if(parts[0]==='dashboard')void ownerWelcome.check();
 }
 let modalReturnFocus=null;
 function modal(title,content,size=''){
@@ -1183,7 +1231,7 @@ window.addEventListener('storage',e=>{
   if(google.handled){
    const result=google.ok?await dir.acceptGoogleSession(google.session):google;
    if(!result.ok){if(result.resumable&&(dir.hasSession()||dir.hasPendingOwnerSessionAdoption?.())){restoringOwnerSession=true;ownerRestoreRoute='dashboard';loadingOwner=false;ownerLoadError=result.message||'Your sign-in could not finish. Check your connection and try again.';history.replaceState(null,'',location.pathname+location.search+'#dashboard');render();return;}signOut();history.replaceState(null,'',location.pathname+location.search+'#login');render();const alert=document.querySelector('[data-form="login"] .error');if(alert)alert.textContent=result.message||'Google sign-in could not be confirmed.';return;}
-   signIn();
+   signIn({interactive:true});
    if(result.needsBusiness){history.replaceState(null,'',location.pathname+location.search+'#signup');render();return;}
    const loaded=await loadLive();if(!loaded.ok){ownerLoadError='We could not load your business. Please try again.';history.replaceState(null,'',location.pathname+location.search+'#dashboard');render();return;}
    history.replaceState(null,'',location.pathname+location.search+(billingRestricted()?'#billing':ownerAccessState?.access==='setup'?'#signup':'#dashboard'));render();return;
@@ -1194,14 +1242,14 @@ window.addEventListener('storage',e=>{
   const hasSession=dir.hasSession();
   if(!hasSession&&isLive(salon()))signOut();
   if(!hasSession)purgeLive(onbGet());
-  if(hasSession){await restoreOwnerSession();return;}
+  if(hasSession){if(ownerIdle?.expired(dir.sessionIdentity?.())){expireOwnerIdle(dir.sessionIdentity?.());return;}await restoreOwnerSession();return;}
  }
  render();
 })();
 function admin_route(){return OWNER_ROUTES.includes(route().split('/')[0]);}
 // Background work updates notifications only. Diary data changes on open, reload or an owner action.
 let notificationFlight=null,notificationScope='',notificationFailures=0,notificationRetryAt=0;
-function notificationPollAllowed(){return !document.hidden&&!(typeof navigator!=='undefined'&&navigator.onLine===false)&&dir.remote&&signedIn()&&isLive(salon())&&dir.hasSession()&&!pubMode()&&!customerScope()&&!syncPending()&&!loadingOwner&&!restoringOwnerSession;}
+function notificationPollAllowed(){return !ownerIdle?.expired(dir.sessionIdentity?.())&&!document.hidden&&!(typeof navigator!=='undefined'&&navigator.onLine===false)&&dir.remote&&signedIn()&&isLive(salon())&&dir.hasSession()&&!pubMode()&&!customerScope()&&!syncPending()&&!loadingOwner&&!restoringOwnerSession;}
 async function refreshOwnerNotifications(){
  if(!notificationPollAllowed())return {ok:false,skipped:true};
  const scope=String(dir.sessionIdentity?.())+'|'+salon().id;
