@@ -31,3 +31,9 @@
 .op-outreach-last{display:block;font-size:11.5px;line-height:1.5;color:var(--muted)}
 .op-flow-typo{display:block;margin-top:6px;max-width:230px;font-size:11.5px;line-height:1.5;color:#7d571b}
 .op-badge[data-state=typo]{background:#fdeee0;color:#8a4b12}
+.op-flow-nudges{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 24px 0}
+.op-flow-nudges>span{font-size:12px;font-weight:650;color:var(--muted);margin-right:4px}
+.op-flow-nudges button{display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.op-flow-nudges button strong{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#eef2f6;font-size:11.5px}
+.op-flow-nudges button[aria-pressed=true]{background:#153a5b;border-color:#153a5b;color:#fff}
+.op-flow-nudges button[aria-pressed=true] strong{background:#ffffff26;color:#fff}

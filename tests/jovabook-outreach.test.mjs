@@ -73,6 +73,12 @@ test('back office flags a mistyped duplicate and only offers sensible templates'
   assert.equal(map.get('t')?.id,'r');assert.ok(!map.has('o'));
   assert.equal(JSON.stringify(f.eligibleTemplates(typo,map.get('t'),now)),JSON.stringify([]));
   assert.equal(JSON.stringify(f.eligibleTemplates(other,undefined,now)),JSON.stringify(['verify_email']));
-  assert.equal(JSON.stringify(f.eligibleTemplates({verified_at:'2026-11-01T00:00:00Z',created_at:'2026-11-01T00:00:00Z'},undefined,now)),JSON.stringify(['finish_setup','come_back']));
+  assert.equal(JSON.stringify(f.eligibleTemplates({verified_at:'2026-11-01T00:00:00Z',created_at:'2026-11-01T00:00:00Z'},undefined,now)),JSON.stringify(['come_back','finish_setup']));
   assert.equal(JSON.stringify(f.eligibleTemplates({verified_at:'2026-11-10T00:00:00Z',created_at:'2026-11-10T00:00:00Z',business_id:'b',last_sign_in_at:'2026-11-10T20:00:00Z'},undefined,now)),JSON.stringify([]));
+  const week=Date.parse('2026-11-20T00:00:00Z');
+  assert.equal(f.nudgeMatch(other,undefined,'unverified',week),true);
+  assert.equal(f.nudgeMatch(typo,map.get('t'),'unverified',week),false);
+  assert.equal(f.nudgeMatch({verified_at:'2026-11-01T00:00:00Z',created_at:'2026-11-01T00:00:00Z'},undefined,'nosetup',week),true);
+  assert.equal(f.nudgeMatch({verified_at:'2026-11-01T00:00:00Z',created_at:'2026-11-01T00:00:00Z',last_sign_in_at:'2026-11-18T00:00:00Z'},undefined,'inactive',week),false);
+  assert.equal(f.nudgeMatch({verified_at:'2026-11-01T00:00:00Z',created_at:'2026-11-01T00:00:00Z',last_sign_in_at:'2026-11-10T00:00:00Z'},undefined,'inactive',week),true);
 });
