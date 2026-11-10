@@ -22,6 +22,12 @@ const industryPaths={
 function IndustryIcon({name}){return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={industryPaths[name]||industryPaths.other}/></svg>;}
 function QuoteIcon(){return <svg className="cs-quote-icon" viewBox="0 0 32 26" fill="currentColor" aria-hidden="true"><path d="M0 14C0 6 4 1 12 0v5c-4 1-6 3-6 6h6v15H0V14Zm20-3h6v15H14V14C14 6 18 1 26 0v5c-4 1-6 3-6 6Z"/></svg>;}
 
+function StoryQuote({quote,highlight}){
+ const start=highlight?quote.indexOf(highlight):-1;
+ if(start<0)return quote;
+ return <>{quote.slice(0,start)}<span className="cs-quote-highlight">{highlight}</span>{quote.slice(start+highlight.length)}</>;
+}
+
 export default function CustomerStories(){
  const [active,setActive]=useState(0),gesture=useRef(null),count=customerStories.length;
  const select=index=>setActive((index+count)%count);
@@ -47,7 +53,7 @@ export default function CustomerStories(){
   <header className="cs-heading"><h2 id="customer-stories-title">Loved by service businesses.</h2><p>See what business owners say about JovaBook.</p></header>
   <div className="cs-grid" id="customer-stories-slides" role="group" aria-roledescription="carousel" aria-label="Customer stories" aria-keyshortcuts="ArrowLeft ArrowRight Home End" tabIndex={0} onKeyDown={onKeyDown} onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={()=>{gesture.current=null;}} onDragStart={event=>event.preventDefault()}>
    {order.map((index,offset)=>{const story=customerStories[index];return <article key={story.name} className="cs-card" data-story-state={offset===0?'featured':'hidden'} hidden={offset!==0} aria-hidden={offset!==0} aria-roledescription="slide" aria-label={'Story '+(index+1)+' of '+count}>
-    <div className="cs-story-body"><QuoteIcon/><blockquote>{story.quote}</blockquote><footer className="cs-author"><span className="cs-category-symbol"><IndustryIcon name={story.icon}/></span><div className="cs-byline"><strong>{story.name}</strong><span className="cs-category">{story.category}</span>{story.business&&<span className="cs-business">{story.business}</span>}</div></footer></div>
+    <div className="cs-story-body"><QuoteIcon/><blockquote><StoryQuote quote={story.quote} highlight={story.highlight}/></blockquote><footer className="cs-author"><span className="cs-category-symbol"><IndustryIcon name={story.icon}/></span><div className="cs-byline"><strong>{story.name}</strong><span className="cs-category">{story.category}</span>{story.business&&<span className="cs-business">{story.business}</span>}</div></footer></div>
    </article>;})}
   </div>
   <div className="cs-controls" role="group" aria-label="Choose a customer story"><button className="cs-arrow" type="button" aria-label="Previous customer story" aria-controls="customer-stories-slides" onClick={()=>select(active-1)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button><div className="cs-dots">{customerStories.map((story,index)=><button className="cs-dot" type="button" key={story.name} aria-label={'Show story by '+story.name} aria-pressed={active===index} aria-controls="customer-stories-slides" onClick={()=>select(index)}><span/></button>)}</div><button className="cs-arrow" type="button" aria-label="Next customer story" aria-controls="customer-stories-slides" onClick={()=>select(active+1)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
