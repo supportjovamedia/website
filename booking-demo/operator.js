@@ -32,11 +32,13 @@ function commissionStats(c={},compact=false){
   <article><span>Not invoiced yet</span><strong>${esc(money(c.unbilled_minor))}</strong><p>Recorded commission carried to a future bill</p></article>
  </section>${partial?'<p class="op-record-note">Some businesses do not have commission records yet. These figures include recorded amounts only.</p>':''}`;
 }
-function signupFlowMarkup(){return window.JovaOperatorSignupFlow?.render?.(signupFlowData,{esc,joined},{stage:signupStage,query:signupQuery})||'<section class="op-panel op-detail"><h2>Signups &amp; setup</h2><p role="status">Reload this page to load the updated signup view.</p></section>';}
+function signupFlowMarkup(){return window.JovaOperatorSignupFlow?.render?.(signupFlowData,{esc,joined},{stage:signupStage,query:signupQuery,nudge:signupNudge})||'<section class="op-panel op-detail"><h2>Signups &amp; setup</h2><p role="status">Reload this page to load the updated signup view.</p></section>';}
 function renderSignupFlow(){const region=root.querySelector('[data-signup-flow]');if(region)region.outerHTML=signupFlowMarkup();}
 function activityMarkup(){return window.JovaOperatorSignupFlow?.renderEvents?.(ownerFlowEvents,{esc,joined},{query:activityQuery})||'';}
 function renderActivity(){const region=root.querySelector('[data-owner-activity]');if(region)region.outerHTML=activityMarkup();}
 root.addEventListener('submit',event=>{const form=event.target.closest('[data-form="activity-filter"]');if(!form)return;event.preventDefault();event.stopImmediatePropagation();activityQuery=String(new FormData(form).get('activity_search')||'').trim().slice(0,100);renderActivity();root.querySelector('#activity-search')?.focus();},true);
+let signupNudge='all';
+root.addEventListener('click',event=>{const b=event.target.closest('[data-action="signup-nudge"],[data-action="signup-clear"]');if(!b)return;if(b.dataset.action==='signup-clear'){signupNudge='all';return;}event.preventDefault();event.stopImmediatePropagation();const next=['unverified','nosetup','inactive'].includes(b.dataset.nudge)&&signupNudge!==b.dataset.nudge?b.dataset.nudge:'all';signupNudge=next;renderSignupFlow();root.querySelector('[data-action=signup-nudge][data-nudge='+(next==='all'?b.dataset.nudge:next)+']')?.focus();},true);
 // Operator-sent signup nudges. Two presses are required and the server chooses the recipient.
 root.addEventListener('change',event=>{const form=event.target.closest('[data-form="outreach"]');if(!form)return;delete form.dataset.confirm;form.querySelector('button').textContent='Send email';const note=form.parentElement.querySelector('.op-outreach-note');if(note)note.textContent='';});
 root.addEventListener('submit',async event=>{const form=event.target.closest('[data-form="outreach"]');if(!form)return;event.preventDefault();event.stopImmediatePropagation();
