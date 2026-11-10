@@ -1,3 +1,4 @@
+import {enhancePricing} from './enhance-pricing.mjs';
 import {portalScreens} from './portal-screens.mjs';import {calculatorDefaults,calculatorPresets,calculateComparison,calculatorMoney,subscriptionForPeople,comparisonCostsMarkup,comparisonAssumptions,acuityPricing} from './calculator.mjs';
 export function enhanceStory(host){
  const engineKey=Symbol.for('jovabook.marketing.story-engine');
@@ -44,7 +45,7 @@ export function enhanceStory(host){
  const themes={harbour:['#245f89','#153c50','#f3f5f5','#fff','#183440'],rose:['#a44e6e','#482b3b','#f5f4f4','#fff','#32262e'],sage:['#356c56','#233e34','#f3f5f3','#fff','#263c32'],copper:['#925e43','#453026','#f6f4f1','#fff','#3c3029'],orchid:['#735a9c','#342b48','#f5f4f7','#fff','#342a44'],midnight:['#426a80','#171d24','#20262d','#2b333c','#f3f6f8']};
  root.querySelectorAll('[data-theme]').forEach(btn=>btn.addEventListener('click',()=>{q('ex-theme-workspace').dataset.design=btn.dataset.theme;q('portal-theme-image').src=portalScreens['theme.'+btn.dataset.theme+'.desktop'].url;q('portal-theme-image').alt='The actual JovaBook dashboard in the '+btn.textContent.trim()+' theme';q('portal-theme-mobile').srcset=portalScreens['theme.'+btn.dataset.theme+'.mobile'].url;root.querySelectorAll('[data-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));}));
  q('ex-deposit').addEventListener('input',e=>q('ex-deposit-value').textContent=e.target.value+'%');
- let competitor=calculatorDefaults.competitor,cadence='monthly';
+ let competitor=calculatorDefaults.competitor;
  const fieldIds=['ex-comp-subscription','ex-comp-seats','ex-comp-website','ex-new-clients','ex-first-value','ex-manual-commissions','ex-jova-plan','ex-jova-seats'];
  const fmt=calculatorMoney,presets=calculatorPresets;
  function updateComparison(){q('ex-commission-note').textContent=presets[competitor].note;
@@ -77,8 +78,6 @@ export function enhanceStory(host){
  root.querySelectorAll('[data-competitor]').forEach(btn=>btn.addEventListener('click',()=>{competitor=btn.dataset.competitor;if(competitor==='squarespace')q('ex-jova-plan').value='0';else if(q('ex-jova-plan').value==='0')q('ex-jova-plan').value='20';if(['solo','manual','acuity','squarespace'].includes(competitor))q('ex-comp-seats').value=1;q('ex-comp-subscription').value=presets[competitor].base;q('ex-comp-website').value='0';q('ex-fresha-website').checked=false;q('ex-fresha-insights').checked=false;q('ex-sub-hint').textContent=presets[competitor].hint;q('ex-commission-note').textContent=presets[competitor].note;root.querySelectorAll('[data-competitor]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));syncPeople();}));
  fieldIds.filter(id=>id!=='ex-comp-seats').forEach(id=>q(id).addEventListener('input',updateComparison));q('ex-comp-seats').addEventListener('input',syncPeople);q('ex-boost').addEventListener('change',updateComparison);
  q('ex-fresha-website').addEventListener('change',()=>{q('ex-comp-website').value=q('ex-fresha-website').checked?'12.95':'0';updateComparison();});q('ex-fresha-insights').addEventListener('change',updateComparison);
- root.addEventListener('click',event=>{const btn=event.target.closest('[data-cadence]');if(!btn||!root.contains(btn))return;cadence=btn.dataset.cadence;root.querySelectorAll('[data-cadence]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));q('ex-solo-price').textContent=cadence==='annual'?'£16':'£20';q('ex-team-price').textContent=cadence==='annual'?'£20':'£25';q('ex-solo-billing').textContent=cadence==='annual'?'£192 billed yearly, paid upfront.':'Billed monthly.';q('ex-team-billing').textContent=cadence==='annual'?'£240/year. Extra seats £57.60/year each.':'One seat included. Extra seats £6/month.';});
- root.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{const plan=btn.dataset.plan;q('ex-jova-plan').value=plan==='Free'?'0':plan==='Solo'?'20':'25';q('ex-plan-selection').textContent=plan+' selected in the cost comparison.';updateComparison();}));
  root.querySelectorAll('[data-play-demo]').forEach(btn=>btn.addEventListener('click',()=>{const d=q('local-film');d.showModal();}));
  q('local-film-close').addEventListener('click',()=>q('local-film').close());q('local-film').addEventListener('close',()=>q('local-film').querySelector('video').pause());root.querySelectorAll('.ex-site-copy button,.ex-theme-workspace button').forEach(b=>b.addEventListener('click',()=>document.getElementById('booking')?.scrollIntoView({behavior:reduced()?'instant':'smooth'})));
  updateComparison();
@@ -89,6 +88,7 @@ export function enhanceStory(host){
  const root=document.getElementById('jova-story-concept');
  if(root.dataset.refined)return;root.dataset.refined='true';
  const q=id=>root.querySelector('#'+id),reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+ enhancePricing(root,{onPlanSelect(plan){q('ex-jova-plan').value=plan==='Free'?'0':plan==='Solo'?'20':'25';q('ex-plan-selection').textContent=plan+' selected in the cost comparison.';updateComparison();},onSeatsChange(seats){q('ex-jova-seats').value=seats;if(q('ex-jova-plan').value==='25')q('ex-jova-seats').dispatchEvent(new Event('input',{bubbles:true}));}});
  root.querySelectorAll('[data-booking-link]').forEach(b=>b.addEventListener('click',()=>document.getElementById('booking')?.scrollIntoView({behavior:reduced()?'instant':'smooth'})));
  // Keep invoice inputs and methodology available without making them the headline.
  const controls=root.querySelector('.ex-compare-controls'),more=document.createElement('details');
@@ -104,7 +104,6 @@ export function enhanceStory(host){
  const featureHead=root.querySelector('.js-featureband .ex-title');if(featureHead)featureHead.remove();
  const features=root.querySelectorAll('.js-featureband h3');if(features[0])features[0].textContent='Deposits. Your way.';if(features[1])features[1].textContent='Automatic reminders.';
  const bookingHead=root.querySelector('.local-booking h2');if(bookingHead)bookingHead.textContent='See how your clients book.';root.querySelectorAll('.local-booking .feature-copy>p').forEach(p=>p.remove());
- const pricingNote=root.querySelector('.js-pricing-note');if(pricingNote){const d=document.createElement('details');d.className='nr-price-details';d.innerHTML='<summary>Plan & payment details</summary>';d.append(pricingNote);root.querySelector('.js-plan-grid').after(d);}
  const setup=root.querySelector('.ex-setup-card');if(setup){setup.querySelector('b').textContent='Want us to set it up?';setup.querySelector('p')?.remove();}
  const track=q('nr-reviews-track'),dots=q('nr-review-dots');
  if(!track||!dots)return; // The customer-stories component owns its own navigation.
@@ -129,21 +128,9 @@ export function enhanceStory(host){
  root.querySelectorAll('.nr-review').forEach((el,i)=>{el.querySelector('.ex-review-person')?.setAttribute('data-index',String(i));});
 })();
 
-(()=>{
- const root=document.getElementById('jova-story-concept');if(root.dataset.polished)return;root.dataset.polished='true';
- const q=id=>root.querySelector('#'+id);
- const readSeats=()=>Math.max(1,Math.min(100,Number(q('nv-team-count').value)||1));
- let seats=readSeats();
- const currency=n=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:Number.isInteger(n)?0:2,maximumFractionDigits:2}).format(n);
- const update=()=>{const annual=root.querySelector('[data-cadence="annual"]').getAttribute('aria-pressed')==='true';const monthly=25+Math.max(0,seats-1)*6;const yearly=240+Math.max(0,seats-1)*57.6;q('ex-team-price').textContent=currency(annual?yearly/12:monthly);q('ex-team-billing').textContent=annual?currency(yearly)+' billed yearly for '+seats+' '+(seats===1?'seat.':'seats.'):seats===1?'One seat included. Extra seats £6/month.':'Billed monthly for '+seats+' seats.';q('nv-team-count').value=seats;q('nv-team-minus').disabled=seats===1;q('nv-team-plus').disabled=seats===100;};
- const sync=()=>{q('ex-jova-seats').value=seats;if(q('ex-jova-plan').value==='25')q('ex-jova-seats').dispatchEvent(new Event('input',{bubbles:true}));update();};
- root.addEventListener('click',event=>{const button=event.target.closest('[data-cadence],#nv-team-minus,#nv-team-plus,[data-plan="Team"]');if(!button||!root.contains(button))return;seats=readSeats();if(button.id==='nv-team-minus'){seats=Math.max(1,seats-1);sync();}else if(button.id==='nv-team-plus'){seats=Math.min(100,seats+1);sync();}else if(button.matches('[data-plan="Team"]'))sync();else update();});
- root.addEventListener('input',event=>{if(event.target.id!=='nv-team-count')return;const count=Number(event.target.value);if(Number.isInteger(count)&&count>=1&&count<=100){seats=count;sync();}});
- root.addEventListener('focusout',event=>{if(event.target.id==='nv-team-count')update();});update();
-})();
 
 (()=>{const root=document.getElementById('jova-story-concept');const paint=()=>{const amounts=['ex-current-total','ex-jova-total'].map(id=>Number(root.querySelector('#'+id).textContent.replace(/[^0-9.]/g,'')));const maximum=Math.max(1,...amounts);root.querySelectorAll('.ex-compare-result .js-cost-row').forEach((row,i)=>row.style.setProperty('--cost-bar',Math.max(0,Math.min(100,amounts[i]/maximum*100))+'%'));};root.addEventListener('input',()=>requestAnimationFrame(paint));root.addEventListener('click',()=>requestAnimationFrame(paint));paint();})();
-(()=>{const root=document.getElementById('jova-story-concept'),controls=root.querySelector('.ex-compare-controls'),more=controls.querySelector('.nr-more-inputs');['ex-boost-field','ex-marketplace-fields'].forEach(id=>{const el=root.querySelector('#'+id);if(el)controls.insertBefore(el,more);});const slider=root.querySelector('#ex-new-clients'),output=root.querySelector('#sw-new-clients-value');slider.addEventListener('input',()=>output.textContent=slider.value);const yearly=root.querySelector('[data-cadence="annual"]');if(yearly){yearly.textContent='Yearly';const tag=document.createElement('span');tag.className='sw-yearly-saving';tag.textContent='Save 20%';yearly.append(tag);}if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('sw-in-view');observer.unobserve(e.target);}}),{threshold:.2});root.querySelectorAll('.sw-journey-panel').forEach(el=>observer.observe(el));}})();(()=>{
+(()=>{const root=document.getElementById('jova-story-concept'),controls=root.querySelector('.ex-compare-controls'),more=controls.querySelector('.nr-more-inputs');['ex-boost-field','ex-marketplace-fields'].forEach(id=>{const el=root.querySelector('#'+id);if(el)controls.insertBefore(el,more);});const slider=root.querySelector('#ex-new-clients'),output=root.querySelector('#sw-new-clients-value');slider.addEventListener('input',()=>output.textContent=slider.value);if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('sw-in-view');observer.unobserve(e.target);}}),{threshold:.2});root.querySelectorAll('.sw-journey-panel').forEach(el=>observer.observe(el));}})();(()=>{
  const root=document.getElementById('jova-story-concept'),q=id=>root.querySelector('#'+id);
  const result=root.querySelector('.ex-compare-result'),grid=root.querySelector('.ex-compare-grid');
   if(!result.querySelector('.calculator-monthly-costs')){
@@ -221,7 +208,6 @@ export function enhanceStory(host){
  });
 })();
 
-(()=>{const root=document.getElementById('jova-story-concept');const sync=()=>{const cadence=root.querySelector('[data-cadence="annual"]').getAttribute('aria-pressed')==='true'?'annual':'monthly';const seats=Math.max(1,Math.min(100,Number(root.querySelector('#nv-team-count').value)||1));root.querySelectorAll('a[data-plan]').forEach(a=>{const ids={Free:'essential',Solo:'standard',Team:'premium'};const url=new URL('https://book.jovamedia.com/');url.searchParams.set('portal','owner');url.searchParams.set('plan',ids[a.dataset.plan]);url.searchParams.set('cadence',cadence);if(a.dataset.plan==='Team')url.searchParams.set('seats',String(seats));url.hash='signup';a.href=url.href;});};root.addEventListener('input',sync);root.addEventListener('change',sync);root.addEventListener('click',e=>{if(e.target.closest('[data-cadence],#nv-team-plus,#nv-team-minus'))requestAnimationFrame(sync);});sync();})();
 
  (()=>{
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;

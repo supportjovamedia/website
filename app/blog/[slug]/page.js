@@ -1,4 +1,3 @@
-import PhotoHero from "@/components/PhotoHero";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { pageMetadata } from "@/lib/seo";
@@ -12,8 +11,6 @@ import GuideSeries from "@/components/GuideSeries";
 import LinkCta from "@/components/GuideSignupCta";
 import guideStyles from "@/components/Guides.module.css";
 import s from "@/components/Editorial.module.css";
-
-const articleHeroImages = { phpSecurity: "/websites/photography/crm-systems-hero-context.webp", aiSecurity: "/websites/photography/bespoke-websites-hero-main.webp", bookingSecurity: "/websites/photography/booking-systems-editorial-one.webp", booking: "/service-editorial/email.jpg", cost: "/hero-backgrounds/pricing.webp", lashes: "/insights/lash-treatment.webp", salon: "/insights/salon-interior.webp", salonInvestment: "/insights/salon-interior.webp", business: "/insights/qaiser-website.webp", launch: "/service-editorial/copywriting.jpg" };
 
 export const dynamicParams = false;
 export function generateStaticParams() { return articles.map(({ slug }) => ({ slug })); }
@@ -35,10 +32,9 @@ export default async function ArticlePage({ params }) {
   const headings = article.blocks.filter(block => block.type === "heading" && (!article.contents || article.contents.includes(block.id)));
   const isGuide = article.series === 'google-growth';
   const isResource = isGuide || ['tips', 'guides', 'comparisons'].includes(article.collection);
-  const HeaderFrame = isResource ? 'section' : PhotoHero;
-  return <main className={`${s.editorial} ${article.layout === "longform" ? s.articleReading : ""}`}>
+  return <main className={`${s.editorial} ${s.resourcePage} ${article.layout === "longform" ? s.articleReading : ""}`}>
     <StructuredData data={articleSchema(article, `https://www.jovamedia.com/blog/${slug}/opengraph-image`)}/>
-    <HeaderFrame {...(isResource ? {} : {src:articleHeroImages[article.cover]})} className={isResource ? s.googleSeriesHero : `page-hero ${s.photoHero}`}><div className={s.shell}><header className={s.articleHeader}><Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Resources", path: "/resources" }, { name: article.category, path: `/blog/${slug}` }]}/><h1>{article.title}</h1><p className={s.articleDeck}>{article.summary}</p>{article.answer && <p className={s.articleAnswer}>{article.answer}</p>}<div className={s.byline}><Link prefetch={false} href="/about">By JovaMedia</Link><time dateTime={publishedAt}>Published {publicationDate}</time><span>{articleReadMinutes(article)} min read</span></div></header></div></HeaderFrame>
+    <section className={s.googleSeriesHero}><div className={s.shell}><header className={s.articleHeader}><Breadcrumbs visible={false} items={[{ name: "Home", path: "/" }, { name: "Resources", path: "/resources" }, { name: article.category, path: `/blog/${slug}` }]}/><h1>{article.title}</h1><p className={s.articleDeck}>{article.summary}</p>{article.answer && <p className={s.articleAnswer}>{article.answer}</p>}<div className={s.byline}><Link prefetch={false} href="/about">By JovaMedia</Link><time dateTime={publishedAt}>Published {publicationDate}</time><span>{articleReadMinutes(article)} min read</span></div></header></div></section>
     <div className={s.shell}>
       <div className={isResource?s.resourceFeature:s.feature}><InsightCover kind={article.cover}/></div>
       {isGuide && <GuideSeries current={article.slug}/>}

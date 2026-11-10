@@ -90,3 +90,29 @@
 .phpSecurity,.aiSecurity,.bookingSecurity{background:#0c2948}
 
 .articleAnswer{max-width:68ch;margin:0 0 26px;font-size:clamp(1rem,1.3vw,1.125rem);line-height:1.65;color:var(--ed-ink);text-wrap:pretty}
+
+/* Reading pages share the homepage palette without changing photographic assets. */
+.resourcePage{--ed-ink:#111;--ed-muted:#333;--ed-paper:#f6f7f8;color:var(--ed-ink)}
+.resourcePage :is(h1,h2,h3){color:var(--ed-ink)}
+.resourcePage .googleSeriesHero{background:#f6f7f8;padding:42px 0}
+.resourcePage .indexHero{padding:0;border:0}
+.resourcePage .articleHeader h1{margin-top:0}
+.resourcePage .prose{color:var(--ed-ink)}
+.resourcePage .prose p{color:var(--ed-muted)}
+.resourcePage .prose a{color:#111;text-decoration-color:#235789;text-decoration-thickness:2px}
+.resourcePage .prose a:hover{color:#111}
+.resourcePage .prose ol li::marker{color:#111}
+.resourcePage .tableScroll thead{background:#111;color:#fff}
+.resourcePage .tableScroll thead th{color:#fff}
+.resourcePage .calculator{background:#f6f7f8;border-color:#dce2e2;color:#111}
+.resourcePage .calculatorFields input{color:#111;border-color:#9ba4ae}
+.resourcePage .calculatorResults{border-color:#dce2e2}
+.resourcePage .finePrint{color:#333}
+.resourcePage .related{background:#f6f7f8}
+.resourcePage .contactChoices{background:#111}
+.resourcePage .contactChoices h2,.resourcePage .contactChoices p{color:#fff}
+/* Constrain every article cover to the reading column and reserve its height. */
+.resourcePage :is(.feature,.resourceFeature){width:min(100%,840px);margin:30px auto 38px}
+.resourcePage :is(.feature,.resourceFeature)>.cover{width:100%;height:clamp(200px,28vw,320px);max-height:320px;min-height:0;aspect-ratio:auto;border-radius:20px}
+.resourcePage .cover>img{width:100%;height:100%;object-fit:cover}
+@media(max-width:700px){.resourcePage .googleSeriesHero{padding:32px 0}.resourcePage :is(.feature,.resourceFeature){margin:24px auto 28px}.resourcePage :is(.feature,.resourceFeature)>.cover{height:clamp(180px,55vw,250px);max-height:250px;border-radius:16px}}

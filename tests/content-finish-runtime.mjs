@@ -1,3 +1,4 @@
+import {storyRuntimeSource} from './story-runtime-source.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,writeFile} from 'node:fs/promises';
@@ -18,8 +19,7 @@ test('content spacing, four product captions and screenshot proportions stay bal
  const landing=await readFile(new URL('../app/jovabook/story/Landing.js',import.meta.url),'utf8');
  const files=[...landing.matchAll(/import '([^']+\.css)'/g)].map(match=>new URL('../app/jovabook/story/'+match[1],import.meta.url));
  const css=(await Promise.all(files.map(file=>readFile(file,'utf8')))).join('\n');
- const moduleSource=(await readFile(new URL('../app/jovabook/story/calculator.mjs',import.meta.url),'utf8')).replace(/^export /gm,'');
- const engine=moduleSource+'\n'+(await readFile(new URL('../app/jovabook/story/enhance-story.js',import.meta.url),'utf8')).replace(/^import[^\n]+\n/,'').replace('export function enhanceStory','function enhanceStory');
+ const engine=await storyRuntimeSource();
  const publicRoot=fileURLToPath(new URL('../public/',import.meta.url)),measurements=[];
  const browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'chrome'}:{})});
  try{
