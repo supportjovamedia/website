@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
+import {jovabookDemo} from '../lib/jovabook-demo.mjs';
 
 const require=createRequire(import.meta.url);
 const React=require('react');
@@ -18,6 +19,7 @@ test('fictional booking demo preserves selections and shows a complete deposit b
   vm.runInNewContext(code,{exports,React,Intl,requestAnimationFrame:fn=>fn(),require:name=>{
     if(name==='react')return hooks;
     if(name==='./portal-screens.mjs')return {portalScreens:{}};
+    if(name==='../../../lib/jovabook-demo.mjs')return {jovabookDemo};
     throw new Error('Unexpected dependency '+name);
   }});
   let tree;

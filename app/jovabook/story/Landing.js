@@ -17,6 +17,7 @@ import './calculator-finish.css';
 import './customer-stories.css';
 import './content-finish.css';
 import './website-designs-showcase.css';
+import './demo-player.css';
 
 export default function StoryLanding() {
   return <main className="jovabook-story">

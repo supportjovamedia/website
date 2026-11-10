@@ -1,4 +1,4 @@
-"use client";import {useRef,useState} from 'react';import {portalScreens} from './portal-screens.mjs';const images={
+"use client";import {useRef,useState} from 'react';import {portalScreens} from './portal-screens.mjs';import {jovabookDemo} from '../../../lib/jovabook-demo.mjs';const images={
   "calendar-desktop": {
     "src": "/jovabook/calendar-desktop.webp",
     "width": 2880,
@@ -20,9 +20,9 @@
     "height": 1920
   },
   "demo-poster": {
-    "src": "/jovabook/demo-poster-clean.webp",
-    "width": 1600,
-    "height": 900
+    "src": jovabookDemo.poster,
+    "width": 1920,
+    "height": 1080
   },
   "website": {
     "src": "/jovabook/website-optimized.webp",
