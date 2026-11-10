@@ -39,6 +39,13 @@ const nextConfig = {
       source: "/jovabook/industries/:path*",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     }, {
+      // Portal screenshot filenames contain their content hash.
+      source: "/jovabook/portal/:path*",
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+    }, {
+      source: "/jovabook/portal/manifest.json",
+      headers: [{ key: "Cache-Control", value: "no-cache" }],
+    }, {
       source: "/previews/aleiman/:path*",
       headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
     }];

@@ -164,7 +164,7 @@ function Navigation({ pathname }) {
         </div>
         <nav ref={menu} inert={!open} aria-hidden={!open} data-open={open} id="mobile-menu" className="mobile-menu" aria-label="Mobile navigation">
           <div className="mobile-menu-inner"><div className="mobile-menu-page" data-active="true">
-            {links.map(([name,href])=>name==='Resources'?<details className="mobile-resource-group" key={href}><summary>Resources<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg></summary><div>{resourceLinks.map(([label,to])=><a key={to} href={to} onClick={closeMenu} aria-current={pathname===to?'page':undefined}>{label}</a>)}</div></details>:<a key={href} href={href} onClick={closeMenu} aria-current={active(href)?"page":undefined}>{name}</a>)}
+            {links.map(([name,href])=><a key={href} href={href} onClick={closeMenu} aria-current={active(href)?"page":undefined}>{name}</a>)}
             <a href={startHref} onClick={closeMenu}>Start now</a>
             <a href={loginHref} onClick={closeMenu}>Login</a>
           </div></div>

@@ -1,0 +1,35 @@
+/* Shared marketing controls: one monochrome action palette across the website. */
+:root{--dashboard-accent:#ffd700}
+body :is(button,a.btn,a.button,a.js-btn,a.nv-main-button,a.nv-secondary-button){
+ background:#fff!important;color:#111!important;border-color:#b9b9b9!important;box-shadow:none!important;
+}
+body :is(a.btn:not(.desktop-login),a.button,a.js-btn:not(.js-outline),a.nv-main-button,button.button,button[type="submit"],button[aria-pressed="true"],button[aria-selected="true"],button[class*="accept"]){
+ background:#111!important;color:#fff!important;border-color:#111!important;
+}
+body :is(a.js-outline,a.nv-secondary-button,.desktop-login){background:#fff!important;color:#111!important;border-color:#111!important}
+body button[aria-pressed="true"] :is(span,b,strong,small,svg),body button[aria-selected="true"] :is(span,b,strong,small,svg){color:inherit!important}
+body :is(button,a.btn,a.button,a.js-btn,a.nv-main-button,a.nv-secondary-button):focus-visible{outline:2px solid #111;outline-offset:4px}
+body button:disabled{opacity:.45}
+/* The video control covers a poster, so its outer hit area stays transparent. */
+body button.ex-play{background:transparent!important;color:#fff!important;border-color:transparent!important}
+body .ex-play-disc{background:#111!important;color:#fff!important}
+body .ex-play-disc svg{color:#fff!important}
+body :is(.resource-nav-toggle,.menu-toggle,.cookie-settings){background:transparent!important;color:inherit!important;box-shadow:none!important}
+body .resource-nav-toggle{border:0!important}
+body button.cookie-settings{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;color:inherit!important;text-decoration:underline;text-underline-offset:4px}
+body .jovabook-story .art-hero{background:#faf8f3;color:#111}
+body .jovabook-story .art-hero h1{color:#111}
+body .jovabook-story .art-hero-copy>p{color:#555}
+body .jovabook-story .art-hero-scene::after{background:linear-gradient(transparent,#faf8f3)}
+body .jovabook-story :is(h1,h2,h3,h4){color:#111}
+body .jovabook-story .art-hero h1{letter-spacing:-.035em}
+body .jovabook-story .portal-theme-preview{display:block;overflow:hidden;background:#fff;border:1px solid #d3d3d3;border-radius:16px}
+body .jovabook-story .portal-theme-preview picture{display:block}
+body .jovabook-story .portal-theme-preview img{display:block;width:100%;height:auto}
+@media(max-width:700px){
+ body .jovabook-story .portal-theme-preview{max-width:390px;margin-inline:auto}
+ body .jovabook-story #ex-product .ex-product-visual{height:auto;max-height:none}
+ body .jovabook-story #ex-product .ex-img-button{height:auto;max-height:none}
+ body .jovabook-story #ex-product picture{display:block;max-width:390px;margin-inline:auto}
+ body .jovabook-story #ex-product img.ex-capture{width:100%;height:auto;max-height:none;object-fit:contain}
+}

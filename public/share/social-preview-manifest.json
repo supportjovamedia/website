@@ -1,16 +1,21 @@
 {
-  "image": "/share/jovabook-hero-bd69bc54f8c9.png",
+  "image": "/share/jovabook-hero-2f43d8cc8c24.png",
   "width": 1200,
   "height": 630,
-  "sha256": "bd69bc54f8c9fc112cc11578912ec52a27c65192a78979fe26dbd99774477e51",
+  "sha256": "2f43d8cc8c2426e55d93e3f364e5e270bd460663554de6854c3c545389b872d0",
   "sources": {
-    "app/jovabook/story/OriginalSections.js": "17978e0e2ee1df865562a47df0ae2c3d5c04aea8f41798e98feb0046206604cf",
+    "app/navigation.css": "1d0c1c4a352d0ca8d7109f6bc741ef471b50a2d82585e9ef19f761bc69ad76f4",
+    "app/jovabook/story/OriginalSections.js": "d394dd48e6552e30c961e5549a4d8ae46b8c355b7d868f49050be629a3daeab7",
     "app/jovabook/story/story.css": "7f741f039ccc84cc1ada540aaea86af105b991015ab90561d1c1500a7138d0a0",
-    "app/jovabook/story/rhythm.css": "3088ae1829bf52994d631511d6e93b90be5249b6f26dd312db70476572da566f",
-    "scripts/capture-jovabook-share.mjs": "8ac176721157c7a3beac389b98de566f6ca716558816b78ab1205df22f2f2c04",
+    "app/jovabook/story/rhythm.css": "cd2f4eaa923c0a7b74d6c5ca1e60f29c877f754cf6d46b84fc9e6dddcda7c4fa",
+    "app/jovabook/story/polish.css": "73bb2174ae1643638cf21303e7b3827600abeb7549437deee04a305b3338edc7",
+    "app/button-colours.css": "56d68e9006b656fa57f1f7d824c606db51a3b6a5d615c6b7a94f7a613453e2b8",
+    "app/jovabook/story/portal-screens.mjs": "cf37e5f340767dbd45d5d2d8e0db5d6b75944320cac2a624b59bf655e1559d96",
+    "app/jovabook/search-data.mjs": "c3cf538d4b6158d22bcdcd3b7ec77d436373e728eb985a9bf86964671dc71000",
+    "scripts/capture-jovabook-share.mjs": "50ca278cc64e2183898723cbc6770d85c55b4b552a7baa806f8995fe8eb32d2f",
     "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55",
-    "public/jovabook/story/dashboard-current-5df2dc7de8.webp": "5df2dc7de830545024ea5c16ca4294475c111e2679ec91acb383553df8cfb686",
-    "public/jovabook/story/calendar-phone-current-5e5232164a.webp": "5e5232164a62db6109a35da9d05cef6047b8f7cf66f483c3f762ccd8f761ce3c",
+    "public/jovabook/portal/hero-macbook-air-13-9d18ee77cd02.webp": "9d18ee77cd02ac003005f327f1af9603f2771d81e48446734c48099636bc3780",
+    "public/jovabook/portal/hero-iphone-17-pro-max-4fbf826e18cc.webp": "4fbf826e18ccd2fdfa9f2d38cc67b5295e8dab095f5f03eb22f76270619cf534",
     "app/fonts/plus-jakarta-sans.woff2": "153fc85b70298beeb1d61a5f723331649e7f23bb77302a66e61cb3e2fbdb5e79"
   }
 }

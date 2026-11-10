@@ -50,6 +50,13 @@
 .jova-pages .resource-nav-panel{position:absolute;top:calc(100% - 1px);left:50%;transform:translateX(-50%);width:230px;padding:10px;background:#fff;border:1px solid #dce3e8;border-radius:16px;box-shadow:0 16px 38px -18px #12365350;z-index:120}
 .jova-pages .resource-nav-panel[hidden]{display:none}.jova-pages.jova-header-chrome .desktop-nav .resource-nav-panel a{font-size:14px;line-height:1.4;padding:12px 14px;min-height:46px;border-radius:9px;white-space:normal;text-decoration:none}
 .jova-pages .resource-nav-panel a:hover,.jova-pages .resource-nav-panel a[aria-current=page]{background:#f3f3ed}.jova-pages .resource-nav-toggle:focus-visible,.jova-pages .resource-nav-panel a:focus-visible{outline:2px solid #235789;outline-offset:2px}
+/* The current destination uses the same yellow accent as the booking workspace. */
+body .jova-pages.jova-header-chrome .header .desktop-nav a.active{background:var(--dashboard-accent,#ffd700);color:#111;padding-inline:10px;border-radius:4px;text-decoration:none}
+body .jova-pages.jova-header-chrome .header .mobile-menu-page>a[aria-current=page]{color:#111;background:var(--dashboard-accent,#ffd700);border-radius:5px;padding-inline:12px}
+body .jova-pages.jova-header-chrome .header :is(.desktop-nav a,.mobile-menu a,.resource-nav,.resource-nav-toggle){color:#111}
+body .jova-pages.jova-header-chrome .header .menu-toggle span{background:#111!important}
 .jova-pages .mobile-resource-group{width:100%;border-bottom:1px solid #e2e7ea;color:#123653;text-align:inherit}.jova-pages .mobile-resource-group summary{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:66px;padding:20px 0;list-style:none;font-size:26px;font-weight:500;line-height:1.2;cursor:pointer}.jova-pages .mobile-resource-group summary::-webkit-details-marker{display:none}.jova-pages .mobile-resource-group summary svg{width:20px;height:20px;flex:none}.jova-pages .mobile-resource-group[open] summary svg{transform:rotate(180deg)}
 .jova-pages .mobile-resource-group>div{display:grid;padding:0 0 14px 16px}.jova-pages.jova-header-chrome .mobile-resource-group a{font-size:16px;line-height:1.4;padding:12px 0;min-height:44px;border:0;text-decoration:none;font-weight:500}.jova-pages .mobile-resource-group a[aria-current=page]{color:#235789;font-weight:700}
 @media(max-width:1100px){.jova-pages .mobile-menu-page{max-height:calc(100dvh - var(--navigation-height,78px));overflow-y:auto;padding-bottom:32px}}
+
+body:has(.jovabook-story) .jova-pages.jova-header-chrome .header .resource-nav-toggle{background:transparent!important;color:#111!important;border:0!important;box-shadow:none!important}

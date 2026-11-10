@@ -1,0 +1,108 @@
+/* Compact benefits, balanced section spacing and readable demonstration captions. */
+body .jovabook-story #jova-story-concept #why-jovabook{--story-top:26px;--story-bottom:8px}
+body .jovabook-story #jova-story-concept #why-jovabook h2{margin:0 0 22px}
+body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card{min-height:0!important;padding:22px!important;gap:0}
+body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card h3{margin:0 0 10px;font-size:24px;line-height:1.22}
+body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card p{max-width:30ch;margin:0;font-size:14px;line-height:1.55}
+body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-photograph{height:156px;max-height:none;margin:18px 0 0;aspect-ratio:auto}
+body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-photograph img{display:block;width:100%;height:100%;aspect-ratio:auto;object-fit:cover}
+body .jovabook-story #jova-story-concept #why-jovabook .vp-swipe-navigation{margin-top:10px!important;padding:0}
+body .jovabook-story #jova-story-concept #why-jovabook .vp-swipe-shell{margin-bottom:0}
+body .jovabook-story #jova-story-concept #ex-product{--story-top:22px;--story-bottom:24px}
+body .jovabook-story #jova-story-concept #ex-product .ex-section-head{margin-bottom:24px}
+body .jovabook-story #jova-story-concept #ex-product .ex-product-details{margin-top:24px!important;padding-inline:12px}
+body .jovabook-story #jova-story-concept #ex-product .ex-product-details h3,body .jovabook-story #jova-story-concept #service-businesses h2{font-size:clamp(28px,3.4vw,42px)!important;line-height:1.16;font-weight:700;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-product :is(.ex-img-button,#ex-product-preview,#ex-product-preview picture,#ex-product-preview img){cursor:default!important}
+body .jovabook-story #jova-story-concept #service-businesses{--story-top:28px;--story-bottom:28px}
+body .jovabook-story #jova-story-concept #service-businesses .vp-industry-intro{font-size:18px;line-height:1.55;margin:16px auto 24px;color:#111!important}
+body .jovabook-story #jova-story-concept #booking-mount{padding-block:44px!important}
+body .jovabook-story #jova-story-concept #booking-mount #booking{padding-block:0!important;margin-block:0!important}
+body .jovabook-story #jova-story-concept #ex-websites{--story-top:40px;--story-bottom:36px}
+body .jovabook-story #jova-story-concept #ex-websites .nr-phone-stage{gap:32px;padding-top:0}
+body .jovabook-story #jova-story-concept #ex-websites .vp-share-benefit{margin:0}
+@media(max-width:899px){
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card{padding:20px 18px!important}
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card h3{font-size:22px;line-height:1.24}
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card p{max-width:30ch;font-size:14px;line-height:1.55}
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-photograph{height:136px;margin-top:16px}
+}
+
+/* Full-width neutral bands make the final page sequence easy to distinguish. */
+body .jovabook-story #jova-story-concept .js-wrap{width:calc(100% - 80px)!important;max-width:1160px!important;margin-inline:auto}
+body .jovabook-story #jova-story-concept .js-wrap .js-wrap{width:100%!important;max-width:none!important}
+body .jovabook-story #jova-story-concept .local-booking .ws-booking,body .jovabook-story #jova-story-concept .nv-ending-inner{max-width:1160px!important;margin-inline:auto}
+body .jovabook-story #jova-story-concept #booking-tools{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body .jovabook-story #jova-story-concept #ex-websites{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#fff!important}
+body .jovabook-story #jova-story-concept .content-band{box-sizing:border-box;width:100%;max-width:none;padding-block:48px;border-top:1px solid #d9dddd}
+body .jovabook-story #jova-story-concept .content-band-stories,
+body .jovabook-story #jova-story-concept .content-band-support{background:#f1f2f2}
+body .jovabook-story #jova-story-concept .content-band-referrals{background:#fff}
+body .jovabook-story #jova-story-concept .content-band>:is(.cs-stories,#ex-referral,#ex-support){padding-block:0!important;margin-block:0!important;background:transparent!important}
+body .jovabook-story #jova-story-concept .nv-section-band:has(>#ex-themes){border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body .jovabook-story #jova-story-concept #ex-themes{--story-top:48px;--story-bottom:48px;padding-block:48px!important;background:transparent!important}
+body .jovabook-story #jova-story-concept #ex-compare{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#fff!important}
+body .jovabook-story #jova-story-concept .nv-section-band:has(>#ex-pricing){border-top:1px solid #d9dddd;background:#fff!important}
+body .jovabook-story #jova-story-concept #ex-pricing{--story-top:48px;--story-bottom:48px;padding-block:48px!important;background:transparent!important}
+body .jovabook-story #jova-story-concept #ex-faq{padding-block:48px!important;border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body .jovabook-story #jova-story-concept #ex-faq :is(.ws,.ws-original-faq,#faq){background:transparent!important}
+body .jovabook-story #jova-story-concept #ex-faq .ws-original-faq{width:calc(100% - 80px);max-width:1160px;margin-inline:auto}
+body .jovabook-story #jova-story-concept #ex-faq #faq{padding:0!important}
+body .jovabook-story #jova-story-concept .nv-ending{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#fff!important}
+body:has(.jovabook-story) .jova-newsletter{border-top:1px solid #d9dddd;background:#f1f2f2}
+body:has(.jovabook-story) #growth-signup{box-sizing:border-box;width:100%;padding-block:48px!important;padding-inline:max(40px,calc((100% - 1160px)/2))!important;border:0;background:transparent!important}
+@media(max-width:700px){
+ body .jovabook-story #jova-story-concept .js-wrap{width:calc(100% - 40px)!important}
+ body .jovabook-story #jova-story-concept .content-band{padding-block:32px}
+ body .jovabook-story #jova-story-concept .content-band-referrals,
+ body .jovabook-story #jova-story-concept .content-band-support{padding-block:40px}
+ body .jovabook-story #jova-story-concept #booking-tools{--story-top:32px;--story-bottom:32px;padding-block:32px!important}
+ body .jovabook-story #jova-story-concept #ex-websites{--story-top:32px;--story-bottom:32px;padding-block:32px!important}
+ body .jovabook-story #jova-story-concept #ex-themes{--story-top:32px;--story-bottom:32px;padding-block:32px!important}
+ body .jovabook-story #jova-story-concept #ex-compare{--story-top:40px;--story-bottom:40px;padding-block:40px!important}
+ body .jovabook-story #jova-story-concept #ex-pricing{--story-top:40px;--story-bottom:40px;padding-block:40px!important}
+ body .jovabook-story #jova-story-concept #ex-faq{padding-block:32px!important}
+ body .jovabook-story #jova-story-concept #ex-faq .ws-original-faq{width:calc(100% - 40px)}
+ body .jovabook-story #jova-story-concept .nv-ending{--story-top:32px;--story-bottom:32px;padding-block:32px!important}
+ body:has(.jovabook-story) #growth-signup{padding-block:40px!important;padding-inline:20px!important}
+}
+@media(max-width:700px){
+ body .jovabook-story #jova-story-concept #why-jovabook{--story-top:22px;--story-bottom:6px}
+ body .jovabook-story #jova-story-concept #why-jovabook h2{margin-bottom:18px}
+ body .jovabook-story #jova-story-concept #ex-product{--story-top:20px;--story-bottom:24px}
+ body .jovabook-story #jova-story-concept #ex-product .ex-product-details{margin-top:22px!important}
+ body .jovabook-story #jova-story-concept #service-businesses{--story-top:26px;--story-bottom:26px}
+ body .jovabook-story #jova-story-concept #service-businesses .vp-industry-intro{font-size:16px;line-height:1.55;margin-top:15px}
+ body .jovabook-story #jova-story-concept #booking-mount{padding-block:32px!important}
+ body .jovabook-story #jova-story-concept #ex-themes .portal-theme-preview{width:clamp(224px,calc((100svh - 280px) * .462085),304px);max-width:100%;margin-inline:auto}
+ body .jovabook-story #jova-story-concept #ex-themes .portal-theme-preview img{display:block;width:100%;height:auto;object-fit:contain;aspect-ratio:390/844}
+ body .jovabook-story #jova-story-concept #ex-websites{--story-top:32px;--story-bottom:32px}
+ body .jovabook-story #jova-story-concept #ex-websites .nr-phone-stage{gap:28px;padding-top:0}
+}
+
+/* Four concise desktop benefits; smaller screens retain their existing layout. */
+@media(min-width:1200px){
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-swipe-shell{width:100%;max-width:none!important;margin-inline:0!important}
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-reason-track.vp-swipe-track{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important;align-items:stretch}
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card{min-height:336px!important;padding:20px!important}
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-card h3{font-size:24px;line-height:1.22}
+ body .jovabook-story #jova-story-concept #why-jovabook .vp-benefit-photograph{height:140px;margin-top:16px}
+}
+
+/* Desktop product captions share the preview's center line. */
+@media(min-width:701px){
+ body .jovabook-story #jova-story-concept #ex-product .ex-product-details{display:block;text-align:center}
+ body .jovabook-story #jova-story-concept #ex-product .ex-product-details h3{width:100%;max-width:none;margin-inline:auto!important;text-align:center}
+}
+
+/* Bare carousel chevrons share the testimonial control treatment. */
+body .jovabook-story #jova-story-concept .vp-swipe-navigation .vp-swipe-arrow{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:0;border:0!important;border-radius:0;background:transparent!important;color:#111!important;box-shadow:none!important;cursor:pointer}
+body .jovabook-story #jova-story-concept .vp-swipe-arrow svg{display:block;width:24px;height:24px;color:#111!important}
+body .jovabook-story #jova-story-concept .vp-swipe-arrow:focus-visible{outline:2px solid #111;outline-offset:2px}
+
+/* Earlier major sections must have the same visible boundary system as the tail. */
+body .jovabook-story #jova-story-concept .q4-demo-band{border-top:1px solid #d9dddd;background:#fff!important}
+body .jovabook-story #jova-story-concept #why-jovabook,
+body .jovabook-story #jova-story-concept #service-businesses{border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body .jovabook-story #jova-story-concept .nv-section-band:has(>#ex-product){border-top:1px solid #d9dddd;background:#fff!important}
+body .jovabook-story #jova-story-concept #workspace-details{background:#fff!important}
+body .jovabook-story #jova-story-concept #booking-mount{border-top:1px solid #d9dddd;background:#fff!important}
