@@ -19,7 +19,7 @@ export const BASE_DIR=path.join(REPO_ROOT,'.jovabook-test');
 export const DATA_DIR=path.join(BASE_DIR,'data');
 const MARKER_FILE=path.join(BASE_DIR,'marker.json'),LOCK_FILE=path.join(BASE_DIR,'cli.lock');
 const FORMAT='jovabook-isolated-local-test-v1',FIXTURES='fictional-example-test-v1';
-export const MANIFEST_VERSION=24,BOOTSTRAP_VERSION=2;
+export const MANIFEST_VERSION=25,BOOTSTRAP_VERSION=3;
 export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owner_experience.sql','migration_subscription_requests.sql',
  'migrations/20261031161318_jovabook_email_delivery.sql','migrations/20261031225418_jovabook_website_images.sql',
  'migrations/20261031232653_jovabook_sms_reminders.sql','migrations/20261101003559_jovabook_billing_access.sql',
@@ -58,9 +58,9 @@ export const SOURCE_FILES=Object.freeze(['setup_new_project.sql','migration_owne
  'migrations/20261103013239_workspace_branding_sms_reminders.sql',
  'migrations/20261103015311_deposit_sms_consent.sql',
  'migrations/20261103015918_sms_message_controls.sql',
- 'migrations/20261103222916_owner_funnel.sql','migrations/20261105022405_free_plans.sql','migrations/20261105071000_trial_limits.sql','migrations/20261105110000_deposits_paid_plans.sql','migrations/20261105113000_no_free_trial.sql','migrations/20261105140000_message_topups.sql','migrations/20261105150000_us_sms_numbers.sql','migrations/20261105160000_uk_only_sms_numbers.sql','migrations/20261105170000_stripe_paid_only.sql','migrations/20261105180000_team_logins.sql','migrations/20261105200000_plan_names.sql','migrations/20261106003810_solo_insights_access.sql','migrations/20261106170125_international_business_locale.sql','migrations/20261106201510_referral_program.sql']);
+ 'migrations/20261103222916_owner_funnel.sql','migrations/20261105022405_free_plans.sql','migrations/20261105071000_trial_limits.sql','migrations/20261105110000_deposits_paid_plans.sql','migrations/20261105113000_no_free_trial.sql','migrations/20261105140000_message_topups.sql','migrations/20261105150000_us_sms_numbers.sql','migrations/20261105160000_uk_only_sms_numbers.sql','migrations/20261105170000_stripe_paid_only.sql','migrations/20261105180000_team_logins.sql','migrations/20261105200000_plan_names.sql','migrations/20261106003810_solo_insights_access.sql','migrations/20261106170125_international_business_locale.sql','migrations/20261106201510_referral_program.sql','migrations/20261109031716_operator_signup_flow.sql','migrations/20261109033558_owner_flow_errors.sql','migrations/20261109115800_owner_onboarding_progress.sql','migrations/20261109134538_owner_activity_identities.sql','migrations/20261109151245_simple_primary_service.sql','migrations/20261110051528_paid_signup_before_setup.sql']);
 // Historical billing suites stay on their released policy; the CLI and new offer suites use every migration.
-export const LEGACY_SOURCE_FILES=Object.freeze(SOURCE_FILES.filter(name=>!name.endsWith('_free_plans.sql')&&!name.endsWith('_trial_limits.sql')&&!name.endsWith('_deposits_paid_plans.sql')&&!name.endsWith('_no_free_trial.sql')&&!name.endsWith('_message_topups.sql')&&!name.endsWith('_us_sms_numbers.sql')&&!name.endsWith('_uk_only_sms_numbers.sql')&&!name.endsWith('_stripe_paid_only.sql')&&!name.endsWith('_team_logins.sql')&&!name.endsWith('_plan_names.sql')&&!name.endsWith('_solo_insights_access.sql')&&!name.endsWith('_international_business_locale.sql')&&!name.endsWith('_referral_program.sql')));
+export const LEGACY_SOURCE_FILES=Object.freeze(SOURCE_FILES.filter(name=>!name.endsWith('_free_plans.sql')&&!name.endsWith('_trial_limits.sql')&&!name.endsWith('_deposits_paid_plans.sql')&&!name.endsWith('_no_free_trial.sql')&&!name.endsWith('_message_topups.sql')&&!name.endsWith('_us_sms_numbers.sql')&&!name.endsWith('_uk_only_sms_numbers.sql')&&!name.endsWith('_stripe_paid_only.sql')&&!name.endsWith('_team_logins.sql')&&!name.endsWith('_plan_names.sql')&&!name.endsWith('_solo_insights_access.sql')&&!name.endsWith('_international_business_locale.sql')&&!name.endsWith('_referral_program.sql')&&!name.endsWith('_operator_signup_flow.sql')&&!name.endsWith('_owner_flow_errors.sql')&&!name.endsWith('_owner_onboarding_progress.sql')&&!name.endsWith('_owner_activity_identities.sql')&&!name.endsWith('_simple_primary_service.sql')&&!name.endsWith('_paid_signup_before_setup.sql')));
 // The mixed idle-funnel/operator patch depends on the deliberately omitted
 // scheduler and Vault transport. Its operator-feed addition is not rehearsed here.
 export const OMITTED_SOURCE_FILES=Object.freeze(['migrations/20261031162535_jovabook_email_scheduler.sql','migrations/20261105130000_workers_skip_when_idle.sql','migrations/20261105211920_skip_idle_funnel_and_report_message_topups.sql',
@@ -180,7 +180,10 @@ export async function sources({legacy=false}={}){
  const directory=path.join(REPO_ROOT,'booking-demo','supabase');
  const migrations=(await fs.readdir(path.join(directory,'migrations'))).filter(name=>name.endsWith('.sql')).map(name=>'migrations/'+name);
  validateSourceInventory(migrations);
- const entries=await Promise.all((legacy?LEGACY_SOURCE_FILES:SOURCE_FILES).map(async name=>{const raw=await fs.readFile(path.join(directory,name),'utf8');return {name,sql:prepareSchemaSql(raw),sha256:createHash('sha256').update(raw).digest('hex')};}));
+ const entries=await Promise.all((legacy?LEGACY_SOURCE_FILES:SOURCE_FILES).map(async name=>{const raw=await fs.readFile(path.join(directory,name),'utf8');
+  // Rehearse the released diagnostic tables/functions, without its hosted cron registration.
+  const local=name==='migrations/20261109033558_owner_flow_errors.sql'?raw.replace(/do \$\$begin\s*if exists\(select 1 from pg_extension where extname='pg_cron'\)[\s\S]*?end\$\$;/,'').replace(/--[^\n]*pg_cron[^\n]*/g,''):raw;
+  return {name,sql:prepareSchemaSql(local),sha256:createHash('sha256').update(raw).digest('hex')};}));
  const hashes=Object.fromEntries(entries.map(entry=>[entry.name,entry.sha256])),order=entries.map(entry=>entry.name);
  const digest=createHash('sha256').update(JSON.stringify({version:MANIFEST_VERSION,bootstrap:BOOTSTRAP_VERSION,fixtures:FIXTURES,order,hashes,omitted:OMITTED_SOURCE_FILES})).digest('hex');
  return {entries,hashes,order,digest};
@@ -201,7 +204,7 @@ export async function bootstrap(db,source){
  await db.exec(`create schema if not exists jovabook_test;revoke all on schema jovabook_test from public;
  create table jovabook_test.metadata(singleton boolean primary key default true check(singleton),format text not null,fixtures text not null,source_hashes jsonb not null,manifest_version int not null,manifest_digest text not null,source_order jsonb not null,omitted_sources jsonb not null,initialized_at timestamptz);`);
  await db.query('insert into jovabook_test.metadata(format,fixtures,source_hashes,manifest_version,manifest_digest,source_order,omitted_sources) values($1,$2,$3,$4,$5,$6,$7)',[FORMAT,FIXTURES,JSON.stringify(source.hashes),MANIFEST_VERSION,source.digest,JSON.stringify(source.order),JSON.stringify(OMITTED_SOURCE_FILES)]);
- await db.exec(`create schema auth;create table auth.users(id uuid primary key,email text not null,email_confirmed_at timestamptz);
+ await db.exec(`create schema auth;create table auth.users(id uuid primary key,email text not null,email_confirmed_at timestamptz,raw_user_meta_data jsonb not null default '{}',created_at timestamptz not null default now(),last_sign_in_at timestamptz);
  do $$begin if not exists(select 1 from pg_roles where rolname='anon') then create role anon;end if;if not exists(select 1 from pg_roles where rolname='authenticated') then create role authenticated;end if;if not exists(select 1 from pg_roles where rolname='service_role') then create role service_role;end if;end$$;
  create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
  grant usage on schema public,auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;

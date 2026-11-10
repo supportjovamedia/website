@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const source=(await readFile(new URL('../app.js',import.meta.url),'utf8')).replaceAll('\r\n','\n');
 const restoreSource=source.slice(source.indexOf('async function restoreOwnerSession(){'),source.indexOf("window.addEventListener('storage',e=>{"));
+const signupRequiredSource=source.match(/^const ownerSignupRequired=.*;$/m)?.[0];if(!signupRequiredSource)throw Error('Owner signup routing helper missing');
 const storageStart=source.indexOf("window.addEventListener('storage',e=>{");
 const storageSource=source.slice(storageStart,source.indexOf('(async function boot(){',storageStart));
 const bootSource=source.slice(source.indexOf('(async function boot(){'),source.indexOf('function admin_route(){',source.indexOf('(async function boot(){')));
@@ -19,10 +20,10 @@ function harness({hash='#login',result={ok:true,salon:{id:'business-a'}},publicP
   billingRestricted:()=>false,history:{replaceState:(_a,_b,url)=>{location.hash=url.includes('#')?'#'+url.split('#')[1]:'';}},
   invalidateOwnerView:()=>{events.push('invalidated');signed=false;env.restoringOwnerSession=false;env.loadingOwner=false;env.ownerRestoreAttempt++;env.liveLoadSequence++;env.verifiedOwnerIdentity=null;},
   syncPending:()=>false,hasUnsavedEditor:()=>false,document:{querySelector:()=>null},$:()=>null,draft:{},
-  loadLive:async()=>{env.liveLoadSequence++;events.push('verify');const response=load?await load():result;if(response.ok){env.verifiedOwnerIdentity=owner;env.ownerAccessState={access:'active',business:{status:'active'}};}return response;}
+  loadLive:async()=>{env.liveLoadSequence++;events.push('verify');const response=load?await load():result;if(response.ok){env.verifiedOwnerIdentity=owner;env.ownerAccessState=response.access||{access:'active',business:{status:'active'}};}return response;}
  };
  if(google)env.window.JovaGoogleAuth={callback:async()=>google};
- const ctx=vm.createContext(env);vm.runInContext(restoreSource,ctx);
+ const ctx=vm.createContext(env);vm.runInContext(signupRequiredSource+'\n'+restoreSource,ctx);
  return {env,events,listeners,runBoot:()=>vm.runInContext(bootSource,ctx),installStorage:()=>vm.runInContext(storageSource,ctx),restore:()=>env.restoreOwnerSession(),owner:value=>owner=value,auth:value=>hasAuth=value,get signed(){return signed;}};
 }
 test('fresh persisted session with no tab marker shows loader and verifies before signIn',async()=>{
@@ -34,6 +35,11 @@ test('fresh persisted session with no tab marker shows loader and verifies befor
 });
 test('saved owner deep link survives successful re-verification',async()=>{
  const h=harness({hash:'#bookings'});await h.runBoot();assert.equal(h.env.location.hash,'#bookings');assert.equal(h.signed,true);
+});
+test('managed incomplete signup restores to its payment/setup gate before billing restriction',async()=>{
+ const access={access:'billing_only',business:{status:'setup'},onboarding_required:true,signup_payment:{managed_signup:true,payment_required:true,paid_verified:false}};
+ const h=harness({hash:'#dashboard',result:{ok:true,salon:{id:'business-a'},access}});h.env.billingRestricted=()=>true;await h.runBoot();assert.equal(h.env.location.hash,'#signup');assert.equal(h.signed,true);assert.equal(h.events.filter(e=>e==='verify').length,1);assert(h.events.indexOf('verify')<h.events.indexOf('signIn'));
+ const completed=harness({result:{ok:true,salon:{id:'business-a'},access:{...access,onboarding_required:false,business:{status:'active'}}}});completed.env.billingRestricted=()=>true;await completed.runBoot();assert.equal(completed.env.location.hash,'#billing');
 });
 test('same-owner shared diary updates during restoration cannot invalidate the session',async()=>{
  let release;const h=harness({hash:'#calendar',load:()=>new Promise(resolve=>release=resolve)});h.installStorage();const pending=h.runBoot();

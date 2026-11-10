@@ -29,3 +29,12 @@
 #app .ob-shell .ob-field .ob-address input{border:0!important;border-radius:0!important;box-shadow:none!important;padding:2px 0!important;min-height:26px;background:transparent}
 .ob-shell .ob-address:focus-within{outline:3px solid var(--ob-blue,#235789);outline-offset:4px}
 #app .ob-shell .ob-address input:focus-visible{outline:none!important}
+.ob-payment-summary{padding:22px;border:1px solid var(--ob-line,#d7dade);border-radius:16px;background:#fff}
+.ob-payment-summary h2{margin:0 0 18px;font-size:24px;line-height:1.2;letter-spacing:-.025em}
+.ob-payment-summary dl{display:grid;gap:14px;margin:0}
+.ob-payment-summary dl>div{display:flex;align-items:baseline;justify-content:space-between;gap:20px}
+.ob-payment-summary dt,.ob-payment-summary dd{font-size:15px;line-height:1.5;margin:0}
+.ob-payment-summary dd{font-weight:600;text-align:right}
+.ob-payment-summary .ob-payment-total{padding-top:16px;border-top:1px solid var(--ob-line,#d7dade)}
+.ob-payment-summary .ob-payment-total dd{font-size:26px;line-height:1.2}
+.ob-payment-summary>p{font-size:13px;line-height:1.6;color:var(--ob-muted,#62666c);margin:18px 0 0}

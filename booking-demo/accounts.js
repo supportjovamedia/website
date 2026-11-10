@@ -487,6 +487,12 @@
         const t=await token();if(!t)return authFailure();const r=await rpc('owner_onboarding_progress',{p_step:step,p_values:values},t);
         return r.stale?r:{ok:r.ok&&r.data?.ok===true,data:r.data,message:r.data?.message||'Your progress could not be saved. Please try again.'};
       },
+      async signupPayment(action='read',values={}) {
+        if(!['read','prepare'].includes(action))return {ok:false,message:'This signup payment action is unavailable.'};
+        const t=await token();if(!t)return authFailure();const r=await rpc('owner_signup_payment',{p_action:action,p_values:values},t);
+        if(r.stale)return r;const d=r.data,valid=d?.ok===true&&['managed_signup','existing_account','payment_required','paid_verified'].every(key=>typeof d[key]==='boolean')&&['essential','standard','premium'].includes(d.plan)&&['monthly','annual'].includes(d.cadence)&&Number.isSafeInteger(d.seats)&&d.seats>=1&&d.seats<=1000&&Number.isSafeInteger(d.amount_pence)&&d.amount_pence>=0&&d.currency==='GBP'&&typeof d.legal_version==='string'&&d.legal_version.length>0&&d.legal_version.length<=80&&(!d.managed_signup||websiteId(d.business_id))&&(!d.payment_required||d.managed_signup&&!d.paid_verified);
+        return valid&&r.ok?{ok:true,data:d}:{ok:false,auth:r.status===401||r.status===403,status:r.status,network:!!r.network,message:r.data?.message||'We could not check your signup payment. Please try again.'};
+      },
       async importOwnerClients(rows){
         const t=await token();if(!t)return authFailure();const r=await rpc('owner_import_clients',{p_rows:rows},t);
         return {ok:r.ok&&r.data?.ok===true,message:'Your clients could not be imported. Check the file and try again.',data:r.data};
