@@ -9,6 +9,7 @@
 - Use native mobile menu disclosures, a close icon, Escape and outside-click dismissal, and section navigation. Cobalt and Olive use sidebars on desktop.
 - Remove decorative arrows. Underline the JovaMedia website credit on all four new designs, including paid accounts, as requested.
 - Render real template miniatures in the dashboard instead of the old approximate thumbnail graphics. Add Preview selected design beside the choices without requiring a save.
+- Keep all four picker thumbnails in a 390-pixel mobile layout with portrait crops. Selected-design dialogs also stay phone-sized on desktop. Public business websites retain their responsive desktop layouts.
 - Use existing project photographs for the fictional local demo and homepage example. Existing customer uploads remain intact. No new images were generated or added to services.
 - Omit the location row if no address is saved.
 

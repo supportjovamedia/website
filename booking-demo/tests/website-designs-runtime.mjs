@@ -30,7 +30,8 @@ try{
    await page.getByRole('button',{name:'Website settings',exact:true}).click();await page.getByRole('button',{name:'Preview',exact:true}).click();
    const dialog=page.getByRole('dialog',{name:'Website preview'}),site=dialog.locator('.wd-site');await site.waitFor();assert.equal(await site.getAttribute('data-website-design'),name);
    const geometry=await site.evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth,display:getComputedStyle(el).display,columns:getComputedStyle(el).gridTemplateColumns}));assert(geometry.scroll<=geometry.width+1,name+' has no horizontal overflow at '+width);
-   if(width===1440&&['Cobalt','Olive'].includes(name))assert.equal(geometry.display,'grid',name+' uses desktop sidebar');
+   assert(geometry.width<=420,name+' selected-design preview stays phone-sized even on desktop');
+   if(width===1440&&['Cobalt','Olive'].includes(name)){const publicPage=await context.newPage();await publicPage.goto(origin+'/?demo=jova-demo#website');assert.equal(await publicPage.locator('.wd-site').evaluate(el=>getComputedStyle(el).display),'grid',name+' public website retains its desktop sidebar');await publicPage.close();}
    const heroImage=site.locator('.wd-photo');assert(await heroImage.evaluate(img=>img.complete&&img.naturalWidth>0),name+' sample image loads locally');
    const credit=site.getByRole('link',{name:'Powered by JovaMedia'});assert.equal(await credit.getAttribute('href'),'https://www.jovamedia.com/');assert((await credit.evaluate(el=>getComputedStyle(el).textDecorationLine)).includes('underline'));
    assert.equal(await site.locator('svg path[d="M4 12h16m-6-6 6 6-6 6"]').count(),0,'No decorative arrows');
