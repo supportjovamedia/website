@@ -1,6 +1,6 @@
 {
   "captured": "2026-11-10",
-  "source": "Actual localhost:4458 JovaBook demo, with fictional Avery Studio records",
+  "source": "Actual localhost:4466 fictional JovaBook demo; refreshed product screens captured as lossless WebP at 2x.",
   "screens": {
     "desktop.dashboard": {
       "url": "/jovabook/portal/dashboard-desktop-82ae21507329.webp",
@@ -16,11 +16,11 @@
       }
     },
     "desktop.calendar-week": {
-      "url": "/jovabook/portal/calendar-week-desktop-0113c769309e.webp",
+      "url": "/jovabook/portal/calendar-week-desktop-431a38349f38.webp",
       "width": 3200,
       "height": 2000,
-      "bytes": 397890,
-      "sha256": "0113c769309ec22f0d13408b67b8006cd8353780252164af5150c3f067d5bb9e",
+      "bytes": 164482,
+      "sha256": "431a38349f38d9e2922877d5dec25f724d64b25ea84a176cdbc188462d1a66a7",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -42,11 +42,11 @@
       }
     },
     "desktop.customers": {
-      "url": "/jovabook/portal/customers-desktop-cbc3cfa0c31c.webp",
+      "url": "/jovabook/portal/customers-desktop-b7b8c3038a87.webp",
       "width": 3200,
       "height": 2000,
-      "bytes": 182198,
-      "sha256": "cbc3cfa0c31ce6a40a6a550c3214498cd00ba92bc9489330279262acfaedb51d",
+      "bytes": 60318,
+      "sha256": "b7b8c3038a87ece9c67934c9881ccadff3339913e5d8485faf2441d4fc8de881",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -55,11 +55,11 @@
       }
     },
     "desktop.services": {
-      "url": "/jovabook/portal/services-desktop-e748be433607.webp",
+      "url": "/jovabook/portal/services-desktop-a60a31681a07.webp",
       "width": 3200,
       "height": 2000,
-      "bytes": 144370,
-      "sha256": "e748be433607a10c96edee599dd4988328a18a2fe6747443e039e9a8e79478e1",
+      "bytes": 67210,
+      "sha256": "a60a31681a079496aa0bd117b2266e96e8fc435181ab8a747da88ec1b4c4ba9e",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -81,11 +81,11 @@
       }
     },
     "desktop.insights": {
-      "url": "/jovabook/portal/insights-desktop-7e1ff6663e89.webp",
+      "url": "/jovabook/portal/insights-desktop-a0c64e776260.webp",
       "width": 3200,
       "height": 2000,
-      "bytes": 169792,
-      "sha256": "7e1ff6663e891d185374f221506b246d15796096e05ed42847615e20188ee45e",
+      "bytes": 83082,
+      "sha256": "a0c64e7762607a945ddfe460049bb4aaa5796abf7fcb7a890c83c74256916ee1",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -107,11 +107,11 @@
       }
     },
     "mobile.calendar": {
-      "url": "/jovabook/portal/calendar-mobile-e5c9d6062b23.webp",
+      "url": "/jovabook/portal/calendar-mobile-23cba420633a.webp",
       "width": 780,
       "height": 1688,
-      "bytes": 84342,
-      "sha256": "e5c9d6062b232502e461ad93957fc6a86608f2e6135906d2effc0ac4f61b0c2e",
+      "bytes": 41102,
+      "sha256": "23cba420633ad5223be9987d161e3830af761d1db43ffe1ecfdb13aa5c6b4e82",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -133,11 +133,11 @@
       }
     },
     "mobile.customers": {
-      "url": "/jovabook/portal/customers-mobile-33b80f585a50.webp",
+      "url": "/jovabook/portal/customers-mobile-deb78a82d1ea.webp",
       "width": 780,
       "height": 1688,
-      "bytes": 99126,
-      "sha256": "33b80f585a507e0303007776518a05c5b86a170b8e557366e458b2c9068665e8",
+      "bytes": 34146,
+      "sha256": "deb78a82d1ea07e741fcae8122ffd7bbedeaddeaf724de0adff75e1f2473d6d5",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -146,11 +146,11 @@
       }
     },
     "mobile.services": {
-      "url": "/jovabook/portal/services-mobile-70eee955e518.webp",
+      "url": "/jovabook/portal/services-mobile-64c9352b6a6a.webp",
       "width": 780,
       "height": 1688,
-      "bytes": 71818,
-      "sha256": "70eee955e518006efd911cd183eecca4e9a0ee5b2760788447eea0b6ad8ad944",
+      "bytes": 33804,
+      "sha256": "64c9352b6a6a1520b027a40145c3cc6b027d95f0af4ab05d26483c3df32f6539",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -172,11 +172,11 @@
       }
     },
     "mobile.insights": {
-      "url": "/jovabook/portal/insights-mobile-4b0891cd32bf.webp",
+      "url": "/jovabook/portal/insights-mobile-f36d821e165f.webp",
       "width": 780,
       "height": 1688,
-      "bytes": 67194,
-      "sha256": "4b0891cd32bf175dc528b1cc69a00492b5c9404f76320ece8a323077c036ff08",
+      "bytes": 36044,
+      "sha256": "f36d821e165f31170c708bb08723d8275c0376c6023871fdf36e9fc3edcbbea7",
       "metadata": {
         "exif": false,
         "xmp": false,

@@ -1,4 +1,4 @@
-// Generated from actual local portal screenshots. Rebuild with prepare-portal-screenshots.mjs.
+// Actual local fictional demo screenshots. Product refresh: scripts/refresh-product-screens.mjs.
 export const portalScreens = {
   "desktop.dashboard": {
     "url": "/jovabook/portal/dashboard-desktop-82ae21507329.webp",
@@ -6,7 +6,7 @@ export const portalScreens = {
     "height": 2000
   },
   "desktop.calendar-week": {
-    "url": "/jovabook/portal/calendar-week-desktop-0113c769309e.webp",
+    "url": "/jovabook/portal/calendar-week-desktop-431a38349f38.webp",
     "width": 3200,
     "height": 2000
   },
@@ -16,12 +16,12 @@ export const portalScreens = {
     "height": 2000
   },
   "desktop.customers": {
-    "url": "/jovabook/portal/customers-desktop-cbc3cfa0c31c.webp",
+    "url": "/jovabook/portal/customers-desktop-b7b8c3038a87.webp",
     "width": 3200,
     "height": 2000
   },
   "desktop.services": {
-    "url": "/jovabook/portal/services-desktop-e748be433607.webp",
+    "url": "/jovabook/portal/services-desktop-a60a31681a07.webp",
     "width": 3200,
     "height": 2000
   },
@@ -31,7 +31,7 @@ export const portalScreens = {
     "height": 2000
   },
   "desktop.insights": {
-    "url": "/jovabook/portal/insights-desktop-7e1ff6663e89.webp",
+    "url": "/jovabook/portal/insights-desktop-a0c64e776260.webp",
     "width": 3200,
     "height": 2000
   },
@@ -41,7 +41,7 @@ export const portalScreens = {
     "height": 1688
   },
   "mobile.calendar": {
-    "url": "/jovabook/portal/calendar-mobile-e5c9d6062b23.webp",
+    "url": "/jovabook/portal/calendar-mobile-23cba420633a.webp",
     "width": 780,
     "height": 1688
   },
@@ -51,12 +51,12 @@ export const portalScreens = {
     "height": 1688
   },
   "mobile.customers": {
-    "url": "/jovabook/portal/customers-mobile-33b80f585a50.webp",
+    "url": "/jovabook/portal/customers-mobile-deb78a82d1ea.webp",
     "width": 780,
     "height": 1688
   },
   "mobile.services": {
-    "url": "/jovabook/portal/services-mobile-70eee955e518.webp",
+    "url": "/jovabook/portal/services-mobile-64c9352b6a6a.webp",
     "width": 780,
     "height": 1688
   },
@@ -66,7 +66,7 @@ export const portalScreens = {
     "height": 1688
   },
   "mobile.insights": {
-    "url": "/jovabook/portal/insights-mobile-4b0891cd32bf.webp",
+    "url": "/jovabook/portal/insights-mobile-f36d821e165f.webp",
     "width": 780,
     "height": 1688
   },

@@ -22,10 +22,18 @@ test('new, cancellation and reschedule events have plain labels and escaped deta
  for(const label of ['New booking','Booking cancelled','Booking rescheduled'])assert(html.includes(label));
  assert(html.includes('Alex &lt;Client&gt;'));assert(html.includes('Brow &amp; tint'));assert(!html.includes('data-event="e4"'));assert(!html.includes('email sent'));
 });
+test('booking notifications expose escaped special instructions using their existing note snapshot',()=>{
+ const {tools,state}=harness();const e=event('instructions');e.booking.notes='Knock quietly. <img src=x onerror=alert(1)>';state.emails=[e];const html=tools.pages.activity();assert(html.includes('Special instructions'));assert(html.includes('Knock quietly. &lt;img'));assert(!html.includes('<img src=x'));assert(!html.includes('name="special_instructions"'));
+});
 test('duplicate event IDs render once and opening an event marks it read',()=>{
  const {tools,state,seen}=harness();state.emails=[event('same'),event('same'),event('other','cancelled')];
  assert.match(tools.header(),/Notifications, 2 unread/);assert.equal((tools.pages.activity().match(/data-event="same"/g)||[]).length,1);
  assert.equal(tools.click('notif-item',{dataset:{event:'same'}}),true);assert.deepEqual(seen.opened,['b1']);assert.match(tools.header(),/Notifications, 1 unread/);
+});
+test('a 500-character note has a short preview and can expand/collapse without marking the booking read',()=>{
+ const {tools,state}=harness();const e=event('long-note');e.booking.notes='x'.repeat(500);state.emails=[e];const html=tools.pages.activity();assert(html.includes('data-note-full hidden'));assert(html.includes('View more'));assert(html.includes('x'.repeat(120)+'…'));
+ const preview={hidden:false},full={hidden:true},attrs={'aria-expanded':'false'},button={dataset:{event:'long-note'},getAttribute:k=>attrs[k],setAttribute:(k,v)=>attrs[k]=v,closest:()=>({querySelector:q=>q==='[data-note-preview]'?preview:full})};
+ assert.equal(tools.click('notif-instructions',button),true);assert.equal(full.hidden,false);assert.equal(preview.hidden,true);assert.equal(button.textContent,'View less');assert.match(tools.header(),/1 unread/);tools.click('notif-instructions',button);assert.equal(full.hidden,true);assert.equal(button.textContent,'View more');
 });
 test('read state persists across module recreation',()=>{
  const storage=new Map(),state={id:'salon-one',emails:[event('e1')],bookings:[{id:'b1'}]};

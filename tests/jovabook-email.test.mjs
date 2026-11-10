@@ -19,6 +19,10 @@ test('Booking emails escape content, keep business replies and separate owner/cu
  const mail=bookingEmailContent(j,cfg);assert(!mail.subject.includes('\n'));assert(!mail.html.includes('<script>'));assert(!mail.html.includes('<img src=x'));assert(mail.html.includes('&lt;img src=x'));assert.equal(mail.reply_to,'owner@example.test');assert(mail.text.includes('?salon=example-studio#manage/bk_private'));assert(mail.from.endsWith('<bookings@jovamedia.com>'));assert(!JSON.stringify(mail).includes('private-test-only'));
  j.payload.audience='owner';const owner=bookingEmailContent(j,cfg);assert(owner.text.includes('https://book.jovamedia.com/#bookings'));assert(!owner.text.includes('#manage/'));
 });
+test('the business copy includes special instructions while customer messages never expose booking notes',()=>{
+ const j=structuredClone(fixture);j.payload.booking.notes='Do not ring the bell.\n<script>alert(1)</script>';
+ const customer=bookingEmailContent(j,cfg);assert(!customer.text.includes('Do not ring'));j.payload.audience='owner';const owner=bookingEmailContent(j,cfg);assert(owner.text.includes('Special instructions: Do not ring'));assert(owner.html.includes('&lt;script&gt;'));assert(!owner.html.includes('<script>'));
+});
 test('Unauthorized requests and malformed bodies never touch the provider or database',async()=>{
  const h=harness();let r=await h.handlers.worker(new Request('https://www.jovamedia.com/api/jovabook/email/worker',{method:'POST',body:'{}'}));assert.equal(r.status,401);assert.equal(h.database.length,0);
  r=await h.handlers.worker(new Request(request({}),{body:'['}));assert.equal(r.status,400);assert.equal(h.calls.length,0);

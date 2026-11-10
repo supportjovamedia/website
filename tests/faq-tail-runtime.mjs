@@ -16,7 +16,7 @@ test('FAQ tails join a single matching border without connector lines in grey an
    await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
    await page.goto(base,{waitUntil:'networkidle'});await page.waitForFunction(()=>document.querySelector('#jova-story-concept')?.dataset.enhanced==='true');
    const cards=page.locator('#faq [data-story-card]');assert.equal(await cards.filter({visible:true}).count(),6);
-   for(const index of [0,5])for(const active of [false,true]){
+   for(const index of [0,1,5])for(const active of [false,true]){
     const card=cards.nth(index),bubble=card.locator('details');await card.scrollIntoViewIfNeeded();await bubble.hover();await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     await page.evaluate(({index,active})=>{const cards=[...document.querySelectorAll('#faq [data-story-card]')];cards.forEach((card,i)=>card.dataset.current=String(i===(active?index:index===0?1:0)));},{index,active});
     const state=await bubble.evaluate(e=>{const c=getComputedStyle(e),tail=getComputedStyle(e,'::before'),after=getComputedStyle(e,'::after'),r=e.getBoundingClientRect();return{body:c.borderLeftWidth,bodyColour:c.borderLeftColor,outline:c.outlineStyle,tailLeft:tail.borderLeftWidth,tailBottom:tail.borderBottomWidth,tailColour:tail.borderLeftColor,marker:getComputedStyle(e.parentElement.querySelector('[data-story-marker]')).backgroundColor,connector:after.content,top:parseFloat(tail.top),border:parseFloat(c.borderTopWidth),rect:{x:r.x,y:r.y,width:r.width,height:r.height}};});

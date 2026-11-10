@@ -145,3 +145,8 @@ body .jovabook-story #jova-story-concept #ex-compare .calculator-footnote-copy{p
  body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes>summary{padding:12px 18px}
  body .jovabook-story #jova-story-concept #ex-compare .calculator-footnote-copy{padding:0 18px 14px}
 }
+
+/* Each provider occupies its complete cell in the joined selector. */
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments{padding:0!important;gap:0!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments>button{margin:0!important;border-radius:0!important;border-right:1px solid #d6d9d1!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments>button:last-of-type{border-right:0!important}
