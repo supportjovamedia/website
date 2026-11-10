@@ -1,3 +1,4 @@
+import {storyRuntimeSource} from './story-runtime-source.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -8,8 +9,7 @@ import {portalScreens} from '../app/jovabook/story/portal-screens.mjs';
 import {withInitialCalculatorMarkup} from '../app/jovabook/story/calculator.mjs';
 
 test('calculator server state and actual inputs stay consistent across providers',async()=>{
- const moduleSource=(await readFile(new URL('../app/jovabook/story/calculator.mjs',import.meta.url),'utf8')).replace(/^export /gm,'');
- const source=moduleSource+'\n'+(await readFile(new URL('../app/jovabook/story/enhance-story.js',import.meta.url),'utf8')).replace(/^import[^\n]+\n/,'').replace('export function enhanceStory','function enhanceStory');
+ const source=await storyRuntimeSource();
  const browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'chrome'}:{})});
  try{
   const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];

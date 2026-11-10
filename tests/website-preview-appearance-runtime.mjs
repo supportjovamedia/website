@@ -1,0 +1,14 @@
+import {chromium,expect} from '@playwright/test';
+import assert from 'node:assert/strict';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {websiteReferenceImages} from '../app/jovabook/story/website-reference-images.mjs';
+const dir='output/website-preview-appearance';await mkdir(dir,{recursive:true});const browser=await chromium.launch({channel:'chrome',headless:true}),report=[];
+try{for(const width of [360,390,768,1440]){
+ const context=await browser.newContext({viewport:{width,height:1000}}),requested=[];await context.route('**/*',r=>new URL(r.request().url()).origin==='http://127.0.0.1:4468'?r.continue():r.abort());const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().includes('/website-'))requested.push(r.url());});await page.goto('http://127.0.0.1:4468/');const reject=page.getByRole('button',{name:'Reject all',exact:true});await reject.waitFor({timeout:5000});await reject.click();
+ for(const [id,name] of [['one-page','Evergreen'],['brightside','Cobalt'],['form','Terracotta'],['willow','Olive']]){
+  await page.getByRole('button',{name:new RegExp('^'+name+' ')}).click();const root=page.locator('.ws-website-browser'),image=root.locator('img'),expected=websiteReferenceImages[id][width<=700?'mobile':'desktop'];await root.scrollIntoViewIfNeeded();await expect(image).toBeVisible();await page.waitForFunction(url=>document.querySelector('.ws-reference-image').currentSrc.endsWith(url)&&document.querySelector('.ws-reference-image').complete,expected.src);
+  const appearance=await root.evaluate(el=>{const img=el.querySelector('img'),s=getComputedStyle(img),r=img.getBoundingClientRect();return {source:img.currentSrc,naturalWidth:img.naturalWidth,imageWidth:r.width,previewWidth:el.clientWidth,opacity:s.opacity,filter:s.filter,inert:el.firstElementChild.inert,links:el.querySelectorAll('a,button').length,overflow:el.scrollWidth>el.clientWidth+1};});assert(appearance.inert);assert.equal(appearance.links,0);assert.equal(appearance.filter,'none');assert.equal(appearance.opacity,'1');assert(!appearance.overflow);assert(Math.abs(appearance.imageWidth-appearance.previewWidth)<2);assert.equal(appearance.naturalWidth,expected.width);
+  if(width===390||width===1440){await root.screenshot({path:dir+'/'+width+'-'+name+'.png'});await root.evaluate(el=>{el.scrollTop=el.scrollHeight;});await root.screenshot({path:dir+'/'+width+'-'+name+'-services-contact.png'});}
+  report.push({width,name,...appearance});
+ }assert.equal(new Set(requested).size,4,'Only selected device image loads per design');assert.deepEqual(errors,[]);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await context.close();
+}await writeFile(dir+'/report.json',JSON.stringify(report,null,2));console.log(JSON.stringify({cases:report.length,passed:report.length,externalRequests:'blocked'}));}finally{await browser.close();}

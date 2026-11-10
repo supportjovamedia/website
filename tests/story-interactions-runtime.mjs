@@ -1,14 +1,12 @@
+import {storyRuntimeSource} from './story-runtime-source.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
 import {chromium} from '@playwright/test';
 import {sections, dialogs} from '../app/jovabook/story/sections.mjs';
 import {portalScreens} from '../app/jovabook/story/portal-screens.mjs';
 
 test('story initialization survives effect replay and replaced pricing controls', async () => {
-  const calculatorSource=(await readFile(new URL('../app/jovabook/story/calculator.mjs',import.meta.url),'utf8')).replace(/^export /gm,'');
-  const source=calculatorSource+'\n'+(await readFile(new URL('../app/jovabook/story/enhance-story.js',import.meta.url),'utf8'))
-    .replace(/^import[^\n]+\n/,'').replace('export function enhanceStory','function enhanceStory');
+  const source=await storyRuntimeSource();
   const browser=await chromium.launch({headless:true,channel:'chrome'});
   try {
     const page=await browser.newPage({viewport:{width:390,height:844}});

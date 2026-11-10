@@ -131,6 +131,10 @@ body .jovabook-story #jova-story-concept #ex-compare details :is(p,.ex-compare-c
 body .jovabook-story #jova-story-concept #faq summary+div>p{width:100%;max-width:none;margin-inline:0;text-align:left}
 body .jovabook-story #jova-story-concept #ex-compare :is(.vp-settings>div,.nr-more-fields){max-width:none;margin-inline:0;text-align:left}
 /* Price hierarchy stays readable with either billing frequency. */
+/* The standalone page starts below the shared fixed navigation. */
+.jovabook-pricing-page{padding-top:100px}
+@media(max-width:700px){.jovabook-pricing-page{padding-top:78px}}
+body .jovabook-story #jova-story-concept #ex-pricing .ex-title :is(h1,h2){font-size:clamp(32px,4vw,46px);line-height:1.1;letter-spacing:-.055em;color:#111}
 body .jovabook-story #jova-story-concept #ex-pricing .nv-team-seats{display:flex;flex-direction:column;gap:8px;margin:8px auto 12px;padding:0;border:0;background:transparent;box-shadow:none}
 body .jovabook-story #jova-story-concept #ex-pricing .nv-team-seats>label{position:static;align-self:center;display:block;inset:auto;margin:0;padding:0;transform:none;translate:none;background:transparent;font-size:16px!important;font-weight:600;line-height:1.5}
 body .jovabook-story #jova-story-concept #ex-pricing .nv-team-seats>div{gap:8px;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}

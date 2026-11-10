@@ -1,10 +1,10 @@
 import Link from "next/link";
 import StructuredData from "./StructuredData";
 import { siteUrl } from "@/lib/seo";
-export default function Breadcrumbs({ items }) {
+export default function Breadcrumbs({ items, visible = true }) {
   return (
     <>
-      <nav className="breadcrumbs" aria-label="Breadcrumb">
+      {visible && <nav className="breadcrumbs" aria-label="Breadcrumb">
         <ol>
           {items.map((item, i) => (
             <li key={item.path}>
@@ -16,7 +16,7 @@ export default function Breadcrumbs({ items }) {
             </li>
           ))}
         </ol>
-      </nav>
+      </nav>}
       <StructuredData
         data={{
           "@context": "https://schema.org",

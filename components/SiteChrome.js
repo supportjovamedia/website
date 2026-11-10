@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 export default function SiteChrome({children, header, footer}) {
   const pathname = usePathname();
   const root = useRef(null);
-  const isJovaBook = pathname === "/";
+  const isJovaBook = pathname === "/" || pathname === "/pricing";
   useEffect(() => {
     if (!root.current) return;
     const media = matchMedia('(prefers-reduced-motion: reduce)');

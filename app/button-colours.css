@@ -1,6 +1,6 @@
 /* Shared marketing controls: one monochrome action palette across the website. */
 :root{--dashboard-accent:#ffd700}
-body :is(button,a.btn,a.button,a.js-btn,a.nv-main-button,a.nv-secondary-button){
+body :is(button,a.btn,a.button,a.js-btn,a.nv-main-button,a.nv-secondary-button):not(.wd-site *){
  background:#fff!important;color:#111!important;border-color:#b9b9b9!important;box-shadow:none!important;
 }
 body :is(a.btn:not(.desktop-login),a.button,a.js-btn:not(.js-outline),a.nv-main-button,button.button,button[type="submit"],button[aria-pressed="true"],button[aria-selected="true"],button[class*="accept"]){
@@ -9,7 +9,7 @@ body :is(a.btn:not(.desktop-login),a.button,a.js-btn:not(.js-outline),a.nv-main-
 body :is(a.js-outline,a.nv-secondary-button,.desktop-login){background:#fff!important;color:#111!important;border-color:#111!important}
 body button[aria-pressed="true"] :is(span,b,strong,small,svg),body button[aria-selected="true"] :is(span,b,strong,small,svg){color:inherit!important}
 body :is(button,a.btn,a.button,a.js-btn,a.nv-main-button,a.nv-secondary-button):focus-visible{outline:2px solid #111;outline-offset:4px}
-body button:disabled{opacity:.45}
+body button:not(.wd-site *):disabled{opacity:.45}
 /* The video control covers a poster, so its outer hit area stays transparent. */
 body button.ex-play{background:transparent!important;color:#fff!important;border-color:transparent!important}
 body .ex-play-disc{background:#111!important;color:#fff!important}
@@ -21,7 +21,7 @@ body .jovabook-story .art-hero{background:#faf8f3;color:#111}
 body .jovabook-story .art-hero h1{color:#111}
 body .jovabook-story .art-hero-copy>p{color:#555}
 body .jovabook-story .art-hero-scene::after{background:linear-gradient(transparent,#faf8f3)}
-body .jovabook-story :is(h1,h2,h3,h4){color:#111}
+body .jovabook-story :is(h1,h2,h3,h4):not(.wd-site *){color:#111}
 body .jovabook-story .art-hero h1{letter-spacing:-.035em}
 body .jovabook-story .portal-theme-preview{display:block;overflow:hidden;background:#fff;border:1px solid #d3d3d3;border-radius:16px}
 body .jovabook-story .portal-theme-preview picture{display:block}
@@ -33,3 +33,10 @@ body .jovabook-story .portal-theme-preview img{display:block;width:100%;height:a
  body .jovabook-story #ex-product picture{display:block;max-width:390px;margin-inline:auto}
  body .jovabook-story #ex-product img.ex-capture{width:100%;height:auto;max-height:none;object-fit:contain}
 }
+
+/* Strong outlined controls keep their original footprint by drawing the extra pixel inward. */
+body :is(a.js-outline,a.nv-secondary-button,a.btn.outline,.desktop-login){border:1px solid #111!important;box-shadow:inset 0 0 0 1px #111!important}
+body .jova-pages.jova-header-chrome .desktop-login{border-width:2px!important;padding:12px 24px}
+
+/* Login already has a real 2px border, so avoid adding a third inset pixel. */
+body .desktop-login{box-shadow:none!important}

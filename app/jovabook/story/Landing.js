@@ -1,3 +1,4 @@
+import JovaBookPlans from '../JovaBookPlans';
 import ReferralsPreview from './ReferralsPreview';
 import CustomerStories from './CustomerStories';
 import SupportPreview from './SupportPreview';
@@ -15,7 +16,6 @@ import './controls-finish.css';
 import './calculator-finish.css';
 import './customer-stories.css';
 import './content-finish.css';
-import '../../../booking-demo/website-designs.css';
 import './website-designs-showcase.css';
 
 export default function StoryLanding() {
@@ -24,6 +24,7 @@ export default function StoryLanding() {
     <div id="jova-story-concept">
       <div className="blend-sections">
         {sections.map((html, index) => {
+          if (html.includes('id="ex-pricing"')) return <JovaBookPlans key={index} enhancedByStory/>;
           if (html.includes('id="ex-websites"')) return <WebsiteShowcase key={index}/>;
           if (html.includes('id="customer-stories-mount"')) return <div className="content-band content-band-stories" key={index}><CustomerStories/></div>;
           if (html.includes('id="referrals-preview-mount"')) return <div className="content-band content-band-referrals" key={index}><ReferralsPreview/></div>;
