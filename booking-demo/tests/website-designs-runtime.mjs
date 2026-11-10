@@ -27,6 +27,7 @@ try{
    await page.reload();
    await page.getByRole('button',{name:'Website design Choose a layout for your website'}).click();
    assert(await page.locator('input[name=template][value="'+id+'"]').isChecked(),name+' survives save and reload');
+   if(width===390&&id==='willow')await page.screenshot({path:path.join(output,'390-dashboard-mobile-picker.png'),fullPage:true});
    await page.getByRole('button',{name:'Website settings',exact:true}).click();await page.getByRole('button',{name:'Preview',exact:true}).click();
    const dialog=page.getByRole('dialog',{name:'Website preview'}),site=dialog.locator('.wd-site');await site.waitFor();assert.equal(await site.getAttribute('data-website-design'),name);
    const geometry=await site.evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth,display:getComputedStyle(el).display,columns:getComputedStyle(el).gridTemplateColumns}));assert(geometry.scroll<=geometry.width+1,name+' has no horizontal overflow at '+width);
