@@ -6,9 +6,9 @@
   "sources": {
     "app/navigation.css": "1d0c1c4a352d0ca8d7109f6bc741ef471b50a2d82585e9ef19f761bc69ad76f4",
     "app/jovabook/story/OriginalSections.js": "ca6c1043e800338697efcf7508324cc8dfec2d08b82a75033ffbb4f1721dd2ab",
-    "app/jovabook/story/story.css": "7f741f039ccc84cc1ada540aaea86af105b991015ab90561d1c1500a7138d0a0",
+    "app/jovabook/story/story.css": "2cb0983805a59b6ac8cc76acc6f721327addc29bd39312e168270ec9c9424687",
     "app/jovabook/story/rhythm.css": "cd2f4eaa923c0a7b74d6c5ca1e60f29c877f754cf6d46b84fc9e6dddcda7c4fa",
-    "app/jovabook/story/polish.css": "743ede25c9fd530dce9da29b9316a5fa3057a09505e39dcd8f969e0ceb7996c4",
+    "app/jovabook/story/polish.css": "87b9104f9ac7bb66f81feb96d986ab5abc37e2c0355d0c07b48c8772e1a2c963",
     "app/button-colours.css": "b51ff8f5c1a7b0e9fbaf06df7e92203693bfbcf974ba3c788575884cb2ddc82c",
     "app/jovabook/story/portal-screens.mjs": "ce08de500c4d032b2b36c95b40b611e3d39a3c9581298f0b65cb2c858693489c",
     "app/jovabook/search-data.mjs": "28b87ed8e2db7123f4ef51a0d4d2fd6f65f9b5b8cd9bc9a8649d7820f5b62753",
