@@ -323,9 +323,9 @@
       if(row&&row.owner_id===load()?.user?.id){verifiedSalon={id:row.id,ownerId:row.owner_id};return row;}
       return null;
     }
-    async function billingCall(action,body={}) {
+    async function billingCall(action,body={},reason='unknown') {
       const t=await token();if(!t)return authFailure();const expected=stamp(),ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
-      try{const response=await fetch('/api/jovabook/billing/'+action,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)});let data=null;try{data=await response.json();}catch{}if(!current(expected))return stale();if(action==='status'&&(!response.ok||data?.ok!==true)&&!data?.no_business)window.JovaOwnerDiagnostics?.report('account_access',response.status>=500?'server_error':'request_rejected',response.status,t);return {ok:response.ok&&data?.ok===true,status:response.status,data,auth:response.status===401,message:data?.message||'We could not verify your subscription. Try again.'};}
+      try{const response=await fetch((action==='status'&&typeof location!=='undefined'&&location.origin==='https://book.jovamedia.com'?'https://www.jovamedia.com':'')+'/api/jovabook/billing/'+action,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json',Authorization:'Bearer '+t,...(action==='status'?{'x-jovabook-access-reason':reason,'x-jovabook-client':'20261110-record-pages'}:{})},body:JSON.stringify(body)});let data=null;try{data=await response.json();}catch{}if(!current(expected))return stale();if(action==='status'&&(!response.ok||data?.ok!==true)&&!data?.no_business)window.JovaOwnerDiagnostics?.report('account_access',response.status>=500?'server_error':'request_rejected',response.status,t);return {ok:response.ok&&data?.ok===true,status:response.status,data,auth:response.status===401,message:data?.message||'We could not verify your subscription. Try again.'};}
       catch{if(!current(expected))return stale();if(action==='status')window.JovaOwnerDiagnostics?.report('account_access','network_unavailable',0,t);return {ok:false,network:true,message:NET};}finally{clearTimeout(timer);}
     }
     async function integrationCall(action,body={}) {
@@ -350,8 +350,8 @@
       verifiedAccess={ownerId,data};verifiedSalon={id:data.business.id,ownerId};
       return {ok:true,data};
     }
-    async function ownerAccess() {
-      const ownerId=load()?.user?.id,result=await billingCall('status');if(result.stale)return result;
+    async function ownerAccess(reason='unknown') {
+      const ownerId=load()?.user?.id,result=await billingCall('status',{},reason);if(result.stale)return result;
       const data=result.data,business=data?.business;
       if(data?.access==='wrong_portal'&&data.role==='team')return teamAccess(ownerId);
       if(data?.access==='wrong_portal'){verifiedAccess=null;verifiedSalon=null;return {ok:false,wrongPortal:true,message:data.message||'Use the correct login for this account.'};}
@@ -412,7 +412,7 @@
         if(!user?.id||typeof user.email!=='string')return resumable('verify_session',checked,'We could not finish verifying your sign-in. Please try again.');
         if(!Number.isFinite(Date.parse(user.email_confirmed_at||''))||(expectedEmail&&normEmail(user.email)!==normEmail(expectedEmail))){if(load()?.access_token===session.access_token)keep(null);return {ok:false,auth:true,message:'Your email could not be verified. Please try again.'};}
         keep({access_token:session.access_token,refresh_token:session.refresh_token,expires_at:Number.isFinite(Number(session.expires_at))?Number(session.expires_at):Date.now()/1000+Math.max(1,Number(session.expires_in)||60),user});
-        const saved=stamp(),access=await ownerAccess();if(!current(saved))return stale();
+        const saved=stamp(),access=await ownerAccess('google');if(!current(saved))return stale();
         if(access.noBusiness){
           // This identity was already verified by Auth above and remains bound to the same session.
           const metadata=user.user_metadata||{},name=metadata.owner_name||metadata.full_name||[metadata.first_name,metadata.last_name].filter(value=>typeof value==='string').join(' ');
@@ -531,7 +531,7 @@
         if (r.network) return { ok: false, message: NET };
         if (r.status === 429) return { ok: false, locked: true, message: 'Too many attempts. Wait a minute, then try again.' };
         if (!r.ok) return {ok:false,message:/email_not_confirmed|email.*not confirmed/i.test(String(r.data?.error_code||r.data?.code||r.data?.msg||r.data?.message||''))?'Verify your email from the link you received, then log in.':'That email and password do not match.'};
-        const access = await ownerAccess();
+        const access = await ownerAccess('login');
         if(!current(r.authStamp))return stale();
         if(access.noBusiness){const identity=await verifiedBusinessIdentity();if(!identity.ok){keep(null);clearExisting();return identity;}if(!current(r.authStamp))return stale();const matchingDraft=freshSignupDraft(identity.profile);if(!matchingDraft){window.JovaOwnerDiagnostics?.report('business_setup','setup_resumed',200,load()?.access_token);try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}}pendingBusinessOwner={...identity.profile,manualSetup:!matchingDraft};try{sessionStorage.setItem(EXISTING,JSON.stringify(pendingBusinessOwner));}catch{}const profile=existingBusinessContext();if(profile?.name?.trim()&&profile?.slug?.trim()){const created=await this.createBusinessForExistingUser(profile);if(created.ok)return {...created,salon:{id:created.account.salonId}};if(created.stale)return created;if(pendingBusinessOwner)pendingBusinessOwner.creationError=created.message||'We could not create your business. Try again.';}return {ok:true,needsBusiness:true,profile:existingBusinessContext()};}
         if (!access.ok){if(access.wrongPortal){keep(null);clearExisting();}return access;}
@@ -661,12 +661,12 @@
         const r = await rpc('owner_capabilities', {}, t);
         return r.ok && r.data ? r.data : null;
       },
-      async loadDiary({loginProof}={}) {
+      async loadDiary({loginProof,reason='restore'}={}) {
         const proof=loginProof&&typeof loginProof==='object'?diaryLoginProofs.get(loginProof):null;
         if(proof)diaryLoginProofs.delete(loginProof);
         const age=proof?Date.now()-proof.at:-1;
         const loginAccess=proof&&age>=0&&age<=5000&&current(proof.expected)&&proof.ownerId===load()?.user?.id&&proof.salonId===proof.access.data.business.id&&verifiedAccess?.data===proof.access.data?proof.access:null;
-        const access=loginAccess||await ownerAccess();if(!access.ok)return access;
+        const access=loginAccess||await ownerAccess(loginProof?'login':reason);if(!access.ok)return access;
         const onboarding=access.data.access==='setup'||(access.data.access==='active'&&access.data.business.status==='setup');if(access.data.access!=='active'||onboarding)return {ok:true,access:access.data,billingOnly:!onboarding,setup:onboarding};
         const t = await token(); if (!t) return authFailure();
         const expected=stamp();
@@ -688,7 +688,7 @@
         if (core.some(r => !r.ok || !Array.isArray(r.data))) return { ok: false, network: core.some(r => r.network), auth: core.some(r => r.status === 401) };
         const emailActivityUnavailable=!res[emailIndex].ok || !Array.isArray(res[emailIndex].data);
         const rows = {}; names.forEach((n, i) => { rows[n] = n==='email_log'&&emailActivityUnavailable?[]:res[i + 1].data; });
-        const checked=await ownerAccess();if(!checked.ok)return checked;
+        const checked=await ownerAccess('diary-after');if(!checked.ok)return checked;
         if(checked.data.access!=='active')return {ok:true,access:checked.data,billingOnly:checked.data.access!=='setup',setup:checked.data.access==='setup'};
         if(!current(expected)||checked.data.business.id!==selected.id)return stale();
         verifiedSalon={id:selected.id,ownerId:selected.owner_id};
@@ -722,7 +722,7 @@
         if(!current(expected)||r.stale)return stale();
         if(!r.ok)return {...r,auth:r.status===401||r.status===403};
         if(!Array.isArray(r.data)||r.data.length!==1||r.data[0].id!==salonId||r.data[0].owner_id!==ownerId)return scopeFailure();
-        const checked=await ownerAccess();if(!current(expected)||checked.stale)return stale();if(!checked.ok)return checked;
+        const checked=await ownerAccess('save-verify');if(!current(expected)||checked.stale)return stale();if(!checked.ok)return checked;
         if(!['active','setup'].includes(checked.data.access)||checked.data.business.id!==salonId||!writeScope(salonId))return scopeFailure();
         return {ok:true,salon:r.data[0],access:checked.data};
       },
@@ -757,7 +757,7 @@
         if(s.length<3||s.length>30||!ADDRESS_RULE.test(s)||RESERVED.includes(s))return {ok:false,field:'slug',message:'Choose an available address with 3 to 30 letters, numbers or hyphens.'};
         if(pending&&(n!==pending.name||s!==pending.slug))return {ok:false,message:'Your business was created with the previous name and address. Restore those details to continue.'};
         const unchanged=()=>identity===load()?.user?.id&&attempt===businessCreationIntent;
-        const access=await ownerAccess();if(!unchanged())return stale();
+        const access=await ownerAccess('signup');if(!unchanged())return stale();
         const completed=(salonId,checked,profile)=>{pendingCreatedBusiness=null;try{localStorage.removeItem(SIGNUP_DRAFT);}catch{}void token().then(t=>{if(t&&unchanged())void window.JovaOwnerFunnel?.bind(t);}).catch(()=>{});return {ok:true,account:{salonId},access:checked.data,profile:{owner:profile.owner,email:profile.email}};};
         if(pending){
           if(!access.ok)return {ok:false,message:access.message||'We could not verify your created business. Please try again.'};
@@ -775,7 +775,7 @@
         if(result.stale||!unchanged())return stale();
         if(!result.ok||result.data?.ok!==true||!websiteId(result.data.salon_id))return {ok:false,field:result.data?.field||'',message:result.data?.message||'We could not create your business. Try again.'};
         pendingCreatedBusiness={ownerId:identity,salonId:result.data.salon_id,name:n,slug:s,intent:attempt,at:Date.now()};
-        const checked=await ownerAccess();if(!unchanged())return stale();
+        const checked=await ownerAccess('signup');if(!unchanged())return stale();
         if(!checked.ok||checked.data.business.id!==result.data.salon_id)return {ok:false,message:'Your business was created. We could not verify it yet. Please try again.'};
         return completed(result.data.salon_id,checked,verified.profile);
       },

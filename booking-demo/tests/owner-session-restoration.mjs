@@ -10,7 +10,7 @@ const bootSource=source.slice(source.indexOf('(async function boot(){'),source.i
 function harness({hash='#login',result={ok:true,salon:{id:'business-a'}},publicPage=false,customerPage=false,load,google}={}){
  let signed=false,owner='owner-a',hasAuth=true;const events=[],listeners={};
  const location={pathname:'/',search:'',hash};
- const env={console,Promise,Date,setTimeout,clearTimeout,KEY:'jovabook-essential-demo-v2',TABLES:[],snap:{},salonSnap:{},syncDirty:false,syncBlocked:false,syncTimer:null,accessRefreshTimer:null,verifiedOwnerIdentity:null,observedOwnerIdentity:owner,ownerAccessState:null,ownerLoadError:'',loadingOwner:false,restoringOwnerSession:false,ownerRestoreRoute:'',ownerRestoreAttempt:0,liveLoadSequence:0,state:{active:'old-business'},location,window:{addEventListener:(name,handler)=>listeners[name]=handler},
+ const env={ownerIdle:null,console,Promise,Date,setTimeout,clearTimeout,KEY:'jovabook-essential-demo-v2',TABLES:[],snap:{},salonSnap:{},syncDirty:false,syncBlocked:false,syncTimer:null,accessRefreshTimer:null,verifiedOwnerIdentity:null,observedOwnerIdentity:owner,ownerAccessState:null,ownerLoadError:'',loadingOwner:false,restoringOwnerSession:false,ownerRestoreRoute:'',ownerRestoreAttempt:0,liveLoadSequence:0,state:{active:'old-business'},location,window:{addEventListener:(name,handler)=>listeners[name]=handler},
   dir:{remote:true,hasSession:()=>hasAuth,sessionIdentity:()=>owner,hasPendingOwnerSessionAdoption:()=>false},
   OWNER_ROUTES:['dashboard','calendar','bookings','customers','billing'],
   route:()=>location.hash.slice(1)||'login',signedIn:()=>signed,signIn:()=>{signed=true;events.push('signIn');},signOut:()=>signed=false,
@@ -73,15 +73,15 @@ test('a flood of same-owner cache events schedules no remote fetches or cache ec
  h.owner('owner-b');h.listeners.storage({key:h.env.KEY,newValue:'{}'});assert(h.events.includes('invalidated'),'An actual identity change still fails closed');
 });
 
-test('unchanged expired access deadline is checked once, while new deadline or identity can recheck',()=>{
+test('access deadlines block locally without idle network requests',()=>{
  const start=source.indexOf('const accessDeadlineAttempts=new Set();'),end=source.indexOf('const TEAM_ROUTES=',start),timers=new Map();let time=2000,next=0,reloads=0,identity='owner-a';
  const access={access:'active',business:{id:'business-a',status:'active'},lifecycle:{trialEndsAt:null},full_until:'1970-01-01T00:00:01.000Z',server_now:'1970-01-01T00:00:02.000Z'};
- const env={Date:{parse:Date.parse,now:()=>time},Set,Math,Number,accessRefreshTimer:null,syncTimer:null,dir:{sessionIdentity:()=>identity},salon:()=>({id:'business-a'}),signedIn:()=>true,clearTimeout:id=>timers.delete(id),setTimeout:(fn,delay)=>{const id=++next;timers.set(id,{fn,delay});return id;},closeModal:()=>{},render:()=>{},reloadOwner:()=>{reloads++;env.scheduleAccessCheck(access);}};
+ const env={Date:{parse:Date.parse,now:()=>time},Set,Math,Number,accessRefreshTimer:null,syncTimer:null,syncDirty:false,dir:{sessionIdentity:()=>identity},salon:()=>({id:'business-a'}),signedIn:()=>true,clearTimeout:id=>timers.delete(id),setTimeout:(fn,delay)=>{const id=++next;timers.set(id,{fn,delay});return id;},closeModal:()=>{},render:()=>{},reloadOwner:()=>{reloads++;env.scheduleAccessCheck(access);}};
  vm.runInNewContext(source.slice(start,end),env);env.scheduleAccessCheck(access);assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,1000);
  const run=()=>{const [id,timer]=timers.entries().next().value;timers.delete(id);timer.fn();};
- run();assert.equal(reloads,1);assert.equal(timers.size,0,'A stale active response must not arm another one-second timer');
+ run();assert.equal(reloads,0);assert.equal(env.syncBlocked,true);assert.match(env.ownerLoadError,/Refresh/);assert.equal(timers.size,0,'A stale active response must not arm another one-second timer');
  for(let index=0;index<10;index++)env.scheduleAccessCheck(access);assert.equal(timers.size,0);
- access.full_until='1970-01-01T00:00:05.000Z';env.scheduleAccessCheck(access);assert.equal(timers.size,1);time=6000;run();assert.equal(reloads,2);assert.equal(timers.size,0);
+ access.full_until='1970-01-01T00:00:05.000Z';env.scheduleAccessCheck(access);assert.equal(timers.size,1);time=6000;run();assert.equal(reloads,0);assert.equal(timers.size,0);
  identity='owner-b';env.scheduleAccessCheck(access);assert.equal(timers.size,1,'A distinct owner gets its own re-verification');
 });
 
@@ -89,7 +89,7 @@ const notificationSource=source.slice(source.indexOf('// Background work updates
 function notificationHarness(){
  let time=100000,identity='owner-a',reads=0,merges=0,invalidated=0,reply=async()=>({ok:true,rows:[]}),interval;
  const salon={id:'business-a',emails:[]},bell={outerHTML:''},stored=new Map();
- const env={Promise,Map,Math,Date:{now:()=>time,parse:Date.parse},document:{hidden:false,querySelector:()=>null,addEventListener:()=>assert.fail('No owner visibility refresh may be registered')},navigator:{onLine:true},dir:{remote:true,hasSession:()=>true,sessionIdentity:()=>identity,loadActivity:async()=>{reads++;return reply();},ownerAccess:()=>assert.fail('Notifications cannot refresh billing')},signedIn:()=>true,isLive:()=>true,salon:()=>salon,pubMode:()=>false,customerScope:()=>false,syncPending:()=>false,loadingOwner:false,restoringOwnerSession:false,loadLive:()=>assert.fail('Notifications cannot refresh the diary'),render:()=>assert.fail('Notifications cannot re-render the dashboard'),invalidateOwnerView:()=>invalidated++,JovaEmailDelivery:{latest:()=>null,changed:(_events,rows)=>rows.length>0,fromRow:row=>row},snap:{},state:{salons:[salon]},KEY:'cache',localStorage:{getItem:key=>stored.get(key),setItem:(key,value)=>{merges++;stored.set(key,value);}},$:()=>bell,notifications:{header:()=>'<button>Updated notifications</button>'},setInterval:(fn,delay)=>{interval={fn,delay};}};
+ const env={ownerIdle:null,Promise,Map,Math,Date:{now:()=>time,parse:Date.parse},document:{hidden:false,querySelector:()=>null,addEventListener:()=>assert.fail('No owner visibility refresh may be registered')},navigator:{onLine:true},dir:{remote:true,hasSession:()=>true,sessionIdentity:()=>identity,loadActivity:async()=>{reads++;return reply();},ownerAccess:()=>assert.fail('Notifications cannot refresh billing')},signedIn:()=>true,isLive:()=>true,salon:()=>salon,pubMode:()=>false,customerScope:()=>false,syncPending:()=>false,loadingOwner:false,restoringOwnerSession:false,loadLive:()=>assert.fail('Notifications cannot refresh the diary'),render:()=>assert.fail('Notifications cannot re-render the dashboard'),invalidateOwnerView:()=>invalidated++,JovaEmailDelivery:{latest:()=>null,changed:(_events,rows)=>rows.length>0,fromRow:row=>row},snap:{},state:{salons:[salon]},KEY:'cache',localStorage:{getItem:key=>stored.get(key),setItem:(key,value)=>{merges++;stored.set(key,value);}},$:()=>bell,notifications:{header:()=>'<button>Updated notifications</button>'},setInterval:(fn,delay)=>{interval={fn,delay};}};
  vm.runInNewContext(notificationSource,env);
  return {env,salon,bell,get reads(){return reads;},get merges(){return merges;},get invalidated(){return invalidated;},get interval(){return interval;},time:value=>time=value,owner:value=>identity=value,reply:fn=>reply=fn};
 }

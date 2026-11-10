@@ -35,7 +35,7 @@ async function run(kind,editing=true,{rowChange=false,foreignConfirmation=false}
   salon:()=>state.salons[0],businessOwner:()=>owner,isLive:()=>true,teamMode:()=>false,salonFields:fields,rowsOf,showSync:()=>{},render:()=>{},toast:()=>{},closeModal:()=>{},hasUnsavedEditor:()=>editing,signedIn:()=>true,syncPending:()=>env.syncBusy||env.syncDirty,scheduleAccessCheck:()=>{},purgeLive:()=>{},queueSync:()=>{},markSynced:()=>{},buildLive:(r)=>({...current,name:r.name,workspace:r.settings.workspace}),JovaSchedule:{normalize:v=>v},JovaBusinessLocale:{resolve:x=>x.settings||x}};
  env.save=()=>{env.saveRevision++;env.syncDirty=true;};
  vm.createContext(env);
- vm.runInContext(block('async function flushSync(){','async function persistWebsite(')+block('async function persistWebsite(',"window.addEventListener('beforeunload'")+block('async function loadLive(','// Take other people')+block('async function persistBusinessDetails(','async function saveBusinessDetails('),env);
+ vm.runInContext(block('function hasRemoteChanges(current){','function queueSync(){')+block('async function flushSync(){','async function persistWebsite(')+block('async function persistWebsite(',"window.addEventListener('beforeunload'")+block('async function loadLive(','// Take other people')+block('async function persistBusinessDetails(','async function saveBusinessDetails('),env);
  // Establish verified tenant once, then exclude opening from save measurements.
  assert.equal((await dir.loadDiary()).ok,true);requests.length=0;
  if(rowChange)current.customers.push({id:'new-client',name:'Client'});
