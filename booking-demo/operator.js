@@ -37,6 +37,20 @@ function renderSignupFlow(){const region=root.querySelector('[data-signup-flow]'
 function activityMarkup(){return window.JovaOperatorSignupFlow?.renderEvents?.(ownerFlowEvents,{esc,joined},{query:activityQuery})||'';}
 function renderActivity(){const region=root.querySelector('[data-owner-activity]');if(region)region.outerHTML=activityMarkup();}
 root.addEventListener('submit',event=>{const form=event.target.closest('[data-form="activity-filter"]');if(!form)return;event.preventDefault();event.stopImmediatePropagation();activityQuery=String(new FormData(form).get('activity_search')||'').trim().slice(0,100);renderActivity();root.querySelector('#activity-search')?.focus();},true);
+// Operator-sent signup nudges. Two presses are required and the server chooses the recipient.
+root.addEventListener('change',event=>{const form=event.target.closest('[data-form="outreach"]');if(!form)return;delete form.dataset.confirm;form.querySelector('button').textContent='Send email';const note=form.parentElement.querySelector('.op-outreach-note');if(note)note.textContent='';});
+root.addEventListener('submit',async event=>{const form=event.target.closest('[data-form="outreach"]');if(!form)return;event.preventDefault();event.stopImmediatePropagation();
+ const names=window.JovaOperatorSignupFlow?.outreachNames||{},template=String(new FormData(form).get('template')||''),note=form.parentElement.querySelector('.op-outreach-note'),button=form.querySelector('button');
+ if(!names[template]){note.textContent='Choose an email first.';return;}
+ if(form.dataset.confirm!==template){form.dataset.confirm=template;button.textContent='Confirm send';note.textContent='Send "'+names[template]+'" to '+form.dataset.email+'? Press Confirm send.';return;}
+ const version=epoch,t=await token();if(!t)return fail({status:401});
+ button.disabled=true;button.textContent='Sending…';note.textContent='';
+ let result;try{const response=await fetch('/api/jovabook/operator/outreach',{method:'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({user_id:form.dataset.user,template}),signal:AbortSignal.timeout(25000)});result={status:response.status,data:await response.json().catch(()=>({}))};}catch{result={status:0,data:{}};}
+ if(version!==epoch)return;
+ if([401,403].includes(result.status))return fail({status:result.status});
+ if(result.data?.ok===true){const row=signupFlowData?.recent?.find(r=>r.id===form.dataset.user);if(row)row.outreach={template,at:result.data.sent_at||new Date().toISOString()};renderSignupFlow();const sent=root.querySelector('[data-user="'+CSS.escape(form.dataset.user)+'"]')?.parentElement?.querySelector('.op-outreach-note');if(sent)sent.textContent='Sent.';return;}
+ delete form.dataset.confirm;button.disabled=false;button.textContent='Send email';note.textContent=result.data?.message||'The email was not sent. Please try again.';
+},true);
 root.addEventListener('click',event=>{if(!event.target.closest('[data-action="activity-clear"]'))return;event.preventDefault();event.stopImmediatePropagation();activityQuery='';renderActivity();root.querySelector('#activity-search')?.focus();},true);
 function overviewMarkup(){
  const d=overviewData||{},months=d.months||[],max=Math.max(1,...months.map(m=>Number(m.count)||0));
