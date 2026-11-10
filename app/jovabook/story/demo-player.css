@@ -1,3 +1,51 @@
+.jovabook-story #jova-story-concept #ex-film .ex-video-shell {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  background: #f3f3f3;
+  box-shadow: 0 14px 32px #1112;
+}
+.jovabook-story #jova-story-concept #ex-film .ex-video-shell > img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border-radius: 0;
+}
+.jovabook-story #jova-story-concept #ex-film .ex-play {
+  background: #1116 !important;
+  display: grid !important;
+  place-items: center;
+  color: #111;
+  border-radius: 12px;
+  gap: 12px;
+}
+.jovabook-story #jova-story-concept #ex-film .ex-play-disc {
+  width: clamp(52px, 6vw, 76px);
+  height: clamp(52px, 6vw, 76px);
+  background: #ffd700 !important;
+  color: #111 !important;
+  box-shadow: 0 5px 24px #0003;
+}
+.jovabook-story #jova-story-concept #ex-film .ex-play-disc svg { fill: #111 !important; }
+.jovabook-story #jova-story-concept #ex-film .ex-play > span:last-child {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(12px, 3vw, 30px);
+  translate: -50% 0;
+  white-space: nowrap;
+  padding: 7px 12px;
+  background: #fffffff2;
+  border-radius: 20px;
+  font-size: clamp(11px, 1.1vw, 14px);
+}
+.jovabook-story #jova-story-concept #ex-film .ex-video-shell > video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #111;
+}
 .jovabook-story #jova-story-concept #local-film {
   width: min(1100px, calc(100vw - 24px));
   height: auto;

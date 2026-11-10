@@ -79,8 +79,8 @@ export function enhanceStory(host){
  root.querySelectorAll('[data-competitor]').forEach(btn=>btn.addEventListener('click',()=>{competitor=btn.dataset.competitor;if(competitor==='squarespace')q('ex-jova-plan').value='0';else if(q('ex-jova-plan').value==='0')q('ex-jova-plan').value='20';if(['solo','manual','acuity','squarespace'].includes(competitor))q('ex-comp-seats').value=1;q('ex-comp-subscription').value=presets[competitor].base;q('ex-comp-website').value='0';q('ex-fresha-website').checked=false;q('ex-fresha-insights').checked=false;q('ex-sub-hint').textContent=presets[competitor].hint;q('ex-commission-note').textContent=presets[competitor].note;root.querySelectorAll('[data-competitor]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));syncPeople();}));
  fieldIds.filter(id=>id!=='ex-comp-seats').forEach(id=>q(id).addEventListener('input',updateComparison));q('ex-comp-seats').addEventListener('input',syncPeople);q('ex-boost').addEventListener('change',updateComparison);
  q('ex-fresha-website').addEventListener('change',()=>{q('ex-comp-website').value=q('ex-fresha-website').checked?'12.95':'0';updateComparison();});q('ex-fresha-insights').addEventListener('change',updateComparison);
- root.querySelectorAll('[data-play-demo]').forEach(btn=>btn.addEventListener('click',()=>{const d=q('local-film');d.showModal();}));
- q('local-film-close').addEventListener('click',()=>q('local-film').close());q('local-film').addEventListener('close',()=>q('local-film').querySelector('video').pause());root.querySelectorAll('.ex-site-copy button,.ex-theme-workspace button').forEach(b=>b.addEventListener('click',()=>document.getElementById('booking')?.scrollIntoView({behavior:reduced()?'instant':'smooth'})));
+
+ root.querySelectorAll('.ex-site-copy button,.ex-theme-workspace button').forEach(b=>b.addEventListener('click',()=>document.getElementById('booking')?.scrollIntoView({behavior:reduced()?'instant':'smooth'})));
  updateComparison();
 })();
 
