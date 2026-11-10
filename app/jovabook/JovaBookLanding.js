@@ -3,6 +3,7 @@
 import Image from "next/image";
 import {useRef, useState} from "react";
 import JovaBookPlans from "./JovaBookPlans";
+import {jovabookDemo} from "../../lib/jovabook-demo.mjs";
 
 import {FaqStory} from "@/components/ScrollStories";
 import {WhyJovaBook,JovaBookTestimonials,JovaBookFounderNote} from "./JovaBookProof";
@@ -33,9 +34,9 @@ const images={
     "height": 1920
   },
   "demo-poster": {
-    "src": "/jovabook/demo-poster-clean.webp",
-    "width": 1600,
-    "height": 900
+    "src": jovabookDemo.poster,
+    "width": 1920,
+    "height": 1080
   },
   "website": {
     "src": "/jovabook/website-optimized.webp",
@@ -183,7 +184,7 @@ export default function JovaBookLanding({faqs}){
 <ReferralSection/>
 <FaqSection faqs={faqs}/>
 <ClosingSection/>
-    <dialog ref={film} className="movie-modal" aria-label="JovaBook product demo" onClose={()=>video.current?.pause()} onClick={e=>{if(e.target===e.currentTarget)film.current.close();}}><button className="modal-close" type="button" autoFocus onClick={()=>film.current.close()}>Close</button><video ref={video} controls playsInline preload="none" src="/jovabook/demo.mp4?v=v4-20261105" poster="/jovabook/demo-poster-clean.webp">Your browser does not support video. <a href="/jovabook/demo.mp4?v=v4-20261105">Watch the JovaBook demo</a>.</video></dialog>
+    <dialog ref={film} className="movie-modal" aria-label="JovaBook product demo" onClose={()=>video.current?.pause()} onClick={e=>{if(e.target===e.currentTarget)film.current.close();}}><button className="modal-close" type="button" autoFocus onClick={()=>film.current.close()}>Close</button><video ref={video} controls playsInline preload="none" src={jovabookDemo.src} poster={jovabookDemo.poster}>Your browser does not support video. <a href={jovabookDemo.src}>Watch the JovaBook demo</a>.</video></dialog>
   </main>;
 }
 

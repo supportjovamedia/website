@@ -35,6 +35,13 @@ const nextConfig = {
       source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2|woff|mp4|webm)",
       headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
     }, {
+      // Demo media uses content hashes, so updated videos get fresh URLs.
+      source: "/jovabook/demo-:hash.mp4",
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+    }, {
+      source: "/jovabook/demo-poster-:hash.webp",
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+    }, {
       // These filenames contain a content hash. Changed artwork gets a new URL.
       source: "/jovabook/industries/:path*",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],

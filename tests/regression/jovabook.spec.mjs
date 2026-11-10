@@ -44,7 +44,7 @@ test('JovaBook plan choice, six real themes and FAQ work with the current intera
  const order=await page.evaluate(()=>['#demo','#calendar','#booking','#features','#website','#workspace','.ws-insights','.ws-industries','#plans','#questions'].map(selector=>document.querySelector(selector).getBoundingClientRect().top+scrollY));expect(order).toEqual([...order].sort((a,b)=>a-b));
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  const faq=page.locator('[data-site-faq]');await faq.locator('summary').nth(0).click();await faq.locator('summary').nth(1).click();await expect(faq.locator('details[open]')).toHaveCount(1);await expect(faq.locator('details').nth(0)).not.toHaveAttribute('open');
- expect((await page.locator('script[type="application/ld+json"]').allTextContents()).join('')).toContain('PT1M23S');
+ expect((await page.locator('script[type="application/ld+json"]').allTextContents()).join('')).toContain('PT1M15S');
 });
 
 test('Pricing starts with JovaBook and retains Websites and Webcare',async({page})=>{

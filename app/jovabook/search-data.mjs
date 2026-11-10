@@ -1,5 +1,6 @@
 import {OFFER_PLANS} from "../../lib/jovabook-offer.mjs";
 import {socialPreview} from "../../lib/social-preview.mjs";
+import {jovabookDemo} from "../../lib/jovabook-demo.mjs";
 const site = "https://www.jovamedia.com";
 export const jovabookUrl = `${site}/`;
 
@@ -98,8 +99,8 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       "@id": `${jovabookUrl}#demo-video`,
       name: "JovaBook product demonstration",
       description: "A demonstration of JovaBook's online booking and business management workspace.",
-      thumbnailUrl: `${site}/jovabook/demo-poster-clean.webp`,
-      contentUrl: `${site}/jovabook/demo.mp4`,
+      thumbnailUrl: `${site}${jovabookDemo.poster}`,
+      contentUrl: `${site}${jovabookDemo.src}`,
       uploadDate: video.uploadDate,
       duration: video.duration,
       inLanguage: "en-GB",
