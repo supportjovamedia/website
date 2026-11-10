@@ -24,12 +24,24 @@
 - Browser checks blocked external requests. This verification did not crawl production or spend Vercel CDN requests.
 - The two reused WebP photographs have no EXIF, XMP or ICC metadata reported by Sharp. Source originals remain in the project.
 
-## Review dependencies and queued follow-up
+## Release scope and remaining limits
 
-- Visual approval of the remaining designs is ongoing. Evergreen was accepted during the local review. Images are existing project examples rather than the exact mockup photos.
+- The user approved all four designs. Homepage Evergreen uses an existing treatment photo with white heading text; public customers retain their own uploaded images. Homepage samples are inert scrollable visuals, with only their external design selectors interactive. Redundant example labels are removed.
 - Only mobile/narrow references were provided for Evergreen and Terracotta. Their desktop layouts adapt the same design; Cobalt and Olive have supplied desktop references.
-- Product copy still advertises Team branding removal. The new instruction to retain a website credit on every design needs that existing marketing promise clarified before release. No plan price, billing logic or entitlement was changed here.
-- Mobile/online address enforcement is a separate confirmed issue: onboarding records the service-location choice, while Business information and the legacy setup form still mark Address required. Do not claim this is fixed by hiding the website location row. This remains queued for an end-to-end form and backend correction.
-- PRs 199 and 200 are separate branches and are not included in this change.
+- Team copy now specifies booking-page branding removal. All four new website templates retain the underlined JovaMedia credit. Plan prices, limits and billing entitlements are unchanged.
+- Mobile-only and online-only businesses may save a blank address in Business information and setup. Physical, mixed and legacy/unknown choices retain address validation. The existing access response carries the requirement, adding no polling or requests. Phone, owner and paid-signup guards remain enforced. Both migrations were applied and their hosted grants and constraints verified.
+- PRs 199 and 200 are included by merge, covering service descriptions, existing booking notes as Special instructions, calendar presentation, selector/FAQ fixes and yellow testimonial text.
+- Calendar, Services, Clients and Insights now use new 2x lossless WebP screenshots on phone and desktop. Every RGB pixel matches the original PNG; captures use #FFD700. Metadata was stripped and originals preserved under output/product-screens-refresh.
+- Pricing and industry templates use black text and buttons, consistent card edges and yellow accents. Pricing Team-seat totals and signup destinations now use the same selected quantity.
+- No real payment, outbound message or live customer booking was created during validation. Service-specific midnight-only availability and overnight appointments are not added by this release.
 
 Local review entry: `http://127.0.0.1:4466/?preview=day#scheduling`, then Website design. The temporary four-design gallery is a local review artifact and is not part of the release.
+
+## Final release checks
+
+- 81 focused checks passed across the final runs. Two asset tests initially encountered local sandbox EPERM reads; all three bundle tests passed when rerun with filesystem access.
+- Four real address form modes passed save/reload or required-field checks. The database tests cover all 67 schema layers, private helper grants and paid-signup guards.
+- New homepage preview, pricing-seat totals, monthly/yearly switching and two industry pages passed at 360, 390, 768 and 1440 pixels without overflow or browser exceptions.
+- FAQ and selector runtime checks passed on mobile and desktop.
+- Full local production build completed with webpack, generating 141 pages. Webpack is used locally because the shared dependency directory is a junction; production keeps the normal project configuration.
+- Hosted description constraints, public salon access and authenticated-only owner-access grants verified after both migrations. Security-advisor findings are unchanged from before this release.
