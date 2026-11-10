@@ -1,0 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
+import vm from 'node:vm';
+const require=createRequire(import.meta.url),React=require('react'),swc=require('next/dist/build/swc');await swc.loadBindings();
+const {code}=await swc.transform(await readFile(new URL('../components/ScrollStories.js',import.meta.url),'utf8'),{filename:'ScrollStories.js',jsc:{parser:{syntax:'ecmascript',jsx:true},transform:{react:{runtime:'classic'}}},module:{type:'commonjs'}});
+test('FAQ current selection and connector geometry ignore hidden questions before and after reveal',()=>{
+ const values={},style={setProperty(k,v){values[k]=v;}},effects=[];
+ const card=(top,hidden=false,cssHidden=false)=>({hidden,cssHidden,dataset:{},style,getClientRects(){return this.hidden||this.cssHidden?[]:[{}];},getBoundingClientRect(){return {top,height:this.hidden||this.cssHidden?0:100};},querySelector:()=>({getBoundingClientRect:()=>({top,height:40})})});
+ const visibleFirst=card(-650),visibleLast=card(-130),hidden=card(0,true),cssHidden=card(0,false,true),cards=[visibleFirst,visibleLast,hidden,cssHidden];
+ const root={id:'faq',dataset:{},style,getBoundingClientRect:()=>({top:-1800,bottom:200,height:2000}),querySelectorAll:()=>cards,querySelector:()=>({getBoundingClientRect:()=>({top:-650})})};
+ const exports={};let request;
+ const media=query=>({matches:query.includes('min-width'),addEventListener(){},removeEventListener(){}});
+ vm.runInNewContext(code,{exports,React,innerHeight:900,matchMedia:media,cancelAnimationFrame(){},requestAnimationFrame(fn){fn();return 1;},addEventListener(name,fn){if(name==='scroll')request=fn;},removeEventListener(){},ResizeObserver:class{observe(){}disconnect(){}},IntersectionObserver:class{observe(){}disconnect(){}},require:name=>name==='react'?{...React,useRef:()=>({current:root}),useId:()=> 'faq',useEffect:fn=>effects.push(fn)}:name==='next/link'?()=>null:name.endsWith('.css')?{}:name==='./MotionRegion'?()=>null:assert.fail(name)});
+ exports.FaqStory({items:[['Q','A']],showArtwork:false});effects.forEach(fn=>fn());
+ assert.equal(visibleLast.dataset.current,'true');assert.equal(visibleFirst.dataset.current,'false');assert.equal(hidden.dataset.current,undefined);assert.equal(cssHidden.dataset.current,undefined);assert.equal(values['--line-length'],'520px');
+ assert.equal(typeof request,'function');
+ hidden.hidden=false;cssHidden.cssHidden=false;request();assert.equal(hidden.dataset.current,'true');assert.equal(visibleLast.dataset.current,'false');assert.equal(values['--line-length'],'650px');
+});

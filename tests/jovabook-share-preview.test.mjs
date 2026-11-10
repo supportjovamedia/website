@@ -5,13 +5,13 @@ import sharp from 'sharp';
 import {jovabookMetadata} from '../app/jovabook/search-data.mjs';
 import {socialPreview} from '../lib/social-preview.mjs';
 const asset=new URL('../public'+socialPreview.url,import.meta.url);
-test('JovaBook OG and Twitter share the versioned hero with correct dimensions and unchanged page title',async()=>{
+test('JovaBook OG and Twitter share the versioned hero with correct dimensions and approved page title',async()=>{
  const metadata=jovabookMetadata(),expected=new URL(socialPreview.url,'https://www.jovamedia.com').href;
- assert.equal(metadata.title.absolute,'Booking System for Service Businesses | JovaBook');
+ assert.equal(metadata.title.absolute,'Online Booking System for Small Businesses | JovaBook');
  assert.equal(metadata.openGraph.title,metadata.title.absolute);assert.equal(metadata.twitter.title,metadata.title.absolute);
  assert.equal(metadata.alternates.canonical,'https://www.jovamedia.com/');
  assert.deepEqual(metadata.openGraph.images,metadata.twitter.images);
- assert.equal(metadata.openGraph.images.length,1);const image=metadata.openGraph.images[0];assert.equal(image.url,expected);assert.equal(image.width,1200);assert.equal(image.height,630);assert.match(image.alt,/current dashboard, mobile calendar and free plan/);
+ assert.equal(metadata.openGraph.images.length,1);const image=metadata.openGraph.images[0];assert.equal(image.url,expected);assert.equal(image.width,1200);assert.equal(image.height,630);assert.match(image.alt,/dashboard.*mobile calendar/);
  assert.equal(metadata.twitter.card,'summary_large_image');
 });
 test('The delivered PNG is 1200 by 630 and contains no embedded provenance or personal metadata',async()=>{

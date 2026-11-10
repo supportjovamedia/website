@@ -1,0 +1,370 @@
+{
+  "captured": "2026-11-10",
+  "source": "Actual localhost:4458 JovaBook demo, with fictional Avery Studio records",
+  "screens": {
+    "desktop.dashboard": {
+      "url": "/jovabook/portal/dashboard-desktop-82ae21507329.webp",
+      "width": 3200,
+      "height": 2000,
+      "bytes": 195960,
+      "sha256": "82ae215073294267d2be82ef852e9e555de58828a0bc9fbecb8f3d1c181e5edf",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "desktop.calendar-week": {
+      "url": "/jovabook/portal/calendar-week-desktop-0113c769309e.webp",
+      "width": 3200,
+      "height": 2000,
+      "bytes": 397890,
+      "sha256": "0113c769309ec22f0d13408b67b8006cd8353780252164af5150c3f067d5bb9e",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "desktop.bookings": {
+      "url": "/jovabook/portal/bookings-desktop-b726b1cf06c3.webp",
+      "width": 3200,
+      "height": 2000,
+      "bytes": 147242,
+      "sha256": "b726b1cf06c348fa68af87ea8a091a40f94e4115f25770b5dad7c96d66169b4c",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "desktop.customers": {
+      "url": "/jovabook/portal/customers-desktop-cbc3cfa0c31c.webp",
+      "width": 3200,
+      "height": 2000,
+      "bytes": 182198,
+      "sha256": "cbc3cfa0c31ce6a40a6a550c3214498cd00ba92bc9489330279262acfaedb51d",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "desktop.services": {
+      "url": "/jovabook/portal/services-desktop-e748be433607.webp",
+      "width": 3200,
+      "height": 2000,
+      "bytes": 144370,
+      "sha256": "e748be433607a10c96edee599dd4988328a18a2fe6747443e039e9a8e79478e1",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "desktop.staff": {
+      "url": "/jovabook/portal/staff-desktop-5e2cb21768d4.webp",
+      "width": 3200,
+      "height": 2000,
+      "bytes": 139262,
+      "sha256": "5e2cb21768d454aca77ce870447370b9e10e056c1a40f8172ac2ac5c08d47fa9",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "desktop.insights": {
+      "url": "/jovabook/portal/insights-desktop-7e1ff6663e89.webp",
+      "width": 3200,
+      "height": 2000,
+      "bytes": 169792,
+      "sha256": "7e1ff6663e891d185374f221506b246d15796096e05ed42847615e20188ee45e",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "mobile.dashboard": {
+      "url": "/jovabook/portal/dashboard-mobile-debd96e242a2.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 73588,
+      "sha256": "debd96e242a272a1540efdfea375bf6f1e5f0f2c2f5ea5f3fb66f23cf759cf86",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "mobile.calendar": {
+      "url": "/jovabook/portal/calendar-mobile-e5c9d6062b23.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 84342,
+      "sha256": "e5c9d6062b232502e461ad93957fc6a86608f2e6135906d2effc0ac4f61b0c2e",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "mobile.bookings": {
+      "url": "/jovabook/portal/bookings-mobile-8a2bf5469358.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 92170,
+      "sha256": "8a2bf54693587c4fc118004b6b9250637b7b6f498fbee9648ddad527730f173e",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "mobile.customers": {
+      "url": "/jovabook/portal/customers-mobile-33b80f585a50.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 99126,
+      "sha256": "33b80f585a507e0303007776518a05c5b86a170b8e557366e458b2c9068665e8",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "mobile.services": {
+      "url": "/jovabook/portal/services-mobile-70eee955e518.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 71818,
+      "sha256": "70eee955e518006efd911cd183eecca4e9a0ee5b2760788447eea0b6ad8ad944",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "mobile.staff": {
+      "url": "/jovabook/portal/staff-mobile-0ede8ae03a97.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 64694,
+      "sha256": "0ede8ae03a97e60a6d0ae84c6559220b73fe2d761f9482f0ce1c8cc7157ad0ec",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "mobile.insights": {
+      "url": "/jovabook/portal/insights-mobile-4b0891cd32bf.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 67194,
+      "sha256": "4b0891cd32bf175dc528b1cc69a00492b5c9404f76320ece8a323077c036ff08",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.classic.desktop": {
+      "url": "/jovabook/portal/dashboard-classic-desktop-5afcd9cc3e5e.webp",
+      "width": 2880,
+      "height": 2000,
+      "bytes": 208708,
+      "sha256": "5afcd9cc3e5ebb32b30d8910bc9b7428f507e8e31e42b8fe7cf402f0dc092b1a",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.classic.mobile": {
+      "url": "/jovabook/portal/dashboard-classic-mobile-debd96e242a2.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 73588,
+      "sha256": "debd96e242a272a1540efdfea375bf6f1e5f0f2c2f5ea5f3fb66f23cf759cf86",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.botanical.desktop": {
+      "url": "/jovabook/portal/dashboard-botanical-desktop-3227d52a86a0.webp",
+      "width": 2880,
+      "height": 2000,
+      "bytes": 196992,
+      "sha256": "3227d52a86a016d57307beee9df40358eb556195e64438df6b4dbc07e8660f12",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.botanical.mobile": {
+      "url": "/jovabook/portal/dashboard-botanical-mobile-3b8d6327c152.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 77218,
+      "sha256": "3b8d6327c152fc596eea673c0ec67e112c982f292985cf150a1c444bf36067e8",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.glass.desktop": {
+      "url": "/jovabook/portal/dashboard-glass-desktop-fecb820326bd.webp",
+      "width": 2880,
+      "height": 2000,
+      "bytes": 208010,
+      "sha256": "fecb820326bd1b173c890bf02d3d253f154a963cfa5a70c4ffb1b69ba4649856",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.glass.mobile": {
+      "url": "/jovabook/portal/dashboard-glass-mobile-61c3ca2a43a0.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 80040,
+      "sha256": "61c3ca2a43a0058f56225573692547f9098dbbe36cb5cfb3bb8c5232104a84fa",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.graphite.desktop": {
+      "url": "/jovabook/portal/dashboard-graphite-desktop-9fa6fb38c271.webp",
+      "width": 2880,
+      "height": 2000,
+      "bytes": 202224,
+      "sha256": "9fa6fb38c271bbe15c2471a677cdac161f6b7b6525ec9b979375e37cb3d57acb",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.graphite.mobile": {
+      "url": "/jovabook/portal/dashboard-graphite-mobile-63f397931b2f.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 77006,
+      "sha256": "63f397931b2fe924dacbf6427d29718e22fe8c3500296a070e388d0752cf110a",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.editorial.desktop": {
+      "url": "/jovabook/portal/dashboard-editorial-desktop-5c27234c9977.webp",
+      "width": 2880,
+      "height": 2000,
+      "bytes": 195922,
+      "sha256": "5c27234c99771f5fc834a57ad7f810f3cd8c70a0d83d986a9639ecc0918de5f7",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.editorial.mobile": {
+      "url": "/jovabook/portal/dashboard-editorial-mobile-1dada3448731.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 75742,
+      "sha256": "1dada344873121b997a8c9042c3be4ff3dd72e2403cac499d6d2bde398f3618a",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.studio.desktop": {
+      "url": "/jovabook/portal/dashboard-studio-desktop-f0394ad4788a.webp",
+      "width": 2880,
+      "height": 2000,
+      "bytes": 197424,
+      "sha256": "f0394ad4788a0bc9f67aeca1becfe44c77cc14526d877440a4ef4318d6dcc35a",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "theme.studio.mobile": {
+      "url": "/jovabook/portal/dashboard-studio-mobile-783065cbc701.webp",
+      "width": 780,
+      "height": 1688,
+      "bytes": 74782,
+      "sha256": "783065cbc7016861cdf8bcc21800fd59ce7851ee285b0a1b945a3be6761c713c",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "hero.macbook": {
+      "url": "/jovabook/portal/hero-macbook-air-13-9d18ee77cd02.webp",
+      "width": 2560,
+      "height": 1664,
+      "bytes": 168576,
+      "sha256": "9d18ee77cd02ac003005f327f1af9603f2771d81e48446734c48099636bc3780",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    },
+    "hero.iphone": {
+      "url": "/jovabook/portal/hero-iphone-17-pro-max-4fbf826e18cc.webp",
+      "width": 880,
+      "height": 1912,
+      "bytes": 101962,
+      "sha256": "4fbf826e18ccd2fdfa9f2d38cc67b5295e8dab095f5f03eb22f76270619cf534",
+      "metadata": {
+        "exif": false,
+        "xmp": false,
+        "iptc": false,
+        "provenanceMarkers": false
+      }
+    }
+  }
+}

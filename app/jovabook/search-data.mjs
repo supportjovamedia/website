@@ -4,8 +4,8 @@ const site = "https://www.jovamedia.com";
 export const jovabookUrl = `${site}/`;
 
 export function jovabookMetadata() {
-  const title = "Booking System for Service Businesses | JovaBook";
-  const description = "JovaBook by JovaMedia is a booking system for service businesses. Start free with 20 monthly bookings and a one-page website. Add Stripe deposits on paid plans. 0% booking commission on every plan.";
+  const title = "Online Booking System for Small Businesses | JovaBook";
+  const description = "Online booking for small businesses. Manage appointments, customers and staff. Start free with 20 monthly bookings, a website included and 0% booking commission.";
   const image = {...socialPreview, url: new URL(socialPreview.url, site).href};
   return {
     title: { absolute: title },
@@ -44,7 +44,7 @@ export function jovabookStructuredData({ faqs = [], video } = {}) {
       "@type": "WebPage",
       "@id": `${jovabookUrl}#webpage`,
       url: jovabookUrl,
-      name: "JovaBook booking system for service businesses",
+      name: "JovaBook online booking system for small businesses",
       description: "JovaBook by JovaMedia is scheduling and online booking software for service businesses, including hair and beauty, healthcare, education, fitness, consulting, and spa and wellness businesses.",
       inLanguage: "en-GB",
       isPartOf: { "@id": `${site}/#website` },

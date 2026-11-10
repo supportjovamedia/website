@@ -1,0 +1,147 @@
+/* Approved comparison: one width, two cost cards and a savings summary. */
+body .jovabook-story #jova-story-concept #ex-compare{background:#f7f7f7!important;padding-block:52px!important}
+body .jovabook-story #jova-story-concept #ex-compare>.js-wrap{width:calc(100% - 80px)!important;max-width:1160px!important;min-width:0}
+body .jovabook-story #jova-story-concept #ex-compare .ex-title{text-align:left!important;margin-bottom:12px!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-title h2{color:#111!important;text-align:left!important;text-wrap:balance}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-example-label{font-size:12px!important;line-height:1.5;color:#555!important;margin:0 0 7px!important;max-width:none!important}
+body .jovabook-story #jova-story-concept #ex-compare #vp-example{max-width:none!important;margin:0 0 23px!important;font-size:14px!important;line-height:1.6;color:#555!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;box-sizing:border-box;width:100%!important;max-width:none!important;margin:0 0 20px!important;padding:4px!important;gap:4px;border:1px solid #d2d2d2!important;border-radius:5px!important;background:#fff!important;box-shadow:none}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments>button{grid-column:auto!important;min-height:47px;margin:0;padding:10px 8px!important;border:0!important;border-radius:4px!important;font-size:14px;font-weight:600;color:#111}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options .segment-pill{border-radius:4px!important}
+body .jovabook-story #jova-story-concept #ex-compare .vp-unified-calculator{box-sizing:border-box;width:100%!important;max-width:none!important;padding:0!important;margin:0!important;border:1px solid #dedede!important;border-radius:5px!important;background:#fff!important;box-shadow:0 10px 24px -16px rgba(0,0,0,.2);overflow:hidden}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-grid{display:flex!important;flex-direction:column;gap:0!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-grid>div:not(.vp-value-result){display:none!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-compare-grid>div.vp-value-result{display:grid!important;grid-template-columns:1fr 1fr 1.12fr;align-items:stretch;gap:18px;order:0;width:100%!important;max-width:none!important;padding:25px!important;margin:0;border:0!important;border-radius:0!important;background:#fff!important;color:#111!important;text-align:left;box-shadow:none}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-monthly-costs{display:contents!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-monthly-costs .js-cost-row{display:flex!important;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;min-width:0;min-height:276px;margin:0;padding:22px!important;border:1px solid #dedede!important;border-radius:5px!important;background:#fff!important;color:#111!important;box-shadow:none}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-monthly-costs .js-cost-row::before,body .jovabook-story #jova-story-concept #ex-compare .calculator-monthly-costs .js-cost-row::after{display:none!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-label{display:grid;gap:9px;min-width:0;margin-bottom:21px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-label>small{font-size:12px!important;line-height:1.45;color:#666!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-label>span{font-size:19px;font-weight:700;line-height:1.3;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-name-line{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-name-line>span:first-child{font-size:19px;font-weight:700;line-height:1.3;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-included{padding:5px 7px;border-radius:3px;background:#FFD700!important;color:#111!important;font-size:11px!important;font-weight:700;line-height:1.3}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-price-value{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:55px;margin-bottom:23px;max-width:100%}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-price-value>b{font-size:43px!important;line-height:1.1;color:#111!important;font-weight:700;font-variant-numeric:tabular-nums}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-current-cost .calculator-price-value>b{font-size:34px!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-price-value>small{font-size:12px!important;color:#555!important;white-space:nowrap;margin-top:12px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-reject-icon{display:none;align-self:center;color:#bd2924!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-reject-icon svg{color:#bd2924!important;width:19px;height:19px}
+body .jovabook-story #jova-story-concept #ex-compare[data-calculator-outcome="saving"] .calculator-current-cost .calculator-reject-icon{display:inline-flex}
+body .jovabook-story #jova-story-concept #ex-compare[data-calculator-outcome="saving"] .calculator-current-cost b{text-decoration:line-through;text-decoration-color:#bd2924;text-decoration-thickness:1.5px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-lines{display:grid;gap:10px;width:100%;margin:auto 0 0;padding:18px 0 0;border-top:1px solid #eee;font-size:12px;line-height:1.4}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-lines>div{display:flex;justify-content:space-between;gap:8px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-lines dt{color:#606060}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-lines dd{margin:0;text-align:right;color:#111;font-variant-numeric:tabular-nums}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card{display:flex;grid-column:auto;flex-direction:column;align-items:flex-start;justify-content:center;min-width:0;padding:22px;border:1px solid #d4d4d4;border-radius:5px;background:#fbfbfb!important;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare #ex-free-limit{grid-column:1/-1;margin:0!important;color:#555!important;font-size:12px!important;line-height:1.6}
+body .jovabook-story #jova-story-concept #ex-compare #ex-saving-heading{order:0;align-self:flex-start;width:auto;max-width:100%;margin:0 0 17px!important;padding:6px 10px!important;border:0;border-radius:99px;background:transparent!important;color:#111!important;-webkit-text-fill-color:#111;font-size:13px!important;font-weight:700;line-height:1.35}
+body .jovabook-story #jova-story-concept #ex-compare[data-calculator-outcome="saving"] #ex-saving-heading{background:#FFD700!important}
+body .jovabook-story #jova-story-concept #ex-compare #vp-versus{display:none!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-annual{display:flex!important;flex-direction:column;gap:8px;order:1;align-items:flex-start;margin:0 0 19px!important;padding:0;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-annual>b{font-size:46px!important;line-height:1.05;font-weight:700;color:#111!important;font-variant-numeric:tabular-nums}
+body .jovabook-story #jova-story-concept #ex-compare .ex-annual>span{font-size:13px!important;line-height:1.4;color:#555!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-saving-number{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;order:2;width:100%;padding-top:17px;border-top:1px solid #ddd;font-size:22px!important;line-height:1.25;letter-spacing:normal!important;margin:0!important;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card :is(output,b,span){text-decoration:none!important;letter-spacing:normal!important}
+body .jovabook-story #jova-story-concept #ex-compare .ex-saving-number>output{font-size:inherit!important;color:#111!important;font-weight:700;font-variant-numeric:tabular-nums}
+body .jovabook-story #jova-story-concept #ex-compare .ex-saving-number>small{font-size:12px!important;color:#555!important}
+body .jovabook-story #jova-story-concept #ex-compare[data-calculator-outcome="unknown"] .calculator-monthly-costs{display:none!important}
+body .jovabook-story #jova-story-concept #ex-compare[data-calculator-outcome="unknown"] .calculator-savings-card{grid-column:1/-1;min-height:90px}
+body .jovabook-story #jova-story-concept #ex-compare[data-calculator-outcome="unknown"] .calculator-savings-card :is(.ex-annual,.ex-saving-number){display:none!important}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings{display:block!important;order:1;margin:0!important;padding:0 25px!important;border:0!important;border-top:1px solid #e4e4e4!important;border-radius:0!important;background:#fff!important}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings>summary{display:flex;align-items:center;justify-content:space-between;min-height:60px;padding:14px 0;font-size:14px;font-weight:600;line-height:1.5;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings>summary::after{display:grid;place-items:center;width:28px;height:28px;padding:0;border:1px solid #cfcfcf;border-radius:50%;background:#fff;color:#111;font:400 23px/1 Arial,sans-serif}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings>summary:focus-visible{outline:2px solid #111;outline-offset:4px;border-radius:5px}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings .ex-compare-controls{background:transparent!important;color:#111;padding-block:4px 22px}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings[open] .ex-compare-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings .ex-compare-controls :is(h3,.nr-more-inputs,#ex-marketplace-fields){grid-column:1/-1}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings>.ex-result-banner{background:transparent!important;color:#111!important;margin-top:18px;padding:0!important;font-size:12px}
+body .jovabook-story #jova-story-concept #ex-compare .vp-settings>.js-btn{display:inline-flex;margin-block:14px 22px}
+body .jovabook-story #jova-story-concept #ex-compare .vp-price-source{display:block;box-sizing:border-box;width:100%;margin:0!important;padding:17px 25px;border-top:1px solid #e4e4e4;background:#fff!important;color:#444!important;font-size:12px;line-height:1.6;text-align:right;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:700px){
+ body .jovabook-story #jova-story-concept #ex-compare{padding-block:32px!important}
+ body .jovabook-story #jova-story-concept #ex-compare>.js-wrap{width:calc(100% - 40px)!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-title h2{font-size:25px!important;line-height:1.15}
+ body .jovabook-story #jova-story-concept #ex-compare #vp-example{font-size:13px!important;line-height:1.55;margin-bottom:16px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3px;margin-bottom:15px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments>button{grid-column:auto!important;min-height:36px;padding:9px 3px!important;font-size:12px}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments>button:nth-of-type(n+4){grid-column:auto!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-compare-grid>div.vp-value-result{grid-template-columns:repeat(2,minmax(0,1fr));padding:14px!important;gap:10px}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-monthly-costs .js-cost-row{padding:14px 12px!important;min-height:0}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-label{gap:5px;margin-bottom:10px}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-label>small{font-size:12px!important;min-height:34px;line-height:1.35}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-label>span{font-size:14px;line-height:1.35;min-height:20px}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-name-line>span:first-child{font-size:14px;line-height:1.35;min-height:20px}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-included{display:none}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-price-value{justify-content:flex-start;align-items:center;gap:4px;max-width:100%;min-height:58px;margin:0}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-price-value>b{font-size:31px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-current-cost .calculator-price-value>b{font-size:27px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-price-value>small{display:block;width:100%;font-size:12px!important;line-height:1.4;margin:0}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-reject-icon svg{width:14px;height:14px}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-lines{display:none}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-column:1/-1;gap:0 12px;padding:14px 16px}
+ body .jovabook-story #jova-story-concept #ex-compare #ex-saving-heading{grid-column:1/-1;margin-bottom:12px!important;font-size:12px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-annual{grid-column:1;grid-row:2;gap:5px;margin:0!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-annual>b{font-size:30px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-annual>span{font-size:12px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-saving-number{grid-column:2;grid-row:2;display:flex;flex-direction:column;justify-content:center;gap:5px;width:auto;min-height:52px;padding:0 0 0 12px;border-top:0;border-left:1px solid #ddd;font-size:24px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-saving-number>small{font-size:12px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .vp-settings{padding:0 18px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .vp-settings>summary{min-height:54px;font-size:14px}
+ body .jovabook-story #jova-story-concept #ex-compare .vp-settings[open] .ex-compare-controls{grid-template-columns:minmax(0,1fr)}
+ body .jovabook-story #jova-story-concept #ex-compare .vp-price-source{padding:14px 18px;text-align:left}
+}
+/* Assumptions and official sources follow the figures disclosure, on every size. */
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes{padding:14px 25px 16px;border-top:1px solid #e4e4e4;background:#fff}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes .calculator-example-label{margin:0 0 5px!important;font-size:12px!important;line-height:1.5;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare #vp-example{margin:0 0 9px!important;font-size:12px!important;line-height:1.55;color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-source-links{display:flex;flex-wrap:wrap;gap:7px 17px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes :is(.vp-price-source,.vp-fx-source){display:inline;width:auto;margin:0!important;padding:0;border:0!important;background:transparent!important;color:#111!important;font-size:12px;line-height:1.5;text-align:left;text-decoration:underline;text-underline-offset:3px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes [hidden]{display:none!important}
+@media(max-width:700px){
+ body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments{grid-template-columns:repeat(4,minmax(0,1fr))!important;padding:3px!important;gap:2px!important;margin-bottom:13px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments>button{grid-column:auto!important;min-width:0;min-height:44px;padding:8px 2px!important;font-size:12px;line-height:1.3;white-space:nowrap;border-bottom:0!important}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes{padding:12px 18px 14px}
+ body .jovabook-story #jova-story-concept #ex-compare[data-selected-provider=acuity] .vp-settings>.js-btn{display:flex;width:max-content;max-width:100%;justify-content:center;margin-inline:auto!important;text-align:center}
+}
+@media(max-width:700px){body .jovabook-story #jova-story-concept #ex-compare .ex-compare-options.portal-segments>button:nth-of-type(n+4){grid-column:auto!important}}
+/* Desktop summaries share a centred three-column frame; invoice rows stay aligned. */
+body .jovabook-story #jova-story-concept #ex-compare>.js-wrap{margin-inline:auto!important}
+body .jovabook-story #jova-story-concept #ex-compare :is(.ex-compare-options.portal-segments,.vp-unified-calculator){margin-inline:auto!important}
+@media(min-width:900px){
+ body .jovabook-story #jova-story-concept #ex-compare .ex-title,body .jovabook-story #jova-story-concept #ex-compare .ex-title h2{text-align:center!important}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-compare-grid>div.vp-value-result{grid-template-columns:repeat(3,minmax(0,1fr))}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-monthly-costs .js-cost-row{align-items:center;text-align:center}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-label{width:100%;justify-items:center;text-align:center}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-name-line{justify-content:center}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-price-value{justify-content:center;width:100%}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-cost-lines{text-align:left}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card{align-items:center;text-align:center}
+ body .jovabook-story #jova-story-concept #ex-compare #ex-saving-heading{align-self:center}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-annual{align-items:center}
+ body .jovabook-story #jova-story-concept #ex-compare .ex-saving-number{justify-content:center}
+}
+
+/* Annual savings lead; positive savings reuse the appointment confirmation green. */
+body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-saving-number{order:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:0;padding:0 0 18px;font-size:46px!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-saving-number>small{font-size:13px!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-annual{order:2;display:flex!important;flex-direction:row;justify-content:center;align-items:baseline;gap:8px;width:100%;margin:0!important;padding-top:17px;border-top:1px solid #ddd}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-annual>b{font-size:22px!important}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card :is(#ex-saving,#ex-saving-annual){color:#111!important}
+body .jovabook-story #jova-story-concept #ex-compare[data-calculator-outcome="saving"] .calculator-savings-card :is(#ex-saving,#ex-saving-annual){color:#286745!important}
+body .jovabook-story #jova-story-concept #ex-compare details.calculator-footnotes{display:block;box-sizing:border-box;width:100%;max-width:none!important;padding:0!important;margin:0!important;border:0;border-top:1px solid #e4e4e4;border-radius:0;background:#fff}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes>summary{display:flex;align-items:center;gap:12px;min-height:52px;padding:12px 25px;cursor:pointer;list-style:none;color:#111;font-size:13px;font-weight:600;text-align:left}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes>summary::-webkit-details-marker{display:none}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes>summary>span{margin-left:auto;color:#555;font-size:12px;font-weight:400}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes>summary::after{content:'+';display:grid;place-items:center;flex:0 0 25px;width:25px;height:25px;margin:0;border:1px solid #cfcfcf;border-radius:50%;font:400 20px/1 Arial,sans-serif;color:#111;background:#fff;transform:none}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes[open]>summary::after{content:'−'}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes>summary:focus-visible{outline:2px solid #111;outline-offset:-4px}
+body .jovabook-story #jova-story-concept #ex-compare .calculator-footnote-copy{padding:0 25px 16px;text-align:left}
+@media(max-width:700px){
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-saving-number{grid-column:1;grid-row:2;align-items:flex-start;gap:5px;min-height:52px;padding:0;font-size:30px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-saving-number>small{font-size:12px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-annual{grid-column:2;grid-row:2;flex-direction:column;justify-content:center;align-items:flex-start;gap:5px;width:auto;padding:0 0 0 12px;border-top:0;border-left:1px solid #ddd}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-savings-card .ex-annual>b{font-size:22px!important}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-footnotes>summary{padding:12px 18px}
+ body .jovabook-story #jova-story-concept #ex-compare .calculator-footnote-copy{padding:0 18px 14px}
+}

@@ -50,7 +50,7 @@ export default function Footer() {
       </div>
       <div className={styles.contactRow}>
         <div className={styles.contactLinks}><a href="mailto:support.jovamedia@gmail.com">support.jovamedia@gmail.com</a><a href={businessPhone.tel}>{businessPhone.display}</a><a href={whatsappLink()} target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></div>
-        <nav className={styles.socials} aria-label="JovaMedia social profiles">{footerSocialProfiles.map(profile => <a key={profile.icon} href={profile.url} target="_blank" rel="noopener noreferrer me" aria-label={`JovaMedia on ${profile.label}`} title={profile.label}><SocialIcon name={profile.icon}/></a>)}<a href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat with JovaMedia on WhatsApp" title="WhatsApp" data-contact-placement="footer"><SocialIcon name="whatsapp"/></a></nav>
+        <nav className={styles.socials} aria-label="JovaMedia social profiles">{footerSocialProfiles.map(profile => <a key={profile.icon} href={profile.url} target="_blank" rel="noopener noreferrer me" aria-label={`JovaMedia on ${profile.label}`} title={profile.label}><SocialIcon name={profile.icon} colored/></a>)}<a href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat with JovaMedia on WhatsApp" title="WhatsApp" data-contact-placement="footer"><SocialIcon name="whatsapp" colored/></a></nav>
       </div>
       <div className={styles.bottom}>
         <p>© {new Date().getFullYear()} JovaMedia</p>

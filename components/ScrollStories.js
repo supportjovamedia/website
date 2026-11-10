@@ -38,7 +38,7 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
       // updates independent of observer timing when opening an anchor directly.
       if (rect.bottom < -250 || rect.top > innerHeight + 250) return;
       const progress = Math.max(0, Math.min(1, (innerHeight - rect.top) / (innerHeight + rect.height)));
-      const cards = [...root.querySelectorAll("[data-story-card]")];
+      const cards = [...root.querySelectorAll("[data-story-card]")].filter(card => !card.hidden && card.getClientRects().length > 0);
       // Read all geometry before changing styles, rather than forcing layout
       // again for each card and marker.
       const positions = cards.map(card => ({
@@ -46,7 +46,7 @@ function useStoryMotion(ref, paused, hasProgressTrack = false) {
         markerBox: card.querySelector("[data-story-marker]")?.getBoundingClientRect(),
       }));
       const track = hasProgressTrack && root.querySelector("[data-story-track]");
-      const markers = hasProgressTrack ? [...root.querySelectorAll("[data-story-marker]")] : [];
+      const markers = hasProgressTrack ? cards.map(card => card.querySelector("[data-story-marker]")).filter(Boolean) : [];
       const trackBox = track && markers.length > 1 ? track.getBoundingClientRect() : null;
       const first = trackBox && markers[0].getBoundingClientRect();
       const last = trackBox && markers[markers.length - 1].getBoundingClientRect();

@@ -1,33 +1,33 @@
-.footer:global(.jova-footer){display:block;background:#f3f4f6;padding:44px 5vw 22px;color:#213b50;text-align:left;border-top:1px solid #dce1e5}
+.footer:global(.jova-footer){display:block;background:#f7f7f7;padding:44px 5vw 22px;color:#111;text-align:left;border-top:1px solid #dce1e5}
 .inner{max-width:1440px;margin-inline:auto}
 .footer .brand{display:inline-flex;margin-bottom:32px}
 .footer .brand img{width:136px;height:auto}
 .navigation{display:grid;grid-template-columns:2.4fr .9fr .8fr .9fr;gap:42px;align-items:start}
-.footer .navigation h3{font-size:14px;font-weight:600;line-height:1.5;margin:0 0 14px;color:#173a54}
+.footer .navigation h3{font-size:14px;font-weight:600;line-height:1.5;margin:0 0 14px;color:#111}
 .groupLinks{display:grid;align-items:start}
 .industryLinks{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:26px}
-.footer .groupLinks a{min-height:34px;display:flex;align-items:center;padding:6px 0;font-size:13px;line-height:1.6;overflow-wrap:normal;color:#456276;text-decoration:none;text-underline-offset:4px}
-.footer .groupLinks a:hover{text-decoration:underline;color:#173a54}
+.footer .groupLinks a{min-height:34px;display:flex;align-items:center;padding:6px 0;font-size:13px;line-height:1.6;overflow-wrap:normal;color:#111;text-decoration:none;text-underline-offset:4px}
+.footer .groupLinks a:hover{text-decoration:underline;color:#111}
 .footer .contactRow{display:flex;align-items:center;justify-content:space-between;gap:24px;border-top:1px solid #dce1e5;margin-top:32px;padding-top:20px}
 .contactLinks{display:flex;align-items:center;flex-wrap:wrap;gap:8px 28px}
-.footer .contactLinks a{display:flex;align-items:center;min-height:44px;font-size:13px;line-height:1.6;color:#456276;text-decoration:none;text-underline-offset:4px;overflow-wrap:anywhere}
+.footer .contactLinks a{display:flex;align-items:center;min-height:44px;font-size:13px;line-height:1.6;color:#111;text-decoration:none;text-underline-offset:4px;overflow-wrap:anywhere}
 .footer .contactLinks a:hover{text-decoration:underline}
-.footer .socials{display:flex;align-items:center;gap:10px}
-.footer .socials a{display:grid;place-items:center;width:44px;height:44px;flex:none;border:1px solid #d4dce2;border-radius:50%;color:#213b50;background:#fff}
-.footer .socials svg{width:20px;height:20px}
+.footer .socials{display:flex;align-items:center;gap:14px}
+.footer .socials a{display:grid;place-items:center;width:48px;height:48px;flex:none;border:1px solid #d4dce2;border-radius:50%;color:#111;background:#fff}
+.footer .socials svg{display:block;width:27px;height:27px}
 .footer .bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}
-.footer .bottom p{border:0;padding:0;margin:0;color:#526a7d;font-size:12px;line-height:1.7}
+.footer .bottom p{border:0;padding:0;margin:0;color:#111;font-size:12px;line-height:1.7}
 .footer .legal{display:flex;align-items:center;flex-wrap:wrap;gap:4px 24px}
-.footer .legal a,.footer .legal :global(.cookie-settings){display:flex;align-items:center;min-height:44px;margin:0;padding:0;font-size:12px;line-height:1.7;color:#456276;text-decoration:none}
-.footer a:focus-visible,.footer :global(.cookie-settings):focus-visible{outline:2px solid #235789;outline-offset:4px}
-@media(hover:hover){.footer .socials a:hover{background:#17394f;color:#fff;border-color:#17394f}}
+.footer .legal a,.footer .legal :global(.cookie-settings){display:flex;align-items:center;min-height:44px;margin:0;padding:0;font-size:12px;line-height:1.7;color:#111;text-decoration:none}
+.footer a:focus-visible,.footer :global(.cookie-settings):focus-visible{outline:2px solid #111;outline-offset:4px}
+@media(hover:hover){.footer .socials a:hover{background:#fff;color:#111;border-color:#777}}
 @media(max-width:1100px){.navigation{gap:26px;grid-template-columns:2.3fr 1fr .8fr 1fr}.industryLinks{column-gap:18px}}
 @media(max-width:900px){
   .footer:global(.jova-footer){padding:32px 22px 20px;text-align:left}
   .footer .brand{margin-bottom:24px}
   .footer .brand img{width:126px}
   .navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 24px;align-items:start}
-  .footer .navigation h3{font-size:14px;font-weight:600;line-height:1.5;margin:0 0 12px;color:#173a54;text-align:left}
+  .footer .navigation h3{font-size:14px;font-weight:600;line-height:1.5;margin:0 0 12px;color:#111;text-align:left}
   .navigation .groupLinks{padding:0}
   .navigation .industryLinks{grid-template-columns:1fr}
   .footer .navigation .groupLinks a{font-size:14px;min-height:44px;padding:10px 0}
@@ -61,3 +61,7 @@
 }
 .footer .contactLinks a{min-height:32px;padding:4px 0;line-height:1.5}
 @media(min-width:701px){.footer .navigation h3{margin-bottom:18px}.footer .contactLinks{gap:4px 24px}}
+
+.footer:global(.jova-footer){background:#f7f7f7;color:#111}
+.footer .socials a{background:transparent;border:0;border-radius:4px}
+.footer .socials a:hover{background:#ededed;color:inherit;border-color:transparent}
