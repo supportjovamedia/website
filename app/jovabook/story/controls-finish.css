@@ -1,12 +1,14 @@
 /* Final control exceptions stay scoped to their marketing examples. */
+/* Anchor the badge with a full-width flex row, not two independent translations.
+   The same wrapper is present in initial HTML and after pricing hydration. */
+body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch [data-cadence=annual]>.sw-yearly-badge{position:absolute;inset-inline:0;top:-19px;bottom:auto;width:auto;margin:0;padding:0;display:flex;justify-content:center;translate:none;transform:none;pointer-events:none;z-index:3}
+body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch .sw-yearly-badge>.sw-yearly-saving{position:static;inset:auto;display:block;width:max-content;margin:0!important;padding:6px 11px;translate:none!important;transform:none!important;border:4px solid #fff;border-radius:99px;background:var(--dashboard-accent,#ffd700)!important;color:#111!important;font-size:11px;font-weight:750;line-height:1;white-space:nowrap;box-shadow:none;box-sizing:border-box}
 body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;width:100%;max-width:none;margin:44px auto 38px;padding:0;border:1px solid #c4c8c0;border-radius:5px;background:#fff;overflow:visible}
 body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch>button{display:flex;align-items:center;justify-content:center;position:relative;min-width:0;min-height:52px;margin:0;padding:14px 16px;border:0!important;border-radius:0;background:#fff!important;color:#111!important;font-size:15px;font-weight:650;line-height:1.35}
 body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch>button:first-child{border-right:1px solid #c4c8c0!important;border-radius:4px 0 0 4px}
 body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch>button:last-child{border-radius:0 4px 4px 0}
 body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch>button[aria-pressed=true]{background:#111!important;color:#fff!important}
-body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch [data-cadence=annual]>:is(.sw-yearly-saving,small){position:absolute;top:-19px;left:50%;right:auto;bottom:auto;translate:none;transform:translateX(-50%);display:block;z-index:3;width:max-content;margin:0;padding:6px 11px;border:4px solid #fff;border-radius:99px;background:var(--dashboard-accent,#ffd700)!important;color:#111!important;font-size:11px;font-weight:750;line-height:1;white-space:nowrap;box-shadow:none}
 body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch [data-cadence=annual]{position:relative!important}
-body .jovabook-story #jova-story-concept #ex-pricing .ex-billing-switch [data-cadence=annual]>.sw-yearly-saving{left:50%!important;right:auto!important;translate:none!important;transform:translateX(-50%)!important;box-sizing:border-box}
 body .jovabook-story #jova-story-concept #ex-pricing .nv-team-seats button{display:grid;place-items:center;align-content:center;justify-content:center;line-height:1}
 body .jovabook-story #jova-story-concept #ex-pricing .nv-team-seats button svg{display:block;width:18px;height:18px;flex:none;margin:0;padding:0;translate:none;transform:none;pointer-events:none}
 /* Restore the four sample sites' own contrast, outside the shared monochrome controls. */
