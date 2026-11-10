@@ -43,6 +43,10 @@ const nextConfig = {
       source: "/jovabook/portal/:path*",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     }, {
+      // Versioned social artwork is immutable, just like the portal screenshots.
+      source: "/share/jovabook-hero-:hash.png",
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+    }, {
       source: "/jovabook/portal/manifest.json",
       headers: [{ key: "Cache-Control", value: "no-cache" }],
     }, {

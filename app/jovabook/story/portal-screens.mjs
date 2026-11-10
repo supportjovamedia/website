@@ -131,12 +131,12 @@ export const portalScreens = {
     "height": 1688
   },
   "hero.macbook": {
-    "url": "/jovabook/portal/hero-macbook-air-13-9d18ee77cd02.webp",
+    "url": "/jovabook/portal/hero-macbook-air-13-95c1489ccc6d.webp",
     "width": 2560,
     "height": 1664
   },
   "hero.iphone": {
-    "url": "/jovabook/portal/hero-iphone-17-pro-max-4fbf826e18cc.webp",
+    "url": "/jovabook/portal/hero-iphone-17-pro-max-001a990e8805.webp",
     "width": 880,
     "height": 1912
   }
