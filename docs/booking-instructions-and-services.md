@@ -2,6 +2,7 @@
 
 - Reuse `bookings.notes`, labelled **Special instructions** on appointment forms and details. Private customer-record notes are unchanged.
 - Calendar slots with notes show a red **Note** label. Calendar and Bookings both open the same full instruction section.
+- Booking-slot arrows are removed. Day and month grids use square, full-width edges within the workspace, without another rounded card around the grid.
 - Notifications show up to 120 characters, then **View more / View less**, without fetching, re-rendering or marking the event as read.
 - Business email copies include the booking instructions. Customer email copies do not expose appointment notes.
 - Services keep their existing name. An optional plain-text description is limited to 1,000 characters in the editor and database, saved with the existing service request, and shown on the booking page.

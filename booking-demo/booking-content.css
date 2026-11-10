@@ -16,3 +16,13 @@
 :is(.jb-grid-event,.jg-calendar-mobile-event) .jb-calendar-note{position:absolute;right:5px;top:5px}
 .nf-view-note{margin:0 16px 12px 57px;padding:5px 0;border:0;background:transparent;color:var(--theme-heading,#171717);font:inherit;font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .nf-instructions [hidden]{display:none!important}
+
+/* Calendar grids meet the existing workspace edges instead of nesting another card. */
+html[data-workspace-theme] .shell.jb-reference .workspace-main:has(>.db-calendar-page){padding-inline:0!important}
+.shell.jb-reference .db-calendar-page>.db-heading{padding-inline:clamp(18px,2vw,28px)}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page .db-diary{border:0!important;border-radius:0!important;box-shadow:none!important;padding-inline:0!important}
+html[data-workspace-theme] .shell.jb-reference .db-calendar-page :is(.jg-calendar-mobile-day,.jg-calendar-desktop-day,.month){margin-inline:0!important;width:100%;box-sizing:border-box;border-inline:0!important;border-radius:0!important;box-shadow:none!important}
+.shell.jb-reference .db-calendar-page .month-head{padding-inline:0!important}
+.shell.jb-reference .db-calendar-page .jg-calendar-month-agenda{margin-inline:0;border-radius:0;border-inline:0;box-shadow:none}
+:is(.jb-grid-event,.jg-calendar-mobile-event):has(.jb-calendar-note){padding-right:52px!important}
+:is(.jb-grid-event,.jg-calendar-mobile-event) .jb-calendar-note{right:10px;top:50%;transform:translateY(-50%)}
