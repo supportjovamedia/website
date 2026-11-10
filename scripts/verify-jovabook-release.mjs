@@ -16,7 +16,7 @@ const CRITICAL_ASSETS=Object.freeze([
  'workspace-polish.css','mobile-navigation.js','mobile-navigation.css','calendar-workspace.js',
  'calendar-polish.css','dashboard-date-picker.js','date-picker-polish.css','booking-filters.js',
  'booking-filters.css','booking-list-polish.css','dirty-forms.js','dirty-forms.css',
- 'owner-onboarding.js','owner-onboarding.css','owner-welcome.js','refunds.js','owner-funnel.js','sms-reminders.js'
+ 'booking-content.js','booking-content.css','owner-onboarding.js','owner-onboarding.css','owner-welcome.js','refunds.js','owner-funnel.js','sms-reminders.js'
 ]);
 const OPERATOR_ASSETS=Object.freeze(['operator.js','operator.css','operator-signup-flow.js','operator-signup-flow.css','operator-polish.css']);
 const normalized=value=>String(value).replaceAll('\r\n','\n');
