@@ -6,7 +6,8 @@ import {OriginalHero, InteractiveBooking} from './OriginalSections';
 import StoryFaq from './Faq';
 import StoryInteractions from './StoryInteractions';
 import WebsiteShowcase from './WebsiteShowcase';
-import {sections, dialogs} from './sections.mjs';
+import {sections} from './sections.mjs';
+import DemoVideo from './DemoVideo';
 import '../landing.css';
 import './story.css';
 import './rhythm.css';
@@ -25,6 +26,7 @@ export default function StoryLanding() {
     <div id="jova-story-concept">
       <div className="blend-sections">
         {sections.map((html, index) => {
+          if (html.includes('id="ex-film"')) return <DemoVideo key={index}/>;
           if (html.includes('id="ex-pricing"')) return <JovaBookPlans key={index} enhancedByStory/>;
           if (html.includes('id="ex-websites"')) return <WebsiteShowcase key={index}/>;
           if (html.includes('id="customer-stories-mount"')) return <div className="content-band content-band-stories" key={index}><CustomerStories/></div>;
@@ -39,7 +41,6 @@ export default function StoryLanding() {
           return <div className="story-fragment" key={index} dangerouslySetInnerHTML={{__html: html}}/>;
         })}
       </div>
-      <div dangerouslySetInnerHTML={{__html: dialogs}}/>
     </div>
     <StoryInteractions/>
   </main>;
