@@ -4,7 +4,7 @@ import {createRequire} from 'node:module';
 import {readFile} from 'node:fs/promises';
 import {createJovaBookIntegrationHandlers,sealCredentials,openCredentials} from '../lib/jovabook-integrations.mjs';
 import {recoveryEmail} from '../booking-demo/recovery-copy.js';
-import {SOURCE_FILES,prepareSchemaSql,bootstrap} from '../scripts/jovabook-test-db.mjs';
+import {sources as approvedSchemaSources,bootstrap} from '../scripts/jovabook-test-db.mjs';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const sid='20000000-0000-4000-8000-000000000001',other='20000000-0000-4000-8000-000000000002',owner='10000000-0000-4000-8000-000000000001',outsider='10000000-0000-4000-8000-000000000002';
 const env={JOVABOOK_SUPABASE_URL:'https://fixture.supabase.co',JOVABOOK_SUPABASE_PUBLISHABLE_KEY:'fixture-publishable',JOVABOOK_INTEGRATIONS_WORKER_TOKEN:'a'.repeat(64),JOVABOOK_INTEGRATIONS_ENCRYPTION_KEY:'b'.repeat(64),JOVABOOK_INTEGRATIONS_ENABLED:'true',JOVABOOK_RECOVERY_ENABLED:'true'};
@@ -99,7 +99,7 @@ test('provider probes verify identity without claiming checkout/reminder readine
 });
 
 test('all current schema migrations coexist with integrations and remain operationally disabled',async()=>{
- const db=new PGlite();try{const names=[...new Set([...SOURCE_FILES,'migrations/20261101051342_jovabook_business_integrations.sql'])],entries=await Promise.all(names.map(async name=>({name,sql:prepareSchemaSql(await readFile(new URL('../booking-demo/supabase/'+name,import.meta.url),'utf8'))})));await bootstrap(db,{entries,hashes:{},digest:'f'.repeat(64),order:names});const value=(await db.query('select * from jovabook_private.integration_config')).rows[0];assert.equal(value.enabled,false);assert.equal(value.recovery_enabled,false);assert.equal(value.worker_hash,null);assert.equal((await db.query('select count(*)::int n from jovabook_private.business_integrations')).rows[0].n,0);assert.equal((await db.query('select count(*)::int n from salons')).rows[0].n,2);for(const role of ['anon','authenticated']){await db.exec('set role '+role);await assert.rejects(db.query('select * from jovabook_private.recovery_dispatches'),/permission denied/);await assert.rejects(db.query('select jovabook_private.recovery_context($1,$2,$3)',[sid,owner,'forged']),/permission denied/);await db.exec('reset role');}}finally{await db.close();}
+ const db=new PGlite();try{const schema=await approvedSchemaSources();assert(schema.order.includes('migrations/20261101051342_jovabook_business_integrations.sql'),'The approved offline manifest must include integrations');await bootstrap(db,schema);const value=(await db.query('select * from jovabook_private.integration_config')).rows[0];assert.equal(value.enabled,false);assert.equal(value.recovery_enabled,false);assert.equal(value.worker_hash,null);assert.equal((await db.query('select count(*)::int n from jovabook_private.business_integrations')).rows[0].n,0);assert.equal((await db.query('select count(*)::int n from salons')).rows[0].n,2);for(const role of ['anon','authenticated']){await db.exec('set role '+role);await assert.rejects(db.query('select * from jovabook_private.recovery_dispatches'),/permission denied/);await assert.rejects(db.query('select jovabook_private.recovery_context($1,$2,$3)',[sid,owner,'forged']),/permission denied/);await db.exec('reset role');}}finally{await db.close();}
 });
 
 test('input limits, exact CORS, disabled config and provider rejection never store a connection',async()=>{
