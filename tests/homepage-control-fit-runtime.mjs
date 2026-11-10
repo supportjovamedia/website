@@ -1,0 +1,17 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {mkdir,writeFile} from 'node:fs/promises';import {chromium} from '@playwright/test';
+test('theme/comparison cells, Yearly badge and short FAQ tails fit at phone and desktop widths',async()=>{
+ const base=process.env.HOME_UI_TEST_URL||'http://127.0.0.1:4464',origin=new URL(base).origin;assert(['localhost','127.0.0.1'].includes(new URL(base).hostname));await mkdir('output/homepage-ui-followup',{recursive:true});
+ const browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'chrome'}:{})}),report=[];
+ try{for(const width of [360,390,768,1440]){
+  const page=await browser.newPage({viewport:{width,height:900}});await page.emulateMedia({reducedMotion:'reduce'});await page.addInitScript(()=>localStorage.setItem('jovamedia-consent-v2',JSON.stringify({choice:'rejected',time:Date.now()})));await page.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());await page.goto(base,{waitUntil:'networkidle'});await page.waitForFunction(()=>document.querySelector('#jova-story-concept')?.dataset.enhanced==='true');
+  for(const barSelector of ['.nr-dashboard-styles','.ex-compare-options']){
+   const bar=page.locator(barSelector),buttons=bar.locator('button');assert.equal(await bar.locator('.segment-pill').count(),0);
+   for(let i=0;i<await buttons.count();i++){await buttons.nth(i).click();const fit=await buttons.nth(i).evaluate(el=>{const b=el.getBoundingClientRect(),r=el.parentElement.getBoundingClientRect(),s=getComputedStyle(el);return{selected:el.getAttribute('aria-pressed'),background:s.backgroundColor,color:s.color,transform:s.transform,inside:b.left>=r.left&&b.right<=r.right+.5&&b.top>=r.top&&b.bottom<=r.bottom+.5};});assert.equal(fit.selected,'true');assert.equal(fit.background,'rgb(17, 17, 17)');assert.equal(fit.color,'rgb(255, 255, 255)');assert.equal(fit.transform,'none');assert(fit.inside);}
+   if(width===390||width===1440)await bar.screenshot({path:`output/homepage-ui-followup/${width}-${barSelector.slice(1)}.png`});
+  }
+  const yearly=page.locator('#ex-pricing [data-cadence=annual]');for(const cadence of ['annual','monthly']){await page.locator('#ex-pricing [data-cadence='+cadence+']').click();const offset=await yearly.evaluate(el=>{const a=el.getBoundingClientRect(),b=el.querySelector('.sw-yearly-saving').getBoundingClientRect();return Math.abs((a.left+a.width/2)-(b.left+b.width/2));});assert(offset<.6,'Saving badge is centred on Yearly');}
+  if(width===390||width===1440)await page.locator('.ex-billing-switch').screenshot({path:`output/homepage-ui-followup/${width}-billing.png`});
+  const geometry=await page.locator('#faq details').evaluateAll(items=>items.slice(0,2).map(el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el),tail=getComputedStyle(el,'::before'),half=parseFloat(tail.height)/2;return{height:r.height,tailBottom:parseFloat(tail.top)+half+Math.SQRT2*half+parseFloat(s.borderTopWidth),straightEdgeEnd:r.height-parseFloat(s.borderBottomLeftRadius)};}));for(const g of geometry)assert(g.tailBottom<g.straightEdgeEnd-3,'Tail stays clear of the short bubble corner '+JSON.stringify({width,...g}));
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));report.push({width,geometry,passed:true});await page.close();
+ }}finally{await browser.close();await writeFile('output/homepage-ui-followup/report.json',JSON.stringify(report,null,2));}
+});

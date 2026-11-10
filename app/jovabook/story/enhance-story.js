@@ -236,6 +236,9 @@ export function enhanceStory(host){
  (()=>{
   host.querySelectorAll('.ex-product-tabs,.nr-dashboard-styles,.ex-compare-options').forEach(bar=>{
    bar.classList.add('portal-segments');
+   // Multi-row theme cells and comparison options paint their own selection.
+   // This avoids a second positioned rectangle drifting from the actual grid.
+   if(!bar.matches('.ex-product-tabs')){bar.querySelector('.product-tab-pill,.segment-pill')?.remove();return;}
    let pill=bar.querySelector('.product-tab-pill');if(!pill){pill=document.createElement('span');pill.setAttribute('aria-hidden','true');bar.prepend(pill);}pill.classList.add('segment-pill');
    const align=animate=>{if(!bar.isConnected)return;const selected=bar.querySelector('button[aria-pressed="true"]')||bar.querySelector('button');if(!selected)return;if(!animate)pill.style.transition='none';const cell=selected.getBoundingClientRect(),barBounds=bar.getBoundingClientRect();pill.style.transform='translate('+(cell.left-barBounds.left-bar.clientLeft)+'px,'+(cell.top-barBounds.top-bar.clientTop)+'px)';pill.style.width=cell.width+'px';pill.style.height=cell.height+'px';if(!animate)requestAnimationFrame(()=>{if(pill.isConnected)pill.style.transition='';});};
    bar.addEventListener('click',event=>{if(event.target.closest('button'))requestAnimationFrame(()=>align(true));});
