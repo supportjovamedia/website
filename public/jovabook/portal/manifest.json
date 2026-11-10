@@ -341,11 +341,11 @@
       }
     },
     "hero.macbook": {
-      "url": "/jovabook/portal/hero-macbook-air-13-9d18ee77cd02.webp",
+      "url": "/jovabook/portal/hero-macbook-air-13-95c1489ccc6d.webp",
       "width": 2560,
       "height": 1664,
-      "bytes": 168576,
-      "sha256": "9d18ee77cd02ac003005f327f1af9603f2771d81e48446734c48099636bc3780",
+      "bytes": 74994,
+      "sha256": "95c1489ccc6d9466d22c0394ac3657a3c69616a5eb237ba70b94b873fcfc78e9",
       "metadata": {
         "exif": false,
         "xmp": false,
@@ -354,11 +354,11 @@
       }
     },
     "hero.iphone": {
-      "url": "/jovabook/portal/hero-iphone-17-pro-max-4fbf826e18cc.webp",
+      "url": "/jovabook/portal/hero-iphone-17-pro-max-001a990e8805.webp",
       "width": 880,
       "height": 1912,
-      "bytes": 101962,
-      "sha256": "4fbf826e18ccd2fdfa9f2d38cc67b5295e8dab095f5f03eb22f76270619cf534",
+      "bytes": 44668,
+      "sha256": "001a990e88053029b34b67597d5bec6a1807c41a7ae74a366541b03e24ea08fb",
       "metadata": {
         "exif": false,
         "xmp": false,

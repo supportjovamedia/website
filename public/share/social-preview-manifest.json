@@ -1,21 +1,21 @@
 {
-  "image": "/share/jovabook-hero-2f43d8cc8c24.png",
+  "image": "/share/jovabook-hero-8a6fcfa82401.png",
   "width": 1200,
   "height": 630,
-  "sha256": "2f43d8cc8c2426e55d93e3f364e5e270bd460663554de6854c3c545389b872d0",
+  "sha256": "8a6fcfa824014c14401f18b87087db25cdaad94a1f78db10fe2a6da44d9e15ca",
   "sources": {
     "app/navigation.css": "1d0c1c4a352d0ca8d7109f6bc741ef471b50a2d82585e9ef19f761bc69ad76f4",
-    "app/jovabook/story/OriginalSections.js": "d394dd48e6552e30c961e5549a4d8ae46b8c355b7d868f49050be629a3daeab7",
+    "app/jovabook/story/OriginalSections.js": "ecf791689ec510e9b77c5ddf0a4990c523bf93c894c21122364bb2857aaf282f",
     "app/jovabook/story/story.css": "7f741f039ccc84cc1ada540aaea86af105b991015ab90561d1c1500a7138d0a0",
     "app/jovabook/story/rhythm.css": "cd2f4eaa923c0a7b74d6c5ca1e60f29c877f754cf6d46b84fc9e6dddcda7c4fa",
-    "app/jovabook/story/polish.css": "73bb2174ae1643638cf21303e7b3827600abeb7549437deee04a305b3338edc7",
-    "app/button-colours.css": "56d68e9006b656fa57f1f7d824c606db51a3b6a5d615c6b7a94f7a613453e2b8",
-    "app/jovabook/story/portal-screens.mjs": "cf37e5f340767dbd45d5d2d8e0db5d6b75944320cac2a624b59bf655e1559d96",
+    "app/jovabook/story/polish.css": "743ede25c9fd530dce9da29b9316a5fa3057a09505e39dcd8f969e0ceb7996c4",
+    "app/button-colours.css": "b51ff8f5c1a7b0e9fbaf06df7e92203693bfbcf974ba3c788575884cb2ddc82c",
+    "app/jovabook/story/portal-screens.mjs": "ce08de500c4d032b2b36c95b40b611e3d39a3c9581298f0b65cb2c858693489c",
     "app/jovabook/search-data.mjs": "c3cf538d4b6158d22bcdcd3b7ec77d436373e728eb985a9bf86964671dc71000",
-    "scripts/capture-jovabook-share.mjs": "50ca278cc64e2183898723cbc6770d85c55b4b552a7baa806f8995fe8eb32d2f",
+    "scripts/capture-jovabook-share.mjs": "d1f5b9e72b72ef76a9ef994114fae3dc91965ce33c7ed4e65b4ed64b88fe46b7",
     "public/brand/jova-logo.png": "87c210c9c583ab22bb37177982431bd7b67c4b69518aeb6ccd3532650d827a55",
-    "public/jovabook/portal/hero-macbook-air-13-9d18ee77cd02.webp": "9d18ee77cd02ac003005f327f1af9603f2771d81e48446734c48099636bc3780",
-    "public/jovabook/portal/hero-iphone-17-pro-max-4fbf826e18cc.webp": "4fbf826e18ccd2fdfa9f2d38cc67b5295e8dab095f5f03eb22f76270619cf534",
+    "public/jovabook/portal/hero-macbook-air-13-95c1489ccc6d.webp": "95c1489ccc6d9466d22c0394ac3657a3c69616a5eb237ba70b94b873fcfc78e9",
+    "public/jovabook/portal/hero-iphone-17-pro-max-001a990e8805.webp": "001a990e88053029b34b67597d5bec6a1807c41a7ae74a366541b03e24ea08fb",
     "app/fonts/plus-jakarta-sans.woff2": "153fc85b70298beeb1d61a5f723331649e7f23bb77302a66e61cb3e2fbdb5e79"
   }
 }
