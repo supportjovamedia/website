@@ -31,6 +31,9 @@ test('customer stories preserve the exact five name and quote pairs in SSR',()=>
  assert.equal(h.nodes(tree).filter(node=>node.type==='article').length,5);
  assert.equal((html.match(/<blockquote>/g)||[]).length,5);assert.equal((html.match(/<mark/g)||[]).length,0);
  for(const [,quote] of expected)assert(quotes.includes(quote));
+ const highlights=h.nodes(tree).filter(node=>node.props.className==='cs-quote-highlight');
+ assert.deepEqual(highlights.map(h.text),Array.from(h.stories,story=>story.highlight));
+ assert.equal(highlights.length,5);assert.equal(h.text(highlights[3]),'book and pay a deposit online');
  assert.equal(h.nodes(tree).filter(node=>node.type==='article'&&node.props.hidden).length,4);
  assert.equal(h.nodes(tree).filter(node=>node.type==='button'&&node.props.className==='cs-dot').length,5);
  assert.equal(h.stories.find(story=>story.name==='Paul Smith').business,'CoreFitness');

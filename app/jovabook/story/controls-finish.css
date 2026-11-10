@@ -39,11 +39,12 @@ body .jovabook-story #jova-story-concept .nv-ending :is(h2,p){color:#111}
 body .jovabook-story #jova-story-concept .nv-ending-mark{background:var(--dashboard-accent,#ffd700);border-color:var(--dashboard-accent,#ffd700);box-shadow:none}
 /* Visible questions retain the original blue and red states before Show more. */
 body .jovabook-story #jova-story-concept #faq [data-story-card]:not([hidden]){opacity:1!important;transform:none!important}
-body .jovabook-story #jova-story-concept #faq [data-story-card]>details{border-color:#cdd9e2!important}
+body .jovabook-story #jova-story-concept #faq [data-story-card]>details{border:2px solid #cdd9e2!important;outline:none!important}
 body .jovabook-story #jova-story-concept #faq [data-story-marker]{display:grid;place-items:center;background:#102f4d;color:#fff!important;opacity:1}
-body .jovabook-story #jova-story-concept #faq [data-story-card]>details::before{border-color:#cdd9e2!important;transition:none!important}
+body .jovabook-story #jova-story-concept #faq [data-story-card]>details::before{box-sizing:border-box;left:-8px;width:14px;height:14px;border:0;border-bottom:2px solid #cdd9e2!important;border-left:2px solid #cdd9e2!important;background:#fff;transition:none!important;pointer-events:none}
+body .jovabook-story #jova-story-concept #faq [data-story-card]>details::after{content:none!important}
 body .jovabook-story #jova-story-concept #faq [data-story-card][data-current=true]:not([hidden])>[data-story-marker],body .jovabook-story #jova-story-concept #faq ol:not(:has(>li:not([hidden])[data-current=true]))>li:first-child>[data-story-marker]{background:#ed1039}
-body .jovabook-story #jova-story-concept #faq [data-story-card][data-current=true]:not([hidden])>details,body .jovabook-story #jova-story-concept #faq ol:not(:has(>li:not([hidden])[data-current=true]))>li:first-child>details{border-color:#ed1039!important;outline:1px solid #ed1039;outline-offset:0}
+body .jovabook-story #jova-story-concept #faq [data-story-card][data-current=true]:not([hidden])>details,body .jovabook-story #jova-story-concept #faq ol:not(:has(>li:not([hidden])[data-current=true]))>li:first-child>details{border-color:#ed1039!important}
 body .jovabook-story #jova-story-concept #faq [data-story-card][data-current=true]:not([hidden])>details::before,body .jovabook-story #jova-story-concept #faq ol:not(:has(>li:not([hidden])[data-current=true]))>li:first-child>details::before{border-color:#ed1039!important}
 body:has(.jovabook-story) .jova-pages.jova-header-chrome .header .menu-toggle{gap:6px}
 body:has(.jovabook-story) .jova-pages.jova-header-chrome .header .menu-toggle span{display:block;flex:0 0 2px;width:20px;height:2px;min-height:2px;border-radius:1px}
