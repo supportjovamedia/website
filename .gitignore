@@ -10,4 +10,5 @@ playwright-report/
 .lighthouseci/
 artifacts/lighthouse/
 booking-demo/supabase/.temp/
+booking-demo/dist/
 /.jovabook-test/

@@ -164,22 +164,27 @@ async function flushSync(){if(!dir.remote||!snap)return;clearTimeout(syncTimer);
 async function persistWebsite(website,sid,expectedIdentity){
  const current=salon(),identity=String(dir.sessionIdentity?.()||'demo');
  if(current.id!==sid||identity!==expectedIdentity||(isLive(current)&&(current.ownerId!==identity||verifiedOwnerIdentity!==identity)))return {ok:false,stale:true,message:'Your business account changed. Open Website again.'};
+ const finishConfirmation=beginSalonConfirmation(sid);
+ try{
  current.workspace={...current.workspace,website:{...website}};save();const revision=saveRevision;
  if(!isLive(current))return {ok:true};
  await flushSync();
  const unchanged=()=>salon().id===sid&&String(dir.sessionIdentity?.()||'demo')===identity&&saveRevision===revision&&salon().ownerId===identity;
  if(!unchanged())return {ok:false,stale:true,message:'Your business account or changes changed. Review your website again.'};
  if(syncBusy||syncDirty||syncBlocked||salonSnap[sid]!==JSON.stringify(salonFields(salon())))return {ok:false,message:'Your website is not saved yet. Check your connection and try again.'};
- const result=await dir.loadDiary();
+ const result=await dir.verifySalon(sid);
  if(!unchanged())return {ok:false,stale:true,message:'Your business account changed. Open Website again.'};
  if(!result.ok||result.salon?.id!==sid||result.salon.owner_id!==identity)return {ok:false,message:'We could not confirm the saved website. Check your connection and try again.'};
  const canonical=result.salon.settings?.workspace?.website;
  if(!canonical||!Object.entries(website).every(([key,value])=>canonical[key]===value))return {ok:false,message:'The saved website differs from these changes. Review your website and try again.'};
  return {ok:true};
+ }finally{finishConfirmation();}
 }
-var syncBlocked=false;
+var syncBlocked=false,salonConfirmations=new Map();
+function salonConfirmationKey(sid,identity=dir.sessionIdentity?.()||'demo'){return JSON.stringify([identity,sid]);}
+function beginSalonConfirmation(sid){const key=salonConfirmationKey(sid);salonConfirmations.set(key,(salonConfirmations.get(key)||0)+1);return ()=>{const remaining=salonConfirmations.get(key)-1;if(remaining>0)salonConfirmations.set(key,remaining);else salonConfirmations.delete(key);};}
 async function pump(){
- if(syncBusy||syncBlocked)return;syncBusy=true;let retry=false;
+ if(syncBusy||syncBlocked)return;syncBusy=true;let retry=false,onlySalonChanges=true;
  const identity=dir.sessionIdentity?.();
  const reject=(result,sid)=>{if(result.stale)throw {sessionChanged:true};throw {syncRejected:true,sid,message:result.message||'The booking system refused this change.',transient:result.network||result.auth||result.status>=500};};
  const assertOwner=x=>{if(!identity||dir.sessionIdentity?.()!==identity||x.ownerId!==identity||x.id!==state.active||!dir.canWrite?.(x.id))throw {sessionChanged:true};};
@@ -197,14 +202,14 @@ async function pump(){
      if(dir.sessionIdentity?.()!==identity)throw {sessionChanged:true};
      const previous=old[table],seen={},items=[];
      cur[table].forEach(row=>{seen[row.id]=true;const json=JSON.stringify(row);if(previous[row.id]!==json)items.push({row,json,fresh:previous[row.id]===undefined});});
-     if(items.length){const body=items.map(item=>({...item.row,salon_id:x.id,...(item.fresh&&['categories','staff','services','customers'].includes(table)?{created_at:new Date(base+sequence++).toISOString()}:{} )}));const r=await dir.upsertRows(table,body);assertOwner(x);if(!r.ok)reject(r,x.id);items.forEach(item=>previous[item.row.id]=item.json);}
+     if(items.length){onlySalonChanges=false;const body=items.map(item=>({...item.row,salon_id:x.id,...(item.fresh&&['categories','staff','services','customers'].includes(table)?{created_at:new Date(base+sequence++).toISOString()}:{} )}));const r=await dir.upsertRows(table,body);assertOwner(x);if(!r.ok)reject(r,x.id);items.forEach(item=>previous[item.row.id]=item.json);}
      const removed=teamMode()?[]:Object.keys(previous).filter(id=>!seen[id]);
-     if(removed.length){const r=await dir.deleteRows(table,x.id,removed);assertOwner(x);if(!r.ok)reject(r,x.id);removed.forEach(id=>delete previous[id]);}
+     if(removed.length){onlySalonChanges=false;const r=await dir.deleteRows(table,x.id,removed);assertOwner(x);if(!r.ok)reject(r,x.id);removed.forEach(id=>delete previous[id]);}
     }
    }
   }
   syncFail=0;showSync('saved');
-  if(identity===dir.sessionIdentity?.()&&!syncDirty&&!hasUnsavedEditor()){
+  if(identity===dir.sessionIdentity?.()&&!syncDirty&&!hasUnsavedEditor()&&(!salonConfirmations.has(salonConfirmationKey(state.active,identity))||!onlySalonChanges)){
    const loaded=await loadLive({afterSave:true});
    if(loaded.ok&&identity===dir.sessionIdentity?.()&&!syncDirty)render();
   }
@@ -263,10 +268,10 @@ function installAccessOnly(access){
  return x;
 }
 // Load (or refresh) one owner's salon from the database and make it the active salon.
-async function loadLive({afterSave=false}={}){
+async function loadLive({afterSave=false,loginProof}={}){
  if(syncPending()&&!(afterSave&&syncBusy&&!syncDirty))return {ok:false,pending:true};
  const revision=saveRevision,identity=dir.sessionIdentity?.(),sequence=++liveLoadSequence,editingAtStart=hasUnsavedEditor();
- const d=await dir.loadDiary();
+ const d=await dir.loadDiary({loginProof});
  if(!d.ok){if(signedIn()&&!d.stale){ownerLoadError='We could not verify access to your business. Check your connection and refresh.';syncDirty=false;syncBlocked=true;clearTimeout(syncTimer);syncTimer=null;loadingOwner=false;closeModal();render();}return d;}
  if(identity!==dir.sessionIdentity?.()||sequence!==liveLoadSequence)return {ok:false,stale:true};
  if(d.billingOnly||d.setup){const x=installAccessOnly(d.access);if(d.setup){x.subscription.status='setup';onbSet(x.id);}return {ok:true,salon:x,access:d.access};}
@@ -534,17 +539,20 @@ function settings(){const s=salon();return `<section class="card stack bd-inform
 async function persistBusinessDetails(values,sid,identity){
  const current=salon();
  if(current.id!==sid||businessOwner()!==identity||isLive(current)&&(current.ownerId!==dir.sessionIdentity?.()||verifiedOwnerIdentity!==dir.sessionIdentity?.()))return {ok:false,stale:true,message:'Your business account changed. Open Business details again.'};
+ const finishConfirmation=beginSalonConfirmation(sid);
+ try{
  Object.assign(current,values);save();const revision=saveRevision;
  if(!isLive(current))return {ok:true};
  await flushSync();
  const unchanged=()=>businessOwner()===identity&&salon().id===sid&&saveRevision===revision;
  if(!unchanged())return {ok:false,stale:true,message:'Your business account or changes changed. Review your details again.'};
  if(syncBusy||syncDirty||syncBlocked||salonSnap[sid]!==JSON.stringify(salonFields(salon())))return {ok:false,message:'Your changes are not saved yet. Check your connection and try again.'};
- const result=await dir.loadDiary();if(!unchanged())return {ok:false,stale:true,message:'Your business account changed. Open Business details again.'};
+ const result=await dir.verifySalon(sid);if(!unchanged())return {ok:false,stale:true,message:'Your business account changed. Open Business details again.'};
  if(!result.ok||result.salon?.id!==sid||result.salon.owner_id!==dir.sessionIdentity?.())return {ok:false,message:'We could not confirm these changes were saved. Please try again.'};
  const row=result.salon,st=row.settings||{},sameHours=JSON.stringify(JovaSchedule.normalize(st.hours))===JSON.stringify(JovaSchedule.normalize(values.hours));
  if(row.name!==values.name||(row.email||'')!==values.email||(row.phone||'')!==values.phone||(row.address||'')!==values.address||(st.about||'')!==values.about||Number(st.buffer||0)!==values.buffer||Number(st.notice||0)!==values.notice||!sameHours||['country','timezone','currency'].some(key=>JovaBusinessLocale.resolve({settings:st})[key]!==values[key]))return {ok:false,message:'The saved details differ from these changes. Review them and try again.'};
  return {ok:true};
+ }finally{finishConfirmation();}
 }
 async function saveBusinessDetails(form,data){
  if(businessSettingsSaving&&businessSettingsSaveOwner===businessOwner())return;
@@ -712,7 +720,7 @@ async function authSubmit(type,form,data){
    if(!r.ok){idle();error(form,r.message);return;}
    if(r.needsBusiness){observedOwnerIdentity=dir.sessionIdentity?.();verifiedOwnerIdentity=null;onbSet(null);signIn();draft={};chat=[];go('signup');return;}
    let sal=state.salons.find(x=>x.id===r.account.salonId);
-   if(dir.remote&&r.salon){const L=await loadLive();if(!L.ok){idle();error(form,'We couldn’t load your business. Check your connection and try again.');return;}sal=L.salon;}
+   if(dir.remote&&r.salon){const L=await loadLive({loginProof:r.diaryProof});if(!L.ok){idle();error(form,'We couldn’t load your business. Check your connection and try again.');return;}sal=L.salon;}
    if(!sal){idle();error(form,'We couldn’t find that salon.');return;}
    noteOwnerLogin();if(dir.remote)purgeLive(sal.id);state.active=sal.id;save();draft={};chat=[];
    if(billingRestricted()){signIn();go('billing');return;}

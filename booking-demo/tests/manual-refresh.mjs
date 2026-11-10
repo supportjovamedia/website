@@ -48,3 +48,10 @@ test('Operator manual refresh still refuses revoked access and cannot repaint af
  const denied=operator();await settle();denied.deny();denied.click('retry');await settle();assert.match(denied.root.innerHTML,/data-form="login"/);assert.equal(denied.store.has('jovabook-operator-auth-v1'),false);
  const ui=operator();await settle();const pending=deferred();ui.gates.set('operator_overview',pending);ui.click('retry');await settle();ui.click('logout');await settle();assert.match(ui.root.innerHTML,/data-form="login"/);pending.resolve();await settle();assert.match(ui.root.innerHTML,/data-form="login"/);assert.equal(ui.store.has('jovabook-operator-auth-v1'),false);
 });
+
+test('Operator Notifications navigation and Refresh each make only identity plus overview reads',async()=>{
+ const ui=operator();await settle();assert.deepEqual(ui.calls.map(call=>call.name),['portal_identity','operator_businesses','operator_overview','operator_signup_flow','operator_owner_flow_events']);
+ let before=ui.calls.length;ui.click('notifications');await settle();assert.match(ui.root.innerHTML,/<h1>Notifications<\/h1>/);assert.deepEqual(ui.calls.slice(before).map(call=>call.name),['portal_identity','operator_overview']);
+ before=ui.calls.length;ui.click('retry');await settle();assert.deepEqual(ui.calls.slice(before).map(call=>call.name),['portal_identity','operator_overview']);
+ before=ui.calls.length;ui.deny();ui.click('retry');await settle();assert.deepEqual(ui.calls.slice(before).map(call=>call.name),['portal_identity']);assert.match(ui.root.innerHTML,/data-form="login"/);
+});
