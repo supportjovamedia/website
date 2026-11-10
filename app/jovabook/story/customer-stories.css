@@ -47,5 +47,5 @@ body .jovabook-story #jova-story-concept .cs-sr-only{position:absolute;width:1px
 }
 @media(prefers-reduced-motion:reduce){body .jovabook-story #jova-story-concept .cs-stories *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
-/* Keep the quote white while underlining its original emphasis phrase. */
-body .jovabook-story #jova-story-concept .cs-card .cs-quote-highlight{color:inherit!important;text-decoration-line:underline;text-decoration-color:#FFD700;text-decoration-thickness:.12em;text-underline-offset:.17em;text-decoration-skip-ink:none;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+/* Emphasize the original phrase with yellow text, without changing the quote. */
+body .jovabook-story #jova-story-concept .cs-card .cs-quote-highlight{color:#FFD700!important;background:transparent!important;text-decoration:none!important}
