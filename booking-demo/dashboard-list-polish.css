@@ -88,3 +88,60 @@ html[data-workspace-theme] .shell.jb-reference .jg-quick-stat{display:grid;grid-
 html[data-workspace-theme] .shell.jb-reference .rf-dashboard-heading{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;min-height:0!important;height:auto!important;text-align:left!important}
 html[data-workspace-theme] .shell.jb-reference .rf-dashboard-heading>div:first-child{flex:1 1 220px!important;width:auto!important;height:auto!important;min-height:0!important;margin:0!important;text-align:left!important}
 html[data-workspace-theme] .shell.jb-reference .rf-dashboard-actions{height:auto!important;align-self:center!important}
+.shell.jb-reference .jg-setup-progress{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 28px;align-items:center;
+ padding:18px 22px;margin:0 0 18px;border:1px solid var(--theme-line,#dce4ea);
+ border-radius:16px;background:var(--theme-panel,#fff);color:var(--theme-heading,#182d3c)
+}
+.shell.jb-reference .jg-setup-progress h2{margin:0 0 10px;font-size:16px;line-height:1.25;letter-spacing:-.02em}
+.jg-setup-progress .jg-progress-track{display:flex;align-items:center;gap:12px;max-width:420px}
+.jg-setup-progress .jg-progress-track span{white-space:nowrap;font-size:12px;font-weight:600;color:var(--theme-muted,#536677)}
+.jg-setup-progress progress{flex:1;min-width:0;appearance:none;height:7px;border:0;border-radius:10px;overflow:hidden;background:var(--theme-inset,#eaf0f4);color:var(--theme-primary,#235789)}
+.jg-setup-progress progress::-webkit-progress-bar{background:var(--theme-inset,#eaf0f4)}
+.jg-setup-progress progress::-webkit-progress-value{background:var(--theme-primary,#235789);border-radius:10px}
+.jg-setup-progress progress::-moz-progress-bar{background:var(--theme-primary,#235789);border-radius:10px}
+.shell.jb-reference .jg-setup-progress .btn{min-height:40px;white-space:nowrap}
+.shell .jg-setup-target{outline:2px solid var(--theme-primary,#235789);outline-offset:4px}
+.shell[data-setup-active] .jg-setup-tip{border-inline-start:3px solid var(--theme-primary,#235789)}
+.shell[data-setup-active] .jg-setup-tip-actions .btn{white-space:nowrap}
+@media(max-width:600px){
+ .shell.jb-reference .jg-setup-progress{gap:12px;padding:14px 16px;border-radius:14px}
+ .shell.jb-reference .jg-setup-progress .btn{padding-inline:12px}
+ .jg-setup-progress .jg-progress-track{gap:8px}
+ .jg-setup-progress .jg-progress-track span{font-size:11px}
+}
+
+.jg-setup-progress-actions{display:flex;align-items:center;gap:8px}
+.shell.jb-reference .jg-setup-progress .jg-setup-skip{border-color:transparent;background:transparent;box-shadow:none;color:var(--theme-muted,#536677)}
+@media(max-width:500px){.shell.jb-reference .jg-setup-progress{grid-template-columns:1fr}.jg-setup-progress-actions{justify-content:flex-start}}
+
+.jg-setup-readiness{margin:0 0 16px}.jg-setup-readiness p{margin:6px 0}.jg-setup-readiness .btn{margin-top:6px}
+
+/* The guide has its own high contrast treatment so it reads as help, not page content. */
+.shell.jb-reference :is(.jg-setup-progress,.jg-setup-tip){
+ background:#171819;color:#fff;border:1px solid #383936;border-radius:16px
+}
+.shell.jb-reference .jg-setup-tip{padding:16px 18px}
+.shell.jb-reference .jg-setup-tip strong{color:#fff;font-size:17px}
+.shell.jb-reference :is(.jg-setup-position,.jg-setup-progress .jg-progress-track span){color:#ffe35b;font-weight:700}
+.shell.jb-reference .jg-setup-tip p{color:#dfdfd8}
+.shell.jb-reference .jg-setup-progress progress,
+.shell.jb-reference .jg-setup-progress progress::-webkit-progress-bar{background:#454541}
+.shell.jb-reference .jg-setup-progress progress::-webkit-progress-value{background:#f4d321}
+.shell.jb-reference .jg-setup-progress progress::-moz-progress-bar{background:#f4d321}
+html[data-workspace-theme] .shell.jb-reference :is(.jg-setup-progress,.jg-setup-tip) .btn{
+ min-height:42px;padding:9px 15px!important;border:1px solid #676761!important;
+ background:#222321!important;color:#fff!important;box-shadow:none!important
+}
+html[data-workspace-theme] .shell.jb-reference :is(.jg-setup-progress,.jg-setup-tip) .btn.primary{
+ background:#f4d321!important;color:#171819!important;border-color:#f4d321!important
+}
+.shell .jg-setup-target{outline:2px solid #f4d321;outline-offset:4px}
+.shell[data-setup-active] .jg-setup-target[aria-describedby="jg-setup-instruction"]{box-shadow:0 0 0 4px #171819,0 0 0 7px #f4d321!important;position:relative;z-index:1}
+.shell[data-setup-active] .jg-setup-obscured{filter:blur(2px);opacity:.48;pointer-events:none}
+@media(max-width:500px){
+ .shell.jb-reference .jg-setup-tip{padding:14px 16px}
+ .shell.jb-reference .jg-setup-tip-actions{gap:8px}
+}
+
+html[data-workspace-theme] .shell.jb-reference .jg-setup-progress h2{color:#fff!important}

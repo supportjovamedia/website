@@ -12,7 +12,7 @@ test('Share, Personalise, website editor, service copies and iframe use the publ
  const bookingLink=vm.runInNewContext(definition+'bookingLink;',context);
  context.businessWebsite={websiteLink:salon=>window.JovaPublicLinks.website(salon.slug)};
  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
- Object.assign(context,{a:'share-booking-link',bookingLink,esc,modal:(title,html)=>modals.push({title,html})});
+ Object.assign(context,{a:'share-booking-link',bookingLink,esc,bookingSetupWarning:()=>'',modal:(title,html)=>modals.push({title,html})});
  vm.runInNewContext('(()=>{'+app.slice(app.indexOf(" if(a==='share-booking-link')"),app.indexOf(" if(a==='workspace-appearance')"))+'})()',context);
  assert.equal(modals[0].title,'Share your links');
  assert.match(modals[0].html,/data-target="website" aria-label="Copy website link">Copy<\/button>.*<details><summary>See more<\/summary>.*id="share-website" readonly value="https:\/\/www\.jovamedia\.com\/book\/arooj"/);
@@ -20,7 +20,7 @@ test('Share, Personalise, website editor, service copies and iframe use the publ
  await load('scheduling-core.cjs');await load('business-website.cjs');vm.runInNewContext((await readFile(new URL('../booking-demo/workspace.js',import.meta.url),'utf8')).split('/* Reference-led owner presentation.')[0],context);
  const api={salon:()=>s,bookingLink,ownerIdentity:()=> 'fixture-owner',esc,field:()=>'',money:v=>'£'+v,toast(){},modal(){},save(){},render(){}};
  const website=window.JovaBusinessWebsite.create(api);api.website=website;
- const workspace=window.JovaWorkspace.create(api),personalise=workspace.pages.scheduling(),editor=website.editor();
+ const workspace=window.JovaWorkspace.create(api),personalise=workspace.pages['booking-setup'](),editor=website.editor();
  assert(personalise.includes('value="https://www.jovamedia.com/book/arooj/appointments"'));
  assert(personalise.includes('src=&quot;https://www.jovamedia.com/book/arooj/appointments&quot;'));
  workspace.click('ws-copy-service',{dataset:{id:'cut'}});assert.equal(copied[0],'https://www.jovamedia.com/book/arooj/appointments?service=cut');

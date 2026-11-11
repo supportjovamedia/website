@@ -1,45 +1,90 @@
-/* Setup progress comes from saved business data, never a browser-only checklist. */
+/* Guided setup uses saved business data and a per-business browser checkpoint. */
 (() => {
  'use strict';
- const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function status(s,{bookable=service=>(service.staffIds||[]).some(id=>(s.staff||[]).some(member=>member.id===id&&member.active!==false)),hasHours}={}){
+ const steps=[
+  {id:'details',title:'Business information',route:'settings',target:'[name=name]',text:'Check your business name and contact details, then select Save. Mobile services can leave the address blank.'},
+  {id:'hours',title:'Working hours',route:'availability',target:'.ws-daily-row',text:'Choose the days and times clients can book, then select Save.'},
+  {id:'category',title:'Add a service category',route:'services',target:'[data-action="add-category"]',text:'Select the highlighted Category button. Give it a name, choose a color, then select Add category.'},
+  {id:'services',title:'Add a service',route:'services',target:'[data-action="add-service"]',text:'Select the highlighted Add service button. Enter the name, category, price and duration, then confirm who offers it.'},
+  {id:'website',title:'Set up your website',route:'scheduling',target:'[data-bw-section]:not([hidden])',text:'Choose how your website looks and what clients see.'},
+  {id:'booking',title:'Booking page',route:'booking-setup',target:'.bw-settings-intro',text:'Clients choose a service and time here. You can change the welcome message and appearance, copy links to individual services, or share the direct booking link.'},
+  {id:'share',title:'Your dashboard',route:'dashboard',target:'.workspace-header [data-action="share-booking-link"]',text:'Use Share links at the top right to copy your website or direct booking link. The bell shows notifications, and the palette changes your workspace theme.'},
+  {id:'bookings',title:'Bookings',route:'bookings',target:'[data-action="bookings-filters"]',text:'Find your appointments here. Use the filters to narrow the list by status, service or team member. You can also manage bookings with multiple sessions.'},
+  {id:'calendar',title:'Calendar',route:'calendar',target:'.db-period-controls',text:'Switch between Day, Week and Month to see your schedule at different levels. Try the views whenever you like.'},
+  {id:'customers',title:'Customers',route:'customers',target:'[data-action="add-customer"]',text:'Find client details and booking history here. Add customer opens the form. You can look around and close it when you are ready.'}
+ ];
+ const sections=[
+  ['design','Choose a website design. Save a new choice or continue with the current one.'],
+  ['colours','Choose colors for buttons and headings, or keep the defaults.'],
+  ['hero','Check the headline at the top of your website. A logo and banner image are optional.'],
+  ['about','Add a short introduction if you would like clients to know more about your business.'],
+  ['search','Choose whether Google can find your website and whether to hide your street address. Both choices are optional.']
+ ];
+ const getStep=id=>steps.find(step=>step.id===id);
+ const destination=id=>{const step=getStep(id);return step?step.route+'?setup='+step.id:'dashboard';};
+ const defaultState={mode:'new',step:'',section:'design',websiteReviewed:false,skipped:false,waived:[]};
+ function createState(storage){
+  const memory=new Map();
+  const key=(owner,business)=>'jovabook-setup-guide-v2:'+JSON.stringify([owner,business]);
+  function read(owner,business){
+   const id=key(owner,business);let stored=memory.get(id);
+   if(!stored){try{stored=JSON.parse(storage?.getItem(id)||'null');}catch{}}
+   const valid=stored&&['paused','active','done'].includes(stored.mode);
+   if(!valid)return {...defaultState};
+   return {mode:stored.mode,step:getStep(stored.step)?.id||'',section:sections.some(([id])=>id===stored.section)?stored.section:'design',websiteReviewed:stored.websiteReviewed===true,skipped:stored.skipped===true,waived:Array.isArray(stored.waived)?stored.waived.filter(id=>steps.slice(0,5).some(step=>step.id===id)):[]};
+  }
+  function write(owner,business,change){
+   const id=key(owner,business),state={...read(owner,business),...change};
+   memory.set(id,state);try{storage?.setItem(id,JSON.stringify(state));}catch{}
+   return state;
+  }
+  return {read,write};
+ }
+ function status(s,{bookable=service=>(service.staffIds||[]).some(id=>(s.staff||[]).some(member=>member.id===id&&member.active!==false)),hasHours,addressRequired=true,guide=defaultState}={}){
   const hours=s.hours||{},time=value=>typeof value==='string'&&/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
   const working=typeof hasHours==='boolean'?hasHours:Array.isArray(hours.days)&&hours.days.some(day=>Number.isInteger(day)&&day>=0&&day<=6)&&time(hours.start)&&time(hours.end)&&hours.end>hours.start;
   const website=s.workspace?.website||{};
-  const tasks=[
-   {id:'services',title:'Add your first service',description:'Choose what clients can book, with a price and duration.',done:(s.services||[]).some(bookable),action:'setup-service',href:'#services?setup=services',label:'Add a service'},
-   {id:'hours',title:'Set your available times',description:'Choose the days and hours you take appointments.',done:working,href:'#availability?setup=hours',label:'Set availability'},
-   {id:'details',title:'Introduce your business',description:'Tell clients what you do and add an address if they visit you.',done:!!String(s.about||'').trim(),href:'#settings?setup=details',label:'Add business details'},
-   {id:'website',title:'Set up your website',description:'Add a headline, photo or description for your clients.',done:[website.headline,website.heroImage,website.about,website.homeIntro].some(value=>!!String(value||'').trim()),action:'setup-website',label:'Set up your website'}
-  ];
-  return {tasks,completed:tasks.filter(task=>task.done).length,total:tasks.length,ready:tasks.every(task=>task.done)};
- }
- const shareStep={id:'share',title:'Share your links',href:'#dashboard?setup=share'};
- const check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
- function guideButton(task,label){
-  return task.action&&!task.href?`<button type="button" class="btn" data-action="${task.action}">${esc(label)}</button>`:`<a class="btn" href="${task.href}">${esc(label)}</a>`;
- }
- function nextStep(s,options){return status(s,options).tasks.find(task=>!task.done)||shareStep;}
- function renderStep(s,options,step){
-  const {tasks}=status(s,options),steps=[...tasks,shareStep];
-  const index=steps.findIndex(task=>task.id===step);
-  if(index<0)return '';
-  const current=steps[index];
-  const instructions={services:'Add a name, price and duration. Choose who offers the service, then save it.',hours:'Choose when clients can book, then select Save.',details:'Add a short description. Include an address if clients visit you, then select Save.',website:'Choose a layout and add your headline, description or photo. Select Save changes when you’re ready.',share:'Use Share links here or in the dashboard header whenever you need to copy either link.'};
-  const next=current.done?nextStep(s,options):null;
-  const action=next?guideButton(next,'Next: '+next.title):step==='share'?'<button type="button" class="btn primary" data-action="share-booking-link">Share links</button>':step==='services'?'<button type="button" class="btn primary" data-action="setup-service">Add a service</button>':'';
-  return `<aside class="jg-setup-tip" aria-label="Setup guide"><div><span class="jg-setup-position">Step ${index+1} of ${steps.length}</span><strong>${esc(current.title)}</strong><p>${esc(next?'Saved. Continue when you’re ready.':instructions[step])}</p></div><div class="jg-setup-tip-actions">${action}<a href="#dashboard">${step==='share'?'Finish setup':'Back to dashboard'}</a></div></aside>`;
- }
- const chevron='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
- function render(s,options){
-  const progress=status(s,options);if(progress.ready)return '';
-  const next=progress.tasks.find(task=>!task.done);
-  const row=(task,index)=>{
-   const body=`<span class="jg-step-mark" aria-hidden="true">${task.done?check:index+1}</span><span class="jg-step-copy"><strong>${esc(task.title)}</strong><span class="jg-step-description">${esc(task.description)}</span></span><span class="jg-step-chevron" aria-hidden="true">${chevron}</span>`;
-   const label=task.done?({services:'Manage services',hours:'Edit available times',details:'Edit business details',website:'Edit website'}[task.id]):task.label;
-   return task.action&&(!task.done||!task.href)?`<button type="button" class="jg-setup-action" data-action="${task.action}" aria-label="${esc(label)}">${body}</button>`:`<a class="jg-setup-action" href="${task.id==='services'?'#services':task.href}" aria-label="${esc(label)}">${body}</a>`;
+  const service=(s.services||[]).some(bookable);
+  const complete={
+   details:!!String(s.name||'').trim()&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email||'')&&String(s.phone||'').replace(/\D/g,'').length>=7&&(!addressRequired||String(s.address||'').trim().length>=3),
+   hours:working,category:service||(s.categories||[]).length>0,services:service,
+   website:guide.websiteReviewed||[website.headline,website.heroImage,website.about,website.homeIntro,website.template].some(value=>!!String(value||'').trim())
   };
-  return `<section class="jg-setup" aria-labelledby="jg-setup-title"><div class="jg-setup-intro"><h2 id="jg-setup-title">Get set up and start taking bookings</h2><p>Complete a few quick steps to get your website and booking page ready.</p><button type="button" class="btn primary jg-setup-start" data-action="start-setup-tutorial">${progress.completed?'Continue setup':'Start setup'}</button><div class="jg-progress-label"><span>${progress.completed} of ${progress.total} complete</span><span>${Math.round(progress.completed/progress.total*100)}%</span></div><progress max="${progress.total}" value="${progress.completed}" aria-label="Booking page setup">${progress.completed} of ${progress.total}</progress></div><ol class="jg-setup-list">${progress.tasks.map((task,i)=>`<li class="${task.done?'is-done':task.id===next.id?'is-next':''}">${row(task,i)}</li>`).join('')}</ol></section>`;
+  const tasks=steps.slice(0,5).map(step=>({...step,done:complete[step.id],covered:complete[step.id]||(guide.waived||[]).includes(step.id)}));
+  return {tasks,completed:tasks.filter(task=>task.covered).length,total:tasks.length,ready:tasks.every(task=>task.done)};
  }
- window.JovaSetupGuide=Object.freeze({status,render,renderStep,nextStep});
+ function nextStep(s,options){return status(s,options).tasks.find(task=>!task.covered)||getStep('booking');}
+ function resumeStep(s,options){
+  const saved=getStep(options.guide?.step);
+  const next=nextStep(s,options);
+  if(saved?.id==='website'&&next.id==='booking')return saved;
+  if(saved&&steps.indexOf(saved)>=steps.indexOf(getStep('booking'))&&next.id==='booking')return saved;
+  return next;
+ }
+ const button=(action,label,kind='')=>'<button type="button" class="btn '+kind+'" data-action="'+action+'">'+label+'</button>';
+ function renderStep(s,options,id){
+  const step=getStep(id);if(!step)return '';
+  const guide=options.guide||defaultState;
+  const section=sections.find(([key])=>key===guide.section)||sections[0];
+  const actions={
+   website:button('setup-continue',guide.section==='search'?'Continue to booking page':'Continue','primary'),
+   booking:button('setup-continue','Continue to sharing','primary'),
+   share:button('setup-continue','Continue to bookings','primary'),
+   bookings:button('setup-continue','Continue to calendar','primary'),
+   calendar:button('setup-continue','Continue to customers','primary'),
+   customers:button('setup-finish','Finish demo','primary')
+  };
+  const skip=['details','hours','category','services'].includes(id)?button('setup-skip-step','Skip this step'):'';
+  return '<aside class="jg-setup-tip" aria-label="Setup guide"><div><span class="jg-setup-position">Setup demo</span><strong>'+step.title+'</strong><p id="jg-setup-instruction">'+(id==='website'?section[1]:step.text)+'</p></div><div class="jg-setup-tip-actions">'+(actions[id]||'')+skip+button('setup-pause','Exit demo')+'</div></aside>';
+ }
+ function render(s,options={}){
+  const progress=status(s,options),guide=options.guide||defaultState,done=guide.mode==='done';
+  const stepIndex=steps.findIndex(step=>step.id===guide.step);
+  const reviewed=stepIndex<5?0:stepIndex-5;
+  const websiteFraction=guide.step==='website'&&!progress.tasks[4].covered?Math.max(0,sections.findIndex(([id])=>id===guide.section))/sections.length:0;
+  const percent=done?100:Math.round((progress.completed+reviewed+websiteFraction)/steps.length*100);
+  const label=done&&!guide.skipped?'Replay demo':guide.mode==='paused'&&guide.step?'Resume demo':'Start demo';
+  return '<section class="jg-setup-progress" aria-labelledby="jg-setup-title"><div><h2 id="jg-setup-title">'+(done?(guide.skipped?'Setup demo skipped':'Setup demo complete'):'Setup demo')+'</h2><div class="jg-progress-track"><progress max="100" value="'+percent+'" aria-label="Setup demo progress"></progress><span>'+(guide.skipped?'Skipped':percent+'% complete')+'</span></div></div><div class="jg-setup-progress-actions">'+(guide.mode==='active'?'':button('start-setup-tutorial',label,'primary'))+(done?'':button('skip-setup-tutorial','Skip demo','jg-setup-skip'))+'</div></section>';
+ }
+ window.JovaSetupGuide=Object.freeze({status,render,renderStep,nextStep,resumeStep,getStep,destination,sections,createState});
 })();

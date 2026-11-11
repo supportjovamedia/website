@@ -104,3 +104,15 @@ html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-day-times input{
 html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;min-height:42px;margin:0 0 22px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
 html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-back{min-height:32px!important;padding:4px 0!important;margin:0 0 12px!important}
 html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading :is(.df-save-bar,.se-save-bar){margin:0!important;padding:0!important;border:0!important;min-height:0!important;flex:none!important;background:transparent!important;box-shadow:none!important}
+@media(max-width:760px){
+ html[data-workspace-theme] .shell.jb-reference .bd-settings:not([data-business-view=home]) .bd-heading{
+  position:sticky;top:0;z-index:5;padding:8px 0!important;
+  background:var(--theme-panel,#fff)!important
+ }
+}
+
+.bd-address-group{display:grid;gap:8px}
+.bd-address-group .bd-mobile-service{margin:0;min-height:40px}
+.bd-required{color:#b42318;font-weight:800}
+.bd-optional{color:var(--theme-muted,#536677);font-size:.875em;font-weight:400}
+.shell[data-setup-active="details"] .bd-back,.shell[data-setup-active="hours"] .bd-back{display:none!important}

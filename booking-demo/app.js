@@ -13,7 +13,7 @@ function claimEssentialPurchase(){if(!signedIn()||!isLive(salon())||route().spli
 const signedIn=()=>{if(window.__owner===true)return true;try{return sessionStorage.getItem(SESSION)==='1';}catch(e){return false;}};
 var ownerIdle=null;
 const signIn=({interactive=false}={})=>{window.__owner=true;try{sessionStorage.setItem(SESSION,'1');}catch(e){}ownerIdle?.start({interactive});};
-const signOut=()=>{ownerIdle?.stop();window.__owner=false;try{sessionStorage.removeItem(SESSION);}catch(e){}};
+const signOut=()=>{pauseGuideForLogout();ownerIdle?.stop();window.__owner=false;try{sessionStorage.removeItem(SESSION);}catch(e){}};
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function localeBusiness(){try{return salon();}catch{try{return state.salons.find(s=>s.id===state.active)||state.salons[0]||{};}catch{return {};}}}
@@ -154,7 +154,7 @@ function rowsOf(x){
   payments:x.payments.transactions.map(t=>({id:t.id,booking_id:t.bookingId||'',name:t.name||'',amount:n(t.amount),fee:n(t.fee),net:n(t.net),method:t.method||'Card'}))
  };
 }
-const salonFields=x=>({p_name:x.name,p_email:x.email||'',p_phone:x.phone||'',p_address:x.address||'',p_settings:{...JovaBusinessLocale.resolve(x),hours:x.hours,color:x.color,buffer:Number(x.buffer)||0,notice:Number(x.notice)||0,about:x.about||'',workspace:JovaBookingPalette.workspace(x),seeded:true},p_payments:{enabled:!!x.payments.enabled,deposit:Number(x.payments.deposit)||0,...(x.payments.deposit_percent!==undefined?{deposit_percent:Number(x.payments.deposit_percent)}:{}),stage:x.payments.stage||0},p_usage:x.usage||{sms:0,ai:0}});
+const salonFields=x=>({p_name:x.name,p_email:x.email||'',p_phone:x.phone||'',p_address:x.address||'',p_settings:{...JovaBusinessLocale.resolve(x),hours:x.hours,color:x.color,buffer:Number(x.buffer)||0,notice:Number(x.notice)||0,about:x.about||'',...(typeof x.mobileService==='boolean'?{mobile_service:x.mobileService}:{}),workspace:JovaBookingPalette.workspace(x),seeded:true},p_payments:{enabled:!!x.payments.enabled,deposit:Number(x.payments.deposit)||0,...(x.payments.deposit_percent!==undefined?{deposit_percent:Number(x.payments.deposit_percent)}:{}),stage:x.payments.stage||0},p_usage:x.usage||{sms:0,ai:0}});
 function markSynced(x){snap[x.id]={};const r=rowsOf(x);TABLES.forEach(t=>{snap[x.id][t]={};r[t].forEach(row=>{snap[x.id][t][row.id]=JSON.stringify(row);});});salonSnap[x.id]=JSON.stringify(salonFields(x));}
 function showSync(kind){ // kind: '' | 'saving' | 'saved' | 'error'
  let el=document.getElementById('sync-status');if(!el){el=document.createElement('div');el.id='sync-status';el.setAttribute('role','status');document.body.appendChild(el);}
@@ -287,7 +287,7 @@ function expireOwnerIdle(identity){
 }
 function buildLive(row,rows){
  const st=row.settings||{},base=seedSalon(row.id,row.name,row.slug,st.color||'#77504e');
- const x=Object.assign(base,{...JovaBusinessLocale.resolve({settings:st}),ownerId:row.owner_id,name:row.name,owner:row.owner_name,email:row.email||'',phone:row.phone||'',address:row.address||'',color:st.color||base.color,initials:initials(row.name),workspace:st.workspace||{},about:st.about??'',hours:st.hours||base.hours,buffer:Number(st.buffer)||0,notice:Number(st.notice)||0,emails:[],bookings:[],customers:[]});
+ const x=Object.assign(base,{...JovaBusinessLocale.resolve({settings:st}),ownerId:row.owner_id,name:row.name,owner:row.owner_name,email:row.email||'',phone:row.phone||'',address:row.address||'',color:st.color||base.color,initials:initials(row.name),workspace:st.workspace||{},about:st.about??'',mobileService:typeof st.mobile_service==='boolean'?st.mobile_service:undefined,hours:st.hours||base.hours,buffer:Number(st.buffer)||0,notice:Number(st.notice)||0,emails:[],bookings:[],customers:[]});
  const empty=TABLES.every(t=>!rows[t].length);
  if(!teamMode()&&!st.seeded&&empty){ // Real businesses start blank. Example records belong only to the demo.
   x.staff=[x.staff[0]];x.staff[0].name=x.owner;x.categories=[];x.services=[];
@@ -414,6 +414,8 @@ function notify(kind,b){const s=salon();if(isLive(s))return;const title={confirm
 function bookingTable(list){if(!list.length)return '<div class="card empty">No bookings to show. Create one or try the customer booking flow.</div>';return '<div class="table-wrap rf-booking-table"><table><thead><tr><th>When</th><th>Customer</th><th>Service</th><th>Staff</th><th>Price</th><th>Status</th><th></th></tr></thead><tbody>'+list.map(b=>'<tr><td><b>'+esc(b.time)+'</b><span class="secondary">'+esc(humanDate(b.date))+'</span></td><td><b>'+esc(b.name)+'</b><span class="secondary">'+esc(b.source)+' booking</span></td><td>'+esc(b.serviceName)+'</td><td>'+esc(staffName(b.staffId))+'</td><td>'+money(b.price)+'</td><td>'+statusPill(b.status)+'</td><td><details class="mg-actions"><summary aria-label="Actions for '+esc(b.name)+'">⋮</summary><div class="mg-action-list" popover="auto"><button data-action="booking-details" data-id="'+esc(b.id)+'">View booking</button><button data-action="edit-booking" data-id="'+esc(b.id)+'">Edit booking</button></div></details></td></tr>').join('')+'</tbody></table></div>';}
 function statusPill(status){const value=String(status||'unknown').toLowerCase().replace(/[_ ]/g,'-');const label=({trialing:'Trial active','no-show':'No-show','past-due':'Payment overdue'})[value]||value.charAt(0).toUpperCase()+value.slice(1).replace(/-/g,' ');return `<span class="pill ${['confirmed','active','completed'].includes(value)?'green':value==='cancelled'?'red':value==='trialing'?'blue':''}">${esc(label)}</span>`;}
 function heading(title,desc,actions=''){return `<div class="page-heading"><div><h1>${title}</h1><p>${desc}</p></div>${actions}</div>`;}
+const requiredStar='<span class="bd-required" aria-hidden="true">*</span>';
+const requiredLabel=label=>'<span>'+label+' '+requiredStar+'</span>';
 function field(label,name,value='',type='text',extra=''){return `<label class="field">${label}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;}
 function pubHeader(){if(pubMode()||window.JovaPublicLinks?.hostBusiness?.(location))return bookHeader();const onboarding=/^(signup|setup|checkout)(\/|$)/.test(route());return `<header class="topbar"><a class="brand" href="#home"><img src="/brand/jova-logo.png" alt="JovaMedia"><span class="tag">Booking</span></a><nav><a href="#login">Log in</a>${onboarding?'':`<a class="btn primary small" href="#signup">${route()==='login'||returningOwnerDevice()?'Sign up':'Start free today'}</a>`}</nav></header>`;}
 function screens(){go('map');}
@@ -425,11 +427,11 @@ function ownerShell(content,active){
  if(!staffManagementAllowed(s)&&document.querySelector('#modal-root [data-form=staff]'))closeModal();
  if(billingRestricted()||(ownerAccessState?.access==='setup'&&route()==='checkout')){const pretrial=ownerAccessState?.billing.card_required===true&&ownerAccessState?.billing.trial_eligible===true;JovaWorkspaceThemes.apply(theme);return `<div class="sb-locked-shell"><header class="sb-locked-header"><a class="brand" href="#billing">JovaBook</a><nav aria-label="Account"><a href="#billing" aria-current="page">Subscription</a>${pretrial?'':'<a href="mailto:support@jovamedia.com">Support</a>'}<button type="button" data-action="signout">Log out</button></nav></header><main class="sb-locked-main">${content}</main></div>`;}
  JovaWorkspaceThemes.apply(theme);
- const icons={referrals:'M3 8h18v4H3z M5 12v9h14v-9 M12 8v13 M12 8H8a3 3 0 1 1 3-3l1 3 M12 8h4a3 3 0 1 0-3-3l-1 3',insights:'M4 3v18h18 M8 17v-5 M13 17V8 M18 17V4',dashboard:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',calendar:'M4 5h16v16H4z M4 10h16 M8 2v6 M16 2v6',bookings:'M7 5h14 M7 12h14 M7 19h14 M3 5h.01 M3 12h.01 M3 19h.01',customers:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M8 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0',availability:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M12 7v5l3 2',services:'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z M7 7L7.01 7',scheduling:'M12 20h9 M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z',staff:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0 M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',notifications:'M3 5h18v14H3z M3 6l9 7 9-7',payments:'M3 5h18v14H3z M3 10h18 M7 15h3',settings:'M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0 M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'};
- const primary=[['dashboard','Dashboard'],['calendar','Calendar'],['bookings','Bookings'],['customers','Customers'],['services','Services'],['staff','Staff'],['scheduling','Website'],['insights','Insights'],['referrals','Referrals']].filter(([r])=>!teamMode()||TEAM_ROUTES.includes(r));
+ const icons={referrals:'M3 8h18v4H3z M5 12v9h14v-9 M12 8v13 M12 8H8a3 3 0 1 1 3-3l1 3 M12 8h4a3 3 0 1 0-3-3l-1 3',insights:'M4 3v18h18 M8 17v-5 M13 17V8 M18 17V4',dashboard:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',calendar:'M4 5h16v16H4z M4 10h16 M8 2v6 M16 2v6',bookings:'M7 5h14 M7 12h14 M7 19h14 M3 5h.01 M3 12h.01 M3 19h.01',customers:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M8 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0',availability:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M12 7v5l3 2',services:'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z M7 7L7.01 7','booking-setup':'M7 3v4M17 3v4M3 10h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z',scheduling:'M12 20h9 M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z',staff:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0 M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',notifications:'M3 5h18v14H3z M3 6l9 7 9-7',payments:'M3 5h18v14H3z M3 10h18 M7 15h3',settings:'M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0 M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'};
+ const primary=[['dashboard','Dashboard'],['calendar','Calendar'],['bookings','Bookings'],['customers','Customers'],['services','Services'],['staff','Staff'],['scheduling','Website'],['booking-setup','Booking page'],['insights','Insights'],['referrals','Referrals']].filter(([r])=>!teamMode()||TEAM_ROUTES.includes(r));
  const team=teamMode();
  const more=team?[]:[['settings','Business details'],['integrations','Integrations'],['notifications',planFor(s).name==='Essential'?'Email reminders':'Reminders'],['payments','Payments'],['billing','Subscription']];
- const navActive=active==='booking-setup'?'scheduling':active==='availability'?'settings':active;
+ const navActive=active==='availability'?'settings':active;
  const title=[...primary,...more].find(n=>n[0]===navActive)?.[1]||(active==='insights'?'Insights':'Your workspace');
  const navLink=([r,t])=>{const locked=(r==='staff'&&!staffManagementAllowed(s))||(r==='insights'&&!JovaSchedule.insightsAllowed(s));return `<a href="#${r}" class="${navActive===r?'active':''}${locked?' jb-tier-link':''}" aria-label="${t}" title="${locked?tierAvailability(r):t}" ${locked?`data-plan-locked="true" aria-describedby="tier-${r}-description"`:''} ${navActive===r?'aria-current="page"':''}><i class="jb-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${icons[r]||icons.settings}"></path></svg></i>${r==='staff'||r==='insights'?'<span class="sb-nav-label">'+t+'</span>':t}${locked?`<span class="jb-tier-lock" aria-hidden="true">${tierLockIcon}</span><span class="jb-tier-tooltip" role="tooltip" id="tier-${r}-description">${tierAvailability(r)}</span>`:''}</a>`;};
  const themeControl=team?'':'<button type="button" class="jg-theme-trigger" data-action="workspace-appearance" aria-label="Workspace theme" title="Workspace theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-2-2-2-3-2h-2a2 2 0 0 1-2-2V6c0-2 0-3-2-3Z"/><circle cx="7" cy="11" r="1"/><circle cx="9" cy="7" r="1"/><circle cx="8" cy="16" r="1"/></svg></button>';
@@ -501,35 +503,141 @@ function dashboardDatePicker(context='dashboard'){return JovaDatePicker.markup({
 
 document.addEventListener('jovabook-date-apply',event=>{const selected=event.detail;if(!selected||!['dashboard','calendar'].includes(selected.context)||!['day','week','month'].includes(selected.view))return;try{calendarWeek=JovaDashboard.normalizeAnchor(selected.anchor,selected.view);calView=selected.view;miniOffset=0;render();document.querySelector('.jg-period-picker>summary')?.focus({preventScroll:true});}catch(error){toast(error.message);}});
 
-function dashboardSetupBusiness(s,{confirmedServices=false}={}){
+const setupGuideState=JovaSetupGuide.createState((()=>{try{return window.localStorage;}catch{return null;}})());
+const setupGuideIdentity=()=>[String(dir.sessionIdentity?.()||'demo'),salon().id];
+const setupGuideRead=()=>{const state=setupGuideState.read(...setupGuideIdentity());return state.mode==='active'&&!setupGuideSession()?{...state,mode:'paused'}:state;};
+const setupGuideWrite=change=>setupGuideState.write(...setupGuideIdentity(),change);
+let setupGuideMemory='';
+function setupGuideSession(active){
+ const id=JSON.stringify(setupGuideIdentity());
+ if(active!==undefined){setupGuideMemory=active?id:'';try{if(active)sessionStorage.setItem('jovabook-active-guide',id);else sessionStorage.removeItem('jovabook-active-guide');}catch{}}
+ try{return sessionStorage.getItem('jovabook-active-guide')===id||setupGuideMemory===id;}catch{return setupGuideMemory===id;}
+}
+function pauseGuideForLogout(){
+ if(setupGuideRead().mode==='active')setupGuideWrite({mode:'paused'});
+ setupGuideSession(false);
+}
+function dashboardSetupBusiness(s){
  if(!isLive(s)||!salonSnap[s.id])return s;
  const saved=JSON.parse(salonSnap[s.id]),settings=saved.p_settings;
- const services=confirmedServices?s.services.filter(service=>Object.hasOwn(snap[s.id]?.services||{},service.id)):s.services;
- return {...s,services,about:settings.about,phone:saved.p_phone,address:saved.p_address,hours:settings.hours,workspace:settings.workspace};
+ return {...s,name:saved.p_name,email:saved.p_email,phone:saved.p_phone,address:saved.p_address,mobileService:settings.mobile_service,hours:settings.hours,workspace:settings.workspace,
+  categories:s.categories.filter(category=>Object.hasOwn(snap[s.id]?.categories||{},category.id)),
+  services:s.services.filter(service=>Object.hasOwn(snap[s.id]?.services||{},service.id))};
+}
+function bookingReadinessNotice(s){
+ const saved=dashboardSetupBusiness(s),days=Array.from({length:7},(_,i)=>addDays(today(),i));
+ const services=saved.services.filter(service=>eligible(saved,service).length);
+ if(!services.length)return 'Add a service and assign it to an active team member before sharing your booking link.';
+ const fits=services.some(service=>eligible(saved,service).some(member=>days.some(date=>{
+  const hours=JovaSchedule.hoursFor(saved,member,date);
+  const minute=time=>Number(time.slice(0,2))*60+Number(time.slice(3));
+  return !hours.closed&&minute(hours.end)-minute(hours.start)>=Number(service.duration||0);
+ })));
+ return fits?'':'Set working hours that overlap with an assigned team member’s hours and leave enough time for the service.';
+}
+function bookingSetupWarning(s){
+ const text=bookingReadinessNotice(s);
+ return text?'<div class="notice amber jg-setup-readiness"><strong>Clients can’t book yet</strong><p>'+esc(text)+'</p>'+(dashboardSetupStep()?'':'<button type="button" class="btn" data-action="start-setup-tutorial">Review setup</button>')+'</div>':'';
 }
 function dashboardSetupOptions(s){
- return {bookable:service=>eligible(s,service).length>0,hasHours:Array.from({length:7},(_,i)=>addDays(today(),i)).some(date=>(s.services||[]).some(service=>eligible(s,service).some(member=>!JovaSchedule.hoursFor(s,member,date).closed)))};
+ return {guide:setupGuideRead(),addressRequired:businessAddressRequired(s),bookable:service=>eligible(s,service).length>0,hasHours:JovaSchedule.normalize(s.hours).days.length>0};
 }
 function dashboardSetupStep(currentRoute=route()){
- const step=new URLSearchParams(location.hash.split('?')[1]).get('setup');
- return ({services:'services',availability:'hours',settings:'details',scheduling:'website',dashboard:'share'}[currentRoute]===step)?step:'';
+ if(!signedIn()||teamMode()||billingRestricted())return '';
+ const guide=setupGuideRead(),step=JovaSetupGuide.getStep(guide.step);
+ return guide.mode==='active'&&step?.route===currentRoute?step.id:'';
 }
-function openSetupWebsite(){
- workspace.click('ws-personalise-section',{dataset:{section:'website'}});
- go('scheduling?setup=website');
+function showSetupRoute(destination){
+ const hash='#'+destination;
+ if(location.hash!==hash)history.pushState(null,'',hash);
+ closeModal();render();window.scrollTo(0,0);
+}
+function navigateSetup(step,change={}){
+ setupGuideSession(true);setupGuideWrite({mode:'active',step:step.id,...change});
+ showSetupRoute(JovaSetupGuide.destination(step.id));
 }
 function startSetupTutorial(){
- const s=dashboardSetupBusiness(salon(),{confirmedServices:true});
- const step=JovaSetupGuide.nextStep(s,dashboardSetupOptions(s));
- if(step.id==='website')openSetupWebsite();
- else go(step.href.slice(1));
+ const s=dashboardSetupBusiness(salon()),options=dashboardSetupOptions(s);
+ if(options.guide.mode==='done')options.guide=setupGuideWrite({waived:[],websiteReviewed:false,skipped:false,section:'design'});
+ const step=options.guide.mode==='paused'?JovaSetupGuide.resumeStep(s,options):JovaSetupGuide.nextStep(s,options);
+ closeModal();
+ navigateSetup(step,step.id==='website'&&options.guide.step!=='website'?{section:'design'}:{});
+}
+function advanceSetup(step){
+ if(dashboardSetupStep()!==step)return;
+ const s=dashboardSetupBusiness(salon()),options=dashboardSetupOptions(s);
+ if(!JovaSetupGuide.status(s,options).tasks.find(task=>task.id===step)?.done)return;
+ navigateSetup(JovaSetupGuide.nextStep(s,options),step==='services'?{section:'design'}:{});
+}
+function continueSetup(){
+ const step=dashboardSetupStep();
+ const nextTour={booking:'share',share:'bookings',bookings:'calendar',calendar:'customers'}[step];
+ if(nextTour){navigateSetup(JovaSetupGuide.getStep(nextTour));return;}
+ if(step!=='website'||editorBusy())return;
+ if(businessWebsite.isDirty()){toast('Save your website changes before continuing.');return;}
+ const guide=setupGuideRead(),index=JovaSetupGuide.sections.findIndex(([id])=>id===guide.section),next=JovaSetupGuide.sections[index+1];
+ if(next){setupGuideWrite({section:next[0]});render();}
+ else navigateSetup(JovaSetupGuide.getStep('booking'),{websiteReviewed:true});
+}
+function leaveSetup(proceed){
+ if(editorBusy()){toast('Wait for your changes to finish saving.');return;}
+ if(ownerHasChanges()){requestUnsavedLeave(proceed);return;}
+ proceed();
+}
+function pauseSetup(){
+ leaveSetup(()=>{setupGuideWrite({mode:'paused'});setupGuideSession(false);showSetupRoute('dashboard');});
+}
+function skipSetupStep(){
+ const step=dashboardSetupStep();
+ if(!['details','hours','category','services'].includes(step))return;
+ leaveSetup(()=>{
+  const s=dashboardSetupBusiness(salon()),options=dashboardSetupOptions(s);
+  options.guide=setupGuideWrite({waived:[...new Set([...options.guide.waived,step])]});
+  navigateSetup(JovaSetupGuide.nextStep(s,options));
+ });
+}
+function skipSetupDemo(){
+ leaveSetup(()=>{setupGuideWrite({mode:'done',step:'',skipped:true});setupGuideSession(false);showSetupRoute('dashboard');toast('Demo skipped. You can start it anytime from your dashboard.');});
+}
+function finishSetup(){
+ if(dashboardSetupStep()!=='customers')return;
+ setupGuideWrite({mode:'done',step:'',skipped:false});setupGuideSession(false);showSetupRoute('dashboard');
+ toast('You’ve completed the setup demo. You can replay it anytime from your dashboard.');
+}
+function showSetupWelcome(){
+ modal('Set up your JovaBook workspace','<p>New to JovaBook? We recommend the setup demo. It picks up from the steps you still need to do.</p><div class="row"><button type="button" class="btn primary" data-action="start-setup-tutorial">Start demo</button><button type="button" class="btn" data-action="skip-setup-tutorial">Skip demo</button></div>');
+}
+function applySetupFocus(step){
+ const shell=document.querySelector('.shell');
+ if(!shell||!step)return;
+ shell.dataset.setupActive=step;
+ for(const area of shell.querySelectorAll('.sidebar,.jg-mobile-bottom'))area.inert=true;
+ if(step!=='share')shell.querySelector('.workspace-header').inert=true;
+ const target=shell.querySelector(JovaSetupGuide.getStep(step).target);
+ target?.classList.add('jg-setup-target');
+ if(target&&['category','services'].includes(step)){
+  const main=shell.querySelector('.workspace-main');
+  const highlight=(node)=>{
+   for(const child of node.children){
+    if(child.matches('.jg-setup-tip')||child===target)continue;
+    if(child.contains(target))highlight(child);
+    else{child.inert=true;child.classList.add('jg-setup-obscured');}
+   }
+  };
+  highlight(main);
+  target.setAttribute('aria-describedby','jg-setup-instruction');
+ }
+ if(step==='share'){
+  for(const control of shell.querySelectorAll('.workspace-header [data-action="workspace-appearance"],.workspace-header [data-action="notif-open"]'))control.classList.add('jg-setup-target');
+ }
 }
 function overview(){
  const {s,stats}=dashboardState(),rows=s.bookings.filter(b=>JovaDashboard.inRange(stats.range,b.date)&&calMatches(b.staffId)).sort(sortBookings),unit=calView,label=unit==='week'?'Week starting':unit==='month'?'Month':'Date',nowLabel=unit==='week'?'This week':unit==='month'?'This month':'Today';
  const controls=`<div class="db-period-controls"><div class="seg" role="group" aria-label="Dashboard period">${['day','week','month'].map(view=>`<button type="button" class="${unit===view?'active':''}" data-action="dashboard-range" data-value="${view}" aria-pressed="${unit===view}">${view[0].toUpperCase()+view.slice(1)}</button>`).join('')}</div></div>${dashboardDatePicker()}<p class="db-period-error" id="dashboard-date-error" role="alert" hidden></p>`;
  const setupBusiness=dashboardSetupBusiness(s);
+ const setupReady=JovaSetupGuide.status(setupBusiness,dashboardSetupOptions(setupBusiness)).ready;
  const setupTasks=!teamMode()?JovaSetupGuide.render(setupBusiness,dashboardSetupOptions(setupBusiness)):'';
- return reference.dashboard({stats,rows,controls,staffIds:calStaff,setupGuide:setupTasks,refundPanel:teamMode()?'':refunds.panel(),upgrade:setupTasks?'':freePlanUpgrade(s),referralCard:teamMode()?'':referrals.card()});
+ return reference.dashboard({stats,rows,controls,staffIds:calStaff,setupGuide:setupTasks,setupReady,refundPanel:teamMode()?'':refunds.panel(),upgrade:setupReady?freePlanUpgrade(s):'',referralCard:teamMode()?'':referrals.card()});
 }
 document.addEventListener('change',event=>{
  const input=event.target;if(input.dataset.change!=='dashboard-date')return;
@@ -590,7 +698,7 @@ function restoreBusinessSettingsDrafts(drafts){
  if(!drafts.forms.length||salon().id!==drafts.owner||(dir.sessionIdentity?.()||'demo')!==drafts.identity||!document.querySelector('.st-business-settings,.jg-personalise'))return;
  window.JovaDirtyForms?.scan();
  for(const draft of drafts.forms){const form=Array.from(document.querySelectorAll('.st-business-settings form[data-form],.jg-personalise form[data-form="ws-booking-page"]')).find(form=>form.dataset.form===draft.type&&(form.dataset.id||'')===draft.id);if(!form)continue;const fields=Array.from(form.elements).filter(el=>el.name);if(fields.length!==draft.fields.length)continue;
-  draft.fields.forEach((saved,i)=>{const el=fields[i];if(el.name!==saved.name||el.type!==saved.type)return;el.value=saved.value;if(['checkbox','radio'].includes(el.type))el.checked=saved.checked;el.disabled=saved.disabled;});form.querySelectorAll('fieldset').forEach((el,i)=>{el.disabled=draft.fieldsets[i]??el.disabled;});form.dispatchEvent(new Event('input',{bubbles:true}));if(form.dataset.form==='ws-booking-page'){form.querySelector('[data-colour-value]')?.dispatchEvent(new Event('input',{bubbles:true}));workspace.change(form.querySelector('[data-change=ws-preview]'));}
+  draft.fields.forEach((saved,i)=>{const el=fields[i];if(el.name!==saved.name||el.type!==saved.type)return;el.value=saved.value;if(['checkbox','radio'].includes(el.type))el.checked=saved.checked;el.disabled=saved.disabled;});form.querySelectorAll('fieldset').forEach((el,i)=>{el.disabled=draft.fieldsets[i]??el.disabled;});form.dispatchEvent(new Event('input',{bubbles:true}));if(form.dataset.form==='settings')form.elements.mobileService?.dispatchEvent(new Event('change',{bubbles:true}));if(form.dataset.form==='ws-booking-page'){form.querySelector('[data-colour-value]')?.dispatchEvent(new Event('input',{bubbles:true}));workspace.change(form.querySelector('[data-change=ws-preview]'));}
  }
 }
 function businessSettingsScroll(){requestAnimationFrame(()=>{if(window.JovaBusinessDetails)window.JovaBusinessDetails.open(route()==='availability'?'hours':dashboardSetupStep()==='details'?'information':'home');else if(route()==='availability')document.getElementById('business-hours')?.scrollIntoView({block:'start'});else window.scrollTo(0,0);});}
@@ -598,18 +706,22 @@ const businessOwner=()=>String(dir.sessionIdentity?.()||'demo')+'|'+state.active
 function businessSettings(){
  const s=salon(),supported=schedulingSupported(),busy=businessSettingsSaving&&businessSettingsSaveOwner===businessOwner(),owner=businessOwner();
  const view=window.JovaBusinessDetails?.view(owner,route())||(route()==='availability'?'hours':'home');
- const titles={home:'Business details',information:'Business information',hours:'Working hours',rules:'Booking rules',booking:'Your booking page'};
+ const titles={home:'Business details',information:'Business information',hours:'Working hours',rules:'Booking rules'};
  const icon=paths=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
- const choices=[['information','Business information','Your business details shown on your booking page.','<path d="M3 10h18L19 3H5Z M5 10v11h14V10 M9 21v-6h6v6"/><path d="M3 10c0 4 5 4 5 0 0 4 4 4 4 0 0 4 4 4 4 0 0 4 5 4 5 0"/>'],['hours','Working hours','Set when customers can book appointments.','<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18"/>'],['rules','Booking rules','Manage booking notice and time between appointments.','<path d="M8 5h13M8 12h13M8 19h13M3 5h.01M3 12h.01M3 19h.01"/>'],['booking','Your booking page','Share your booking link or add it to your website.','<path d="m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0m4 2 1-1a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0"/>']];
+ const choices=[['information','Business information','Your business details shown on your booking page.','<path d="M3 10h18L19 3H5Z M5 10v11h14V10 M9 21v-6h6v6"/><path d="M3 10c0 4 5 4 5 0 0 4 4 4 4 0 0 4 4 4 4 0 0 4 5 4 5 0"/>'],['hours','Working hours','Set when customers can book appointments.','<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18"/>'],['rules','Booking rules','Manage booking notice and time between appointments.','<path d="M8 5h13M8 12h13M8 19h13M3 5h.01M3 12h.01M3 19h.01"/>']];
  const hours=workspace.businessHoursFields(),split=hours.indexOf('<details'),hourFields=split<0?hours:hours.slice(0,split);let ruleFields=split<0?'':hours.slice(split).replace('<details class="ws-details">','<div class="bd-rules-fields">').replace('<summary>Booking rules</summary>','').replace('</details>','</div>');
  const minuteChoices=(value,max,step,empty)=>{const selected=Number(value)||0,options=Array.from({length:max/step+1},(_,i)=>i*step);if(!options.includes(selected))options.push(selected);return options.sort((a,b)=>a-b).map(n=>'<option value="'+n+'"'+(n===selected?' selected':'')+'>'+(n===0?empty:n<60?n+' minutes':n%60?Math.floor(n/60)+'h '+n%60+'m':n/60+(n===60?' hour':' hours'))+'</option>').join('');};
  ruleFields=ruleFields.replace(/<input name="buffer"[^>]*>/,'<select name="buffer" required>'+minuteChoices(s.buffer,120,5,'No extra time')+'</select>').replace(/<input name="notice"[^>]*>/,'<select name="notice" required>'+minuteChoices(s.notice,480,15,'No minimum notice')+'</select>').replace('Time between bookings (minutes)','Time between appointments').replace('Notice for bookings today (minutes)','Minimum booking notice');
- const hidden=id=>view===id?'':' hidden',brand=/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#242424';
- return `<div class="st-business-settings bd-settings" data-bd-owner="${esc(owner)}" data-business-view="${view}"><form data-form="settings" data-owner="${esc(owner)}" aria-busy="${busy}"><button type="button" class="bd-back" data-bd-open="home" ${view==='home'?'hidden':''} aria-label="Back to Business details">${icon('<path d="m14 5-7 7 7 7M7 12h14"/>')}Business details</button><header class="bd-heading"><h1 data-bd-title>${titles[view]}</h1><button type="submit" class="btn primary" data-save-placement="top" data-bd-save ${busy?'disabled':''} ${['home','booking'].includes(view)?'hidden':''}>${busy?'Saving…':'Save'}</button></header><section class="bd-hub" data-bd-section="home"${hidden('home')}><div class="bd-menu">${choices.map(([id,title,description,paths])=>`<button type="button" class="bd-option" data-bd-open="${id}"><span class="bd-option-icon">${icon(paths)}</span><span><strong>${title}</strong><span>${description}</span></span>${icon('<path d="m9 5 7 7-7 7"/>')}</button>`).join('')}</div><button type="button" class="quiet bd-export" data-action="export">Export business data</button></section><fieldset class="bs-fields" ${busy?'disabled':''}><section data-bd-section="information"${hidden('information')}>${settings()}</section><section id="business-hours" class="st-business-hours" data-bd-section="hours"${hidden('hours')}><div class="ws ws-simple-hours"><section class="ws-panel">${supported?'':'<p class="ws-capability">Daily hours cannot be changed yet. Your existing hours will be kept when you save your business details.</p>'}<fieldset class="bs-hours-fields" ${supported?'':'disabled'}>${hourFields}</fieldset></section></div></section><section class="bd-rules card" data-bd-section="rules"${hidden('rules')}>${ruleFields}</section></fieldset><section class="bd-booking" data-bd-section="booking"${hidden('booking')}><div class="bd-booking-preview" style="--bd-brand:${brand}"><span class="bd-preview-mark" aria-hidden="true">${esc((s.name||'B').slice(0,1))}</span><h2>${esc(s.name)}</h2>${s.about?`<p>${esc(s.about.slice(0,180))}</p>`:''}<a class="btn primary" href="${esc(bookingLink(s))}" target="_blank" rel="noopener">Book an appointment</a></div><label class="field">Your booking link<div class="bd-share-link"><input readonly value="${esc(bookingLink(s))}" data-bd-link><button type="button" class="btn" data-bd-copy>Copy link</button></div></label><div class="bd-booking-actions"><a class="btn" href="${esc(bookingLink(s))}" target="_blank" rel="noopener">Open booking page ${icon('<path d="M14 3h7v7M21 3l-9 9M10 3H3v18h18v-7"/>')}</a><a class="btn" href="#scheduling">Customise page ${icon('<path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>')}</a></div></section><div class="error" role="alert"></div></form></div>`;
+ const hidden=id=>view===id?'':' hidden';
+ return `<div class="st-business-settings bd-settings" data-bd-owner="${esc(owner)}" data-business-view="${view}"><form data-form="settings" data-owner="${esc(owner)}" aria-busy="${busy}" ${dashboardSetupStep()==='hours'?'novalidate':''}><button type="button" class="bd-back" data-bd-open="home" ${view==='home'?'hidden':''} aria-label="Back to Business details">${icon('<path d="m14 5-7 7 7 7M7 12h14"/>')}Business details</button><header class="bd-heading"><h1 data-bd-title>${titles[view]}</h1><button type="submit" class="btn primary" data-save-placement="top" data-bd-save ${busy?'disabled':''} ${view==='home'?'hidden':''}>${busy?'Saving…':'Save'}</button></header><section class="bd-hub" data-bd-section="home"${hidden('home')}><div class="bd-menu">${choices.map(([id,title,description,paths])=>`<button type="button" class="bd-option" data-bd-open="${id}"><span class="bd-option-icon">${icon(paths)}</span><span><strong>${title}</strong><span>${description}</span></span>${icon('<path d="m9 5 7 7-7 7"/>')}</button>`).join('')}</div><button type="button" class="quiet bd-export" data-action="export">Export business data</button></section><fieldset class="bs-fields" ${busy?'disabled':''}><section data-bd-section="information"${hidden('information')}>${settings()}</section><section id="business-hours" class="st-business-hours" data-bd-section="hours"${hidden('hours')}><div class="ws ws-simple-hours"><section class="ws-panel">${supported?'':'<p class="ws-capability">Daily hours cannot be changed yet. Your existing hours will be kept when you save your business details.</p>'}<fieldset class="bs-hours-fields" ${supported?'':'disabled'}>${hourFields}</fieldset></section></div></section><section class="bd-rules card" data-bd-section="rules"${hidden('rules')}>${ruleFields}</section></fieldset><div class="error" role="alert"></div></form></div>`;
 }
-function businessAddressRequired(s){if(ownerAccessState?.business?.id===s?.id)return ownerAccessState.address_required!==false;const locations=s?.serviceLocations;return !Array.isArray(locations)||!locations.length||locations.includes('physical');}
+function businessAddressRequired(s){if(typeof s?.mobileService==='boolean')return !s.mobileService;if(ownerAccessState?.business?.id===s?.id)return ownerAccessState.address_required!==false;const locations=s?.serviceLocations;return !Array.isArray(locations)||!locations.length||locations.includes('physical');}
 function businessContactError(s,address,phone){if(businessAddressRequired(s)&&String(address||'').trim().length<3)return 'Enter your business address.';if(String(phone||'').replace(/\D/g,'').length<7)return 'Enter a valid business phone number.';return '';}
-function settings(){const s=salon();return `<section class="card stack bd-information"><p class="bd-description">Your business details shown on your booking page.</p>${field('Business name','name',s.name,'text','required maxlength="60"')}<label class="field">Description<textarea name="about" maxlength="700">${esc(s.about)}</textarea></label>${JovaBusinessLocale.fields(s,{locked:s.bookings.length>0})}${field(businessAddressRequired(s)?'Address':'Address (optional)','address',s.address,'text',businessAddressRequired(s)?'required':'')}<div class="grid two">${field('Phone','phone',s.phone,'tel','required')}${field('Email','email',s.email,'email','required')}</div></section>`;}
+function settings(){
+ const s=salon(),addressRequired=businessAddressRequired(s);
+ const input=(label,name,type,required=true,extra='')=>field('<span class="bd-field-label">'+label+' <span class="bd-required" aria-hidden="true" '+(required?'':'hidden')+'>*</span><span class="bd-optional" '+(required?'hidden':'')+'>(optional)</span></span>',name,s[name],type,(required?'required ':'')+extra);
+ return `<section class="card stack bd-information"><p class="bd-description">Your business details shown on your booking page.</p>${input('Business name','name','text',true,'maxlength="60"')}<label class="field"><span>Description <span class="bd-optional">(optional)</span></span><textarea name="about" maxlength="700">${esc(s.about)}</textarea></label>${JovaBusinessLocale.fields(s,{locked:s.bookings.length>0,markRequired:true})}<div class="bd-address-group">${input('Address','address','text',addressRequired)}<label class="ws-check bd-mobile-service"><input type="checkbox" name="mobileService" ${addressRequired?'':'checked'}> I provide a mobile service or have no fixed address</label></div><div class="grid two">${input('Phone','phone','tel')}${input('Email','email','email')}</div></section>`;
+}
 async function persistBusinessDetails(values,sid,identity){
  const current=salon();
  if(current.id!==sid||businessOwner()!==identity||isLive(current)&&(current.ownerId!==dir.sessionIdentity?.()||verifiedOwnerIdentity!==dir.sessionIdentity?.()))return {ok:false,stale:true,message:'Your business account changed. Open Business details again.'};
@@ -624,7 +736,7 @@ async function persistBusinessDetails(values,sid,identity){
  const result=await dir.verifySalon(sid);if(!unchanged())return {ok:false,stale:true,message:'Your business account changed. Open Business details again.'};
  if(!result.ok||result.salon?.id!==sid||result.salon.owner_id!==dir.sessionIdentity?.())return {ok:false,message:'We could not confirm these changes were saved. Please try again.'};
  const row=result.salon,st=row.settings||{},sameHours=JSON.stringify(JovaSchedule.normalize(st.hours))===JSON.stringify(JovaSchedule.normalize(values.hours));
- if(row.name!==values.name||(row.email||'')!==values.email||(row.phone||'')!==values.phone||(row.address||'')!==values.address||(st.about||'')!==values.about||Number(st.buffer||0)!==values.buffer||Number(st.notice||0)!==values.notice||!sameHours||['country','timezone','currency'].some(key=>JovaBusinessLocale.resolve({settings:st})[key]!==values[key]))return {ok:false,message:'The saved details differ from these changes. Review them and try again.'};
+ if(row.name!==values.name||(row.email||'')!==values.email||(row.phone||'')!==values.phone||(row.address||'')!==values.address||(st.about||'')!==values.about||st.mobile_service!==values.mobileService||Number(st.buffer||0)!==values.buffer||Number(st.notice||0)!==values.notice||!sameHours||['country','timezone','currency'].some(key=>JovaBusinessLocale.resolve({settings:st})[key]!==values[key]))return {ok:false,message:'The saved details differ from these changes. Review them and try again.'};
  return {ok:true};
  }finally{finishConfirmation();}
 }
@@ -635,17 +747,19 @@ async function saveBusinessDetails(form,data){
   const locale=JovaBusinessLocale.read(data,salon());
   const name=String(data.name||'').trim(),address=String(data.address||'').trim(),phone=String(data.phone||'').trim(),email=String(data.email||'').trim(),about=String(data.about||'').trim();
   if(!name||name.length>60)throw Error('Enter a business name up to 60 characters.');
-  const contactError=businessContactError(salon(),address,phone);if(contactError)throw Error(contactError);
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Enter a valid email address.');
+  const mobileService=data.mobileService==='on',hoursOnly=dashboardSetupStep()==='hours';
+  const contactError=hoursOnly?'':businessContactError({...salon(),mobileService},address,phone);if(contactError)throw Error(contactError);
+  if(!hoursOnly&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Enter a valid email address.');
   if(about.length>700)throw Error('Keep the description to 700 characters.');
   const hours=schedulingSupported()?workspace.readBusinessHours(form):salon().hours,buffer=Number(data.buffer??salon().buffer),notice=Number(data.notice??salon().notice);
   if(!Number.isInteger(buffer)||buffer<0||buffer>120||buffer%5||!Number.isInteger(notice)||notice<0||notice>480||notice%15)throw Error('Use a buffer from 0 to 120 in steps of 5, and notice from 0 to 480 in steps of 15.');
   businessSettingsSaving=true;businessSettingsSaveOwner=identity;form.setAttribute('aria-busy','true');form.querySelector('.bs-fields').disabled=true;const button=form.querySelector('[type=submit]');button.disabled=true;button.textContent='Saving…';error(form,'');
-  const result=await persistBusinessDetails({...locale,name,initials:initials(name),address,phone,email,about,hours,buffer,notice},sid,identity);
+  const result=await persistBusinessDetails({...locale,name,initials:initials(name),address,phone,email,about,hours,buffer,notice,mobileService},sid,identity);
   if(identity!==businessOwner()||sid!==salon().id)return;
   const active=document.querySelector('.st-business-settings form[data-form=settings]');if(!active)return;
   if(!result.ok){error(active,result.message||'Your changes are not saved. Please try again.');return;}
   JovaDirtyForms.saved(active);businessSettingsSaving=false;render();toast('Business details saved.');
+  const step=dashboardSetupStep();if(step==='details'||step==='hours')queueMicrotask(()=>advanceSetup(step));
  }catch(problem){if(identity===businessOwner())error(document.querySelector('.st-business-settings form[data-form=settings]')||form,problem.message||'Check your entries and try again.');}
  finally{if(businessSettingsSaveOwner===identity){businessSettingsSaving=false;businessSettingsSaveOwner='';}if(identity===businessOwner()){const active=document.querySelector('.st-business-settings form[data-form=settings]');if(active){active.setAttribute('aria-busy','false');active.querySelector('.bs-fields').disabled=false;const button=active.querySelector('[type=submit]');button.disabled=false;button.textContent='Save';}}}
 }
@@ -763,13 +877,13 @@ async function refreshEmailDelivery(){
  if(activity.ok){const merged=new Map(current.emails.map(e=>[e.id,e]));activity.rows.map(JovaEmailDelivery.fromRow).forEach(e=>merged.set(e.id,e));current.emails=[...merged.values()].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));if(snap[sid])rowsOf(current).email_log.forEach(row=>snap[sid].email_log[row.id]=JSON.stringify(row));}
  try{localStorage.setItem(KEY,JSON.stringify(state));}catch{}
 }
-const hostApi={teamLoginsAvailable:s=>!!dir.remote&&isLive(s)&&!teamMode()&&staffManagementAllowed(s)&&!!dir.teamLogin,teamLogins:()=>dir.teamLogins(),teamLogin:(action,salonId,staffId,fields)=>dir.teamLogin(action,salonId,staffId,fields),chooseStarterCalendar:staff=>dir.chooseStarterCalendar(staff),offerBilling:(action,body)=>dir.offerBilling(action,{...body,salon_id:salon().id}),commissionAllowance:()=>dir.commissionAllowance?.(),disputeCommission:(booking,reason)=>dir.disputeCommission?.(booking,reason),refundActivity:()=>dir.refundActivity?.(),isDashboardVisible:()=>signedIn()&&route()==='dashboard',claimPurchaseIntent:claimEssentialPurchase,integrationRequest:(action,body)=>dir.integrationCall(action,body),isIntegrationsVisible:()=>signedIn()&&route().split('/')[0]==='integrations',changeBilling:(plan,sid,requestId,termsVersion,frequency)=>dir.billingChange(plan,sid,requestId,termsVersion,frequency),cancelBillingChange:(sid,requestId)=>dir.billingCancelChange(sid,requestId),cancelBilling:(sid,requestId)=>dir.billingCancel(sid,requestId),accessInfo:()=>ownerAccessState,refreshAccess:async()=>{const r=await loadLive({reason:'manual-refresh'});if(r.ok)render();return r;},checkoutBilling:(plan,sid,requestId,termsVersion,frequency,trial)=>dir.billingCheckout?.(plan,sid,requestId,termsVersion,frequency,trial),refreshSmsReminders,setSmsReminders,setSmsMessage,smsConsentChanged:value=>{draft.smsConsent=value;},persistWebsite,uploadWebsiteImage:(file,sid)=>dir.uploadWebsiteImage?.(file,sid)||Promise.resolve({ok:false,message:'Image uploads are unavailable. Please try again later.'}),refreshEmailDelivery,salon,save,render,esc,field,money,planFor,canAddStaff,uid,today,addDays,humanDate,modal,closeModal,toast,error,isLive,bookingLink,available,schedulingSupported,seriesSupported,createSeries,loadSubscription,requestPlan,cancelPlan,isBillingVisible:()=>signedIn()&&['billing','checkout'].includes(route().split('/')[0]),openBooking:bookingDetails,ownerIdentity:()=>dir.sessionIdentity?.()||'demo'};
+const hostApi={bookingSetupWarning,teamLoginsAvailable:s=>!!dir.remote&&isLive(s)&&!teamMode()&&staffManagementAllowed(s)&&!!dir.teamLogin,teamLogins:()=>dir.teamLogins(),teamLogin:(action,salonId,staffId,fields)=>dir.teamLogin(action,salonId,staffId,fields),chooseStarterCalendar:staff=>dir.chooseStarterCalendar(staff),offerBilling:(action,body)=>dir.offerBilling(action,{...body,salon_id:salon().id}),commissionAllowance:()=>dir.commissionAllowance?.(),disputeCommission:(booking,reason)=>dir.disputeCommission?.(booking,reason),refundActivity:()=>dir.refundActivity?.(),isDashboardVisible:()=>signedIn()&&route()==='dashboard',claimPurchaseIntent:claimEssentialPurchase,integrationRequest:(action,body)=>dir.integrationCall(action,body),isIntegrationsVisible:()=>signedIn()&&route().split('/')[0]==='integrations',changeBilling:(plan,sid,requestId,termsVersion,frequency)=>dir.billingChange(plan,sid,requestId,termsVersion,frequency),cancelBillingChange:(sid,requestId)=>dir.billingCancelChange(sid,requestId),cancelBilling:(sid,requestId)=>dir.billingCancel(sid,requestId),accessInfo:()=>ownerAccessState,refreshAccess:async()=>{const r=await loadLive({reason:'manual-refresh'});if(r.ok)render();return r;},checkoutBilling:(plan,sid,requestId,termsVersion,frequency,trial)=>dir.billingCheckout?.(plan,sid,requestId,termsVersion,frequency,trial),refreshSmsReminders,setSmsReminders,setSmsMessage,smsConsentChanged:value=>{draft.smsConsent=value;},persistWebsite,uploadWebsiteImage:(file,sid)=>dir.uploadWebsiteImage?.(file,sid)||Promise.resolve({ok:false,message:'Image uploads are unavailable. Please try again later.'}),refreshEmailDelivery,salon,save,render,esc,field,money,planFor,canAddStaff,uid,today,addDays,humanDate,modal,closeModal,toast,error,isLive,bookingLink,available,schedulingSupported,seriesSupported,createSeries,loadSubscription,requestPlan,cancelPlan,isBillingVisible:()=>signedIn()&&['billing','checkout'].includes(route().split('/')[0]),openBooking:bookingDetails,ownerIdentity:()=>dir.sessionIdentity?.()||'demo'};
 ownerIdle=window.JovaOwnerIdleSession?.create({identity:()=>dir.sessionIdentity?.(),hasSession:()=>dir.hasSession?.(),liveActive:()=>signedIn()&&dir.remote&&!pubMode()&&!customerScope()&&OWNER_ROUTES.includes(route().split('/')[0]),expire:expireOwnerIdle});
 const ownerOnboarding=JovaOwnerOnboarding.create({directory:dir,esc,render,purchaseIntent:essentialPurchaseIntent,logout:async()=>{await dir.logout();signOut();go('login');},openDashboard:async()=>{const result=await loadLive();if(!result.ok)return result;if(ownerSignupRequired())return {ok:false,message:'Finish your account setup before opening the dashboard.'};clearPurchaseIntent();const url=new URL(location.href);['plan','cadence','seats'].forEach(key=>url.searchParams.delete(key));history.replaceState(null,'',url);onbSet(null);signIn();go('dashboard');return {ok:true};}});
-const ownerWelcome=JovaOwnerWelcome.create({directory:dir,startSetup:startSetupTutorial,visible:()=>signedIn()&&!teamMode()&&isLive(salon())&&route()==='dashboard'&&!dashboardSetupStep()&&ownerAccessState?.onboarding_completed===true});
+const ownerWelcome=JovaOwnerWelcome.create({directory:dir,visible:()=>signedIn()&&!teamMode()&&(isLive(salon())||!dir.remote&&!JovaDemoData.isBuiltIn(salon()))&&route()==='dashboard'&&!billingRestricted()&&setupGuideRead().mode==='new'&&!JovaSetupGuide.status(dashboardSetupBusiness(salon()),dashboardSetupOptions(salon())).ready,identity:()=>JSON.stringify(setupGuideIdentity()),offer:showSetupWelcome});
 const deposits=JovaDeposits.create({...hostApi,isPublic:pubMode,publicSlug:()=>requestedSalon,goDeposit:()=>go('book/deposit'),depositsSaved:(sid,payments)=>{const current=salon();if(current.id!==sid||!isLive(current))return;current.payments={...current.payments,...payments};if(salonSnap[sid]){const snapshot=JSON.parse(salonSnap[sid]);snapshot.p_payments={enabled:!!payments.enabled,deposit:Number(payments.deposit)||0,...(payments.deposit_percent!==undefined?{deposit_percent:Number(payments.deposit_percent)}:{}),stage:payments.stage||0};salonSnap[sid]=JSON.stringify(snapshot);}save();},depositConfirmed:(booking,refunded)=>{if(!pubMode())return;if(!PUB||PUB.status!=='ok'){go('book/deposit');render();return;}PUB.bk[booking.id]=booking;if(booking.status==='confirmed'&&!PUB.salon.bookings.some(b=>b.id==='busy_'+booking.id.slice(0,8)))PUB.salon.bookings.push({id:'busy_'+booking.id.slice(0,8),date:booking.date,time:booking.time,duration:booking.duration,staffId:booking.staffId,status:'confirmed'});lastBooking=booking.id;draft.smsResult=null;if(refunded){go('book/deposit-refund');toast('The slot could not be confirmed. Your deposit refund has been requested.');}else{go('book/confirmation');toast('Deposit paid. Your booking is confirmed.');}}});
 const smsReminders=JovaSmsReminders.create(hostApi);
-const businessWebsite=JovaBusinessWebsite.create({...hostApi,customerAccountLink:s=>customerPortalLink(s,'login')});hostApi.website=businessWebsite;
+const businessWebsite=JovaBusinessWebsite.create({...hostApi,guideSection:()=>dashboardSetupStep()==='website'?setupGuideRead().section:'',afterSave:()=>{if(dashboardSetupStep()==='website')continueSetup();},customerAccountLink:s=>customerPortalLink(s,'login')});hostApi.website=businessWebsite;
 const businessIntegrations=JovaBusinessIntegrations.create(hostApi);hostApi.openRecovery=id=>businessIntegrations.openRecovery(id);
 const refunds=JovaRefunds.create(hostApi);
 const referrals=JovaReferrals.create({...hostApi,claimReferral:()=>dir.claimReferralReward(ownerAccessState?.referrals?.claimable_reward)});
@@ -829,6 +943,12 @@ function render(){
 if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingLeave=null;const retainedContentScroll=document.querySelector('.workspace-main')?.scrollTop||0;const retainedBusinessDrafts=captureBusinessSettingsDrafts();if(new URLSearchParams(location.search).get('portal')==='customer'&&! /^(?:customer(?:\/|$)|book(?:\/|$)|manage(?:\/|$)|website(?:\/|$))/.test(publicRoute())){const authRoute={login:'login',signup:'register',forgot:'forgot',reset:'reset'}[location.hash.slice(1).split('/')[0]]||'bookings';history.replaceState(null,'',location.pathname+location.search+'#customer/'+authRoute);}if(renderCustomerPortal())return;if(customerPortal)destroyCustomerPortal();if(signedIn()&&dir.existingBusinessContext?.()&&OWNER_ROUTES.includes(route().split('/')[0]))history.replaceState(null,'',location.pathname+location.search+'#signup');const setupOnly=isLive(salon())&&ownerAccessState?.business.id===salon().id&&(ownerSignupRequired()||ownerAccessState.access==='setup'||(ownerAccessState.access==='active'&&ownerAccessState.business.status==='setup'));if(signedIn()&&setupOnly&&ownerAccessState?.billing.card_required===true&&route()==='checkout'&&!salon().address)history.replaceState(null,'',location.pathname+location.search+'#setup');if(signedIn()&&setupOnly&&!['signup','setup','checkout','login','forgot','reset'].includes(route().split('/')[0])){onbSet(salon().id);history.replaceState(null,'',location.pathname+location.search+'#signup');}
  if(signedIn()&&isLive(salon())&&!setupOnly&&ownerAccessState?.business.id===salon().id&&route()==='signup'&&essentialPurchaseIntent()&&essentialPurchaseIntent().plan!=='essential')history.replaceState(null,'',location.pathname+location.search+'#billing');
  if(signedIn()&&billingRestricted()&&!ownerSignupRequired()&&!['billing','login','forgot','reset'].includes(route().split('/')[0])){closeModal();history.replaceState(null,'',location.pathname+location.search+'#billing');}
+ const savedGuide=signedIn()&&!teamMode()&&!billingRestricted()&&OWNER_ROUTES.includes(route())?setupGuideRead():null;
+ if(savedGuide?.mode==='active'){
+  const step=JovaSetupGuide.getStep(savedGuide.step);
+  if(step&&location.hash!=='#'+JovaSetupGuide.destination(step.id))history.replaceState(null,'',location.pathname+location.search+'#'+JovaSetupGuide.destination(step.id));
+  if(!step)setupGuideWrite({mode:'paused'});
+ }
  const r=route().replace(/^appointments(?=$|[/?])/,'bookings'),parts=r.split('/');
  document.body.dataset.team=signedIn()&&teamMode()?'true':'false';
  // A team login only has the calendar, dashboard, bookings and customers.
@@ -858,7 +978,7 @@ if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingLeave=null;const re
  $('#app').innerHTML=html;const nextWorkspaceLocation=document.querySelector('.shell')?location.pathname+location.search+location.hash:'';if(nextWorkspaceLocation&&nextWorkspaceLocation!==workspaceLocation)window.scrollTo(0,0);const contentViewport=document.querySelector('.workspace-main');if(contentViewport&&nextWorkspaceLocation===workspaceLocation)contentViewport.scrollTop=retainedContentScroll;workspaceLocation=nextWorkspaceLocation;restoreBusinessSettingsDrafts(retainedBusinessDrafts);if(['settings','availability'].includes(parts[0])){businessSettingsScroll();}if(parts[0]==='website'){const header=$('.bw-public-header>.bw-public-container');if(header)header.insertAdjacentHTML('beforeend',customerPublicNav(s));}document.title=`${({'settings':'Business details','availability':'Business details','map':'Sitemap','home':'Online booking for salons','plans':'Online booking for salons','signup':'Register','setup':'Salon setup','checkout':'Start free trial','login':'Log in','forgot':'Reset password','reset':'Reset password','book':'Customer booking','manage':'Manage booking','salon':'Premium website preview','website':s.name}[parts[0]]||parts[0][0].toUpperCase()+parts[0].slice(1))} · ${realEntry()||pubMode()?'JovaBook':'JovaBook Essential preview'}`;
  if(parts[0]==='website'||pubMode()&&s.offerVersion==='2026-11-free-v1'&&s.brandingRequired===false)document.title=s.name+' · Book online';
  if($('#chat-log'))$('#chat-log').scrollTop=$('#chat-log').scrollHeight;
- ownerIdle?.start();if(parts[0]==='dashboard'&&!dashboardSetupStep())void ownerWelcome.check();
+ applySetupFocus(dashboardSetupStep());ownerIdle?.start();if(parts[0]==='dashboard'&&!dashboardSetupStep())ownerWelcome.check();
 }
 let modalReturnFocus=null;
 function modal(title,content,size=''){
@@ -917,8 +1037,8 @@ function bookingForm(pre={}){const s=salon();if(!s.services.length){toast('Add a
 function refreshManual(f,name){const s=salon(),fd=new FormData(f);if(name==='customerId'){const c=s.customers.find(x=>x.id===fd.get('customerId'));f.elements['name'].value=c?.name||'';f.elements['email'].value=c?.email||'';f.elements['phone'].value=c?.phone||'';return;}const svc=s.services.find(x=>x.id===fd.get('serviceId'));if(!svc)return;if(name==='serviceId'){const sel=f.elements['staffId'],cur=sel.value;sel.innerHTML=staffOpts(eligible(s,svc),cur,true);}const ts=available(fd.get('date'),svc.id,null,f.elements['staffId'].value);f.elements['time'].innerHTML=ts.map(t=>`<option>${t}</option>`).join('')||'<option value="">No available times</option>';f.elements['time'].disabled=!ts.length;const help=f.querySelector('[data-manual-time-help]');if(help)help.innerHTML=manualTimeHelp(s,fd.get('date'),ts);const create=f.querySelector('button.primary');if(create)create.disabled=!ts.length;}
 function editBooking(id){const s=salon(),b=s.bookings.find(x=>x.id===id);if(!b)return;const staffList=s.staff.filter(m=>m.active||m.id===b.staffId);let ts=rescheduleTimes(b,b.date);if(!ts.includes(b.time))ts=[...ts,b.time].sort();modal('Edit booking',`<p class="tiny">${esc(b.name)} · ${esc(b.email)}</p><form data-form="edit-booking" data-id="${id}"><label class="field">Service<select name="serviceId">${s.services.map(x=>`<option value="${x.id}" ${x.id===b.serviceId?'selected':''}>${esc(x.name)} · ${money(x.price)} · ${x.duration} min</option>`).join('')}${s.services.some(x=>x.id===b.serviceId)?'':`<option value="${b.serviceId}" selected>${esc(b.serviceName)} (removed)</option>`}</select></label><div class="grid two"><label class="field">Professional<select name="staffId">${staffOpts(staffList,b.staffId,false)}${s.staff.some(m=>m.id===b.staffId)?'':`<option value="${b.staffId}" selected>Former staff</option>`}</select></label>${field('Date','date',b.date,'date','required')}</div><label class="field">Time<select name="time" required>${ts.map(t=>`<option ${t===b.time?'selected':''}>${t}</option>`).join('')}</select></label><label class="field">Special instructions (optional)<textarea name="notes" rows="3" maxlength="500">${esc(b.notes)}</textarea></label><div class="error" role="alert"></div><div class="form-footer"><span class="tiny muted">${isLive(s)?'Booking changes create automatic email updates. Check email activity for delivery status.':'Moving the time creates a rescheduled email preview.'}</span><button class="btn primary">Save changes</button></div></form>`);}
 function refreshEdit(f,name){const s=salon(),b=s.bookings.find(x=>x.id===f.dataset.id);if(!b)return;const svc=s.services.find(x=>x.id===f.elements['serviceId'].value);if(!svc)return;if(name==='serviceId'){const el=eligible(s,svc),sel=f.elements['staffId'],cur=sel.value;sel.innerHTML=staffOpts(el,el.some(m=>m.id===cur)?cur:el[0]?.id,false);}const staffId=f.elements['staffId'].value,date=f.elements['date'].value;let ts=svc.id===b.serviceId?JovaReschedule.times(s,{...b,staffId},date,slotsFor):available(date,svc.id,b.id,staffId);if(b.date===date&&b.serviceId===svc.id&&b.staffId===staffId&&!ts.includes(b.time))ts=[...ts,b.time].sort();const cur=f.elements['time'].value;f.elements['time'].innerHTML=ts.map(t=>`<option ${t===cur?'selected':''}>${t}</option>`).join('')||'<option value="">No available times</option>';}
-function serviceForm(id){const s=salon(),x=s.services.find(x=>x.id===id)||{name:'',price:25,duration:30,categoryId:serviceManagement.creationCategory(),staffIds:s.staff.map(m=>m.id)};modal(id?'Edit service':'Add service',`<form data-form="service" data-id="${id||''}">${field('Service name','name',x.name,'text','required maxlength="80"')}${JovaBookingContent.fields(x,s)}<label class="field">Category<select name="categoryId"><option value="">No category</option>${s.categories.map(c=>`<option value="${c.id}" ${x.categoryId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label><div class="grid two">${field('Price ('+JovaBusinessLocale.resolve(s).currency+')','price',x.price,'number','min="0" max="10000" step="0.01" required')}${field('Duration (minutes)','duration',x.duration,'number','min="5" max="600" step="1" required')}</div><label class="field">Offered by</label><div class="checklist">${s.staff.map(m=>`<label class="check"><input type="checkbox" name="staffIds" value="${m.id}" ${(x.staffIds||[]).includes(m.id)?'checked':''}> ${esc(m.name)}</label>`).join('')}</div><div class="error" role="alert"></div><button class="btn primary">Save service</button></form>`);JovaBookingContent.bind(document.querySelector('[data-form=service]'),s);}
-function categoryForm(id){const s=salon(),c=s.categories.find(x=>x.id===id)||{name:''},colour=id?JovaBookingPalette.category(s,id):JovaBookingPalette.nextAvailable(s);modal(id?'Edit category':'Add category',`<form data-form="category" data-id="${id||''}">${field('Category name','name',c.name,'text','required maxlength="60" placeholder="e.g. Hair"')}${field('Category colour','categoryColor',colour,'color','required')}<div class="error" role="alert"></div><button class="btn primary">${id?'Save category':'Add category'}</button></form>`);}
+function serviceForm(id){const s=salon(),x=s.services.find(x=>x.id===id)||{name:'',price:25,duration:30,categoryId:serviceManagement.creationCategory()||(dashboardSetupStep()==='services'?s.categories[0]?.id:''),staffIds:dashboardSetupStep()==='services'?[s.staff.find(m=>m.active!==false)?.id].filter(Boolean):s.staff.map(m=>m.id)};modal(id?'Edit service':'Add service',`<form data-form="service" data-id="${id||''}">${field(requiredLabel('Service name'),'name',x.name,'text','required maxlength="80"')}${JovaBookingContent.fields(x,s)}<label class="field">Category<select name="categoryId"><option value="">No category</option>${s.categories.map(c=>`<option value="${c.id}" ${x.categoryId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label><div class="grid two">${field(requiredLabel('Price ('+JovaBusinessLocale.resolve(s).currency+')'),'price',x.price,'number','min="0" max="10000" step="0.01" required')}${field(requiredLabel('Duration (minutes)'),'duration',x.duration,'number','min="5" max="600" step="1" required')}</div><div class="field" id="service-staff-label"><span>Offered by ${requiredStar}</span></div><div class="checklist" role="group" aria-labelledby="service-staff-label">${s.staff.map(m=>`<label class="check"><input type="checkbox" name="staffIds" value="${m.id}" ${(x.staffIds||[]).includes(m.id)?'checked':''}> ${esc(m.name)}</label>`).join('')}</div><div class="error" role="alert"></div><button class="btn primary">Save service</button></form>`);JovaBookingContent.bind(document.querySelector('[data-form=service]'),s);}
+function categoryForm(id){const s=salon(),c=s.categories.find(x=>x.id===id)||{name:''},colour=id?JovaBookingPalette.category(s,id):JovaBookingPalette.nextAvailable(s);modal(id?'Edit category':'Add category',`<form data-form="category" data-id="${id||''}">${field(requiredLabel('Category name'),'name',c.name,'text','required maxlength="60" placeholder="e.g. Hair"')}${field(requiredLabel('Category colour'),'categoryColor',colour,'color','required')}<div class="error" role="alert"></div><button class="btn primary">${id?'Save category':'Add category'}</button></form>`);}
 function customerForm(id){const c=salon().customers.find(x=>x.id===id)||{name:'',email:'',phone:'',notes:''};modal(id?'Edit customer':'Add customer',`<form data-form="customer" data-id="${id||''}">${field('Full name','name',c.name,'text','required maxlength="80"')}${field('Email','email',c.email,'email','required')}${field('Phone (optional)','phone',c.phone,'tel')}<label class="field">Notes (optional)<textarea name="notes" rows="3" maxlength="500">${esc(c.notes)}</textarea><small>Private to your business. Customers never see this.</small></label><div class="error" role="alert"></div><button class="btn primary">${id?'Save changes':'Add customer'}</button></form>`);}
 function customerHistory(id){const s=salon(),c=s.customers.find(x=>x.id===id);if(!c)return;const bookings=s.bookings.filter(b=>b.customerId===id).sort(sortBookings),completed=bookings.filter(b=>b.status==='completed');modal('Customer details',`<section class="jg-customer-detail"><h3>${esc(c.name)}</h3><dl>${c.email?'<div><dt>Email</dt><dd>'+esc(c.email)+'</dd></div>':''}${c.phone?'<div><dt>Phone</dt><dd>'+esc(c.phone)+'</dd></div>':''}<div><dt>Completed visits</dt><dd>${completed.length}</dd></div><div><dt>Visit value</dt><dd>${money(completed.reduce((n,b)=>n+(Number(b.price)||0),0))}</dd></div></dl>${c.notes?'<h3>Notes</h3><p>'+esc(c.notes)+'</p>':''}<div class="row"><button class="btn primary" data-action="edit-customer" data-id="${esc(id)}">Edit customer</button></div><h3>Bookings</h3>${bookings.length?'<ul class="jg-customer-bookings">'+bookings.map(b=>`<li><button data-action="booking-details" data-id="${esc(b.id)}"><strong>${esc(b.serviceName)}</strong><span>${esc(humanDate(b.date))} · ${esc(b.time)}</span><span>${esc(b.status)} · ${money(b.price)}</span></button></li>`).join('')+'</ul>':'<p>No bookings yet.</p>'}</section>`);}
 
@@ -973,19 +1093,22 @@ async function commitBookingEdit(form,s,b,next,success){
  }catch(problem){if(salon().id===sid&&dir.sessionIdentity?.()===identity)error(form,problem.message||'Booking not saved. Try again.');}
  finally{delete form.dataset.saving;form.removeAttribute('aria-busy');if(button)button.textContent=label;controls.forEach((el,i)=>el.disabled=disabled[i]);}
 }
+async function confirmSetupRecord(step,table,id,sid){
+ if(isLive(salon())){
+  await flushSync();
+  if(dashboardSetupStep()!==step||salon().id!==sid)return;
+  if(!Object.hasOwn(snap[sid]?.[table]||{},id)){toast('Your changes are still waiting to sync. Check your connection and try again.');return;}
+ }
+ if(step==='services')toast('Service saved.');
+ advanceSetup(step);
+}
 function handleForms(type,form,data,s){
  if(type==='customer'){const id=form.dataset.id,name=data.name.trim(),email=data.email.trim();if(!name||!email)throw Error('Add a name and an email.');if(s.customers.some(c=>c.id!==id&&c.email.toLowerCase()===email.toLowerCase()))throw Error('Another customer already uses that email.');const phone=data.phone.trim();if(!JovaPhone.valid(phone))throw Error(JovaPhone.message);const notes=(data.notes||'').trim();if(id){const c=s.customers.find(x=>x.id===id);Object.assign(c,{name,email,phone,notes});// Booking contact snapshots retain the details recorded at booking time.
 }else s.customers.push({id:uid('c'),name,email,phone,notes});save();closeModal();render();toast(id?'Customer saved.':'Customer added.');return true;}
- if(type==='category'){const id=form.dataset.id,name=data.name.trim(),colour=JovaBookingPalette.safeColor(data.categoryColor);if(!name||name.length>60)throw Error('Enter a category name up to 60 characters.');if(!colour)throw Error('Choose a valid category colour.');const usedColour=JovaBookingPalette.usedBy(s,colour,id);if(usedColour)throw Error('That colour is already used by '+usedColour.name+'. Choose another colour.');if(s.categories.some(c=>c.id!==id&&c.name.toLowerCase()===name.toLowerCase()))throw Error('That category already exists.');let record=s.categories.find(c=>c.id===id);if(record)record.name=name;else{record={id:uid('cat'),name};s.categories.push(record);}s.workspace=JovaBookingPalette.workspace(s);s.workspace.categoryColors={...s.workspace.categoryColors,[record.id]:colour};save();serviceManagement.revealCategory(record.id,s.id);closeModal();render();toast(id?'Category saved.':'Category added.');return true;}
+ if(type==='category'){const id=form.dataset.id,name=data.name.trim(),colour=JovaBookingPalette.safeColor(data.categoryColor);if(!name||name.length>60)throw Error('Enter a category name up to 60 characters.');if(!colour)throw Error('Choose a valid category colour.');const usedColour=JovaBookingPalette.usedBy(s,colour,id);if(usedColour)throw Error('That colour is already used by '+usedColour.name+'. Choose another colour.');if(s.categories.some(c=>c.id!==id&&c.name.toLowerCase()===name.toLowerCase()))throw Error('That category already exists.');let record=s.categories.find(c=>c.id===id);if(record)record.name=name;else{record={id:uid('cat'),name};s.categories.push(record);}s.workspace=JovaBookingPalette.workspace(s);s.workspace.categoryColors={...s.workspace.categoryColors,[record.id]:colour};save();serviceManagement.revealCategory(record.id,s.id);closeModal();render();toast(id?'Category saved.':'Category added.');if(dashboardSetupStep()==='category')void confirmSetupRecord('category','categories',record.id,s.id);return true;}
  if(type==='service'){const id=form.dataset.id,fd=new FormData(form),old=s.services.find(x=>x.id===id),x={name:data.name.trim(),price:Number(data.price),duration:Number(data.duration),description:String(data.description||'').trim(),categoryId:data.categoryId||'',staffIds:fd.getAll('staffIds')};if(x.description.length>1000)throw Error('Keep the service description to 1,000 characters.');if(!x.name)throw Error('Enter a service name.');if(!Number.isFinite(x.price)||x.price<0||x.price>10000)throw Error('Enter a price of £0 or more.');if(!Number.isInteger(x.duration)||x.duration<5||x.duration>600)throw Error('Duration must be between 5 and 600 minutes.');if(!x.staffIds.length)throw Error('Choose at least one person who offers this service.');const record=old||{id:uid('svc'),...x};if(old)Object.assign(old,x);else s.services.push(record);save();serviceManagement.revealService(record.id,s.id);closeModal();render();
-  if(dashboardSetupStep()==='services'&&isLive(s))void flushSync().then(()=>{
-   if(dashboardSetupStep()!=='services'||salon().id!==s.id)return;
-   if(!Object.hasOwn(snap[s.id]?.services||{},record.id)){toast('Your service is still waiting to sync. Check your connection and try again.');return;}
-   const saved=dashboardSetupBusiness(s,{confirmedServices:true});
-   const tip=document.querySelector('.jg-setup-tip');
-   if(tip)tip.outerHTML=JovaSetupGuide.renderStep(saved,dashboardSetupOptions(saved),'services');
-   toast('Service saved.');
-  });else toast('Service saved.');return true;}
+  if(dashboardSetupStep()==='services')void confirmSetupRecord('services','services',record.id,s.id);
+  else toast('Service saved.');return true;}
  if(type==='staff'){if(!signedIn()||!staffManagementAllowed(s))throw Error(tierAvailability()+'.');const id=form.dataset.id,values=staffEditor.read(form);let m=s.staff.find(x=>x.id===id);if(!m&&!canAddStaff(s))throw Error(`Your ${planFor(s).name} plan includes ${planFor(s).staffLimit} staff members.`);const fields={name:values.name,role:values.role,active:values.active,hours:values.hours};if(m)Object.assign(m,fields);else{m={id:uid('st'),color:STAFF_COLORS[s.staff.length%STAFF_COLORS.length],...fields};s.staff.push(m);}const chosen=values.serviceIds;s.services.forEach(x=>{x.staffIds=(x.staffIds||[]).filter(i=>i!==m.id);if(chosen.includes(x.id))x.staffIds.push(m.id);});save();staffEditor.saved(form);closeModal();render();toast(id?'Staff member saved.':'Staff member added.');return true;}
  if(type==='edit-booking'){const b=s.bookings.find(x=>x.id===form.dataset.id);if(!b)throw Error('Booking not found.');const svc=s.services.find(x=>x.id===data.serviceId),same=b.serviceId===data.serviceId;if(!svc&&!same)throw Error('Choose a valid service.');const sameSlot=same&&b.staffId===data.staffId&&b.date===data.date&&b.time===data.time;if(!sameSlot){const ts=same?JovaReschedule.times(s,{...b,staffId:data.staffId},data.date,slotsFor):svc?available(data.date,svc.id,b.id,data.staffId):[];if(!ts.includes(data.time))throw Error('That time is not free for this person. Choose another.');}const next={...b,...(svc&&!same?{serviceId:svc.id,serviceName:svc.name,duration:svc.duration,price:svc.price}:{}),staffId:data.staffId,date:data.date,time:data.time,notes:(data.notes||'').trim()};void commitBookingEdit(form,s,b,next,'Booking updated.');return true;}
  return false;}
@@ -1011,9 +1134,15 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
  if(signedIn()&&billingRestricted()&&!['signout','owner-funnel-reject','cookies','sb-reload','sb-pay-now','sb-select-trial-plan','sb-trial-plans','sb-cadence','close-modal'].includes(a)){go('billing');return;}
  if(a==='close-modal'){closeModal();return;}
  if(a==='start-setup-tutorial'){startSetupTutorial();return;}
- if(a==='setup-website'){openSetupWebsite();return;}
+ if(a==='skip-setup-tutorial'){skipSetupDemo();return;}
+ if(a==='setup-pause'){pauseSetup();return;}
+ if(a==='setup-skip-step'){skipSetupStep();return;}
+ if(a==='setup-continue'){continueSetup();return;}
+ if(a==='setup-finish'){finishSetup();return;}
+ if(a==='setup-category'){categoryForm();return;}
+ if(a==='setup-website'){go('scheduling');return;}
  if(a==='workspace-more'){modal('More',window.JovaMobileNavigation.moreContent(teamMode()?{allowedRoutes:TEAM_ROUTES}:{}));return;}
- if(a==='workspace-more-route'){const next=el.dataset.route;if(!['dashboard','bookings','calendar','customers','services','staff','scheduling','insights','referrals','settings','integrations'].includes(next)||(teamMode()&&!TEAM_ROUTES.includes(next)))return;closeModal();go(next);return;}
+ if(a==='workspace-more-route'){const next=el.dataset.route;if(!['dashboard','bookings','calendar','customers','services','staff','scheduling','booking-setup','insights','referrals','settings','integrations'].includes(next)||(teamMode()&&!TEAM_ROUTES.includes(next)))return;closeModal();go(next);return;}
  if(a==='reset-retry'){resetValidation={key:null,status:'idle',result:null};render();return;}
  if(a==='retry-business'){ownerLoadError='';loadingOwner=true;render();await reloadOwner();return;}
  if(staffAction(a)&&(!signedIn()||!staffManagementAllowed(s))){e.preventDefault();return;}
@@ -1027,7 +1156,7 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
   ];
   const buttons=links.map(({id,label,icon})=>`<li class="share-link-row"><span class="share-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icon}"/></svg></span><strong>${label}</strong><button type="button" class="btn" data-action="copy-link" data-target="${id}" aria-label="Copy ${id} link">Copy</button></li>`).join('');
   const fields=links.map(({id,url})=>'<label class="field">'+(id==='website'?'Website':'Booking')+' link<input id="share-'+id+'" readonly value="'+esc(url)+'"></label>').join('');
-  modal('Share your links','<div class="share-links"><ul class="share-link-actions">'+buttons+'</ul><p class="db-sr-only" role="status" data-share-status></p><details><summary>See more</summary><p class="share-copy-help" hidden>Select and copy the link below.</p>'+fields+'</details></div>','share-links-modal');
+  modal('Share your links','<div class="share-links">'+bookingSetupWarning(s)+'<ul class="share-link-actions">'+buttons+'</ul><p class="db-sr-only" role="status" data-share-status></p><details><summary>See more</summary><p class="share-copy-help" hidden>Select and copy the link below.</p>'+fields+'</details></div>','share-links-modal');
   return;
  }
  if(a==='workspace-appearance'){const current=JovaWorkspaceThemes.resolve(s.workspace?.appearance);modal('Your workspace theme',`<p class="wt-intro">Only your dashboard uses this theme.</p><form data-form="workspace-appearance">${JovaWorkspaceThemes.choices(current.id)}<div class="error" role="alert"></div><div class="form-footer"><button class="btn primary">Apply theme</button></div></form>`,'wt-picker-modal');return;}
@@ -1219,6 +1348,7 @@ function installUnsavedGuards(){
 }
 function workspaceRouteChanged(){
  const hub=document.querySelector('.st-business-settings'),next=route(),target=location.pathname+location.search+location.hash;
+ if(document.querySelector('.shell[data-setup-active]')&&setupGuideRead().mode==='active'&&location.hash!=='#'+JovaSetupGuide.destination(setupGuideRead().step)){history.replaceState(null,'',location.pathname+location.search+'#'+JovaSetupGuide.destination(setupGuideRead().step));return;}
  if(document.querySelector('.shell')&&workspaceLocation){
   if(pendingLeave){history.replaceState(null,'',workspaceLocation);return;}
   if(editorBusy()){history.replaceState(null,'',workspaceLocation);toast('Wait for your changes to finish saving.');return;}

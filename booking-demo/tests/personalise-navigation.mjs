@@ -13,19 +13,19 @@ function panelRoot(attribute,ids){
  return {dataset:{},panels:ids.map(id=>({dataset:{[attribute]:id},hidden:true})),querySelector:selector=>nodes[selector],querySelectorAll(){return this.panels;},scrollIntoView(){}};
 }
 
-test('website settings keep one original form and all fields across six screens',()=>{
+test('website settings keep one original form and all fields across five screens',()=>{
  const s=fixture(),context={window:{JovaColourPicker:picker},URL,Intl,Date,document:{addEventListener(){},querySelector:()=>null}},seen={renders:0};
  vm.runInNewContext(websiteSource,context);
  const tools=context.window.JovaBusinessWebsite.create({salon:()=>s,esc:escape,ownerIdentity:()=> 'owner',bookingLink:()=> 'https://example.test/studio/book',render:()=>seen.renders++});
  let html=tools.editor();assert.equal((html.match(/data-form="bw-website"/g)||[]).length,1);
  assert.deepEqual([...html.matchAll(/data-action="bw-setting" data-section="([^"]+)"><span class="bw-settings-icon">[\s\S]*?<strong>([^<]+)<\/strong>/g)].map(([,id,label])=>[id,label]),[
-  ['design','Website design'],['colours','Color'],['hero','Banner'],['about','About your business'],['hours','Hours and contact'],['search','Google visibility']
+  ['design','Website design'],['colours','Color'],['hero','Banner'],['about','About your business'],['search','Google visibility']
  ]);
  for(const name of ['headline','about','brandColor','headingColor','template','showInSearch','hideAddress'])assert.ok(html.includes('name="'+name+'"'));
- assert.match(html,/data-bw-section="hours"/);assert.match(html,/href="#availability"/);assert.match(html,/href="#settings"/);
+ assert.doesNotMatch(html,/data-bw-section="hours"/);
  const form={dataset:{owner:'owner|'+s.id},querySelector:()=>null};
  tools.input({name:'headline',value:'My unsaved headline',closest:()=>form});
- const root=panelRoot('bwSection',['design','hero','about','colours','hours','search']);
+ const root=panelRoot('bwSection',['design','hero','about','colours','search']);
  for(const section of ['hero','about','colours','search','home','design']){
   assert.equal(tools.click('bw-setting',{dataset:{section},closest:()=>root}),true);
   assert.equal(root.dataset.bwView,section);
@@ -35,21 +35,18 @@ test('website settings keep one original form and all fields across six screens'
  assert.ok(tools.isDirty());html=tools.editor();assert.ok(html.includes('My unsaved headline'));assert.match(html,/data-bw-view="design"/);
 });
 
-test('website and booking tabs preserve both forms while Save submits only the active form',()=>{
- const s=fixture(),seen={renders:0,websiteSaves:0,bookingSaves:0};
- const nav={dataset:{}},tabs=['website','booking'].map(id=>({dataset:{section:id},setAttribute(){},tabIndex:0}));
- const websitePanel={hidden:false},bookingPanel={hidden:true};
- const websiteForm={querySelector:()=>null,requestSubmit:()=>seen.websiteSaves++},bookingForm={querySelector:()=>null,requestSubmit:()=>seen.bookingSaves++};
- const context={window:{JovaColourPicker:picker},URL,location:{origin:'https://example.test',pathname:'/',hash:''},document:{addEventListener(){},querySelector:selector=>selector==='.jg-personalise-nav'?nav:selector==='[data-form=bw-website]'?websiteForm:selector==='[data-form=ws-booking-page]'?bookingForm:null,querySelectorAll:()=>tabs,getElementById:id=>id==='personalise-website'?websitePanel:bookingPanel}};
+test('website and booking routes only mount their own form and submit their own changes',()=>{
+ const s=fixture(),seen=[];
+ const context={window:{JovaColourPicker:picker},URL,location:{origin:'https://example.test',pathname:'/',hash:''}};
  vm.runInNewContext(workspaceSource,context);
- const tools=context.window.JovaWorkspace.create({salon:()=>s,esc:escape,render:()=>seen.renders++,field:(label,name,value)=>`<input name="${name}" value="${value}">`,money:String,website:{editor:()=>'<form data-form="bw-website"></form>',isBusy:()=>false},bookingLink:()=> 'https://example.test/studio/book'});
- const html=tools.pages.scheduling();assert.match(html,/<h1>Website<\/h1>/);assert.match(html,/data-navigation="panels"/);assert.equal((html.match(/class="bw-settings-option"/g)||[]).length,3);
- assert.doesNotMatch(html,/data-action="workspace-appearance"/);assert.match(html,/data-booking-section="content" hidden/);
- tools.click('ws-save-personalise',{});assert.equal(seen.websiteSaves,1);assert.equal(seen.bookingSaves,0);
- tools.click('ws-personalise-section',{dataset:{section:'booking'}});assert.equal(websitePanel.hidden,true);assert.equal(bookingPanel.hidden,false);
- tools.click('ws-save-personalise',{});assert.equal(seen.websiteSaves,1);assert.equal(seen.bookingSaves,1);
- tools.click('ws-personalise-section',{dataset:{section:'website'}});assert.equal(websitePanel.hidden,false);assert.equal(bookingPanel.hidden,true);
- assert.equal(seen.renders,0,'Tabs must preserve independent form drafts without a rerender');
+ const tools=context.window.JovaWorkspace.create({salon:()=>s,esc:escape,field:(label,name,value)=>`<input name="${name}" value="${value}">`,money:String,website:{editor:()=>'<form data-form="bw-website"></form>',isBusy:()=>false},bookingLink:()=> 'https://example.test/studio/book'});
+ const website=tools.pages.scheduling(),booking=tools.pages['booking-setup']();
+ assert.match(website,/<h1>Website<\/h1>.*data-form="bw-website"/);
+ assert.doesNotMatch(website,/data-form="ws-booking-page"/);
+ assert.match(booking,/<h1>Booking page<\/h1>.*data-form="ws-booking-page"/);
+ assert.doesNotMatch(booking,/data-form="bw-website"/);
+ for(const id of ['website','booking'])tools.click('ws-save-personalise',{closest:()=>({querySelector:()=>({querySelector:()=>null,requestSubmit:()=>seen.push(id)})})});
+ assert.deepEqual(seen,['website','booking']);
 });
 
 test('booking setting navigation keeps controls mounted and rejects unknown panels',()=>{

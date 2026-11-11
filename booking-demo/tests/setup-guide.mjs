@@ -1,17 +1,31 @@
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const context={window:{}};
 vm.runInNewContext(await readFile(new URL('../setup-guide.js',import.meta.url),'utf8'),context);
-const {status,render,renderStep,nextStep}=context.window.JovaSetupGuide;
-const business=()=>({name:'Avery Studio',services:[],staff:[{id:'owner',active:true}],hours:{days:[],start:'09:00',end:'18:00'},about:'',phone:'',address:''});
-const fresh=business();assert.equal(status(fresh).completed,0);assert.equal(status(fresh).ready,false);assert.match(render(fresh),/data-action="setup-website" aria-label="Set up your website"/);assert.equal(status({...fresh,workspace:{website:{headline:'Welcome to Avery Studio'}}}).tasks[3].done,true);
-const unassigned={...business(),services:[{id:'cut',staffIds:['missing']}]};assert.equal(status(unassigned).tasks[0].done,false);
-const inactive={...business(),staff:[{id:'owner',active:false}],services:[{staffIds:['owner']}]};assert.equal(status(inactive).tasks[0].done,false);
-const ready={...business(),services:[{staffIds:['owner']}],hours:{days:[1,2],start:'09:00',end:'18:00'},about:'Online tutoring.',workspace:{website:{headline:'Avery Studio tutoring'}}};
-assert.equal(status(ready).ready,true,'Online businesses can finish without a street address or phone');assert.equal(render(ready),'');assert.match(renderStep(ready,{},'website'),/Next: Share your links/);assert.match(renderStep(ready,{},'share'),/Step 5 of 5.*Finish setup/);assert.equal(nextStep(fresh,{}).id,'services');assert.equal(nextStep({...ready,about:'',phone:'020 7946 0123'},{}).id,'details');assert.match(renderStep({...ready,workspace:{}},{},'details'),/Next: Set up your website/);assert.match(renderStep({...ready,workspace:{}},{},'website'),/Select Save changes/);
-const malformed={...ready,hours:{days:[9],start:'25:00',end:'26:00'}};assert.equal(status(malformed).ready,false);
-assert.equal(status(ready,{hasHours:false}).ready,false,'Shared scheduling rules can reject unavailable staff hours');
-assert.equal(status({...ready,services:[]}).ready,false,'Removing the only service reopens setup');
-assert.equal(status({...ready,services:[{staffIds:['owner']}]},{bookable:()=>false}).tasks[0].done,false);
-console.log('PASS setup readiness: fresh, assigned staff, opening hours, online business, saved changes');
+const guide=context.window.JovaSetupGuide;
+const fresh={name:'Avery Studio',email:'avery@example.test',services:[],staff:[{id:'owner',active:true}],hours:{days:[],start:'09:00',end:'18:00'}};
+test('skipping advances coverage without marking business data complete',()=>{
+ assert.equal(guide.nextStep(fresh,{}).id,'details');
+ const options={guide:{mode:'paused',step:'hours',waived:['details']}};
+ assert.equal(guide.status(fresh,options).completed,1);
+ assert.equal(guide.status(fresh,options).ready,false);
+ assert.equal(guide.resumeStep(fresh,options).id,'hours');
+ assert.match(guide.render(fresh,options),/10% complete.*Resume demo.*Skip demo/);
+ assert.match(guide.render(fresh,{guide:{mode:'done',skipped:true}}),/Setup demo skipped.*Start demo/);
+});
+test('an existing mobile business resumes at its first genuinely unfinished step',()=>{
+ const existing={...fresh,phone:'020 7946 0123',hours:{days:[1],start:'09:00',end:'18:00'},services:[{staffIds:['owner']}]};
+ assert.equal(guide.nextStep(existing,{addressRequired:false}).id,'website');
+ assert.equal(guide.nextStep(existing,{addressRequired:true}).id,'details');
+ assert.equal(guide.nextStep({...existing,staff:[{id:'owner',active:false}]},{addressRequired:false}).id,'category');
+});
+test('a refreshed checkpoint belongs to the original owner and business',()=>{
+ const data=new Map(),storage={getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v)};
+ guide.createState(storage).write('owner','studio',{mode:'paused',step:'website',section:'about',waived:['details']});
+ const loaded=guide.createState(storage);
+ assert.equal(loaded.read('owner','studio').section,'about');
+ assert.equal(loaded.read('owner','other').mode,'new');
+ assert.equal(loaded.read('someone-else','studio').mode,'new');
+});
