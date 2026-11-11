@@ -501,17 +501,28 @@ function dashboardDatePicker(context='dashboard'){return JovaDatePicker.markup({
 
 document.addEventListener('jovabook-date-apply',event=>{const selected=event.detail;if(!selected||!['dashboard','calendar'].includes(selected.context)||!['day','week','month'].includes(selected.view))return;try{calendarWeek=JovaDashboard.normalizeAnchor(selected.anchor,selected.view);calView=selected.view;miniOffset=0;render();document.querySelector('.jg-period-picker>summary')?.focus({preventScroll:true});}catch(error){toast(error.message);}});
 
-function dashboardSetupBusiness(s){
+function dashboardSetupBusiness(s,{confirmedServices=false}={}){
  if(!isLive(s)||!salonSnap[s.id])return s;
  const saved=JSON.parse(salonSnap[s.id]),settings=saved.p_settings;
- return {...s,about:settings.about,phone:saved.p_phone,address:saved.p_address,hours:settings.hours,workspace:settings.workspace};
+ const services=confirmedServices?s.services.filter(service=>Object.hasOwn(snap[s.id]?.services||{},service.id)):s.services;
+ return {...s,services,about:settings.about,phone:saved.p_phone,address:saved.p_address,hours:settings.hours,workspace:settings.workspace};
 }
 function dashboardSetupOptions(s){
  return {bookable:service=>eligible(s,service).length>0,hasHours:Array.from({length:7},(_,i)=>addDays(today(),i)).some(date=>(s.services||[]).some(service=>eligible(s,service).some(member=>!JovaSchedule.hoursFor(s,member,date).closed)))};
 }
 function dashboardSetupStep(){
  const step=new URLSearchParams(location.hash.split('?')[1]).get('setup');
- return ({availability:'hours',settings:'details',scheduling:'website'}[route()]===step)?step:'';
+ return ({services:'services',availability:'hours',settings:'details',scheduling:'website',dashboard:'share'}[route()]===step)?step:'';
+}
+function openSetupWebsite(){
+ workspace.click('ws-personalise-section',{dataset:{section:'website'}});
+ go('scheduling?setup=website');
+}
+function startSetupTutorial(){
+ const s=dashboardSetupBusiness(salon(),{confirmedServices:true});
+ const step=JovaSetupGuide.nextStep(s,dashboardSetupOptions(s));
+ if(step.id==='website')openSetupWebsite();
+ else go(step.href.slice(1));
 }
 function overview(){
  const {s,stats}=dashboardState(),rows=s.bookings.filter(b=>JovaDashboard.inRange(stats.range,b.date)&&calMatches(b.staffId)).sort(sortBookings),unit=calView,label=unit==='week'?'Week starting':unit==='month'?'Month':'Date',nowLabel=unit==='week'?'This week':unit==='month'?'This month':'Today';
@@ -755,7 +766,7 @@ async function refreshEmailDelivery(){
 const hostApi={teamLoginsAvailable:s=>!!dir.remote&&isLive(s)&&!teamMode()&&staffManagementAllowed(s)&&!!dir.teamLogin,teamLogins:()=>dir.teamLogins(),teamLogin:(action,salonId,staffId,fields)=>dir.teamLogin(action,salonId,staffId,fields),chooseStarterCalendar:staff=>dir.chooseStarterCalendar(staff),offerBilling:(action,body)=>dir.offerBilling(action,{...body,salon_id:salon().id}),commissionAllowance:()=>dir.commissionAllowance?.(),disputeCommission:(booking,reason)=>dir.disputeCommission?.(booking,reason),refundActivity:()=>dir.refundActivity?.(),isDashboardVisible:()=>signedIn()&&route()==='dashboard',claimPurchaseIntent:claimEssentialPurchase,integrationRequest:(action,body)=>dir.integrationCall(action,body),isIntegrationsVisible:()=>signedIn()&&route().split('/')[0]==='integrations',changeBilling:(plan,sid,requestId,termsVersion,frequency)=>dir.billingChange(plan,sid,requestId,termsVersion,frequency),cancelBillingChange:(sid,requestId)=>dir.billingCancelChange(sid,requestId),cancelBilling:(sid,requestId)=>dir.billingCancel(sid,requestId),accessInfo:()=>ownerAccessState,refreshAccess:async()=>{const r=await loadLive({reason:'manual-refresh'});if(r.ok)render();return r;},checkoutBilling:(plan,sid,requestId,termsVersion,frequency,trial)=>dir.billingCheckout?.(plan,sid,requestId,termsVersion,frequency,trial),refreshSmsReminders,setSmsReminders,setSmsMessage,smsConsentChanged:value=>{draft.smsConsent=value;},persistWebsite,uploadWebsiteImage:(file,sid)=>dir.uploadWebsiteImage?.(file,sid)||Promise.resolve({ok:false,message:'Image uploads are unavailable. Please try again later.'}),refreshEmailDelivery,salon,save,render,esc,field,money,planFor,canAddStaff,uid,today,addDays,humanDate,modal,closeModal,toast,error,isLive,bookingLink,available,schedulingSupported,seriesSupported,createSeries,loadSubscription,requestPlan,cancelPlan,isBillingVisible:()=>signedIn()&&['billing','checkout'].includes(route().split('/')[0]),openBooking:bookingDetails,ownerIdentity:()=>dir.sessionIdentity?.()||'demo'};
 ownerIdle=window.JovaOwnerIdleSession?.create({identity:()=>dir.sessionIdentity?.(),hasSession:()=>dir.hasSession?.(),liveActive:()=>signedIn()&&dir.remote&&!pubMode()&&!customerScope()&&OWNER_ROUTES.includes(route().split('/')[0]),expire:expireOwnerIdle});
 const ownerOnboarding=JovaOwnerOnboarding.create({directory:dir,esc,render,purchaseIntent:essentialPurchaseIntent,logout:async()=>{await dir.logout();signOut();go('login');},openDashboard:async()=>{const result=await loadLive();if(!result.ok)return result;if(ownerSignupRequired())return {ok:false,message:'Finish your account setup before opening the dashboard.'};clearPurchaseIntent();const url=new URL(location.href);['plan','cadence','seats'].forEach(key=>url.searchParams.delete(key));history.replaceState(null,'',url);onbSet(null);signIn();go('dashboard');return {ok:true};}});
-const ownerWelcome=JovaOwnerWelcome.create({directory:dir,visible:()=>signedIn()&&!teamMode()&&isLive(salon())&&route()==='dashboard'&&ownerAccessState?.onboarding_completed===true});
+const ownerWelcome=JovaOwnerWelcome.create({directory:dir,startSetup:startSetupTutorial,visible:()=>signedIn()&&!teamMode()&&isLive(salon())&&route()==='dashboard'&&!dashboardSetupStep()&&ownerAccessState?.onboarding_completed===true});
 const deposits=JovaDeposits.create({...hostApi,isPublic:pubMode,publicSlug:()=>requestedSalon,goDeposit:()=>go('book/deposit'),depositsSaved:(sid,payments)=>{const current=salon();if(current.id!==sid||!isLive(current))return;current.payments={...current.payments,...payments};if(salonSnap[sid]){const snapshot=JSON.parse(salonSnap[sid]);snapshot.p_payments={enabled:!!payments.enabled,deposit:Number(payments.deposit)||0,...(payments.deposit_percent!==undefined?{deposit_percent:Number(payments.deposit_percent)}:{}),stage:payments.stage||0};salonSnap[sid]=JSON.stringify(snapshot);}save();},depositConfirmed:(booking,refunded)=>{if(!pubMode())return;if(!PUB||PUB.status!=='ok'){go('book/deposit');render();return;}PUB.bk[booking.id]=booking;if(booking.status==='confirmed'&&!PUB.salon.bookings.some(b=>b.id==='busy_'+booking.id.slice(0,8)))PUB.salon.bookings.push({id:'busy_'+booking.id.slice(0,8),date:booking.date,time:booking.time,duration:booking.duration,staffId:booking.staffId,status:'confirmed'});lastBooking=booking.id;draft.smsResult=null;if(refunded){go('book/deposit-refund');toast('The slot could not be confirmed. Your deposit refund has been requested.');}else{go('book/confirmation');toast('Deposit paid. Your booking is confirmed.');}}});
 const smsReminders=JovaSmsReminders.create(hostApi);
 const businessWebsite=JovaBusinessWebsite.create({...hostApi,customerAccountLink:s=>customerPortalLink(s,'login')});hostApi.website=businessWebsite;
@@ -839,7 +850,7 @@ if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingLeave=null;const re
  if(admin[parts[0]]&&!signedIn()){window.__next=parts.join('/');toast('Log in to open the owner area.');location.hash='login';return;}
  if(admin[parts[0]]){
   const step=!teamMode()&&dashboardSetupStep();
-  const setupBusiness=step?dashboardSetupBusiness(s):null;
+  const setupBusiness=step?dashboardSetupBusiness(s,{confirmedServices:true}):null;
   const prompt=step?JovaSetupGuide.renderStep(setupBusiness,dashboardSetupOptions(setupBusiness),step):'';
   html=ownerShell(prompt+admin[parts[0]](),parts[0]);
  }
@@ -847,7 +858,7 @@ if(pendingLeave&&pendingLeave.owner!==businessOwner())pendingLeave=null;const re
  $('#app').innerHTML=html;const nextWorkspaceLocation=document.querySelector('.shell')?location.pathname+location.search+location.hash:'';if(nextWorkspaceLocation&&nextWorkspaceLocation!==workspaceLocation)window.scrollTo(0,0);const contentViewport=document.querySelector('.workspace-main');if(contentViewport&&nextWorkspaceLocation===workspaceLocation)contentViewport.scrollTop=retainedContentScroll;workspaceLocation=nextWorkspaceLocation;restoreBusinessSettingsDrafts(retainedBusinessDrafts);if(['settings','availability'].includes(parts[0])){businessSettingsScroll();}if(parts[0]==='website'){const header=$('.bw-public-header>.bw-public-container');if(header)header.insertAdjacentHTML('beforeend',customerPublicNav(s));}document.title=`${({'settings':'Business details','availability':'Business details','map':'Sitemap','home':'Online booking for salons','plans':'Online booking for salons','signup':'Register','setup':'Salon setup','checkout':'Start free trial','login':'Log in','forgot':'Reset password','reset':'Reset password','book':'Customer booking','manage':'Manage booking','salon':'Premium website preview','website':s.name}[parts[0]]||parts[0][0].toUpperCase()+parts[0].slice(1))} · ${realEntry()||pubMode()?'JovaBook':'JovaBook Essential preview'}`;
  if(parts[0]==='website'||pubMode()&&s.offerVersion==='2026-11-free-v1'&&s.brandingRequired===false)document.title=s.name+' · Book online';
  if($('#chat-log'))$('#chat-log').scrollTop=$('#chat-log').scrollHeight;
- ownerIdle?.start();ownerWelcome.leave();if(parts[0]==='dashboard')void ownerWelcome.check();
+ ownerIdle?.start();if(parts[0]==='dashboard'&&!dashboardSetupStep())void ownerWelcome.check();
 }
 let modalReturnFocus=null;
 function modal(title,content,size=''){
@@ -966,7 +977,15 @@ function handleForms(type,form,data,s){
  if(type==='customer'){const id=form.dataset.id,name=data.name.trim(),email=data.email.trim();if(!name||!email)throw Error('Add a name and an email.');if(s.customers.some(c=>c.id!==id&&c.email.toLowerCase()===email.toLowerCase()))throw Error('Another customer already uses that email.');const phone=data.phone.trim();if(!JovaPhone.valid(phone))throw Error(JovaPhone.message);const notes=(data.notes||'').trim();if(id){const c=s.customers.find(x=>x.id===id);Object.assign(c,{name,email,phone,notes});// Booking contact snapshots retain the details recorded at booking time.
 }else s.customers.push({id:uid('c'),name,email,phone,notes});save();closeModal();render();toast(id?'Customer saved.':'Customer added.');return true;}
  if(type==='category'){const id=form.dataset.id,name=data.name.trim(),colour=JovaBookingPalette.safeColor(data.categoryColor);if(!name||name.length>60)throw Error('Enter a category name up to 60 characters.');if(!colour)throw Error('Choose a valid category colour.');const usedColour=JovaBookingPalette.usedBy(s,colour,id);if(usedColour)throw Error('That colour is already used by '+usedColour.name+'. Choose another colour.');if(s.categories.some(c=>c.id!==id&&c.name.toLowerCase()===name.toLowerCase()))throw Error('That category already exists.');let record=s.categories.find(c=>c.id===id);if(record)record.name=name;else{record={id:uid('cat'),name};s.categories.push(record);}s.workspace=JovaBookingPalette.workspace(s);s.workspace.categoryColors={...s.workspace.categoryColors,[record.id]:colour};save();serviceManagement.revealCategory(record.id,s.id);closeModal();render();toast(id?'Category saved.':'Category added.');return true;}
- if(type==='service'){const id=form.dataset.id,fd=new FormData(form),old=s.services.find(x=>x.id===id),x={name:data.name.trim(),price:Number(data.price),duration:Number(data.duration),description:String(data.description||'').trim(),categoryId:data.categoryId||'',staffIds:fd.getAll('staffIds')};if(x.description.length>1000)throw Error('Keep the service description to 1,000 characters.');if(!x.name)throw Error('Enter a service name.');if(!Number.isFinite(x.price)||x.price<0||x.price>10000)throw Error('Enter a price of £0 or more.');if(!Number.isInteger(x.duration)||x.duration<5||x.duration>600)throw Error('Duration must be between 5 and 600 minutes.');if(!x.staffIds.length)throw Error('Choose at least one person who offers this service.');const record=old||{id:uid('svc'),...x};if(old)Object.assign(old,x);else s.services.push(record);save();serviceManagement.revealService(record.id,s.id);closeModal();render();toast('Service saved.');return true;}
+ if(type==='service'){const id=form.dataset.id,fd=new FormData(form),old=s.services.find(x=>x.id===id),x={name:data.name.trim(),price:Number(data.price),duration:Number(data.duration),description:String(data.description||'').trim(),categoryId:data.categoryId||'',staffIds:fd.getAll('staffIds')};if(x.description.length>1000)throw Error('Keep the service description to 1,000 characters.');if(!x.name)throw Error('Enter a service name.');if(!Number.isFinite(x.price)||x.price<0||x.price>10000)throw Error('Enter a price of £0 or more.');if(!Number.isInteger(x.duration)||x.duration<5||x.duration>600)throw Error('Duration must be between 5 and 600 minutes.');if(!x.staffIds.length)throw Error('Choose at least one person who offers this service.');const record=old||{id:uid('svc'),...x};if(old)Object.assign(old,x);else s.services.push(record);save();serviceManagement.revealService(record.id,s.id);closeModal();render();
+  if(dashboardSetupStep()==='services'&&isLive(s))void flushSync().then(()=>{
+   if(dashboardSetupStep()!=='services'||salon().id!==s.id)return;
+   if(!Object.hasOwn(snap[s.id]?.services||{},record.id)){toast('Your service is still waiting to sync. Check your connection and try again.');return;}
+   const saved=dashboardSetupBusiness(s,{confirmedServices:true});
+   const tip=document.querySelector('.jg-setup-tip');
+   if(tip)tip.outerHTML=JovaSetupGuide.renderStep(saved,dashboardSetupOptions(saved),'services');
+   toast('Service saved.');
+  });else toast('Service saved.');return true;}
  if(type==='staff'){if(!signedIn()||!staffManagementAllowed(s))throw Error(tierAvailability()+'.');const id=form.dataset.id,values=staffEditor.read(form);let m=s.staff.find(x=>x.id===id);if(!m&&!canAddStaff(s))throw Error(`Your ${planFor(s).name} plan includes ${planFor(s).staffLimit} staff members.`);const fields={name:values.name,role:values.role,active:values.active,hours:values.hours};if(m)Object.assign(m,fields);else{m={id:uid('st'),color:STAFF_COLORS[s.staff.length%STAFF_COLORS.length],...fields};s.staff.push(m);}const chosen=values.serviceIds;s.services.forEach(x=>{x.staffIds=(x.staffIds||[]).filter(i=>i!==m.id);if(chosen.includes(x.id))x.staffIds.push(m.id);});save();staffEditor.saved(form);closeModal();render();toast(id?'Staff member saved.':'Staff member added.');return true;}
  if(type==='edit-booking'){const b=s.bookings.find(x=>x.id===form.dataset.id);if(!b)throw Error('Booking not found.');const svc=s.services.find(x=>x.id===data.serviceId),same=b.serviceId===data.serviceId;if(!svc&&!same)throw Error('Choose a valid service.');const sameSlot=same&&b.staffId===data.staffId&&b.date===data.date&&b.time===data.time;if(!sameSlot){const ts=same?JovaReschedule.times(s,{...b,staffId:data.staffId},data.date,slotsFor):svc?available(data.date,svc.id,b.id,data.staffId):[];if(!ts.includes(data.time))throw Error('That time is not free for this person. Choose another.');}const next={...b,...(svc&&!same?{serviceId:svc.id,serviceName:svc.name,duration:svc.duration,price:svc.price}:{}),staffId:data.staffId,date:data.date,time:data.time,notes:(data.notes||'').trim()};void commitBookingEdit(form,s,b,next,'Booking updated.');return true;}
  return false;}
@@ -990,7 +1009,8 @@ function chatSend(text){chat.push({role:'user',text});const s=salon();const svc=
 document.addEventListener('click',async e=>{const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id,s=salon();if(a==='list-page'){if(window.JovaListPages?.move(el.dataset.list,Number(el.dataset.direction))){render();document.querySelector('.workspace-main')?.scrollTo({top:0});}return;}if(teamMode()&&(/^delete-/.test(a)||staffAction(a)||a==='setup-service'||/^(add|edit)-(service|category)/.test(a))){e.preventDefault();e.stopImmediatePropagation();toast('Only the business owner can do that.');return;}
  if(isLive(s)&&(a.startsWith('onboard-')||a==='deposit'||a==='portal')){e.preventDefault();closeModal();go('payments');return;}
  if(signedIn()&&billingRestricted()&&!['signout','owner-funnel-reject','cookies','sb-reload','sb-pay-now','sb-select-trial-plan','sb-trial-plans','sb-cadence','close-modal'].includes(a)){go('billing');return;}
- if(a==='setup-website'){workspace.click('ws-personalise-section',{dataset:{section:'website'}});go('scheduling?setup=website');return;}
+ if(a==='start-setup-tutorial'){startSetupTutorial();return;}
+ if(a==='setup-website'){openSetupWebsite();return;}
  if(a==='workspace-more'){modal('More',window.JovaMobileNavigation.moreContent(teamMode()?{allowedRoutes:TEAM_ROUTES}:{}));return;}
  if(a==='workspace-more-route'){const next=el.dataset.route;if(!['dashboard','bookings','calendar','customers','services','staff','scheduling','insights','referrals','settings','integrations'].includes(next)||(teamMode()&&!TEAM_ROUTES.includes(next)))return;closeModal();go(next);return;}
  if(a==='reset-retry'){resetValidation={key:null,status:'idle',result:null};render();return;}
@@ -1001,12 +1021,12 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
  if(a==='staff-hours'){staffEditor.open(id,'hours');return;}
  if(a==='share-booking-link'){
   const links=[
-   {id:'website',label:'Website',url:businessWebsite.websiteLink(s)},
-   {id:'booking',label:'Booking',url:bookingLink(s)}
+   {id:'website',label:'Website',icon:'M3 5h18v14H3z M3 9h18 M6 7h.01 M9 7h.01',url:businessWebsite.websiteLink(s)},
+   {id:'booking',label:'Booking page',icon:'M4 6h16v14H4z M8 4v4 M16 4v4 M4 11h16 M9 15l2 2 4-4',url:bookingLink(s)}
   ];
-  const buttons=links.map(({id})=>'<button type="button" class="btn" data-action="copy-link" data-target="'+id+'">Copy '+id+' link</button>').join('');
-  const fields=links.map(({id,label,url})=>'<label class="field">'+label+' link<input id="share-'+id+'" readonly value="'+esc(url)+'"></label>').join('');
-  modal('Share your links','<div class="share-links"><div class="share-link-actions">'+buttons+'</div><details><summary>See more</summary>'+fields+'</details></div>','share-links-modal');
+  const buttons=links.map(({id,label,icon})=>`<li class="share-link-row"><span class="share-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icon}"/></svg></span><strong>${label}</strong><button type="button" class="btn" data-action="copy-link" data-target="${id}" aria-label="Copy ${id} link">Copy</button></li>`).join('');
+  const fields=links.map(({id,url})=>'<label class="field">'+(id==='website'?'Website':'Booking')+' link<input id="share-'+id+'" readonly value="'+esc(url)+'"></label>').join('');
+  modal('Share your links','<div class="share-links"><ul class="share-link-actions">'+buttons+'</ul><details><summary>See more</summary>'+fields+'</details></div>','share-links-modal');
   return;
  }
  if(a==='workspace-appearance'){const current=JovaWorkspaceThemes.resolve(s.workspace?.appearance);modal('Your workspace theme',`<p class="wt-intro">Only your dashboard uses this theme.</p><form data-form="workspace-appearance">${JovaWorkspaceThemes.choices(current.id)}<div class="error" role="alert"></div><div class="form-footer"><button class="btn primary">Apply theme</button></div></form>`,'wt-picker-modal');return;}
@@ -1180,7 +1200,7 @@ function workspaceRouteChanged(){
  if(document.querySelector('.shell')&&workspaceLocation){
   if(pendingLeave){history.replaceState(null,'',workspaceLocation);return;}
   if(editorBusy()){history.replaceState(null,'',workspaceLocation);toast('Wait for your changes to finish saving.');return;}
-  if(hub&&['settings','availability'].includes(next)&&target.split('#')[0]===workspaceLocation.split('#')[0]){workspaceLocation=target;document.body.dataset.view=next;closeModal();businessSettingsScroll();return;}
+  if(hub&&!dashboardSetupStep()&&!document.querySelector('.jg-setup-tip')&&['settings','availability'].includes(next)&&target.split('#')[0]===workspaceLocation.split('#')[0]){workspaceLocation=target;document.body.dataset.view=next;closeModal();businessSettingsScroll();return;}
   if(ownerHasChanges()){
    history.replaceState(null,'',workspaceLocation);
    requestUnsavedLeave(()=>{closeModal();history.pushState(null,'',target);syncPublicLocation();render();window.scrollTo(0,0);});return;

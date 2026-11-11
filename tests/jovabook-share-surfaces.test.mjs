@@ -15,8 +15,8 @@ test('Share, Personalise, website editor, service copies and iframe use the publ
  Object.assign(context,{a:'share-booking-link',bookingLink,esc,modal:(title,html)=>modals.push({title,html})});
  vm.runInNewContext('(()=>{'+app.slice(app.indexOf(" if(a==='share-booking-link')"),app.indexOf(" if(a==='workspace-appearance')"))+'})()',context);
  assert.equal(modals[0].title,'Share your links');
- assert.match(modals[0].html,/data-target="website">Copy website link<\/button>.*<details><summary>See more<\/summary>.*id="share-website" readonly value="https:\/\/www\.jovamedia\.com\/book\/arooj"/);
- assert.match(modals[0].html,/data-target="booking">Copy booking link<\/button>.*id="share-booking" readonly value="https:\/\/www\.jovamedia\.com\/book\/arooj\/appointments"/);
+ assert.match(modals[0].html,/data-target="website" aria-label="Copy website link">Copy<\/button>.*<details><summary>See more<\/summary>.*id="share-website" readonly value="https:\/\/www\.jovamedia\.com\/book\/arooj"/);
+ assert.match(modals[0].html,/data-target="booking" aria-label="Copy booking link">Copy<\/button>.*id="share-booking" readonly value="https:\/\/www\.jovamedia\.com\/book\/arooj\/appointments"/);
  await load('scheduling-core.cjs');await load('business-website.cjs');vm.runInNewContext((await readFile(new URL('../booking-demo/workspace.js',import.meta.url),'utf8')).split('/* Reference-led owner presentation.')[0],context);
  const api={salon:()=>s,bookingLink,ownerIdentity:()=> 'fixture-owner',esc,field:()=>'',money:v=>'£'+v,toast(){},modal(){},save(){},render(){}};
  const website=window.JovaBusinessWebsite.create(api);api.website=website;
