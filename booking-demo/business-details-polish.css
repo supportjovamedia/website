@@ -106,12 +106,14 @@ html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-back{min-height:
 html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading :is(.df-save-bar,.se-save-bar){margin:0!important;padding:0!important;border:0!important;min-height:0!important;flex:none!important;background:transparent!important;box-shadow:none!important}
 @media(max-width:760px){
  html[data-workspace-theme] .shell.jb-reference .bd-settings:not([data-business-view=home]) .bd-heading{
-  position:sticky;top:0;z-index:5;padding:8px 0!important;
-  background:var(--theme-panel,#fff)!important
+  position:sticky;top:0;z-index:5;padding:12px 14px!important;
+  border:1px solid var(--theme-line,#dce4ea)!important;border-radius:14px;
+  background:var(--theme-panel,#fff)!important;box-shadow:0 4px 14px rgb(24 45 60 / 6%)!important
  }
 }
 
 .bd-address-group{display:grid;gap:8px}
+.shell.jb-reference .bd-information .bd-address-group .field{margin-bottom:0!important}
 .bd-address-group .bd-mobile-service{margin:0;min-height:40px}
 .bd-required{color:#b42318;font-weight:800}
 .bd-optional{color:var(--theme-muted,#536677);font-size:.875em;font-weight:400}
