@@ -40,6 +40,15 @@
   const hoursEdit=event.target.closest?.('[data-bd-hours-edit]');if(hoursEdit){event.preventDefault();const times=hoursEdit.closest('.ws-daily-row').querySelector('.bd-day-times');times.hidden=!times.hidden;hoursEdit.setAttribute('aria-expanded',String(!times.hidden));if(!times.hidden)times.querySelector('input[type=time]')?.focus();return;}
   const button=event.target.closest?.('[data-bd-open]');if(button){event.preventDefault();open(button.dataset.bdOpen);return;}
  });
+ document.addEventListener('input',event=>{
+  const field=event.target;
+  if(!field.matches?.('[data-bd-phone]')||event.isComposing)return;
+  const digits=field.value.replace(/\D/g,'');
+  if(digits===field.value)return;
+  const position=field.value.slice(0,field.selectionStart??field.value.length).replace(/\D/g,'').length;
+  field.value=digits;
+  field.setSelectionRange(position,position);
+ },true);
  document.addEventListener('change',event=>{
   const row=event.target.closest?.('.bd-settings .ws-daily-row');if(row?.dataset.bdHoursReady)updateHoursRow(row);
   const mobile=event.target;if(mobile.name!=='mobileService'||mobile.form?.dataset.form!=='settings')return;

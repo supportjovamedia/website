@@ -146,3 +146,32 @@ html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setu
  position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;
  padding:0!important;margin:0!important;clip-path:inset(50%)!important;overflow:hidden!important;white-space:nowrap!important
 }
+
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading h1{grid-area:1/1}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading .df-save-indicator{
+ grid-area:2/1;color:#f1f1ec!important;margin:0!important;min-height:0
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading .df-save-indicator:not(.is-dirty){display:none!important}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading .df-save-indicator-dot{background:#f4d321}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading [data-bd-save]{
+ grid-area:1/2/span 2/3
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .workspace-main{padding-top:0!important}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .jg-personalise>.pp-heading{
+ position:sticky;top:0;z-index:6;margin:0 0 14px!important;padding:12px 14px!important;
+ border-radius:0 0 14px 14px;background:#171819!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .jg-personalise>.pp-heading h1{color:#fff!important}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .pp-heading [data-action=ws-save-personalise]{
+ border-color:#fff!important;background:#fff!important;color:#171819!important
+}
+
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading :is(.jg-top-save-wrap,.df-save-bar,.se-save-bar){
+ display:contents!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .pp-heading .df-save-indicator{
+ color:#f1f1ec!important
+}

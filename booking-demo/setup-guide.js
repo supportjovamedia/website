@@ -2,12 +2,12 @@
 (() => {
  'use strict';
  const steps=[
-  {id:'details',title:'Business information',route:'settings',target:'[name=name]',text:'Check your business name and contact details, then select Save. Mobile services can leave the address blank.'},
+  {id:'details',title:'Business information',route:'settings',target:'[name=name]',text:'Check your business details. If you have no fixed address, use the checkbox under Address.'},
   {id:'hours',title:'Working hours',route:'availability',target:'.ws-daily-row',text:'Choose the days and times clients can book, then select Save.'},
   {id:'category',title:'Add a service category',route:'services',target:'[data-action="add-category"]',text:'Select the highlighted Category button. Give it a name, choose a color, then select Add category.'},
   {id:'services',title:'Add a service',route:'services',target:'[data-action="add-service"]',text:'Select the highlighted Add service button. Enter the name, category, price and duration, then confirm who offers it.'},
   {id:'website',title:'Set up your website',route:'scheduling',target:'[data-bw-section]:not([hidden])',text:'Choose how your website looks and what clients see.'},
-  {id:'booking',title:'Booking page',route:'booking-setup',target:'.bw-settings-intro',text:'Clients choose a service and time here. You can change the welcome message and appearance, copy links to individual services, or share the direct booking link.'},
+  {id:'booking',title:'Booking page',route:'booking-setup',target:'.bw-settings-intro',text:'Share the booking page to send clients straight to appointments. Share your website to let them browse first.'},
   {id:'share',title:'Your dashboard',route:'dashboard',target:'.workspace-header [data-action="share-booking-link"]',text:'Use Share links at the top right to copy your website or direct booking link. The bell shows notifications, and the palette changes your workspace theme.'},
   {id:'bookings',title:'Bookings',route:'bookings',target:'[data-action="bookings-filters"]',text:'Find your appointments here. Use the filters to narrow the list by status, service or team member. You can also manage bookings with multiple sessions.'},
   {id:'calendar',title:'Calendar',route:'calendar',target:'.db-period-controls',text:'Switch between Day, Week and Month to see your schedule at different levels. Try the views whenever you like.'},
@@ -74,21 +74,32 @@
    calendar:button('setup-continue','Continue to customers','primary'),
    customers:button('setup-finish','Finish demo','primary')
   };
+  const jump=id==='details'?'<button type="button" class="jg-setup-jump" data-setup-jump>Go to required field</button>':'';
   const skip=['details','hours','category','services'].includes(id)?button('setup-skip-step','Skip this step','primary'):'';
-  return '<aside class="jg-setup-tip" aria-label="Setup guide"><div><span class="jg-setup-position">Setup demo</span><strong>'+step.title+'</strong><p id="jg-setup-instruction">'+(id==='website'?section[1]:step.text)+'</p></div><div class="jg-setup-tip-actions">'+(actions[id]||'')+skip+button('setup-pause','Exit demo')+'</div></aside>';
+  return '<aside class="jg-setup-tip" aria-label="Setup guide"><div><p id="jg-setup-instruction">'+(id==='website'?section[1]:step.text)+'</p>'+jump+'</div><div class="jg-setup-tip-actions">'+(actions[id]||'')+skip+button('setup-pause','Exit demo')+'</div></aside>';
  }
- function render(s,options={}){
+ function progressValue(s,options){
   const progress=status(s,options),guide=options.guide||defaultState,done=guide.mode==='done';
   const stepIndex=steps.findIndex(step=>step.id===guide.step);
   const reviewed=stepIndex<5?0:stepIndex-5;
   const websiteFraction=guide.step==='website'&&!progress.tasks[4].covered?Math.max(0,sections.findIndex(([id])=>id===guide.section))/sections.length:0;
-  const percent=done?100:Math.round((progress.completed+reviewed+websiteFraction)/steps.length*100);
+  return done?100:Math.round((progress.completed+reviewed+websiteFraction)/steps.length*100);
+ }
+ function renderLine(s,options){
+  return '<progress class="jg-setup-line" max="100" value="'+progressValue(s,options)+'" aria-label="Setup demo progress"></progress>';
+ }
+ function render(s,options={}){
+  const guide=options.guide||defaultState,done=guide.mode==='done',percent=progressValue(s,options);
   const label=done&&!guide.skipped?'Replay demo':guide.mode==='paused'&&guide.step?'Resume demo':'Start demo';
   return '<section class="jg-setup-progress" aria-labelledby="jg-setup-title"><div><h2 id="jg-setup-title">'+(done?(guide.skipped?'Setup demo skipped':'Setup demo complete'):'Setup demo')+'</h2><div class="jg-progress-track"><progress max="100" value="'+percent+'" aria-label="Setup demo progress"></progress><span>'+(guide.skipped?'Skipped':percent+'% complete')+'</span></div></div><div class="jg-setup-progress-actions">'+(guide.mode==='active'?'':button('start-setup-tutorial',label,'primary'))+(done?'':button('skip-setup-tutorial','Skip demo','jg-setup-skip'))+'</div></section>';
  }
  // One quiet pointer follows the real control. It never blocks input or takes focus.
  function createCue(){
   let badge,pointed,frame,typingTarget,typingTimer;
+  const usedCues=new Set();
+  const cueAction=element=>element?.dataset.action;
+  const dismissibleActions=new Set(['add-category','add-service','share-booking-link','bookings-filters','cal-view','add-customer','ws-copy']);
+  const cueKey=(step,action)=>step+':'+action;
   const modalFields={
    category:[['[name=name]','Name the category'],['[name=categoryColor]','Choose a color'],['button.primary','Save']],
    service:[['[name=name]','Name the service'],['[name=categoryId]','Choose a category'],['[name=price]','Enter the price'],['[name=duration]','Enter the duration'],['[name=staffIds]','Choose who offers it'],['button.primary','Save']],
@@ -103,7 +114,7 @@
   function complete(field){
    if(!enabled(field)||field.matches(':invalid')||!field.value.trim())return false;
    if(field.name==='address')return field.value.trim().length>=3;
-   if(field.name==='phone')return field.value.replace(/\D/g,'').length>=7;
+   if(field.name==='phone')return /^[0-9]{7,15}$/.test(field.value);
    return true;
   }
   function detailsCue(form){
@@ -150,19 +161,37 @@
     ?asCue(shell,'[data-bd-save]:not(:disabled)','Save')
     :asCue(shell,'.bd-day-toggle','Set opening hours');
    if(step==='website'){
+    const websiteForm=shell.querySelector('[data-form=bw-website]');
+    if(websiteForm?.dataset.dirty==='true')return asCue(shell,'[data-action=ws-save-personalise]','Save changes');
+    if(websiteForm?.dataset.setupDesignReviewed==='true'&&shell.querySelector('[data-bw-view=design]'))return asCue(shell,'[data-action=setup-continue]','Continue');
     const section=shell.querySelector('[data-bw-section]:not([hidden])');
     const selection={design:['.bw-layout-choice','Choose a design'],colours:['[data-colour-value]','Choose a color'],hero:['[name=headline]','Type here'],about:['[name=about]','Type here'],search:['[name=showInSearch]','Optional']};
     return section&&selection[section.dataset.bwSection]?asCue(section,...selection[section.dataset.bwSection]):[];
    }
-   if(step==='booking')return asCue(shell,'[data-action=ws-booking-setting][data-section=options]','Sharing options');
+   if(step==='booking')return asCue(shell,'[data-action=ws-copy][data-target=link]','Copy booking link');
    if(step==='calendar')return asCue(shell,'[data-action=cal-view][data-value=week]','Try Week view');
    return asCue(shell,getStep(step).target,{category:'Add category',services:'Add service',share:'Share links',bookings:'Try filters',customers:'Add customer'}[step]);
+  }
+  function updateJump(shell,el){
+   const jump=shell?.querySelector('[data-setup-jump]');
+   if(!jump)return;
+   const label={name:'Go to business name',address:'Go to address',phone:'Go to phone',email:'Go to email'}[el?.name];
+   jump.hidden=!label;
+   if(label&&jump.textContent!==label)jump.textContent=label;
   }
   function paint(){
    frame=0;
    const shell=document.querySelector('.shell[data-setup-active]'),step=shell?.dataset.setupActive;
-   const [el,label]=getStep(step)?target(shell,step):[];
+   if(!step)usedCues.clear();
+   let [el,label]=getStep(step)?target(shell,step):[];
+   if(usedCues.has(cueKey(step,cueAction(el))))el=null;
    if(pointed!==el){pointed?.classList.remove('jg-setup-pointed');pointed=el;el?.classList.add('jg-setup-pointed');}
+   updateJump(shell,el);
+   if(step==='website'&&shell.querySelector('[data-bw-view=design]')){
+    const hint=shell.querySelector('#jg-setup-instruction');
+    const guidance=el?.matches('[data-action=ws-save-personalise]')?'Design selected. Save changes to continue.':el?.matches('[data-action=setup-continue]')?'This design is already selected. Continue when you’re ready.':sections[0][1];
+    if(hint&&hint.textContent!==guidance)hint.textContent=guidance;
+   }
    if(!el){if(badge)badge.hidden=true;return;}
    const r=el.getBoundingClientRect(),header=el.closest('.workspace-main')&&shell.querySelector('.workspace-header');
    const top=header?.getBoundingClientRect().bottom||0;
@@ -171,18 +200,29 @@
    if(r.bottom<=Math.max(top,clip?.top||0)||r.top>=Math.min(innerHeight,clip?.bottom||innerHeight)){if(badge)badge.hidden=true;return;}
    if(!badge){
     badge=document.createElement('div');badge.className='jg-setup-cue';badge.setAttribute('aria-hidden','true');
-    badge.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6l1-1a1.5 1.5 0 0 1 2.5.6l.6-.4a1.5 1.5 0 0 1 2.3 1l.5-.2a1.6 1.6 0 0 1 2.1 1.5v1.8a7 7 0 0 1-7 7H12c-2 0-3.6-1-4.7-2.6l-3-4.4a1.6 1.6 0 0 1 2.4-2z"/></svg><span></span>';
     document.body.append(badge);
    }
-   badge.lastElementChild.textContent=label||'';
+   const below=el.matches('[data-bd-save],[data-action=ws-save-personalise]');
+   badge.textContent=label||'';
+   badge.dataset.placement=below?'below':'above';
    badge.hidden=false;
-   const width=badge.offsetWidth,x=Math.max(6,Math.min(innerWidth-width-6,r.right-width+7));
+   const width=badge.offsetWidth,x=Math.max(6,Math.min(innerWidth-width-6,r.right-width));
    badge.style.left=x+'px';
-   badge.style.top=Math.max(5,top,r.top-17)+'px';
+   badge.style.top=(below?r.bottom+8:Math.max(5,top,r.top-badge.offsetHeight-7))+'px';
   }
   function refresh(){if(!frame)frame=requestAnimationFrame(paint);}
   for(const event of ['focusin','input','change','click','scroll','animationend','toggle'])document.addEventListener(event,e=>{
    if(!pointed&&!document.querySelector('.shell[data-setup-active]'))return;
+   if(e.type==='click'&&e.target.closest?.('[data-setup-jump]')&&pointed){
+    pointed.scrollIntoView({block:'center',behavior:'instant'});
+    pointed.focus({preventScroll:true});
+   }
+   if(e.type==='click'){
+    const step=document.querySelector('.shell[data-setup-active]')?.dataset.setupActive;
+    const action=cueAction(e.target.closest?.('[data-action]'));
+    if(step&&dismissibleActions.has(action))usedCues.add(cueKey(step,action));
+   }
+   if(e.type==='click'&&e.target.matches('input[name=template]'))e.target.form.dataset.setupDesignReviewed='true';
    if(e.type==='change'&&e.target.name==='categoryColor'&&e.target.form)e.target.form.dataset.setupColorSeen='true';
    if(e.type==='input'&&e.target.matches('input:not([type=checkbox]):not([type=radio]),textarea')){
     typingTarget=e.target;
@@ -194,5 +234,5 @@
   window.addEventListener('resize',refresh);
   return {refresh};
  }
- window.JovaSetupGuide=Object.freeze({status,render,renderStep,nextStep,resumeStep,getStep,destination,sections,createState,createCue});
+ window.JovaSetupGuide=Object.freeze({status,render,renderStep,nextStep,resumeStep,getStep,destination,sections,createState,createCue,renderLine});
 })();
