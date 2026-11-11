@@ -19,7 +19,7 @@ try{
   const page=await context.newPage();page.on('pageerror',error=>report.errors.push(error.message));
   await page.goto(origin+'/?preview=day#login');
   await page.getByRole('textbox',{name:'Email',exact:true}).fill('demo@jovamedia.com');await page.locator('input[name=password]').fill('Salon2026');await page.getByRole('button',{name:'Sign in',exact:true}).click();
-  if(width===390){await page.getByRole('button',{name:'More',exact:true}).click();await page.getByRole('button',{name:'Personalise',exact:true}).click();}else await page.getByRole('link',{name:'Personalise',exact:true}).click();
+  if(width===390){await page.getByRole('button',{name:'More',exact:true}).click();await page.getByRole('button',{name:'Website',exact:true}).click();}else await page.getByRole('link',{name:'Website',exact:true}).click();
   for(const [id,name] of [['one-page','Evergreen'],['brightside','Cobalt'],['form','Terracotta'],['willow','Olive']]){
    await page.getByRole('button',{name:'Website design Choose a layout for your website'}).click();
    await page.locator('.bw-layout-choice:has(input[value="'+id+'"])').click();

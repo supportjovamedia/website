@@ -7,5 +7,11 @@ test('welcome checks only a visible verified dashboard and never polls or repeat
 });
 test('a failed welcome claim cannot block the dashboard or start retry loops',async()=>{
  let calls=0;const window={},document={querySelector:()=>null};vm.runInNewContext(source,{window,document});const welcome=window.JovaOwnerWelcome.create({directory:{remote:true,sessionIdentity:()=> 'owner-one',claimOwnerWelcome:async()=>{calls++;throw Error('Offline');}},visible:()=>true});
- await welcome.check();await welcome.check();welcome.leave();assert.equal(calls,1);
+ await welcome.check();await welcome.check();assert.equal(calls,1);
+});
+
+test('a new owner automatically starts setup once after the dashboard is ready',async()=>{
+ let starts=0;const window={},document={querySelector:()=>null};vm.runInNewContext(source,{window,document});
+ const welcome=window.JovaOwnerWelcome.create({directory:{remote:true,sessionIdentity:()=> 'new-owner',claimOwnerWelcome:async()=>({ok:true,show:true})},visible:()=>true,startSetup:()=>{starts++;}});
+ await welcome.check();await welcome.check();assert.equal(starts,1);
 });

@@ -694,12 +694,28 @@ button,.btn{border-radius:999px}
 :root .trial-billing-details summary{cursor:pointer;font-size:15px;padding:8px 0;color:#235789;font-weight:600}
 :root .trial-billing-details p{font-size:14px;line-height:1.65;margin:12px 0}
 
-html[data-workspace-theme] #modal-root .share-links-modal{max-width:420px;padding:20px!important}
-.share-links{display:grid;gap:12px}
-.share-link-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.share-link-actions button{min-height:44px}
-.share-links summary{cursor:pointer;padding:8px 0;font-size:14px}
+#modal-root .modal-backdrop:has(.share-links-modal){align-items:center;padding:16px}
+html[data-workspace-theme] #modal-root .share-links-modal{width:min(100%,400px);padding:20px!important;border:1px solid var(--theme-line);border-radius:16px;animation:fade .18s ease-out}
+#modal-root .share-links-modal .modal-head{position:sticky;top:0;z-index:1;margin:0 0 14px;background:var(--theme-panel)}
+#modal-root .share-links-modal .modal-head h2{font-size:21px;font-weight:650;line-height:1.3}
+#modal-root .share-links-modal .modal-head button{width:44px;height:44px;flex:none;border-radius:12px}
+body:has(.share-links-modal) #toast.jg-toast{z-index:99}
+.share-link-actions{list-style:none;margin:0;padding:0;border:1px solid var(--theme-line);border-radius:12px}
+.share-link-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 10px;font-size:14px}
+.share-link-row+li{border-top:1px solid var(--theme-line)}
+.share-link-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;background:var(--theme-soft);color:var(--theme-primary)}
+.share-link-icon svg{width:19px;height:19px}
+html[data-workspace-theme] #modal-root .share-link-row button{min-width:78px;min-height:44px;padding:7px 12px;border:0;border-radius:8px;background:var(--theme-inset);color:var(--theme-heading);font-size:13px;font-weight:650;box-shadow:none}
+html[data-workspace-theme] #modal-root .share-link-row button:is(:hover,[data-copy-state=copied]){background:var(--theme-soft);color:var(--theme-primary)}
+html[data-workspace-theme] :is(.shell button,#modal-root button,.jg-setup-tip .btn):active:not(:disabled){filter:brightness(.9)}
+.share-copy-help{margin:0 0 6px;font-size:13px}
+.share-links details{margin-top:8px}
+.share-links summary{width:fit-content;min-height:44px;padding:12px 2px;cursor:pointer;color:var(--theme-muted);font-size:13px}
 .share-links details .field{margin:8px 0 0}
+.jg-setup-start{margin:0 0 18px}
+.jg-setup-position{display:block;margin:0 0 4px;color:var(--theme-muted);font-size:12px}
+@media(prefers-reduced-motion:reduce){html[data-workspace-theme] #modal-root .share-links-modal{animation:none}}
+
 .jg-setup-tip{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;padding:14px 16px;border:1px solid var(--theme-line);border-radius:12px;background:var(--theme-panel);color:var(--theme-heading)}
 .jg-setup-tip p{margin:4px 0 0;font-size:13px;color:var(--theme-muted)}
 .jg-setup-tip-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:13px}

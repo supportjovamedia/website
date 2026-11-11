@@ -17,7 +17,7 @@
   settings:'M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1 1-3ZM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
  });
  const main=Object.freeze([['dashboard','Dashboard'],['bookings','Bookings'],['calendar','Calendar'],['customers','Customers']].map(Object.freeze));
- const more=Object.freeze([['settings','Business Details'],['services','Services'],['staff','Staff'],['scheduling','Personalise'],['insights','Insights'],['integrations','Integrations'],['referrals','Referrals']].map(Object.freeze));
+ const more=Object.freeze([['settings','Business Details'],['services','Services'],['staff','Staff'],['scheduling','Website'],['insights','Insights'],['integrations','Integrations'],['referrals','Referrals']].map(Object.freeze));
  const icon=key=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+paths[key]+'"/></svg>';
  const allowed=(items,options)=>Array.isArray(options?.allowedRoutes)?items.filter(([route])=>options.allowedRoutes.includes(route)):items;
  function markup(active,options={}){
