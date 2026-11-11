@@ -2,11 +2,9 @@ body .jovabook-story #jova-story-concept .website-showcase{background:#fff;paddi
 .ws-showcase-inner{width:min(1180px,100%);margin:auto;min-width:0}.ws-showcase-heading{max-width:700px;margin:0 auto 28px;text-align:center}.ws-showcase-heading h2{font-size:clamp(32px,4vw,48px);color:#111;line-height:1.1;margin:0}.ws-showcase-heading p{font-size:18px;line-height:1.6;color:#333;margin:16px 0 0}
 .ws-design-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid #ccc;border-radius:5px;overflow:hidden;margin-bottom:24px}.ws-design-options button{border:0;border-right:1px solid #ccc;background:#fff;padding:16px 12px;color:#111;cursor:pointer;min-width:0;font:inherit;text-align:left}.ws-design-options button:last-child{border:0}.ws-design-options button b{display:block;font-size:16px}.ws-design-options button span{display:block;font-size:12px;margin-top:4px;line-height:1.3}.ws-design-options button[aria-pressed=true]{background:#111;color:#fff}.ws-design-options button:focus-visible{outline:3px solid #ffd700;outline-offset:-4px}
 .ws-website-frame{overflow:hidden;border:1px solid #d9d9d4;border-radius:12px;background:#fff;box-shadow:0 8px 20px #0001}
-.ws-preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#fafaf8;border-bottom:1px solid #e3e3df}
-.ws-preview-title{color:#444;font-size:14px;font-weight:600}
-.ws-preview-toggle{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:0;border-radius:999px;font:inherit;font-size:14px;font-weight:650;white-space:nowrap;cursor:pointer}
+.ws-preview-toolbar{display:grid;place-items:center;padding:8px 12px;background:#f1f2f2;border-bottom:1px solid #e3e3df}
+.ws-preview-toggle{min-height:44px;padding:0 18px;border:0;border-radius:999px;font:inherit;font-size:14px;font-weight:650;white-space:nowrap;cursor:pointer}
 body .jovabook-story #ex-websites .ws-preview-toggle{background:var(--dashboard-accent)!important}
-.ws-preview-toggle span{font-size:17px;line-height:1}
 .ws-preview-toggle:hover{text-decoration:underline}
 .ws-preview-toggle:focus-visible{outline:2px solid #111;outline-offset:2px}
 .ws-website-browser{position:relative;max-height:690px;overflow:hidden;scrollbar-gutter:stable;background:#fff}
@@ -25,8 +23,10 @@ body .jovabook-story #jova-story-concept #ex-websites .ws-reference-image{displa
   scroll-margin-top:100px;
 }
 .ws-sharing-intro{align-self:center;padding:8px 16px}
+.ws-sharing-heading{display:flex;align-items:center;gap:12px}
+.ws-sharing-mark{display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:10px;background:var(--dashboard-accent);color:#111}
 body .jovabook-story #jova-story-concept .ws-sharing-intro h3{margin:0;font-size:clamp(25px,3vw,34px);line-height:1.1}
-body .jovabook-story #jova-story-concept .ws-sharing-intro p{margin:8px 0 0;font-size:15px;line-height:1.55}
+body .jovabook-story #jova-story-concept .ws-sharing-intro p{margin:5px 0 0;font-size:15px;line-height:1.45}
 .ws-sharing-options{display:inline-flex;max-width:100%;margin-top:16px;border:1px solid #ccc;border-radius:6px}
 .ws-sharing-options button{min-height:44px;padding:7px 12px;border:0;border-radius:0;background:#fff;color:#111;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .ws-sharing-options button:first-child{border-radius:5px 0 0 5px}
@@ -48,43 +48,33 @@ body .jovabook-story #jova-story-concept .ws-sharing-intro p{margin:8px 0 0;font
 .ws-sharing-track::-webkit-scrollbar{display:none}
 .ws-sharing-card {
   display:grid;
-  grid-template-rows:auto auto 1fr;
+  grid-template-rows:1fr auto;
+  align-items:center;
+  gap:10px;
   min-width:0;
   padding:clamp(12px,2vw,18px);
   scroll-snap-align:start;
 }
-.ws-sharing-card > :last-child{align-self:center}
-body .jovabook-story #jova-story-concept .ws-sharing-card h4{margin:0;font-size:19px;line-height:1.25}
-body .jovabook-story #jova-story-concept .ws-sharing-card p{margin:5px 0 0;font-size:14px;line-height:1.5}
-.ws-sharing-card .ws-visibility-screen {
-  display:block;
-  width:min(100%,410px);
-  height:auto;
-  aspect-ratio:850/278;
-  object-fit:cover;
-  object-position:top;
-  margin:14px auto 0;
-  border-radius:9px;
-  box-shadow:0 3px 10px #0001;
-}
-.ws-profile-example {
-  width:min(100%,410px);
-  margin:14px auto 0;
-  padding:12px 15px;
+body .jovabook-story #jova-story-concept .ws-sharing-card p{width:min(100%,480px);margin:0 auto;font-size:14px;line-height:1.5}
+.ws-profile-example,.ws-visibility-example {
+  display:flex;
+  align-items:center;
+  width:min(100%,480px);
+  min-height:70px;
+  margin-inline:auto;
+  padding:8px 12px;
   border:1px solid #dadce0;
-  border-radius:9px;
+  border-radius:7px;
   background:#fff;
   color:#202124;
 }
-.ws-profile-business{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:7px}
-.ws-profile-initial{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:50%;background:#f1f2f2;color:#333;font:18px Georgia,serif}
-.ws-profile-example strong{display:block;font-size:16px;line-height:1.25}
-.ws-profile-label,.ws-profile-category{font-size:12px;color:#4a4e53}
-.ws-profile-category{display:block}
+.ws-visibility-example img{display:block;width:100%;height:auto;max-height:66px;object-fit:contain}
+.ws-profile-example{justify-content:space-between;gap:8px}
+.ws-profile-business{min-width:0}
+.ws-profile-example strong{display:block;font-size:15px;line-height:1.25}
+.ws-profile-label{display:block;font-size:11px;line-height:1.35;color:#4a4e53}
 .ws-profile-website {
-  display:inline-flex;
-  gap:7px;
-  margin-left:auto;
+  flex:none;
   padding:4px 10px;
   border:1px solid #c8d8f8;
   border-radius:20px;
@@ -104,7 +94,10 @@ body .jovabook-story #jova-story-concept .ws-sharing-card p{margin:5px 0 0;font-
   .ws-website-browser{max-height:min(600px,62svh)}
   .ws-showcase-heading p{font-size:16px}
   .ws-sharing-guide{grid-template-columns:minmax(0,1fr);gap:12px;max-width:460px;padding:12px;margin-top:20px}
-  .ws-sharing-intro{padding:4px 4px 0}
-  .ws-sharing-options{margin-top:12px}
+  .ws-sharing-intro{padding:2px 0 0}
+  .ws-sharing-heading{gap:10px}
+  .ws-sharing-mark{flex-basis:40px;height:40px}
+  .ws-sharing-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px}
+  .ws-sharing-options button{padding-inline:4px}
 }
 @media(prefers-reduced-motion:reduce){.ws-sharing-track{scroll-behavior:auto}}
