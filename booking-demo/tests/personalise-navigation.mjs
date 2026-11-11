@@ -18,7 +18,9 @@ test('website settings keep one original form and all fields across six screens'
  vm.runInNewContext(websiteSource,context);
  const tools=context.window.JovaBusinessWebsite.create({salon:()=>s,esc:escape,ownerIdentity:()=> 'owner',bookingLink:()=> 'https://example.test/studio/book',render:()=>seen.renders++});
  let html=tools.editor();assert.equal((html.match(/data-form="bw-website"/g)||[]).length,1);
- assert.equal((html.match(/class="bw-settings-option"/g)||[]).length,6);
+ assert.deepEqual([...html.matchAll(/data-action="bw-setting" data-section="([^"]+)"><span class="bw-settings-icon">[\s\S]*?<strong>([^<]+)<\/strong>/g)].map(([,id,label])=>[id,label]),[
+  ['design','Website design'],['colours','Color'],['hero','Banner'],['about','About your business'],['hours','Hours and contact'],['search','Google visibility']
+ ]);
  for(const name of ['headline','about','brandColor','headingColor','template','showInSearch','hideAddress'])assert.ok(html.includes('name="'+name+'"'));
  assert.match(html,/data-bw-section="hours"/);assert.match(html,/href="#availability"/);assert.match(html,/href="#settings"/);
  const form={dataset:{owner:'owner|'+s.id},querySelector:()=>null};
@@ -41,7 +43,7 @@ test('website and booking tabs preserve both forms while Save submits only the a
  const context={window:{JovaColourPicker:picker},URL,location:{origin:'https://example.test',pathname:'/',hash:''},document:{addEventListener(){},querySelector:selector=>selector==='.jg-personalise-nav'?nav:selector==='[data-form=bw-website]'?websiteForm:selector==='[data-form=ws-booking-page]'?bookingForm:null,querySelectorAll:()=>tabs,getElementById:id=>id==='personalise-website'?websitePanel:bookingPanel}};
  vm.runInNewContext(workspaceSource,context);
  const tools=context.window.JovaWorkspace.create({salon:()=>s,esc:escape,render:()=>seen.renders++,field:(label,name,value)=>`<input name="${name}" value="${value}">`,money:String,website:{editor:()=>'<form data-form="bw-website"></form>',isBusy:()=>false},bookingLink:()=> 'https://example.test/studio/book'});
- const html=tools.pages.scheduling();assert.match(html,/data-navigation="panels"/);assert.equal((html.match(/class="bw-settings-option"/g)||[]).length,3);
+ const html=tools.pages.scheduling();assert.match(html,/<h1>Website<\/h1>/);assert.match(html,/data-navigation="panels"/);assert.equal((html.match(/class="bw-settings-option"/g)||[]).length,3);
  assert.doesNotMatch(html,/data-action="workspace-appearance"/);assert.match(html,/data-booking-section="content" hidden/);
  tools.click('ws-save-personalise',{});assert.equal(seen.websiteSaves,1);assert.equal(seen.bookingSaves,0);
  tools.click('ws-personalise-section',{dataset:{section:'booking'}});assert.equal(websitePanel.hidden,true);assert.equal(bookingPanel.hidden,false);

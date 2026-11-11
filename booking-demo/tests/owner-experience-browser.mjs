@@ -133,7 +133,7 @@ try{
  });
  await run('Owner navigation and real editor controls',async()=>{
   const nav=page.getByRole('navigation',{name:'Workspace'});
-  await expect(nav.locator('.jb-nav-section a')).toHaveText(['Dashboard','Calendar','Appointments','Clients','Services','Staff','Personalise','Insights']);
+  await expect(nav.locator('.jb-nav-section a')).toHaveText(['Dashboard','Calendar','Appointments','Clients','Services','Staff','Website','Insights']);
   const settings=nav.locator('details');await expect(settings).not.toHaveAttribute('open','');await settings.locator('summary').click();
   for(const name of ['Working hours','Business details','Email reminders','Payments','Subscription'])await expect(settings.getByRole('link',{name,exact:true})).toBeVisible();
   for(const route of ['calendar','appointments','customers','services','staff','scheduling','insights']){await go(route);await expect(page.locator('h1')).toBeVisible();}
