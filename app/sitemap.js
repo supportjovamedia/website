@@ -28,7 +28,7 @@ export default function sitemap() {
     ...pages.map(path => {
       const updatedArticles = articles.map(article => articleDates(article).updatedAt).sort().at(-1);
       const modified = {
-        '': '2026-11-07', '/pricing': '2026-11-07', '/privacy-policy': '2026-11-07',
+        '': '2026-11-10', '/pricing': '2026-11-10', '/privacy-policy': '2026-11-07',
         '/terms': '2026-11-06', '/about': '2026-11-08', '/services': '2026-11-08',
         '/websites': '2026-11-08', '/products': '2026-11-03',
         '/industries': '2026-11-09', '/online-booking': '2026-11-09', '/get-a-quote': '2026-11-09',
