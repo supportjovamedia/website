@@ -11,7 +11,7 @@
   {id:'share',title:'Your dashboard',route:'dashboard',target:'.workspace-header [data-action="workspace-appearance"]',text:'The palette changes your workspace theme. The bell shows notifications, and Share links opens your website and booking links.'},
   {id:'bookings',title:'Bookings',route:'bookings',target:'[data-action="bookings-filters"]',text:'Find your appointments here. Use the filters to narrow the list by status, service or team member. You can also manage bookings with multiple sessions.'},
   {id:'calendar',title:'Calendar',route:'calendar',target:'.db-period-controls',text:'Switch between Day, Week and Month to see your schedule at different levels. Try the views whenever you like.'},
-  {id:'customers',title:'Customers',route:'customers',target:'[data-action="add-customer"]',text:'Find client details and booking history here. Add customer opens the form. You can look around and close it when you are ready.'}
+  {id:'customers',title:'Customers',route:'customers',target:'[data-action="add-customer"]',text:'Add a customer and save, or choose Cancel to leave the form. You can delete a saved customer from their record.'}
  ];
  const sections=[
   ['design','Choose a website design. Save a new choice or continue with the current one.'],
@@ -141,7 +141,7 @@
    if(current)return current;
    const missing=targets.find(([el])=>enabled(el)&&!complete(el)&&!el.matches('button,input[type=checkbox]'));
    if(missing)return missing;
-   if(form.dataset.form==='customer')return asCue(form.closest('.modal'),'[data-action=close-modal]','Close to continue');
+   if(form.dataset.form==='customer')return asCue(form,'button[type=submit]','Save customer');
    if(form.dataset.form==='category'&&!form.dataset.setupColorSeen)return targets[1];
    if(form.dataset.form==='service'&&!form.querySelector('[name=staffIds]:checked'))return targets[4];
    return targets.at(-1);
