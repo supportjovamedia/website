@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { loadLiveChat, initialiseLiveChat, chatAllowedOnPath, crispWebsiteId } from "../lib/live-chat.mjs";
+import { loadLiveChat, openLiveChat, initialiseLiveChat, chatAllowedOnPath, crispWebsiteId } from "../lib/live-chat.mjs";
 
 function fixture(hostname = "www.jovamedia.com", pathname = "/") {
   const scripts = [], idle = [], timers = [], events = {};
@@ -41,6 +41,17 @@ test("only native Crisp loads once after page load and idle, with sound muted", 
   assert.equal(opens(f.win), 0);
   assert.ok(f.win.$crisp.some(([type, option, value]) => type === "config" && option === "sound:mute" && value[0] === true));
   assert.equal(f.win.Tawk_API, undefined);
+});
+
+test("dashboard support opens the existing Crisp chat on the live site", () => {
+  const f = fixture();
+  assert.equal(openLiveChat(f.win, f.doc), true);
+  assert.equal(opens(f.win), 1);
+  f.idle[0]();
+  assert.equal(f.scripts.length, 1);
+  const local = fixture('localhost');
+  assert.equal(openLiveChat(local.win, local.doc), false);
+  assert.equal(local.win.$crisp, undefined);
 });
 
 test("local and preview visits never connect to the production chat property", () => {

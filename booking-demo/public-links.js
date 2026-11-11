@@ -4,13 +4,13 @@
   const demoSlug = 'jova-demo';
   const websitePrefix = 'jovamedia.com/book/';
   const production = /^https:\/\/(?:[a-z0-9-]+\.)?jovamedia\.com$/;
-  const canonicalPath = /^\/book\/([a-z0-9-]+)$/;
+  const canonicalPath = /^\/book\/([a-z0-9-]+)(\/appointments)?$/;
   function canonicalURL(slug, route, origin) {
     const url = production.test(origin)
       ? new URL('https://www.' + websitePrefix + slug)
       : new URL('/book/' + slug, origin);
     if (route.startsWith('book/') || route.startsWith('manage/')) {
-      url.searchParams.set('view', 'booking');
+      url.pathname += '/appointments';
       if (route !== 'book/service') url.hash = route;
     } else if (route.startsWith('customer/')) {
       url.searchParams.set('view', 'account');
@@ -33,9 +33,9 @@
     const tenant=hostBusiness(location);
     const mainPath = canonicalPath.exec(pathname);
     if (mainPath && !tenant) {
-      const slug = mainPath[1], view = query.get('view');
-      if (!publicSiteSlug(slug) || query.has('salon') || query.has('demo') || query.getAll('view').length > 1) return empty;
-      const route = view === 'booking' ? 'book/service' : view === 'account' ? 'customer/bookings' : view === null ? 'website' : '';
+      const slug = mainPath[1], appointments = Boolean(mainPath[2]), view = query.get('view');
+      if (!publicSiteSlug(slug) || query.has('salon') || query.has('demo') || query.getAll('view').length > 1 || (appointments && view !== null)) return empty;
+      const route = appointments || view === 'booking' ? 'book/service' : view === 'account' ? 'customer/bookings' : view === null ? 'website' : '';
       return route ? {slug, demo:false, route} : empty;
     }
     const salon = query.get('salon'), demo = query.get('demo');

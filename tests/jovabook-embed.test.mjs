@@ -10,10 +10,11 @@ test('unknown and malformed slugs fail without rendering arbitrary scripts',asyn
 
 test('main-site booking and account use the locally deployed owner bundle with noindex',async()=>{
  const f=fixture({plan:'essential',standalone:true,canonical:true});
- for(const view of ['booking','account']){
-  const r=await f.GET(new Request('https://www.jovamedia.com/book/fixture?view='+view),{params:{slug:'fixture'}});
+ for(const [suffix,frameAncestors] of [['/appointments',"frame-ancestors 'self' https://*.jovamedia.com"],['?view=booking',"frame-ancestors 'self' https://*.jovamedia.com"],['?view=account',"frame-ancestors 'none'"]]){
+  const r=await f.GET(new Request('https://www.jovamedia.com/book/fixture'+suffix),{params:{slug:'fixture'}});
   assert.equal(r.status,200);
   assert.equal(r.headers.get('X-Robots-Tag'),'noindex, nofollow');
+  assert.equal(r.headers.get('Content-Security-Policy'),frameAncestors);
   const html=await r.text();
   assert(html.includes('src="/api/jovabook/assets/owner-app.0123456789abcdef0123.js"'));
   assert(!html.includes('JOVA_EMBED_SLUG'));
