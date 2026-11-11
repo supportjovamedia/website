@@ -693,3 +693,14 @@ button,.btn{border-radius:999px}
 :root .trial-billing-details{margin:20px 0;border-block:1px solid #dce2e8;padding:12px 0}
 :root .trial-billing-details summary{cursor:pointer;font-size:15px;padding:8px 0;color:#235789;font-weight:600}
 :root .trial-billing-details p{font-size:14px;line-height:1.65;margin:12px 0}
+
+html[data-workspace-theme] #modal-root .share-links-modal{max-width:420px;padding:20px!important}
+.share-links{display:grid;gap:12px}
+.share-link-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.share-link-actions button{min-height:44px}
+.share-links summary{cursor:pointer;padding:8px 0;font-size:14px}
+.share-links details .field{margin:8px 0 0}
+.jg-setup-tip{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;padding:14px 16px;border:1px solid var(--theme-line);border-radius:12px;background:var(--theme-panel);color:var(--theme-heading)}
+.jg-setup-tip p{margin:4px 0 0;font-size:13px;color:var(--theme-muted)}
+.jg-setup-tip-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:13px}
+.jg-setup-tip-actions>a:not(.btn){text-decoration:underline}

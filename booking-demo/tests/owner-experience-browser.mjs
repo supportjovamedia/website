@@ -137,7 +137,17 @@ try{
   const settings=nav.locator('details');await expect(settings).not.toHaveAttribute('open','');await settings.locator('summary').click();
   for(const name of ['Working hours','Business details','Email reminders','Payments','Subscription'])await expect(settings.getByRole('link',{name,exact:true})).toBeVisible();
   for(const route of ['calendar','appointments','customers','services','staff','scheduling','insights']){await go(route);await expect(page.locator('h1')).toBeVisible();}
-  await page.locator('[data-action="share-booking-link"]').click();await expect(page.getByRole('dialog',{name:'Share your booking page'})).toBeVisible();assert((await page.getByRole('dialog').locator('input[readonly]').inputValue()).includes('#book/service'));await closeModal();
+  await page.getByRole('button',{name:'Share website and booking links'}).click();
+  const share=page.getByRole('dialog',{name:'Share your links'});
+  await expect(share.getByRole('button',{name:'Copy website link'})).toBeVisible();
+  await expect(share.getByRole('button',{name:'Copy booking link'})).toBeVisible();
+  await expect(share.getByLabel('Website link',{exact:true})).toBeHidden();
+  await share.getByText('See more',{exact:true}).click();
+  await expect(share.getByLabel('Website link',{exact:true})).toBeVisible();
+  const website=await share.getByLabel('Website link',{exact:true}).inputValue();
+  const booking=await share.getByLabel('Booking link',{exact:true}).inputValue();
+  assert.notEqual(website,booking);
+  await closeModal();
   await go('customers');await page.locator('[data-action="add-customer"]').click();const client=page.locator('[data-form="customer"]');await client.locator('[name="name"]').fill('QA Editor Client');await client.locator('[name="email"]').fill('editor@example.com');await client.locator('button.primary').click();
   assert((await salon()).customers.some(c=>c.email==='editor@example.com'));
   await go('services');await page.locator('[data-action="add-service"]').click();const service=page.locator('[data-form="service"]');await service.locator('[name="name"]').fill('QA Owner Service');await service.locator('[name="price"]').fill('45');await service.locator('[name="duration"]').fill('30');await service.locator('[name="staffIds"]').first().check();await service.locator('button.primary').click();assert((await salon()).services.some(s=>s.name==='QA Owner Service'));

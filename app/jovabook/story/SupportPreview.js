@@ -1,18 +1,18 @@
 "use client";
-import {useState} from 'react';
-import {loadLiveChat} from '@/lib/live-chat.mjs';
-import {productionAnalyticsHost} from '@/lib/editorial-routes.mjs';
+import {useEffect,useRef,useState} from 'react';
+import {openLiveChat} from '@/lib/live-chat.mjs';
 
 export default function SupportPreview(){
  const [notice,setNotice]=useState('');
- const openChat=()=>{
-  if(!productionAnalyticsHost(window.location.hostname)){setNotice('Live chat opens on the live JovaMedia website. You can also email our team.');return;}
-  loadLiveChat(window,document);
-  window.$crisp=window.$crisp||[];
-  window.$crisp.push(['do','chat:show']);
-  window.$crisp.push(['do','chat:open']);
-  setNotice('Opening live chat. You can also email our team.');
- };
+ const openedFromDashboard=useRef(false);
+ const openChat=()=>setNotice(openLiveChat(window,document)
+  ? 'Opening live chat. You can also email our team.'
+  : 'Live chat opens on the live JovaMedia website. You can also email our team.');
+ useEffect(()=>{
+  if(openedFromDashboard.current||new URLSearchParams(window.location.search).get('support')!=='chat')return;
+  openedFromDashboard.current=true;
+  openLiveChat(window,document);
+ },[]);
  return <section className="sf-support js-wrap" id="ex-support" data-story-section aria-labelledby="sf-support-title">
   <div className="sf-support-panel">
    <div className="sf-support-copy">

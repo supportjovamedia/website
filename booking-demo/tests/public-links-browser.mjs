@@ -8,7 +8,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url),{chromium,expect}=require('@playwright/test'),{pathToRegexp}=require('next/dist/compiled/path-to-regexp');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),output=path.resolve(root,'../output/public-links-browser');
 const config=JSON.parse(await readFile(path.join(root,'vercel.json'),'utf8')),rewrite=pathToRegexp(config.rewrites.find(r=>r.destination==='/index.html').source);
-const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname,filename=path.resolve(root,pathname==='/'||pathname==='/book/fixture-business'||rewrite.test(pathname)?'index.html':'.'+pathname);assert(filename.startsWith(root+path.sep));res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.html':'text/html','.woff2':'font/woff2','.ttf':'font/ttf'})[path.extname(filename)]||'application/octet-stream');res.end(await readFile(filename));}catch{res.writeHead(404);res.end();}});
+const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname,filename=path.resolve(root,pathname==='/'||pathname==='/book/fixture-business'||pathname==='/book/fixture-business/appointments'||rewrite.test(pathname)?'index.html':'.'+pathname);assert(filename.startsWith(root+path.sep));res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.html':'text/html','.woff2':'font/woff2','.ttf':'font/ttf'})[path.extname(filename)]||'application/octet-stream');res.end(await readFile(filename));}catch{res.writeHead(404);res.end();}});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port,backend='https://backend.example.test';
 const owner={access_token:'fixture-owner-token',refresh_token:'fixture-owner-refresh',expires_at:Date.now()/1000+3600,user:{id:'30000000-0000-4000-8000-000000000001'}};
 const salon={id:'20000000-0000-4000-8000-000000000001',name:'Fixture Business',slug:'fixture-business',website_entitlement:'one-page',settings:{hours:{start:'09:00',end:'17:00',days:[1,2,3,4,5]},workspace:{website:{headline:'Welcome to Fixture Business',about:'The correct public business.'}}},categories:[{id:'fixture-category',name:'Appointments'}],staff:[{id:'fixture-staff',name:'Fixture Staff',active:true}],services:[{id:'fixture-service',name:'Fixture consultation',price:25,duration:30,categoryId:'fixture-category',staffIds:['fixture-staff']}],busy:[]};
@@ -27,7 +27,7 @@ await mkdir(output,{recursive:true});try{
  await check('Main-domain booking link and customer portal use the same business path',async()=>{
   const {ctx,page,requests}=await context(390);try{
    const address='/book/fixture-business';
-   await page.goto(origin+address+'?view=booking&service=fixture-service');
+   await page.goto(origin+address+'/appointments?service=fixture-service');
    await expect(page.getByRole('button',{name:/^Fixture consultation,/})).toBeVisible();
    await page.getByRole('link',{name:'Log in',exact:true}).click();
    await expect(page.locator('[data-cp-form=login]')).toBeVisible();
@@ -35,6 +35,7 @@ await mkdir(output,{recursive:true});try{
    await page.reload();
    await expect(page.locator('[data-cp-form=login]')).toBeVisible();
    await page.goto(origin+address+'?view=booking#signup');
+   await expect(page.getByRole('button',{name:/^Fixture consultation,/})).toBeVisible();
    await expect(page.locator('[data-form=owner-onboarding]')).toHaveCount(0);
    assert(requests.every(r=>r.path.startsWith('/rest/v1/rpc/public_')));
   }finally{await ctx.close();}

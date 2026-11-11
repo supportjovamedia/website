@@ -62,9 +62,13 @@ function WebsiteSharing(){
       </svg>
      </span>
      <div>
-      <h2 id="ws-sharing-title">One link to share.</h2>
-      <p>Share it on Google, Instagram or WhatsApp.</p>
+      <h2 id="ws-sharing-title">Share your links.</h2>
+      <p>Share your website or send customers straight to booking.</p>
      </div>
+    </div>
+    <div className="ws-sharing-example">
+     <div><strong>Share your website</strong><span>Opens your website with a Book button.</span></div>
+     <div><strong>Share your booking page</strong><span>Opens the appointment form directly.</span></div>
     </div>
     <div className="ws-sharing-options" role="group" aria-label="Explore website sharing">
      {['Website link','Google visibility'].map((label,index)=><button key={label} type="button" aria-pressed={sharingView===index} aria-controls="ws-sharing-track" onClick={()=>{
@@ -79,7 +83,7 @@ function WebsiteSharing(){
    }}>
     <div className="ws-sharing-card" aria-hidden={sharingView!==0}>
      <img className="ws-profile-preview" src="/jovabook/story/google-business-profile.webp" alt="Illustrated Google Business Profile for Willow Hair Studio, with a star rating, Reviews tab, salon photos and a Website button" width="784" height="604" loading="lazy" decoding="async" draggable={false} />
-     <p>In Google Business Profile, open <strong>Edit profile</strong> and paste your link into <strong>Website</strong>.</p>
+     <p>In Google Business Profile, open <strong>Edit profile</strong> and paste your website link into <strong>Website</strong>.</p>
     </div>
     <div className="ws-sharing-card" aria-hidden={sharingView!==1}>
      <div className="ws-visibility-preview" role="img" aria-label="In the JovaBook dashboard, open Personalise, choose Website, then Google visibility. Tick Let Google find my website and select Save changes.">

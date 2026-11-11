@@ -19,6 +19,7 @@ test('secondary routes mark More current without interpolating arbitrary active 
  assert.match(html,/data-action="workspace-more" aria-haspopup="dialog" aria-current="page"/);
  assert.equal((content.match(/data-action="workspace-more-route"/g)||[]).length,7);
  for(const route of ['services','staff','scheduling','insights','referrals','settings','integrations'])assert(content.includes('data-route="'+route+'"'));
+ assert.match(content,/href="https:\/\/www\.jovamedia\.com\/\?support=chat#ex-support"[^>]*target="_blank"/);
  assert(!api.markup('<img src=x onerror=alert(1)>').includes('<img'));
 });
 
@@ -26,5 +27,5 @@ test('staff route restrictions do not expose owner-only tools or an empty More d
  const api=navigation(),options={allowedRoutes:['dashboard','calendar','bookings','customers']},html=api.markup('dashboard',options);
  assert.equal((html.match(/class="jg-mobile-bottom-item"/g)||[]).length,4);
  assert(!html.includes('data-action="workspace-more"'));
- assert(!api.moreContent(options).includes('<button'));
+ assert(!api.moreContent(options).includes('<button'));assert(!api.moreContent(options).includes('Support'));
 });
