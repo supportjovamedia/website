@@ -549,7 +549,10 @@ function bookingSetupWarning(s){
  return text?'<div class="notice amber jg-setup-readiness"><strong>Clients can’t book yet</strong><p>'+esc(text)+'</p>'+(dashboardSetupStep()?'':'<button type="button" class="btn" data-action="start-setup-tutorial">Review setup</button>')+'</div>':'';
 }
 function dashboardSetupOptions(s){
- return {guide:setupGuideRead(),addressRequired:businessAddressRequired(s),bookable:service=>eligible(s,service).length>0,hasHours:JovaSchedule.normalize(s.hours).days.length>0};
+ const options={guide:setupGuideRead(),addressRequired:businessAddressRequired(s),bookable:service=>eligible(s,service).length>0,hasHours:JovaSchedule.normalize(s.hours).days.length>0};
+ // Steps whose information is already there are never shown. The built-in demo salon still walks through hours, categories and services.
+ options.skip=JovaSetupGuide.skippable(s,options,{showAll:JovaDemoData.isBuiltIn(salon())});
+ return options;
 }
 function dashboardSetupStep(currentRoute=route()){
  if(!signedIn()||teamMode()||billingRestricted())return '';
@@ -561,11 +564,37 @@ function showSetupRoute(destination){
  if(location.hash!==hash)history.pushState(null,'',hash);
  closeModal();render();window.scrollTo(0,0);
 }
-function navigateSetup(step,change={}){
+function navigateSetup(step,change={},direction=1){
+ {
+  const s=dashboardSetupBusiness(salon()),skip=dashboardSetupOptions(s).skip||[];
+  let id=step.id;
+  while(skip.includes(id)){const next=JovaSetupGuide.order[JovaSetupGuide.order.indexOf(id)+direction];if(!next)break;id=next;}
+  if(id!==step.id){step=JovaSetupGuide.getStep(id);change=id==='website'?{...change,section:'design'}:change;}
+ }
  setupGuideSession(true);setupGuideWrite({mode:'active',step:step.id,...change});
  showSetupRoute(JovaSetupGuide.destination(step.id));
 }
 function startSetupTutorial(replay=false){
+ const options=dashboardSetupOptions(dashboardSetupBusiness(salon()));
+ if(replay&&(options.guide.mode!=='done'||options.guide.skipped||options.guide.replayed||options.guide.dismissed))return;
+ // A fresh start gets a short "get ready" screen first. Resuming a paused demo goes straight back in.
+ if(options.guide.mode==='paused'&&options.guide.step){beginSetupTutorial(false);return;}
+ modal('Let’s get ready','<p>This demo walks you through your workspace in about two minutes. Try each highlighted control as you go.</p><ul class="setup-intro-list"><li>The rest of the screen is blurred so you can see what to tap.</li><li>The Next button unlocks once you have tried the control.</li><li>Use Back to revisit a step, or Exit demo any time.</li></ul><div class="row setup-welcome-actions"><button type="button" class="btn primary" data-action="begin-setup-tutorial" data-replay="'+(replay?'1':'')+'">I’m ready</button><button type="button" class="btn" data-action="close-modal">Not yet</button></div>','setup-welcome-modal');
+}
+function backSetup(){
+ const step=dashboardSetupStep();if(!step)return;
+ leaveSetup(()=>{
+  const guide=setupGuideRead(),sections=JovaSetupGuide.sections;
+  const at=sections.findIndex(([id])=>id===guide.section);
+  if(step==='website'&&at>0){setupGuideWrite({section:sections[at-1][0]});render();return;}
+  const prev=JovaSetupGuide.order[JovaSetupGuide.order.indexOf(step)-1];
+  if(!prev)return;
+  // Going back replays that step's tour so its Next button works again.
+  const seen=(guide.seen||[]).filter(key=>!key.startsWith(prev+':'));
+  navigateSetup(JovaSetupGuide.getStep(prev),{seen,...(prev==='website'?{section:sections.at(-1)[0]}:{})},-1);
+ });
+}
+function beginSetupTutorial(replay=false){
  const s=dashboardSetupBusiness(salon()),options=dashboardSetupOptions(s);
  if(replay){
   if(options.guide.mode!=='done'||options.guide.skipped||options.guide.replayed||options.guide.dismissed)return;
@@ -578,19 +607,28 @@ function startSetupTutorial(replay=false){
  closeModal();
  navigateSetup(step,step.id==='website'&&options.guide.step!=='website'?{section:'design'}:{});
 }
+const followingStep=id=>JovaSetupGuide.getStep(JovaSetupGuide.order[JovaSetupGuide.order.indexOf(id)+1]);
+const stepChange=step=>step.id==='website'?{section:'design'}:{};
 function advanceSetup(step){
  if(dashboardSetupStep()!==step)return;
  const s=dashboardSetupBusiness(salon()),options=dashboardSetupOptions(s);
  if(!JovaSetupGuide.status(s,options).tasks.find(task=>task.id===step)?.done)return;
- navigateSetup(JovaSetupGuide.nextStep(s,options),step==='services'?{section:'design'}:{});
+ {const next=followingStep(step);navigateSetup(next,stepChange(next));}
 }
-function continueSetup(){
+// A save may still be finishing when the guide tries to move on, so wait for it instead of giving up.
+function continueSetupAfterSave(tries=0){
+ if(dashboardSetupStep()!=='website')return;
+ if(editorBusy()&&tries<30){setTimeout(()=>continueSetupAfterSave(tries+1),120);return;}
+ continueSetup(true);
+}
+function continueSetup(afterSave=false){
  const step=dashboardSetupStep();
  const nextTour={theme:'bookings',bookings:'calendar',calendar:'customers',booking:'share'}[step];
  if(nextTour){leaveSetup(()=>navigateSetup(JovaSetupGuide.getStep(nextTour)));return;}
- if(step==='customers'){leaveSetup(()=>{const s=dashboardSetupBusiness(salon());navigateSetup(JovaSetupGuide.nextStep(s,dashboardSetupOptions(s)));});return;}
+ if(step==='customers'){leaveSetup(()=>navigateSetup(followingStep(step)));return;}
+ if(['details','hours','category','services'].includes(step)){skipSetupStep();return;}
  if(step!=='website'||editorBusy())return;
- if(businessWebsite.isDirty()){toast('Save your website changes before continuing.');return;}
+ if(!afterSave&&businessWebsite.isDirty()){toast('Save your website changes before continuing.');return;}
  const guide=setupGuideRead(),index=JovaSetupGuide.sections.findIndex(([id])=>id===guide.section);
  const business=dashboardSetupBusiness(salon()),website=business.workspace?.website||{};
  const next=JovaSetupGuide.sections.slice(index+1).find(([id])=>{
@@ -614,8 +652,8 @@ function skipSetupStep(){
  if(!['details','hours','category','services'].includes(step))return;
  leaveSetup(()=>{
   const s=dashboardSetupBusiness(salon()),options=dashboardSetupOptions(s);
-  options.guide=setupGuideWrite({waived:[...new Set([...options.guide.waived,step])]});
-  navigateSetup(JovaSetupGuide.nextStep(s,options));
+  if(!JovaSetupGuide.status(s,options).tasks.find(task=>task.id===step)?.done)setupGuideWrite({waived:[...new Set([...options.guide.waived,step])]});
+  const next=followingStep(step);navigateSetup(next,stepChange(next));
  });
 }
 function skipSetupDemo(){
@@ -638,6 +676,7 @@ function showSetupCelebration(){
 }
 function showSetupWelcome(){
  modal('Set up your workspace','<p>Take a quick tour to get ready for bookings.</p><div class="row setup-welcome-actions"><button type="button" class="btn primary" data-action="start-setup-tutorial">Start demo</button><button type="button" class="btn" data-action="skip-setup-tutorial">Skip demo</button></div>','setup-welcome-modal');
+ // "Start demo" opens the get-ready screen, so the welcome and the intro stay one flow.
 }
 function applySetupFocus(step){
  const shell=document.querySelector('.shell');
@@ -914,7 +953,7 @@ const ownerOnboarding=JovaOwnerOnboarding.create({directory:dir,esc,render,purch
 const ownerWelcome=JovaOwnerWelcome.create({directory:dir,visible:()=>signedIn()&&!teamMode()&&(isLive(salon())||!dir.remote&&!JovaDemoData.isBuiltIn(salon()))&&route()==='dashboard'&&!billingRestricted()&&setupGuideRead().mode==='new'&&!JovaSetupGuide.status(dashboardSetupBusiness(salon()),dashboardSetupOptions(salon())).ready,identity:()=>JSON.stringify(setupGuideIdentity()),offer:showSetupWelcome});
 const deposits=JovaDeposits.create({...hostApi,isPublic:pubMode,publicSlug:()=>requestedSalon,goDeposit:()=>go('book/deposit'),depositsSaved:(sid,payments)=>{const current=salon();if(current.id!==sid||!isLive(current))return;current.payments={...current.payments,...payments};if(salonSnap[sid]){const snapshot=JSON.parse(salonSnap[sid]);snapshot.p_payments={enabled:!!payments.enabled,deposit:Number(payments.deposit)||0,...(payments.deposit_percent!==undefined?{deposit_percent:Number(payments.deposit_percent)}:{}),stage:payments.stage||0};salonSnap[sid]=JSON.stringify(snapshot);}save();},depositConfirmed:(booking,refunded)=>{if(!pubMode())return;if(!PUB||PUB.status!=='ok'){go('book/deposit');render();return;}PUB.bk[booking.id]=booking;if(booking.status==='confirmed'&&!PUB.salon.bookings.some(b=>b.id==='busy_'+booking.id.slice(0,8)))PUB.salon.bookings.push({id:'busy_'+booking.id.slice(0,8),date:booking.date,time:booking.time,duration:booking.duration,staffId:booking.staffId,status:'confirmed'});lastBooking=booking.id;draft.smsResult=null;if(refunded){go('book/deposit-refund');toast('The slot could not be confirmed. Your deposit refund has been requested.');}else{go('book/confirmation');toast('Deposit paid. Your booking is confirmed.');}}});
 const smsReminders=JovaSmsReminders.create(hostApi);
-const businessWebsite=JovaBusinessWebsite.create({...hostApi,guideSection:()=>dashboardSetupStep()==='website'?setupGuideRead().section:'',afterSave:()=>{if(dashboardSetupStep()==='website')continueSetup();},customerAccountLink:s=>customerPortalLink(s,'login')});hostApi.website=businessWebsite;
+const businessWebsite=JovaBusinessWebsite.create({...hostApi,guideSection:()=>dashboardSetupStep()==='website'?setupGuideRead().section:'',afterSave:()=>{if(dashboardSetupStep()==='website')continueSetupAfterSave();},customerAccountLink:s=>customerPortalLink(s,'login')});hostApi.website=businessWebsite;
 const businessIntegrations=JovaBusinessIntegrations.create(hostApi);hostApi.openRecovery=id=>businessIntegrations.openRecovery(id);
 const refunds=JovaRefunds.create(hostApi);
 const referrals=JovaReferrals.create({...hostApi,claimReferral:()=>dir.claimReferralReward(ownerAccessState?.referrals?.claimable_reward)});
@@ -1048,6 +1087,7 @@ function toast(text,type='neutral'){
   'Workspace theme saved.':'Workspace theme saved','Booking link copied.':'Booking link copied',
   'Website link copied.':'Website link copied'
  };
+ if(message&&/(saved|added|updated|copied)/i.test(message)&&setupCue.flash(confirmed[message]||message.replace(/\.$/,'')))return;
  if(!message){el.classList.remove('show');el.replaceChildren();return;}
  const success=type==='success'||(type!=='error'&&Object.prototype.hasOwnProperty.call(confirmed,message)),kind=success?'success':type==='error'||message.startsWith('Change not saved:')?'error':'neutral';
  if(success&&!message.endsWith('link copied.')&&typeof isLive==='function'&&isLive(salon())&&typeof syncPending==='function'&&(syncPending()||syncBlocked)){
@@ -1170,6 +1210,8 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
  if(a==='skip-setup-tutorial'){skipSetupDemo();return;}
  if(a==='replay-setup-tutorial'){startSetupTutorial(true);return;}
  if(a==='dismiss-setup-tutorial'){setupGuideWrite({dismissed:true});render();return;}
+ if(a==='begin-setup-tutorial'){beginSetupTutorial(el.dataset.replay==='1');return;}
+ if(a==='setup-back'){backSetup();return;}
  if(a==='setup-pause'){pauseSetup();return;}
  if(a==='setup-skip-step'){skipSetupStep();return;}
  if(a==='setup-continue'){continueSetup();return;}

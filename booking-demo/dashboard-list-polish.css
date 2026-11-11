@@ -279,3 +279,62 @@ html .rf-auth .steps :is(.active,[aria-current]),html .rf-auth .step.active{back
  html .rf-auth-story .rf-auth-mark{background:#ffd700;color:#111}
  html .rf-auth-story .rf-auth-mark:after{color:#111}
 }
+
+/* ---- Demo tour v2: spotlight only (no outline or label), one clear forward button ---- */
+html .shell .jg-setup-pointed:not(input,textarea,select){outline:none!important;box-shadow:none!important}
+.shell[data-setup-active] .jg-setup-target[aria-describedby="jg-setup-instruction"]{box-shadow:none!important}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:nowrap}
+.jg-setup-tip-secondary{display:flex;align-items:center;gap:4px;min-width:0}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .btn.jg-ghost{
+ min-height:40px;padding:6px 10px!important;border:0!important;background:transparent!important;
+ color:#cfcfc8!important;font-weight:600;font-size:13px;text-decoration:underline;text-underline-offset:4px
+}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .btn.jg-secondary{min-width:96px}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .btn:disabled{opacity:.4;cursor:not-allowed}
+.setup-intro-list{margin:10px 0 16px;padding-left:18px;display:grid;gap:6px;font-size:14px;line-height:1.45}
+
+/* ---- Demo tour v3: one highlight style, glide between steps, single call to action ---- */
+.jg-setup-dim{transition:clip-path .38s cubic-bezier(.4,0,.2,1),opacity .25s ease;animation:jg-fade-in .28s ease}
+.jg-setup-ring{position:fixed;z-index:96;pointer-events:none;border:2px solid #f4d321;box-shadow:0 0 0 0 #f4d32166;
+ transition:left .38s cubic-bezier(.4,0,.2,1),top .38s cubic-bezier(.4,0,.2,1),width .38s cubic-bezier(.4,0,.2,1),height .38s cubic-bezier(.4,0,.2,1),border-radius .38s ease;
+ animation:jg-pulse 1.8s ease-out infinite}
+.jg-setup-ring[hidden]{display:none}
+@keyframes jg-pulse{0%{box-shadow:0 0 0 0 #f4d32199}70%{box-shadow:0 0 0 12px #f4d32100}100%{box-shadow:0 0 0 0 #f4d32100}}
+@keyframes jg-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes jg-tip-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.jg-setup-shield{position:fixed;inset:0;z-index:300;background:transparent;cursor:progress}
+.jg-setup-shield[hidden]{display:none}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip{animation:jg-tip-in .38s cubic-bezier(.2,.8,.2,1) backwards;gap:10px}
+.jg-setup-tip-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.jg-setup-count{flex:1;text-align:center;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#ffe35b}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .jg-setup-icon{
+ width:32px;height:32px;min-height:32px;padding:0;border:0;border-radius:50%;background:#ffffff1f!important;color:#fff!important;
+ font-size:20px;line-height:1;display:grid;place-items:center;cursor:pointer;transition:background .2s ease}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .jg-setup-icon:hover{background:#ffffff38!important}
+.jg-setup-icon[hidden]{display:block!important;visibility:hidden}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip p{font-size:14px;line-height:1.45;color:#fff}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions{display:flex;justify-content:flex-end;gap:10px;min-height:0}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions:empty{display:none}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .btn.jg-ghost{min-height:34px;padding:4px 8px!important;font-size:13px;color:#cfcfc8!important}
+.jg-setup-line::-webkit-progress-value{transition:width .5s cubic-bezier(.4,0,.2,1)}
+@media(prefers-reduced-motion:reduce){.jg-setup-ring,.jg-setup-dim,.jg-setup-tip{animation:none!important;transition:none!important}}
+.jg-setup-ring{z-index:400}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip.jg-tip-over{z-index:350}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .btn.primary{transition:transform .2s ease,background .2s ease}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .jg-setup-icon[data-action=setup-pause]{width:auto;padding:0 12px;border-radius:16px;font-size:12px;font-weight:700}
+
+/* ---- Demo tour v4: header left/right, Skip aligned to the right edge, feedback pill ---- */
+.jg-setup-tip-top{display:flex;align-items:center;gap:8px}
+.jg-setup-tip-top .jg-setup-icon[data-action=setup-pause]{margin-left:auto}
+.jg-setup-count{flex:0 1 auto!important;text-align:left!important}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions{width:100%;justify-content:flex-end}
+html[data-workspace-theme] .shell.jb-reference .jg-setup-tip .btn.jg-ghost{margin-right:-4px}
+.jg-setup-tip.jg-tip-success .jg-setup-count{color:#7ee2a0;transition:color .25s ease}
+/* The guide stays above forms and sheets so the instruction is always readable; forms leave room for it. */
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip.jg-tip-over{z-index:350}
+body:has(.jg-setup-tip.jg-tip-over) #modal-root .jg-panel-body{padding-bottom:calc(var(--jg-tip-h,0px) + 24px)!important}
+/* The guide box always fills its width so Exit and Skip step sit on the right edge whatever the text length. */
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip{grid-template-columns:minmax(0,1fr)!important;justify-content:stretch!important}
+.jg-setup-tip{transition:opacity .2s ease,transform .2s ease}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip.jg-tip-away{opacity:0;transform:translateY(12px);pointer-events:none}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip.jg-tip-top{inset:calc(env(safe-area-inset-top,0px) + 12px) 12px auto 12px!important;margin-inline:auto}

@@ -37,7 +37,10 @@
  function schedule(){if(!pending){pending=true;requestAnimationFrame(sync);}}
  document.addEventListener('click',event=>{
   const dayToggle=event.target.closest?.('[data-bd-day-toggle]');if(dayToggle){event.preventDefault();if(dayToggle.disabled)return;const row=dayToggle.closest('.ws-daily-row'),closed=row.querySelector('.ws-closed input');closed.checked=!closed.checked;closed.dispatchEvent(new Event('change',{bubbles:true}));updateHoursRow(row);return;}
-  const hoursEdit=event.target.closest?.('[data-bd-hours-edit]');if(hoursEdit){event.preventDefault();const times=hoursEdit.closest('.ws-daily-row').querySelector('.bd-day-times');times.hidden=!times.hidden;hoursEdit.setAttribute('aria-expanded',String(!times.hidden));if(!times.hidden)times.querySelector('input[type=time]')?.focus();return;}
+  const hoursEdit=event.target.closest?.('[data-bd-hours-edit]');if(hoursEdit){event.preventDefault();const times=hoursEdit.closest('.ws-daily-row').querySelector('.bd-day-times');
+  // Only one day's times are open at a time, so the list never grows out of control.
+  if(times.hidden)document.querySelectorAll('.bd-day-times:not([hidden])').forEach(other=>{if(other!==times){other.hidden=true;other.closest('.ws-daily-row')?.querySelector('[data-bd-hours-edit]')?.setAttribute('aria-expanded','false');}});
+  times.hidden=!times.hidden;hoursEdit.setAttribute('aria-expanded',String(!times.hidden));if(!times.hidden)times.querySelector('input[type=time]')?.focus();return;}
   const button=event.target.closest?.('[data-bd-open]');if(button){event.preventDefault();open(button.dataset.bdOpen);return;}
  });
  document.addEventListener('input',event=>{
