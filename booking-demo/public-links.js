@@ -44,7 +44,7 @@
     if (!['home','about','contact'].includes(page)) return '';
     const current = options.location || window.location;
     if (!options.demo && cleanSlug(slug) && /^https:\/\/(?:[a-z0-9-]+\.)?jovamedia\.com$/.test(current.origin || '')) {
-      return 'https://www.jovamedia.com/sites/' + slug + (page === 'home' ? '' : '#' + page);
+      return 'https://www.jovamedia.com/book/' + slug + (page === 'home' ? '' : '#' + page);
     }
     return build(slug, 'website' + (page === 'home' ? '' : '/' + page), options);
   }

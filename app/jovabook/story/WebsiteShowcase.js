@@ -5,10 +5,8 @@ const choices=[['one-page','Evergreen','Natural and welcoming'],['brightside','C
 export default function WebsiteShowcase(){
  const [selected,setSelected]=useState('one-page');
  const [exploring,setExploring]=useState(false);
- const [sharingView,setSharingView]=useState(0);
  const preview=useRef(null);
  const exploreButton=useRef(null);
- const sharingTrack=useRef(null);
  const name=choices.find(([id])=>id===selected)[1],images=websiteReferenceImages[selected];
 
  function selectDesign(id){
@@ -29,8 +27,8 @@ export default function WebsiteShowcase(){
   exploreButton.current.focus({preventScroll:true});
  }
 
- return <section id="ex-websites" className="website-showcase" data-story-section><div className="ws-showcase-inner">
-  <header className="ws-showcase-heading"><h2>Your website. Included.</h2><p>A one-page website personalised to your business, connected to your booking page.</p></header>
+ return <><section id="ex-websites" className="website-showcase" aria-labelledby="ws-showcase-title" data-story-section><div className="ws-showcase-inner">
+  <header className="ws-showcase-heading"><h2 id="ws-showcase-title">Your website. Included.</h2><p>A one-page website personalised to your business, connected to your booking page.</p></header>
   <div className="ws-design-options" role="group" aria-label="Website designs">{choices.map(([id,label,description])=><button key={id} type="button" aria-pressed={selected===id} onClick={()=>selectDesign(id)}><b>{label}</b><span>{description}</span></button>)}</div>
   <div className="ws-website-frame" onKeyDown={handlePreviewKey} onBlur={event=>{
    if(event.relatedTarget&&!event.currentTarget.contains(event.relatedTarget)) setExploring(false);
@@ -47,7 +45,15 @@ export default function WebsiteShowcase(){
     </picture>
    </div>
   </div>
-  <section className="ws-sharing-guide" id="website-google-visibility" aria-labelledby="ws-sharing-title">
+ </div></section><WebsiteSharing/></>;
+}
+
+function WebsiteSharing(){
+ const [sharingView,setSharingView]=useState(0);
+ const sharingTrack=useRef(null);
+
+ return <section className="content-band content-band-sharing" id="website-google-visibility" aria-labelledby="ws-sharing-title" data-story-section>
+  <div className="ws-sharing-guide">
    <div className="ws-sharing-intro">
     <div className="ws-sharing-heading">
      <span className="ws-sharing-mark" aria-hidden="true">
@@ -56,7 +62,7 @@ export default function WebsiteShowcase(){
       </svg>
      </span>
      <div>
-      <h3 id="ws-sharing-title">One link to share.</h3>
+      <h2 id="ws-sharing-title">One link to share.</h2>
       <p>Share it on Google, Instagram or WhatsApp.</p>
      </div>
     </div>
@@ -72,22 +78,32 @@ export default function WebsiteShowcase(){
     setSharingView(Number(track.scrollLeft>=track.clientWidth/2));
    }}>
     <div className="ws-sharing-card" aria-hidden={sharingView!==0}>
-     <div className="ws-profile-example" role="img" aria-label="Example Google Business Profile for Willow Hair Studio with a Website link">
-      <div className="ws-profile-business">
-       <span className="ws-profile-label">Example Google Business Profile</span>
-       <strong>Willow Hair Studio</strong>
-      </div>
-      <span className="ws-profile-website">Website</span>
-     </div>
+     <img className="ws-profile-preview" src="/jovabook/story/google-business-profile.webp" alt="Illustrated Google Business Profile for Willow Hair Studio, with a star rating, Reviews tab, salon photos and a Website button" width="784" height="604" loading="lazy" decoding="async" draggable={false} />
      <p>In Google Business Profile, open <strong>Edit profile</strong> and paste your link into <strong>Website</strong>.</p>
     </div>
     <div className="ws-sharing-card" aria-hidden={sharingView!==1}>
-     <div className="ws-visibility-example">
-      <img src="/jovabook/story/google-visibility-setting.webp" alt="JovaBook dashboard with ‘Let Google find my website’ ticked" width="594" height="137" loading="lazy" decoding="async" />
+     <div className="ws-visibility-preview" role="img" aria-label="In the JovaBook dashboard, open Personalise, choose Website, then Google visibility. Tick Let Google find my website and select Save changes.">
+      <div className="ws-visibility-toolbar">
+       <span>Personalise <span className="ws-visibility-separator">›</span> <strong>Website</strong></span>
+       <span className="ws-visibility-save">Save changes</span>
+      </div>
+      <div className="ws-visibility-panel">
+       <div className="ws-visibility-title">
+        <span className="ws-visibility-icon" aria-hidden="true">
+         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+          <circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/>
+         </svg>
+        </span>
+        Google visibility
+       </div>
+       <div className="ws-visibility-checkbox">
+        <span>Let Google find my website</span><span className="ws-visibility-tick" aria-hidden="true">✓</span>
+       </div>
+      </div>
      </div>
-     <p>In <strong>Personalise → Website → Google visibility</strong>, tick the box and save.</p>
+     <p>Tick the box and save when your site is ready for Google Search.</p>
     </div>
    </div>
-  </section>
- </div></section>;
+  </div>
+ </section>;
 }

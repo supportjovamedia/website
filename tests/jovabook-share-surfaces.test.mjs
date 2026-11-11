@@ -21,7 +21,7 @@ test('Share, Personalise, website editor, service copies and iframe use the publ
  assert(personalise.includes('value="https://arooj.jovamedia.com/book"'));
  assert(personalise.includes('src=&quot;https://arooj.jovamedia.com/book&quot;'));
  workspace.click('ws-copy-service',{dataset:{id:'cut'}});assert.equal(copied[0],'https://arooj.jovamedia.com/book?service=cut');
- assert(editor.includes('value="https://www.jovamedia.com/sites/arooj"'));assert(editor.includes('value="https://arooj.jovamedia.com/book"'));
+ assert(editor.includes('value="https://www.jovamedia.com/book/arooj"'));assert(editor.includes('value="https://arooj.jovamedia.com/book"'));
  assert.equal(window.JovaPublicLinks.addressLabel('arooj'),'arooj.jovamedia.com');
  for(const html of [modals[0].html,personalise,editor])assert(!html.includes('book.jovamedia.com/arooj'));
 });

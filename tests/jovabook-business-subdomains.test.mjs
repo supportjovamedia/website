@@ -29,9 +29,10 @@ test('public addresses cannot switch business through a query and canonical link
 test('old website addresses forward to the main site while old booking links keep their flow', async () => {
  const entry = await readFile(new URL('../booking-demo/public-entry.js', import.meta.url), 'utf8');
  for (const [address, expected] of [
-  ['https://book.jovamedia.com/arooj', ['https://www.jovamedia.com/sites/arooj']],
-  ['https://arooj.jovamedia.com/about', ['https://www.jovamedia.com/sites/arooj#about']],
-  ['https://arooj.jovamedia.com/#website/contact', ['https://www.jovamedia.com/sites/arooj#contact']],
+  ['https://book.jovamedia.com/arooj', ['https://www.jovamedia.com/book/arooj']],
+  ['https://arooj.jovamedia.com/about', ['https://www.jovamedia.com/book/arooj#about']],
+  ['https://arooj.jovamedia.com/#website/contact', ['https://www.jovamedia.com/book/arooj#contact']],
+  ['https://book.jovamedia.com/pricing', ['https://www.jovamedia.com/book/pricing']],
   ['https://book.jovamedia.com/arooj#book/service', ['https://arooj.jovamedia.com/book']],
   ['https://arooj.jovamedia.com/book', []],
   ['https://arooj.jovamedia.com/?salon=other', []],

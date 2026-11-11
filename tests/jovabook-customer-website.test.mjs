@@ -30,12 +30,31 @@ test('published opted-in website renders crawlable business content and the exis
   assert.equal(response.headers.get('X-Robots-Tag'), null);
   const html = await response.text();
   assert.match(html, /<title>Fictional &lt;Studio&gt;<\/title>/);
-  assert.match(html, /rel="canonical" href="https:\/\/www\.jovamedia\.com\/sites\/fictional-studio"/);
+  assert.match(html, /rel="canonical" href="https:\/\/www\.jovamedia\.com\/book\/fictional-studio"/);
   assert.match(html, /href="https:\/\/fictional-studio\.jovamedia\.com\/book"/);
   assert.match(html, /href="#services"/);
   assert.match(html, /id="services"/);
   assert.match(html, /Haircut/);
   assert.doesNotMatch(html, /<script\b|\/pricing/);
+});
+
+test('legacy website links redirect to /book and preserve their query', async () => {
+  let reads = 0;
+  const send = async () => { reads++; return Response.json({ ...business, slug: 'pricing' }); };
+  const legacy = createCustomerWebsite({ env, send, redirectLegacy: true });
+  const redirect = await legacy(new Request('https://www.jovamedia.com/sites/fictional-studio?utm_source=profile'), {
+    params: { slug: 'fictional-studio' },
+  });
+  assert.equal(redirect.status, 308);
+  assert.equal(redirect.headers.get('Location'), 'https://www.jovamedia.com/book/fictional-studio?utm_source=profile');
+  const oldFallback = await legacy(null, { params: { slug: 'pricing' } });
+  assert.equal(oldFallback.status, 308);
+  assert.equal(oldFallback.headers.get('Location'), 'https://www.jovamedia.com/book/pricing');
+  assert.equal(reads, 0);
+  const fallback = await createCustomerWebsite({ env, send })(null, { params: { slug: 'pricing' } });
+  assert.equal(fallback.status, 200);
+  assert.match(await fallback.text(), /rel="canonical" href="https:\/\/www\.jovamedia\.com\/book\/pricing"/);
+  assert.equal(reads, 1);
 });
 
 test('share-only and preview pages keep noindex, and unknown tenants return 404', async () => {
@@ -58,12 +77,13 @@ test('customer sitemap uses one bounded data request and publishes only safe can
     requests++;
     assert.equal(url, 'https://website-fixture.example.test/rest/v1/rpc/customer_website_sitemap');
     assert.equal(request.cache, 'no-store');
-    return Response.json(['fictional-studio', 'jova-demo', 'www', 'bad/<slug>']);
+    return Response.json(['fictional-studio', 'pricing', 'jova-demo', 'www', 'bad/<slug>']);
   } });
   const response = await sitemap();
   assert.equal(response.status, 200);
   assert.equal(requests, 1);
   const xml = await response.text();
-  assert.equal((xml.match(/<loc>/g) || []).length, 1);
-  assert.match(xml, /<loc>https:\/\/www\.jovamedia\.com\/sites\/fictional-studio<\/loc>/);
+  assert.equal((xml.match(/<loc>/g) || []).length, 2);
+  assert.match(xml, /<loc>https:\/\/www\.jovamedia\.com\/book\/fictional-studio<\/loc>/);
+  assert.match(xml, /<loc>https:\/\/www\.jovamedia\.com\/book\/pricing<\/loc>/);
 });
