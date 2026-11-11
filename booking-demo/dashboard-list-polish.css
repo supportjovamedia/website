@@ -224,3 +224,58 @@ html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions 
 .shell[data-setup-active=website] .bw-save-bar>button{display:none!important}
 
 .shell[data-setup-active=website]:has([data-form=bw-website][data-dirty=true]) .jg-setup-tip [data-action=setup-continue]{display:none!important}
+
+/* ---- Demo tour: square full-width bar, dimmed surroundings, room for the instruction box ---- */
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .jg-personalise>.pp-heading.ws-heading{
+ border-radius:0!important;margin:0 -20px 14px!important;padding:12px 34px!important
+}
+@media(min-width:701px){
+ html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .jg-personalise>.pp-heading.ws-heading{
+  margin:0 -28px 14px!important;padding:14px 42px!important
+ }
+}
+html[data-workspace-theme] #app .shell[data-setup-active] .workspace-main{padding-bottom:calc(var(--jg-tip-space,0px) + 24px)!important}
+.jg-setup-dim{position:fixed;inset:0;z-index:90;background:rgba(14,16,20,.52);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);pointer-events:none}
+.jg-setup-dim[hidden]{display:none}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip{z-index:95}
+.shell[data-setup-active] .jg-setup-pointed:not(input,textarea,select){position:relative;z-index:1}
+
+/* ---- Demo complete celebration ---- */
+.jg-celebrate{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:20px;background:rgba(14,16,20,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:jg-fade .3s ease both}
+.jg-celebrate.is-leaving{animation:jg-fade .25s ease reverse both}
+.jg-celebrate-card{position:relative;z-index:1;width:min(380px,100%);padding:30px 26px 26px;border-radius:20px;background:#fff;color:#171819;text-align:center;box-shadow:0 24px 70px #0005;animation:jg-pop .5s cubic-bezier(.2,1.3,.4,1) .1s both}
+.jg-celebrate-card h2{margin:14px 0 8px;font-size:24px;line-height:1.2;letter-spacing:-.02em}
+.jg-celebrate-card p{margin:0 0 20px;color:#555;font-size:14px;line-height:1.55}
+.jg-celebrate-card .btn{width:100%}
+.jg-celebrate-card svg{width:76px;height:76px;fill:#f4d321;stroke:none}
+.jg-celebrate-card svg circle{fill:#f4d321;stroke:none;transform-origin:center;animation:jg-pop .45s cubic-bezier(.2,1.4,.4,1) .2s both}
+.jg-celebrate-card svg path{fill:none;stroke:#171819;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:44;stroke-dashoffset:44;animation:jg-draw .5s ease .55s forwards}
+.jg-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.jg-confetti i{position:absolute;top:-16px;left:var(--x);width:9px;height:14px;border-radius:2px;background:var(--c);transform:rotate(var(--r));opacity:0;animation:jg-fall 2.8s cubic-bezier(.3,.6,.4,1) var(--d) both}
+@keyframes jg-fade{from{opacity:0}to{opacity:1}}
+@keyframes jg-pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes jg-draw{to{stroke-dashoffset:0}}
+@keyframes jg-fall{0%{opacity:1;transform:translateY(0) rotate(var(--r))}100%{opacity:1;transform:translateY(105vh) rotate(calc(var(--r) + 540deg))}}
+@media(prefers-reduced-motion:reduce){.jg-celebrate,.jg-celebrate-card,.jg-celebrate-card svg circle,.jg-celebrate-card svg path{animation:none}.jg-celebrate-card svg path{stroke-dashoffset:0}.jg-confetti{display:none}}
+
+/* ---- Sign in and sign up pages: same black, white and yellow look as jovamedia.com ---- */
+html .rf-auth{background:#f6f4ef;color:#171717}
+html .rf-auth-story{background:#111;color:#fff;border-radius:32px}
+html .rf-auth-story .rf-auth-mark{background:#ffd700;color:#111;border-radius:16px}
+html .rf-auth-story p{color:#d9d7d0}
+html .rf-auth-form h1{color:#111}
+html .rf-auth-form :is(p,label,.muted){color:#5b5b57}
+html .rf-auth-form a,html .rf-auth-form button.link,html .rf-auth-form [data-action="go-signup"],html .rf-auth-form [data-action="go-login"]{color:#111}
+html .rf-auth-form p a{font-weight:650;text-decoration:underline;text-underline-offset:3px}
+html .rf-auth .btn.primary,html .rf-auth button.primary{background:#111!important;border-color:#111!important;color:#fff!important;border-radius:999px!important;box-shadow:none!important}
+html .rf-auth .btn.primary:hover:not(:disabled){background:#2a2a2a!important}
+html .rf-auth :is(input,select,textarea):focus-visible{outline:2px solid #111!important;outline-offset:3px!important}
+html .rf-auth-form .pw:focus-within{border-color:#111;box-shadow:0 0 0 3px #1111110f}
+html .rf-auth-form .pw button{color:#444}
+html .rf-auth .steps :is(.active,[aria-current]),html .rf-auth .step.active{background:#ffd700;color:#111}
+@media(max-width:900px){
+ html .rf-auth{background:#f6f4ef}
+ html .rf-auth-story{background:#f6f4ef;border-radius:0}
+ html .rf-auth-story .rf-auth-mark{background:#ffd700;color:#111}
+ html .rf-auth-story .rf-auth-mark:after{color:#111}
+}

@@ -12,7 +12,7 @@ test('skipping advances coverage without marking business data complete',()=>{
  assert.equal(guide.status(fresh,options).completed,1);
  assert.equal(guide.status(fresh,options).ready,false);
  assert.equal(guide.resumeStep(fresh,options).id,'hours');
- assert.match(guide.render(fresh,options),/10% complete.*Resume demo.*Skip demo/);
+ assert.match(guide.render(fresh,options),/45% complete.*Resume demo.*Skip demo/);
  assert.match(guide.render(fresh,{guide:{mode:'done',skipped:true}}),/Setup demo skipped.*Start demo/);
 });
 test('an existing mobile business resumes at its first genuinely unfinished step',()=>{

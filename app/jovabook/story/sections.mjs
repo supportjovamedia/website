@@ -19,6 +19,6 @@ export const sections = [
   "<span id=\"refer-a-business\"></span>",
   "<div id=\"referrals-preview-mount\"></div>",
   "<div id=\"ex-faq\"><div id=\"faq-mount\"></div></div>",
-  "<section class=\"nv-ending\" data-story-section><div class=\"nv-ending-inner\"><div class=\"nv-ending-mark\"><img src=\"/jovabook/story/jova-symbol.webp\" alt=\"\" width=\"45\" height=\"45\"></div><h2>Your next booking<br>starts here.</h2><p>Start free. Make it yours.</p><a href=\"#plans\" class=\"js-btn\">Start free</a></div></section>"
+  "<section class=\"nv-ending\" data-story-section><div class=\"nv-ending-inner\"><div class=\"nv-ending-mark\"><img src=\"/jovabook/story/jova-symbol.webp\" alt=\"\" width=\"45\" height=\"45\"></div><h2>Your next booking<br>starts here.</h2><p>Start free. Make it yours.</p><a href=\"https://book.jovamedia.com/?portal=owner&amp;plan=essential&amp;cadence=monthly#signup\" class=\"js-btn\">Start free</a></div></section>"
 ].map(withInitialCalculatorMarkup);
 export const dialogs = `\n<dialog id="local-film" aria-label="JovaBook product demo"><button type="button" id="local-film-close">Close demo</button><video controls playsinline preload="none" width="1920" height="1080" src="${jovabookDemo.src}" poster="${jovabookDemo.poster}"></video></dialog>\n\n`;

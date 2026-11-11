@@ -508,7 +508,11 @@ function dashboardDatePicker(context='dashboard'){return JovaDatePicker.markup({
 document.addEventListener('jovabook-date-apply',event=>{const selected=event.detail;if(!selected||!['dashboard','calendar'].includes(selected.context)||!['day','week','month'].includes(selected.view))return;try{calendarWeek=JovaDashboard.normalizeAnchor(selected.anchor,selected.view);calView=selected.view;miniOffset=0;render();document.querySelector('.jg-period-picker>summary')?.focus({preventScroll:true});}catch(error){toast(error.message);}});
 
 const setupGuideState=JovaSetupGuide.createState((()=>{try{return window.localStorage;}catch{return null;}})());
-const setupCue=JovaSetupGuide.createCue();
+const setupCue=JovaSetupGuide.createCue({
+ seen:()=>setupGuideRead().seen||[],
+ mark:(step,key)=>{const id=step+':'+key,seen=setupGuideRead().seen||[];if(!seen.includes(id))setupGuideWrite({seen:[...seen,id]});},
+ advance:step=>{if(dashboardSetupStep()!==step)return;if(step==='share')finishSetup();else continueSetup();}
+});
 const setupGuideIdentity=()=>[String(dir.sessionIdentity?.()||'demo'),salon().id];
 const setupGuideRead=()=>{const state=setupGuideState.read(...setupGuideIdentity());return state.mode==='active'&&!setupGuideSession()?{...state,mode:'paused'}:state;};
 const setupGuideWrite=change=>setupGuideState.write(...setupGuideIdentity(),change);
@@ -566,11 +570,11 @@ function startSetupTutorial(replay=false){
  if(replay){
   if(options.guide.mode!=='done'||options.guide.skipped||options.guide.replayed||options.guide.dismissed)return;
   closeModal();
-  navigateSetup(JovaSetupGuide.getStep('share'),{replayed:true});
+  navigateSetup(JovaSetupGuide.getStep('theme'),{replayed:true,seen:[]});
   return;
  }
- if(options.guide.mode==='done')options.guide=setupGuideWrite({waived:[],websiteReviewed:false,skipped:false,section:'design'});
- const step=options.guide.mode==='paused'?JovaSetupGuide.resumeStep(s,options):JovaSetupGuide.nextStep(s,options);
+ if(options.guide.mode==='done')options.guide=setupGuideWrite({waived:[],websiteReviewed:false,skipped:false,section:'design',seen:[]});
+ const step=options.guide.mode==='paused'&&options.guide.step?JovaSetupGuide.resumeStep(s,options):JovaSetupGuide.getStep('theme');
  closeModal();
  navigateSetup(step,step.id==='website'&&options.guide.step!=='website'?{section:'design'}:{});
 }
@@ -582,8 +586,9 @@ function advanceSetup(step){
 }
 function continueSetup(){
  const step=dashboardSetupStep();
- const nextTour={booking:'share',share:'bookings',bookings:'calendar',calendar:'customers'}[step];
+ const nextTour={theme:'bookings',bookings:'calendar',calendar:'customers',booking:'share'}[step];
  if(nextTour){leaveSetup(()=>navigateSetup(JovaSetupGuide.getStep(nextTour)));return;}
+ if(step==='customers'){leaveSetup(()=>{const s=dashboardSetupBusiness(salon());navigateSetup(JovaSetupGuide.nextStep(s,dashboardSetupOptions(s)));});return;}
  if(step!=='website'||editorBusy())return;
  if(businessWebsite.isDirty()){toast('Save your website changes before continuing.');return;}
  const guide=setupGuideRead(),index=JovaSetupGuide.sections.findIndex(([id])=>id===guide.section);
@@ -617,8 +622,19 @@ function skipSetupDemo(){
  leaveSetup(()=>{setupGuideWrite({mode:'done',step:'',skipped:true});setupGuideSession(false);showSetupRoute('dashboard');});
 }
 function finishSetup(){
- if(dashboardSetupStep()!=='customers')return;
- setupGuideWrite({mode:'done',step:'',skipped:false});setupGuideSession(false);showSetupRoute('dashboard');
+ if(dashboardSetupStep()!=='share')return;
+ leaveSetup(()=>{setupGuideWrite({mode:'done',step:'',skipped:false});setupGuideSession(false);showSetupRoute('dashboard');showSetupCelebration();});
+}
+function showSetupCelebration(){
+ document.querySelector('.jg-celebrate')?.remove();
+ const box=document.createElement('div');box.className='jg-celebrate';box.setAttribute('role','status');
+ const colors=['#f4d321','#245889','#2c9a6a','#e0623a','#8a5bd6','#171819'];
+ const bits=Array.from({length:44},(_,i)=>'<i style="--x:'+(Math.round((Math.sin(i*12.9898)*43758.5453%1)*1000)/10)+'%;--d:'+(i%11)*70+'ms;--r:'+(i*47%360)+'deg;--c:'+colors[i%colors.length]+'"></i>').join('');
+ box.innerHTML='<div class="jg-confetti" aria-hidden="true">'+bits+'</div><div class="jg-celebrate-card"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="23"/><path d="M15 27l8 8 15-17"/></svg><h2>Demo complete</h2><p>You have seen the whole workspace. You are ready for your first booking.</p><button type="button" class="btn primary" data-action="celebrate-close">Start using JovaBook</button></div>';
+ document.body.append(box);
+ const close=()=>{box.classList.add('is-leaving');setTimeout(()=>box.remove(),260);};
+ box.querySelector('[data-action=celebrate-close]').addEventListener('click',close);
+ setTimeout(()=>{if(box.isConnected)close();},9000);
 }
 function showSetupWelcome(){
  modal('Set up your workspace','<p>Take a quick tour to get ready for bookings.</p><div class="row setup-welcome-actions"><button type="button" class="btn primary" data-action="start-setup-tutorial">Start demo</button><button type="button" class="btn" data-action="skip-setup-tutorial">Skip demo</button></div>','setup-welcome-modal');
@@ -629,25 +645,16 @@ function applySetupFocus(step){
  shell.dataset.setupActive=step;
  setupCue.refresh();
  for(const area of shell.querySelectorAll('.sidebar,.jg-mobile-bottom'))area.inert=true;
- if(step!=='share')for(const control of shell.querySelector('.workspace-header').children){
+ if(!['share','theme'].includes(step))for(const control of shell.querySelector('.workspace-header').children){
   if(!control.matches('.jg-setup-line'))control.inert=true;
  }
  const target=shell.querySelector(JovaSetupGuide.getStep(step).target);
  if(target&&['category','services'].includes(step)){
   target.classList.add('jg-setup-target');
-  const main=shell.querySelector('.workspace-main');
-  const highlight=(node)=>{
-   for(const child of node.children){
-    if(child.matches('.jg-setup-tip')||child===target)continue;
-    if(child.contains(target))highlight(child);
-    else{child.inert=true;child.classList.add('jg-setup-obscured');}
-   }
-  };
-  highlight(main);
   target.setAttribute('aria-describedby','jg-setup-instruction');
  }
- if(step==='share'){
-  for(const control of shell.querySelectorAll('.workspace-header [data-action="workspace-appearance"],.workspace-header [data-action="notif-open"]'))control.classList.add('jg-setup-target');
+ if(['share','theme'].includes(step)){
+  for(const control of shell.querySelectorAll('.workspace-header [data-action="workspace-appearance"],.workspace-header [data-action="notif-open"],.workspace-header [data-action="share-booking-link"]'))control.classList.remove('jg-setup-target');
  }
 }
 function overview(){

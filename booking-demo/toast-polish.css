@@ -1,6 +1,6 @@
 /* Non-blocking confirmations and notices. The page remains fully interactive. */
-#toast.jg-toast{display:grid;grid-template-columns:32px minmax(0,1fr) 44px;align-items:center;gap:12px;position:fixed;inset:50% auto auto 50%;z-index:120;width:max-content;max-width:min(420px,calc(100vw - 32px));padding:14px 12px 14px 18px;box-sizing:border-box;border:1px solid #d9d9d9;border-radius:16px;background:#fff;color:#222;box-shadow:0 10px 32px #00000016,0 2px 8px #00000008;text-align:left;font-size:14px;line-height:1.45;pointer-events:none;transform:translate(-50%,-50%);opacity:0;visibility:hidden;transition:transform .18s ease,opacity .18s ease,visibility .18s}
-#toast.jg-toast.show{opacity:1;visibility:visible}
+#toast.jg-toast{display:grid;grid-template-columns:32px minmax(0,1fr) 44px;align-items:center;gap:12px;position:fixed;inset:calc(env(safe-area-inset-top,0px) + 84px) auto auto 50%;z-index:120;width:max-content;max-width:min(420px,calc(100vw - 32px));padding:14px 12px 14px 18px;box-sizing:border-box;border:1px solid #d9d9d9;border-radius:16px;background:#fff;color:#222;box-shadow:0 10px 32px #00000016,0 2px 8px #00000008;text-align:left;font-size:14px;line-height:1.45;pointer-events:none;transform:translate(-50%,-10px);opacity:0;visibility:hidden;transition:transform .18s ease,opacity .18s ease,visibility .18s}
+#toast.jg-toast.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
 #toast.jg-toast[data-kind=success]{border-color:#92c99c;background:#f4fbf4;color:#183b23}
 #toast.jg-toast[data-kind=error]{border-color:#e6adad;background:#fff6f6;color:#692727}
 #toast.jg-toast .jg-toast-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#f0f0f0;color:#444}
