@@ -504,6 +504,7 @@ function dashboardDatePicker(context='dashboard'){return JovaDatePicker.markup({
 document.addEventListener('jovabook-date-apply',event=>{const selected=event.detail;if(!selected||!['dashboard','calendar'].includes(selected.context)||!['day','week','month'].includes(selected.view))return;try{calendarWeek=JovaDashboard.normalizeAnchor(selected.anchor,selected.view);calView=selected.view;miniOffset=0;render();document.querySelector('.jg-period-picker>summary')?.focus({preventScroll:true});}catch(error){toast(error.message);}});
 
 const setupGuideState=JovaSetupGuide.createState((()=>{try{return window.localStorage;}catch{return null;}})());
+const setupCue=JovaSetupGuide.createCue();
 const setupGuideIdentity=()=>[String(dir.sessionIdentity?.()||'demo'),salon().id];
 const setupGuideRead=()=>{const state=setupGuideState.read(...setupGuideIdentity());return state.mode==='active'&&!setupGuideSession()?{...state,mode:'paused'}:state;};
 const setupGuideWrite=change=>setupGuideState.write(...setupGuideIdentity(),change);
@@ -609,13 +610,14 @@ function showSetupWelcome(){
 }
 function applySetupFocus(step){
  const shell=document.querySelector('.shell');
- if(!shell||!step)return;
+ if(!shell||!step){setupCue.refresh();return;}
  shell.dataset.setupActive=step;
+ setupCue.refresh();
  for(const area of shell.querySelectorAll('.sidebar,.jg-mobile-bottom'))area.inert=true;
  if(step!=='share')shell.querySelector('.workspace-header').inert=true;
  const target=shell.querySelector(JovaSetupGuide.getStep(step).target);
- target?.classList.add('jg-setup-target');
  if(target&&['category','services'].includes(step)){
+  target.classList.add('jg-setup-target');
   const main=shell.querySelector('.workspace-main');
   const highlight=(node)=>{
    for(const child of node.children){
@@ -989,9 +991,10 @@ function modal(title,content,size=''){
  document.body.classList.toggle('jg-panel-open',panel);if($('#app'))$('#app').inert=true;
  $('#modal-root').innerHTML=`<div class="modal-backdrop ${panel?'jg-panel-backdrop':''}"><section class="modal ${size} ${panel?'jg-panel':''}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="modal-head"><h2>${title}</h2><button type="button" aria-label="Close dialog" data-action="close-modal">${panel?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>':'×'}</button></div>${panel?'<div class="jg-panel-body">'+content+'</div>':content}</section></div>`;
  const dialog=$('#modal-root .modal');
+ setupCue.refresh();
  setTimeout(()=>{if(dialog.isConnected&&!dialog.contains(document.activeElement))dialog.querySelector('input,select,button,a')?.focus();},0);
 }
-function closeModal({restoreFocus=true}={}){if($('#app'))$('#app').inert=false;pendingLeave=null;const choosingTheme=$('#modal-root').querySelector('[data-form=workspace-appearance]'),origin=modalReturnFocus;modalReturnFocus=null;$('#modal-root').innerHTML='';document.body.classList.remove('jg-panel-open');if(choosingTheme)JovaWorkspaceThemes.apply(JovaWorkspaceThemes.resolve(salon().workspace?.appearance));if(restoreFocus&&origin?.isConnected)origin.focus({preventScroll:true});}
+function closeModal({restoreFocus=true}={}){if($('#app'))$('#app').inert=false;pendingLeave=null;const choosingTheme=$('#modal-root').querySelector('[data-form=workspace-appearance]'),origin=modalReturnFocus;modalReturnFocus=null;$('#modal-root').innerHTML='';setupCue.refresh();document.body.classList.remove('jg-panel-open');if(choosingTheme)JovaWorkspaceThemes.apply(JovaWorkspaceThemes.resolve(salon().workspace?.appearance));if(restoreFocus&&origin?.isConnected)origin.focus({preventScroll:true});}
 let toastTimer;
 function toast(text,type='neutral'){
  clearTimeout(toastTimer);const el=$('#toast');if(!el)return;const sequence=Number(el.dataset.toastSequence||0)+1;el.dataset.toastSequence=String(sequence);
@@ -1129,7 +1132,7 @@ function reschedule(id,date=nextDate()){if(!signedIn()||!admin_route()||pubMode(
 function emailPreview(id){if(isLive(salon())){emailDelivery.details(id);return;}const e=salon().emails.find(x=>x.id===id);if(!e)return;const b=e.booking;modal('Email preview',`<div class="email"><p class="tiny"><b>From:</b> ${esc(e.from)}<br><b>To:</b> ${esc(e.to)}<br><b>Reply-To:</b> ${esc(e.reply)}<br><b>Subject:</b> ${esc(e.subject)}</p><article><div class="brand" style="font-size:19px">jova<em>book</em></div><h2 class="section-space">${e.kind==='cancelled'?'Booking cancelled':e.kind==='rescheduled'?'Your new booking time':e.kind==='reminder'?'See you soon':'Your booking is confirmed'}</h2><p>Hello ${esc(b.name)},</p><p>${esc(b.serviceName)} at <b>${esc(e.salonName)}</b><br>${humanDate(b.date)} at ${b.time}<br>${esc(e.address)}</p><p>Total: ${money(b.price)}<br>Deposit paid: ${money(b.deposit)}</p><a class="btn primary small" href="#manage/${b.id}" data-action="close-modal">Manage booking</a><p class="tiny section-space">Powered by JovaMedia. This email was simulated locally and has not been sent.</p></article></div>`);}
 function chatSend(text){chat.push({role:'user',text});const s=salon();const svc=s.services.find(x=>text.toLowerCase().includes(x.name.toLowerCase())||x.name.toLowerCase().split(' ').some(w=>w.length>3&&text.toLowerCase().includes(w.replace(/s$/,''))));let reply;if(svc){draft={...defaultDraft(),serviceId:svc.id};const times=available(draft.date,svc.id);reply=`${svc.name} is ${money(svc.price)} and takes ${svc.duration} minutes. On ${humanDate(draft.date)}, the demo diary has ${times.slice(0,3).join(', ')||'no available slots'}. Choose “Continue to available times” to select a slot and confirm your details. I haven't booked anything yet.`;}else if(/price|cost|service|treatment|available|book/i.test(text))reply=`Our demo services are ${s.services.map(x=>x.name+' ('+money(x.price)+')').join(', ')}. Which would you like?`;else reply='This is a scripted preview, so I can help with the listed treatments only. Choose a treatment below, or use the booking page. An unsupported request would go to the salon in the real product.';chat.push({role:'assistant',text:reply});render();}
 /* Locked Staff and Insights links open their upgrade pages (see staffUpgradePage and Insights). */
-document.addEventListener('click',async e=>{const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id,s=salon();if(a==='list-page'){if(window.JovaListPages?.move(el.dataset.list,Number(el.dataset.direction))){render();document.querySelector('.workspace-main')?.scrollTo({top:0});}return;}if(teamMode()&&(/^delete-/.test(a)||staffAction(a)||a==='setup-service'||/^(add|edit)-(service|category)/.test(a))){e.preventDefault();e.stopImmediatePropagation();toast('Only the business owner can do that.');return;}
+document.addEventListener('click',async e=>{const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id,s=salon();if(a==='list-page'){if(window.JovaListPages?.move(el.dataset.list,Number(el.dataset.direction))){render();document.querySelector('.workspace-main')?.scrollTo({top:0});}return;}if(teamMode()&&(/^delete-/.test(a)||staffAction(a)||/^(add|edit)-(service|category)/.test(a))){e.preventDefault();e.stopImmediatePropagation();toast('Only the business owner can do that.');return;}
  if(isLive(s)&&(a.startsWith('onboard-')||a==='deposit'||a==='portal')){e.preventDefault();closeModal();go('payments');return;}
  if(signedIn()&&billingRestricted()&&!['signout','owner-funnel-reject','cookies','sb-reload','sb-pay-now','sb-select-trial-plan','sb-trial-plans','sb-cadence','close-modal'].includes(a)){go('billing');return;}
  if(a==='close-modal'){closeModal();return;}
@@ -1139,7 +1142,6 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
  if(a==='setup-skip-step'){skipSetupStep();return;}
  if(a==='setup-continue'){continueSetup();return;}
  if(a==='setup-finish'){finishSetup();return;}
- if(a==='setup-category'){categoryForm();return;}
  if(a==='setup-website'){go('scheduling');return;}
  if(a==='workspace-more'){modal('More',window.JovaMobileNavigation.moreContent(teamMode()?{allowedRoutes:TEAM_ROUTES}:{}));return;}
  if(a==='workspace-more-route'){const next=el.dataset.route;if(!['dashboard','bookings','calendar','customers','services','staff','scheduling','booking-setup','insights','referrals','settings','integrations'].includes(next)||(teamMode()&&!TEAM_ROUTES.includes(next)))return;closeModal();go(next);return;}
@@ -1180,7 +1182,7 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
  else if(a==='cookies'&&location.hostname==='book.jovamedia.com'&&window.JovaOwnerFunnel?.consent())modal('Cookie settings','<p>You allowed anonymous measurement of your business registration, trial and subscription-payment journey. No form values, personal details or replay data are sent from this app.</p><button type="button" class="btn primary" data-action="owner-funnel-reject">Stop optional measurement</button>');
  else if(a==='cookies')modal('Cookie settings','<p>This demo loads no analytics, advertising cookies or external embeds. It uses localStorage to retain the example data you create.</p><button class="btn primary" data-action="close-modal">Keep functional demo storage</button>');
  else if(a==='map-preview')modal('Map integration preview','<p>A production map can show the salon’s saved address. Optional third-party embeds should respect the site’s consent settings. No external map loads here.</p>');
- else if(a==='setup-service'){serviceForm();}else if(a==='new-booking')bookingForm(route().startsWith('calendar')?{date:calendarWeek>=today()?calendarWeek:undefined,staffId:calStaff?.length===1?calStaff[0]:undefined}:{});else if(a==='booking-details')bookingDetails(id);
+ else if(a==='new-booking')bookingForm(route().startsWith('calendar')?{date:calendarWeek>=today()?calendarWeek:undefined,staffId:calStaff?.length===1?calStaff[0]:undefined}:{});else if(a==='booking-details')bookingDetails(id);
  else if(a==='complete-booking'){const b=s.bookings.find(x=>x.id===id);if(b)b.status='completed';save();closeModal();render();toast('Booking marked completed.');}
  else if(a==='cancel-booking')modal('Cancel this booking?',`<p>The time will become available again.</p>${isLive(s)?'<p>Any deposit paid through Stripe will be refunded automatically, including within 24 hours. The refund stays pending until Stripe confirms it.</p>':'<p>A cancellation email will appear in the demo outbox. No real refund is made.</p>'}<div class="error" role="alert"></div><button class="btn primary danger" data-action="cancel-confirm" data-id="${id}">Cancel booking</button>`);
  else if(a==='cancel-confirm'&&pubMode()){const r=await dir.publicRpc('cancel_booking',{p_slug:PUB.slug,p_id:id});closeModal();if(r.ok&&r.data&&r.data.ok){PUB.bk[id]=r.data.booking;render();toast('Booking cancelled. Your cancellation is saved.');}else toast((r.data&&r.data.message)||r.message);}
@@ -1220,22 +1222,18 @@ else if(a==='restart-trial'){s.subscription.status='trialing';s.subscription.tri
   if(!input||!links?.contains(input)||el.dataset.copyState==='pending')return;
   const status=links.querySelector('[data-share-status]'),help=links.querySelector('.share-copy-help');
   el.dataset.copyState='pending';
-  el.textContent='Copying…';
-  el.setAttribute('aria-label','Copying '+id+' link');
   status.textContent='';
   try{
    await navigator.clipboard.writeText(input.value);
    if(!el.isConnected)return;
    el.dataset.copyState='copied';
    el.textContent='Copied';
-   el.setAttribute('aria-label','Copied '+id+' link');
    help.hidden=true;
    status.textContent=id==='website'?'Website link copied.':'Booking link copied.';
   }catch{
    if(!el.isConnected)return;
    delete el.dataset.copyState;
    el.textContent='Copy';
-   el.setAttribute('aria-label','Copy '+id+' link');
    input.closest('details').open=true;
    help.hidden=false;
    input.focus();

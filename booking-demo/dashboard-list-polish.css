@@ -145,3 +145,7 @@ html[data-workspace-theme] .shell.jb-reference :is(.jg-setup-progress,.jg-setup-
 }
 
 html[data-workspace-theme] .shell.jb-reference .jg-setup-progress h2{color:#fff!important}
+
+.jg-setup-cue{position:fixed;z-index:230;display:flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid #171819;border-radius:999px;background:#f4d321;color:#171819;font:700 11px/1.3 'Plus Jakarta Sans',system-ui,sans-serif;white-space:nowrap;pointer-events:none;box-shadow:0 2px 5px rgb(0 0 0 / 15%)}
+.jg-setup-cue[hidden]{display:none}
+.jg-setup-pointed:not(.jg-setup-target){outline:2px solid #ac8700!important;outline-offset:3px}

@@ -86,5 +86,90 @@
   const label=done&&!guide.skipped?'Replay demo':guide.mode==='paused'&&guide.step?'Resume demo':'Start demo';
   return '<section class="jg-setup-progress" aria-labelledby="jg-setup-title"><div><h2 id="jg-setup-title">'+(done?(guide.skipped?'Setup demo skipped':'Setup demo complete'):'Setup demo')+'</h2><div class="jg-progress-track"><progress max="100" value="'+percent+'" aria-label="Setup demo progress"></progress><span>'+(guide.skipped?'Skipped':percent+'% complete')+'</span></div></div><div class="jg-setup-progress-actions">'+(guide.mode==='active'?'':button('start-setup-tutorial',label,'primary'))+(done?'':button('skip-setup-tutorial','Skip demo','jg-setup-skip'))+'</div></section>';
  }
- window.JovaSetupGuide=Object.freeze({status,render,renderStep,nextStep,resumeStep,getStep,destination,sections,createState});
+ // One quiet pointer follows the real control. It never blocks input or takes focus.
+ function createCue(){
+  let badge,pointed,frame;
+  const modalFields={
+   category:[['[name=name]','Type here'],['[name=categoryColor]','Choose a color'],['button.primary','Save']],
+   service:[['[name=name]','Type here'],['[name=categoryId]','Choose a category'],['[name=price]','Enter the price'],['[name=duration]','Enter the duration'],['[name=staffIds]','Choose who offers it'],['button.primary','Save']],
+   customer:[['[name=name]','Type here']]
+  };
+  const find=(root,selector)=>Array.from(root?.querySelectorAll(selector)||[]).find(el=>{
+   const r=el.getBoundingClientRect();
+   return r.width>1&&r.height>1&&!el.closest('[hidden],[inert]')&&getComputedStyle(el).visibility==='visible';
+  });
+  const enabled=el=>!!el&&!el.matches(':disabled');
+  const asCue=(root,selector,label)=>[find(root,selector),label];
+  function formCue(form,fields){
+   const targets=fields.map(([selector,label])=>asCue(form,selector,label));
+   const current=targets.find(([el])=>enabled(el)&&el===document.activeElement);
+   if(current)return current;
+   const missing=targets.find(([el])=>enabled(el)&&el.matches(':invalid'));
+   if(missing)return missing;
+   if(form.dataset.form==='category'&&!form.dataset.setupColorSeen)return targets[1];
+   if(form.dataset.form==='service'&&!form.querySelector('[name=staffIds]:checked'))return targets[4];
+   return targets.at(-1);
+  }
+  function target(shell,step){
+   if(document.querySelector('dialog[open]'))return [];
+   const dialog=document.querySelector('#modal-root .modal');
+   if(dialog){
+    if(dialog.querySelector('[data-unsaved-warning]'))return [];
+    if(dialog.matches('.share-links-modal')&&step==='share'){
+     return asCue(dialog,'[data-action=copy-link]:not([data-copy-state=copied])','Copy the link');
+    }
+    const form=dialog.querySelector('[data-form]'),id=form?.dataset.form;
+    if((step==='category'&&id==='category')||(step==='services'&&id==='service')||(step==='customers'&&id==='customer'))return formCue(form,modalFields[id]);
+    return [];
+   }
+   if(step==='details'){
+    const form=shell.querySelector('[data-form=settings]'),fields=['name','address','mobileService','phone','email'].map(name=>asCue(form,'[name='+name+']',name==='mobileService'?'Mobile service?':'Type here'));
+    const current=fields.find(([el])=>enabled(el)&&el===document.activeElement);
+    const invalid=fields.find(([el])=>enabled(el)&&el.matches(':invalid'));
+    return current||invalid||asCue(form,'[data-bd-save]:not(:disabled)','Save');
+   }
+   if(step==='hours')return shell.querySelector('.bd-day-toggle[aria-checked=true]')&&find(shell,'[data-bd-save]:not(:disabled)')
+    ?asCue(shell,'[data-bd-save]:not(:disabled)','Save')
+    :asCue(shell,'.bd-day-toggle','Set opening hours');
+   if(step==='website'){
+    const section=shell.querySelector('[data-bw-section]:not([hidden])');
+    const selection={design:['.bw-layout-choice','Choose a design'],colours:['[data-colour-value]','Choose a color'],hero:['[name=headline]','Type here'],about:['[name=about]','Type here'],search:['[name=showInSearch]','Optional']};
+    return section&&selection[section.dataset.bwSection]?asCue(section,...selection[section.dataset.bwSection]):[];
+   }
+   if(step==='booking')return asCue(shell,'[data-action=ws-booking-setting][data-section=options]','Sharing options');
+   if(step==='calendar')return asCue(shell,'[data-action=cal-view][data-value=week]','Try Week view');
+   return asCue(shell,getStep(step).target,{category:'Add category',services:'Add service',share:'Share links',bookings:'Try filters',customers:'Add customer'}[step]);
+  }
+  function paint(){
+   frame=0;
+   const shell=document.querySelector('.shell[data-setup-active]'),step=shell?.dataset.setupActive;
+   const [el,label]=getStep(step)?target(shell,step):[];
+   if(pointed!==el){pointed?.classList.remove('jg-setup-pointed');pointed=el;el?.classList.add('jg-setup-pointed');}
+   if(!el){if(badge)badge.hidden=true;return;}
+   const r=el.getBoundingClientRect(),header=el.closest('.workspace-main')&&shell.querySelector('.workspace-header');
+   const top=header?.getBoundingClientRect().bottom||0;
+   const scroller=el.closest('.jg-panel-body,.workspace-main');
+   const clip=scroller?.getBoundingClientRect();
+   if(r.bottom<=Math.max(top,clip?.top||0)||r.top>=Math.min(innerHeight,clip?.bottom||innerHeight)){if(badge)badge.hidden=true;return;}
+   if(!badge){
+    badge=document.createElement('div');badge.className='jg-setup-cue';badge.setAttribute('aria-hidden','true');
+    badge.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6l1-1a1.5 1.5 0 0 1 2.5.6l.6-.4a1.5 1.5 0 0 1 2.3 1l.5-.2a1.6 1.6 0 0 1 2.1 1.5v1.8a7 7 0 0 1-7 7H12c-2 0-3.6-1-4.7-2.6l-3-4.4a1.6 1.6 0 0 1 2.4-2z"/></svg><span></span>';
+    document.body.append(badge);
+   }
+   badge.lastElementChild.textContent=label||'';
+   badge.hidden=false;
+   const width=badge.offsetWidth,x=Math.max(6,Math.min(innerWidth-width-6,r.right-width+7));
+   badge.style.left=x+'px';
+   badge.style.top=Math.max(5,top,r.top-17)+'px';
+  }
+  function refresh(){if(!frame)frame=requestAnimationFrame(paint);}
+  for(const event of ['focusin','input','change','click','scroll','animationend','toggle'])document.addEventListener(event,e=>{
+   if(!pointed&&!document.querySelector('.shell[data-setup-active]'))return;
+   if(e.type==='change'&&e.target.name==='categoryColor'&&e.target.form)e.target.form.dataset.setupColorSeen='true';
+   refresh();
+  },true);
+  window.addEventListener('resize',refresh);
+  return {refresh};
+ }
+ window.JovaSetupGuide=Object.freeze({status,render,renderStep,nextStep,resumeStep,getStep,destination,sections,createState,createCue});
 })();

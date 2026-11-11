@@ -703,9 +703,9 @@ body:has(.share-links-modal) #toast.jg-toast{z-index:99}
 .share-link-actions{list-style:none;margin:0;padding:0;border:1px solid var(--theme-line);border-radius:12px}
 .share-link-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 10px;font-size:14px}
 .share-link-row+li{border-top:1px solid var(--theme-line)}
-.share-link-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;background:var(--theme-soft);color:var(--theme-primary)}
+.share-link-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;background:#f4d321;color:#171819}
 .share-link-icon svg{width:19px;height:19px}
-html[data-workspace-theme] #modal-root .share-link-row button{min-width:78px;min-height:44px;padding:7px 12px;border:0;border-radius:8px;background:var(--theme-inset);color:var(--theme-heading);font-size:13px;font-weight:650;box-shadow:none}
+html[data-workspace-theme] #modal-root .share-link-row button{width:78px;min-width:78px;min-height:44px;white-space:nowrap;padding:7px 12px;border:0;border-radius:8px;background:var(--theme-inset);color:var(--theme-heading);font-size:13px;font-weight:650;box-shadow:none}
 html[data-workspace-theme] #modal-root .share-link-row button:is(:hover,[data-copy-state=copied]){background:var(--theme-soft);color:var(--theme-primary)}
 html[data-workspace-theme] :is(.shell button,#modal-root button,.jg-setup-tip .btn):active:not(:disabled){filter:brightness(.9)}
 .share-copy-help{margin:0 0 6px;font-size:13px}

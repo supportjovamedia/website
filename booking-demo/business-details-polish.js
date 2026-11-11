@@ -20,6 +20,7 @@
    const closedLabel=document.createElement('span');closedLabel.className='bd-day-closed';closedLabel.textContent='Closed';
    const times=document.createElement('div');times.className='bd-day-times';times.hidden=true;times.append(labels[0]);const separator=row.querySelector('.ws-time-to');if(separator)times.append(separator);times.append(labels[1]);
    row.append(toggle,range,closedLabel,times);updateHoursRow(row);
+   if(root.closest('[data-setup-active=hours]'))row.dispatchEvent(new Event('change',{bubbles:true}));
   });
  }
  function open(next,{focus=true}={}){

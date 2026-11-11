@@ -696,3 +696,13 @@ html[data-workspace-theme] #app .shell.jb-reference .page-heading>:is(.btn,butto
  html[data-workspace-theme] #app .shell.jb-reference .rf-customers h1{font-size:22px!important;gap:7px!important}
  html[data-workspace-theme] #app .shell.jb-reference .rf-customers>.page-heading>.btn{font-size:11px!important;padding:10px 12px!important;white-space:nowrap;min-height:44px!important}
 }
+
+/* The compact Share control uses the same hover circle as the other header actions. */
+@media(max-width:700px){
+ html[data-workspace-theme] .shell.jb-reference .workspace-header button[data-action=share-booking-link]{border-radius:50%!important}
+ html[data-workspace-theme] .shell.jb-reference .workspace-header button[data-action=share-booking-link]:is(:hover,:focus-visible){background:var(--theme-inset)!important;box-shadow:inset 0 0 0 1px var(--theme-line)!important}
+}
+@media(min-width:701px){
+ html[data-workspace-theme] .shell.jb-reference .workspace-header button[data-action=share-booking-link]{border-radius:999px!important}
+ html[data-workspace-theme] .shell.jb-reference .workspace-header button[data-action=share-booking-link]:is(:hover,:focus-visible){background:var(--theme-soft)!important}
+}
