@@ -314,7 +314,11 @@
       if(refreshFlight&&refreshFlight.raw===expected.raw&&refreshFlight.generation===expected.generation)return refreshFlight.promise;
       const promise=(async()=>{const r = await call('/auth/v1/token?grant_type=refresh_token', { body: { refresh_token: s.refresh_token } });
         if(!current(expected))return null;
-        if (r.ok && r.data && r.data.access_token) { keep(r.data); return r.data.access_token; }
+        if (r.ok && r.data && r.data.access_token) {
+          const passwordSignIn=s.passwordSignIn===true&&r.data.user?.id===s.user?.id;
+          keep(passwordSignIn?{...r.data,passwordSignIn:true}:r.data);
+          return r.data.access_token;
+        }
         if(r.network||r.status===429||r.status>=500){refreshFailure={expected,result:{ok:false,network:!!r.network,status:r.status,message:r.network?NET:'Your session could not be refreshed. Try again shortly.'}};return null;}
         keep(null); return null;})();
       refreshFlight={...expected,promise};try{return await promise;}finally{if(refreshFlight?.promise===promise)refreshFlight=null;}
@@ -322,7 +326,7 @@
     async function signInPassword(email, password,expected=intent()) {
       const r = await call('/auth/v1/token?grant_type=password', { body: { email: String(email).trim(), password } });
       if(!current(expected))return stale();
-      if (r.ok && r.data && r.data.access_token) keep(r.data);
+      if (r.ok && r.data && r.data.access_token) keep({...r.data,passwordSignIn:true});
       return {...r,authStamp:stamp()};
     }
     async function mySalon() {
@@ -435,7 +439,11 @@
       },
       hasPendingOwnerSessionAdoption(){return !!pendingAdoption();},
       async retryOwnerSessionAdoption(){const pending=pendingAdoption();if(!pending)return {ok:false,stale:true,message:'Your sign-in changed or expired. Please sign in again.'};return this.acceptOwnerSession(pending.session,pending.expectedEmail);},
-      needsOwnerPassword(){const m=load()?.user?.user_metadata;return m?.email_first===true&&m.email_first_profile_complete!==true;},
+      needsOwnerPassword(){
+        const session=load(),metadata=session?.user?.user_metadata;
+        // A successful password sign-in also covers owners who set theirs through recovery.
+        return metadata?.email_first===true&&metadata.email_first_profile_complete!==true&&session.passwordSignIn!==true;
+      },
       async reserveOwnerCode(email){
         const r=await rpc('reserve_owner_verification',{p_email:email});
         if(!r.ok||typeof r.data?.ok!=='boolean')return {ok:false,message:'We could not request a code. Please try again later.'};
