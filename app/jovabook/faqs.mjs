@@ -4,6 +4,10 @@ export const faqs = [
     "answer": "Free is £0 per month with one staff calendar, up to 20 bookings per calendar month and 50 emails per month. Your one-page website includes your business name, logo, description, hours, contact details and online booking. A Powered by JovaMedia badge stays visible. No card is required to use Free."
   },
   {
+    "question": "Can my JovaBook website appear on Google?",
+    "answer": "Yes. Google visibility is off by default. When your website is ready, go to Personalise → Website → Google visibility, tick ‘Let Google find my website’ and save. Google decides whether and when to list your site. You can also add your website link to your Google Business Profile."
+  },
+  {
     "question": "Is the free plan a trial?",
     "answer": "Free is a free plan with monthly limits. There is no automatic upgrade or subscription charge. Solo and Team are paid plans. A card is taken only when you subscribe and the subscription starts straight away. There is no free trial."
   },

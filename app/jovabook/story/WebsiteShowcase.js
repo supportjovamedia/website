@@ -12,6 +12,6 @@ export default function WebsiteShowcase(){
    <source media="(max-width:700px)" srcSet={images.mobile.src} width={images.mobile.width} height={images.mobile.height}/>
    <img className="ws-reference-image" src={images.desktop.src} width={images.desktop.width} height={images.desktop.height} alt={name+' website design with services and contact details'} loading="lazy" decoding="async" draggable={false}/>
   </picture></div></div>
-  <div className="ws-share-benefit"><strong>One link to share.</strong><p>Put it on your website, Instagram bio or WhatsApp.</p></div>
+  <div className="ws-share-benefit"><strong>One link to share.</strong><p>Add it to your Google Business Profile, Instagram bio or WhatsApp.</p><p>When your site is ready, turn on Google visibility in your dashboard so it can appear in Google Search.</p></div>
  </div></section>;
 }
