@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const context={window:{}};for(const file of ['scheduling-core.js','staff-editor.js'])vm.runInNewContext(await readFile(new URL('../'+file,import.meta.url),'utf8'),context);
+const context={window:{}};for(const file of ['scheduling-core.cjs','staff-editor.js'])vm.runInNewContext(await readFile(new URL('../'+file,import.meta.url),'utf8'),context);
 const core=context.window.JovaStaffEditor.core;
 const fixture=()=>({id:'business-one',hours:{start:'09:00',end:'18:00',days:[1,2,3,4,5,6]},staff:[{id:'sam',name:'Sam Taylor',role:'Owner',active:true,hours:null}],services:[{id:'brows',name:'Brows',staffIds:['sam']},{id:'nails',name:'Nails',staffIds:[]}]});
 const copy=value=>JSON.parse(JSON.stringify(value));

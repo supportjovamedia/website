@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-test('Share, Personalise, website editor, service copies and iframe use the same business subdomain',async()=>{
+test('Share, Personalise, website editor, service copies and iframe use the public website and direct booking addresses',async()=>{
  const location=new URL('https://book.jovamedia.com/#scheduling'),copied=[],modals=[];
  const s={id:'20000000-0000-4000-8000-000000000001',slug:'arooj',name:'Arooj Studio',color:'#235789',services:[{id:'cut',name:'Haircut',price:25,duration:30,staffIds:['owner']}],staff:[{id:'owner',name:'Owner',active:true}],categories:[],bookings:[],workspace:{}};
- const window={location,JovaDemoData:{isBuiltIn:()=>false}},context={window,location,URL,URLSearchParams,Date,Intl,Blob,File,Uint8Array,s,JovaDemoData:window.JovaDemoData,navigator:{clipboard:{writeText:async value=>copied.push(value)}},setTimeout,clearTimeout};
+ const window={location,JovaColourPicker:{markup:()=>''},JovaDemoData:{isBuiltIn:()=>false}},context={window,location,URL,URLSearchParams,Date,Intl,Blob,File,Uint8Array,s,JovaDemoData:window.JovaDemoData,navigator:{clipboard:{writeText:async value=>copied.push(value)}},setTimeout,clearTimeout};
  const load=async file=>vm.runInNewContext(await readFile(new URL('../booking-demo/'+file,import.meta.url),'utf8'),context);
  await load('public-links.js');context.JovaPublicLinks=window.JovaPublicLinks;
  const app=await readFile(new URL('../booking-demo/app.js',import.meta.url),'utf8'),definition=app.match(/const bookingLink=.*;\r?\n/)[0];
@@ -14,14 +14,14 @@ test('Share, Personalise, website editor, service copies and iframe use the same
  Object.assign(context,{a:'share-booking-link',bookingLink,esc,modal:(title,html)=>modals.push({title,html})});
  vm.runInNewContext('(()=>{'+app.split('\n').find(line=>line.includes("if(a==='share-booking-link')"))+'})()',context);
  assert(modals[0].html.includes('value="https://arooj.jovamedia.com/book"'));
- await load('scheduling-core.js');await load('business-website.js');await load('workspace.js');
+ await load('scheduling-core.cjs');await load('business-website.cjs');vm.runInNewContext((await readFile(new URL('../booking-demo/workspace.js',import.meta.url),'utf8')).split('/* Reference-led owner presentation.')[0],context);
  const api={salon:()=>s,bookingLink,ownerIdentity:()=> 'fixture-owner',esc,field:()=>'',money:v=>'£'+v,toast(){},modal(){},save(){},render(){}};
  const website=window.JovaBusinessWebsite.create(api);api.website=website;
  const workspace=window.JovaWorkspace.create(api),personalise=workspace.pages.scheduling(),editor=website.editor();
  assert(personalise.includes('value="https://arooj.jovamedia.com/book"'));
  assert(personalise.includes('src=&quot;https://arooj.jovamedia.com/book&quot;'));
  workspace.click('ws-copy-service',{dataset:{id:'cut'}});assert.equal(copied[0],'https://arooj.jovamedia.com/book?service=cut');
- assert(editor.includes('value="https://arooj.jovamedia.com/"'));assert(editor.includes('href="https://arooj.jovamedia.com/"'));
+ assert(editor.includes('value="https://www.jovamedia.com/sites/arooj"'));assert(editor.includes('value="https://arooj.jovamedia.com/book"'));
  assert.equal(window.JovaPublicLinks.addressLabel('arooj'),'arooj.jovamedia.com');
  for(const html of [modals[0].html,personalise,editor])assert(!html.includes('book.jovamedia.com/arooj'));
 });

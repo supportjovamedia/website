@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 
-const websiteSource=await readFile(new URL('../business-website.js',import.meta.url),'utf8');
+const websiteSource=await readFile(new URL('../business-website.cjs',import.meta.url),'utf8');
 const workspaceSource=(await readFile(new URL('../workspace.js',import.meta.url),'utf8')).split('/* Reference-led owner presentation.')[0];
 const escape=value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
 const picker={markup:(name,label,description,value)=>`<input name="${name}" value="${value}">`};
@@ -13,18 +13,18 @@ function panelRoot(attribute,ids){
  return {dataset:{},panels:ids.map(id=>({dataset:{[attribute]:id},hidden:true})),querySelector:selector=>nodes[selector],querySelectorAll(){return this.panels;},scrollIntoView(){}};
 }
 
-test('website settings keep one original form and all fields across five screens',()=>{
+test('website settings keep one original form and all fields across six screens',()=>{
  const s=fixture(),context={window:{JovaColourPicker:picker},URL,Intl,Date,document:{addEventListener(){},querySelector:()=>null}},seen={renders:0};
  vm.runInNewContext(websiteSource,context);
  const tools=context.window.JovaBusinessWebsite.create({salon:()=>s,esc:escape,ownerIdentity:()=> 'owner',bookingLink:()=> 'https://example.test/studio/book',render:()=>seen.renders++});
  let html=tools.editor();assert.equal((html.match(/data-form="bw-website"/g)||[]).length,1);
- assert.equal((html.match(/class="bw-settings-option"/g)||[]).length,5);
- for(const name of ['headline','about','brandColor','headingColor','template'])assert.ok(html.includes('name="'+name+'"'));
+ assert.equal((html.match(/class="bw-settings-option"/g)||[]).length,6);
+ for(const name of ['headline','about','brandColor','headingColor','template','showInSearch','hideAddress'])assert.ok(html.includes('name="'+name+'"'));
  assert.match(html,/data-bw-section="hours"/);assert.match(html,/href="#availability"/);assert.match(html,/href="#settings"/);
  const form={dataset:{owner:'owner|'+s.id},querySelector:()=>null};
  tools.input({name:'headline',value:'My unsaved headline',closest:()=>form});
- const root=panelRoot('bwSection',['design','hero','about','colours','hours']);
- for(const section of ['hero','about','colours','home','design']){
+ const root=panelRoot('bwSection',['design','hero','about','colours','hours','search']);
+ for(const section of ['hero','about','colours','search','home','design']){
   assert.equal(tools.click('bw-setting',{dataset:{section},closest:()=>root}),true);
   assert.equal(root.dataset.bwView,section);
   assert.deepEqual(root.panels.filter(panel=>!panel.hidden).map(panel=>panel.dataset.bwSection),section==='home'?[]:[section]);

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const app=await readFile(new URL('../app.js',import.meta.url),'utf8'),schedule=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
+const app=await readFile(new URL('../app.js',import.meta.url),'utf8'),schedule=await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8');
 function harness(plan='essential'){
  const state={id:'fictional-business',plan,staff:[{id:'owner',name:'Fictional Owner'}],services:[]},seen={management:0,reads:0,writes:0};
  const c={window:{},salon:()=>state,signedIn:()=>true,management:{pages:{staff:()=>{seen.management++;return 'paid staff';}}},staffPage:()=> 'upgrade',tierAvailability:()=> 'Available on Standard and Premium',staffEditor:{read:()=>{seen.reads++;return {name:'Updated',role:'Owner',active:true,hours:null,serviceIds:[]};},saved:()=>{}},canAddStaff:()=>false,save:()=>seen.writes++,closeModal:()=>{},render:()=>{},toast:()=>{}};

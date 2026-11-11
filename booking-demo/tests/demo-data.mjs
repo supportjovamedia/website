@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const context={window:{},Date,Intl};
 vm.runInNewContext(await readFile(new URL('../demo-data.js',import.meta.url),'utf8'),context);
-vm.runInNewContext(await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8'),context);
+vm.runInNewContext(await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8'),context);
 const {build,populate}=context.window.JovaDemoData,schedule=context.window.JovaSchedule;
 const at='2026-10-31T13:30:00Z',plain=value=>JSON.parse(JSON.stringify(value));
 const mins=value=>Number(value.slice(0,2))*60+Number(value.slice(3));

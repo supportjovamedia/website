@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const source=await readFile(new URL('../business-website.js',import.meta.url),'utf8'),schedule=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
+const source=await readFile(new URL('../business-website.cjs',import.meta.url),'utf8'),schedule=await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8');
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // The picker owns visual interactions in its own tests. Keep its native form contract here.
 const picker={markup:(name,label,hint,value,options={})=>`<label>${esc(label)}<input name="${esc(name)}" value="${esc(value)}" ${options.disabled?'disabled':''}></label>`};

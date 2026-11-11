@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const sources=await Promise.all(['scheduling-core.js','list-pages.js','management.js'].map(file=>readFile(new URL('../'+file,import.meta.url),'utf8')));
+const sources=await Promise.all(['scheduling-core.cjs','list-pages.js','management.js'].map(file=>readFile(new URL('../'+file,import.meta.url),'utf8')));
 const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 function fixture(){
  const hours={start:'09:00',end:'17:00',days:[1,2,3,4,5],weekly:{'2':{closed:true,start:'09:00',end:'17:00'}}};

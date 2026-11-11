@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 
 const localeSource=await readFile(new URL('../business-locale.js',import.meta.url),'utf8');
 const dashboardSource=await readFile(new URL('../dashboard-core.js',import.meta.url),'utf8');
-const scheduleSource=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
+const scheduleSource=await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8');
 const workspaceSource=await readFile(new URL('../workspace.js',import.meta.url),'utf8');
 const referenceSource=workspaceSource.slice(workspaceSource.indexOf('/* Reference-led owner presentation.'),workspaceSource.indexOf('/* vanilla-colorful'));
 

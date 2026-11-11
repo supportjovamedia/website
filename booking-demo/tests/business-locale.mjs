@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 
 const context={window:{},Intl,Date};
 vm.runInNewContext(await readFile(new URL('../business-locale.js',import.meta.url),'utf8'),context);
-vm.runInNewContext(await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8'),context);
+vm.runInNewContext(await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8'),context);
 const locale=context.window.JovaBusinessLocale,schedule=context.window.JovaSchedule;
 const plain=value=>JSON.parse(JSON.stringify(value));
 const business=(country,timezone,currency)=>({country,timezone,currency});

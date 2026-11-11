@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const scheduling=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8'),ownerTools=await readFile(new URL('../owner-tools.js',import.meta.url),'utf8');
+const scheduling=await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8'),ownerTools=await readFile(new URL('../owner-tools.js',import.meta.url),'utf8');
 const workspace=await readFile(new URL('../workspace.js',import.meta.url),'utf8');
 const reference=workspace.slice(workspace.indexOf('/* Reference-led owner presentation.'),workspace.indexOf('/* vanilla-colorful'));
 const plus=(date,n)=>{const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};

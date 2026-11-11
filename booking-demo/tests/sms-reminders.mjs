@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 import {webcrypto} from 'node:crypto';
-const source=(await readFile(new URL('../business-locale.js',import.meta.url),'utf8'))+'\n'+(await readFile(new URL('../sms-phone.js',import.meta.url),'utf8'))+'\n'+(await readFile(new URL('../sms-message.js',import.meta.url),'utf8'))+'\n'+await readFile(new URL('../sms-reminders.js',import.meta.url),'utf8'),schedule=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8'),accounts=await readFile(new URL('../accounts.js',import.meta.url),'utf8');
+const source=(await readFile(new URL('../business-locale.js',import.meta.url),'utf8'))+'\n'+(await readFile(new URL('../sms-phone.js',import.meta.url),'utf8'))+'\n'+(await readFile(new URL('../sms-message.js',import.meta.url),'utf8'))+'\n'+await readFile(new URL('../sms-reminders.js',import.meta.url),'utf8'),schedule=await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8'),accounts=await readFile(new URL('../accounts.js',import.meta.url),'utf8');
 const sid='20000000-0000-4000-8000-000000000001';
 const info=()=>({provider:'The SMS Works',plan:'standard',eligible:true,provider_configured:true,global_enabled:true,business_enabled:false,budget_configured:true,remaining_segments:37,enabled:false,consent_required:true,reminder_hours:24,delivery_counts:{scheduled:0,sent:0,delivered:0,failed:2,unknown:1,cancelled:0,suppressed:0},needs_review:true});
 const payload=()=>({p_slug:'fixture-studio',p_service:'service',p_staff:'staff',p_date:'2026-11-05',p_time:'10:00',p_name:'Synthetic Client',p_email:'client@example.test',p_phone:'07700 900123',p_notes:'',p_method:'Card'});

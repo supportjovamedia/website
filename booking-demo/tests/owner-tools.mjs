@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const source=await readFile(new URL('../owner-tools.js',import.meta.url),'utf8');
-const schedulingSource=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
+const schedulingSource=await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8');
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plus=(key,days)=>{const d=new Date(key+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);};
 const seed=()=>({id:'salon-1',entitlements:{plan:'standard'},staff:[{id:'owner',name:'Sam',active:true},{id:'other',name:'Jordan',active:true}],services:[{id:'brows',name:'Brow <care>',price:40,duration:30,staffIds:['owner']}],customers:[{id:'c1',name:'QA Client',email:'qa@example.com'}],bookings:[
