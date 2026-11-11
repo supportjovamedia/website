@@ -416,7 +416,11 @@ function statusPill(status){const value=String(status||'unknown').toLowerCase().
 function heading(title,desc,actions=''){return `<div class="page-heading"><div><h1>${title}</h1><p>${desc}</p></div>${actions}</div>`;}
 const requiredStar='<span class="bd-required" aria-hidden="true">*</span>';
 const requiredLabel=label=>'<span>'+label+' '+requiredStar+'</span>';
-function field(label,name,value='',type='text',extra=''){return `<label class="field">${label}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;}
+function field(label,name,value='',type='text',extra=''){
+ const validation=window.JovaContactValidation;
+ if(type==='email')extra+=' '+validation.emailAttributes;
+ else if(['Full name','Customer name','Your name'].includes(label))extra+=' '+validation.nameAttributes;
+ return `<label class="field">${label}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;}
 function pubHeader(){if(pubMode()||window.JovaPublicLinks?.hostBusiness?.(location))return bookHeader();const onboarding=/^(signup|setup|checkout)(\/|$)/.test(route());return `<header class="topbar"><a class="brand" href="#home"><img src="/brand/jova-logo.png" alt="JovaMedia"><span class="tag">Booking</span></a><nav><a href="#login">Log in</a>${onboarding?'':`<a class="btn primary small" href="#signup">${route()==='login'||returningOwnerDevice()?'Sign up':'Start free today'}</a>`}</nav></header>`;}
 function screens(){go('map');}
 function onbSteps(n){return `<div class="steps">${(window.JOVA_OFFER_VERSION==='2026-11-free-v1'?(essentialPurchaseIntent()?.plan&&essentialPurchaseIntent().plan!=='essential'?['Details','Business setup','Plan review']:['Details','Business setup']):['Details','Business setup','Plan review']).map((x,i)=>`<span class="step ${n===i+1?'active':''}" ${n===i+1?'aria-current="step"':''}>${x}</span>`).join('')}</div>`;}
@@ -557,8 +561,14 @@ function navigateSetup(step,change={}){
  setupGuideSession(true);setupGuideWrite({mode:'active',step:step.id,...change});
  showSetupRoute(JovaSetupGuide.destination(step.id));
 }
-function startSetupTutorial(){
+function startSetupTutorial(replay=false){
  const s=dashboardSetupBusiness(salon()),options=dashboardSetupOptions(s);
+ if(replay){
+  if(options.guide.mode!=='done'||options.guide.skipped||options.guide.replayed||options.guide.dismissed)return;
+  closeModal();
+  navigateSetup(JovaSetupGuide.getStep('share'),{replayed:true});
+  return;
+ }
  if(options.guide.mode==='done')options.guide=setupGuideWrite({waived:[],websiteReviewed:false,skipped:false,section:'design'});
  const step=options.guide.mode==='paused'?JovaSetupGuide.resumeStep(s,options):JovaSetupGuide.nextStep(s,options);
  closeModal();
@@ -573,7 +583,7 @@ function advanceSetup(step){
 function continueSetup(){
  const step=dashboardSetupStep();
  const nextTour={booking:'share',share:'bookings',bookings:'calendar',calendar:'customers'}[step];
- if(nextTour){navigateSetup(JovaSetupGuide.getStep(nextTour));return;}
+ if(nextTour){leaveSetup(()=>navigateSetup(JovaSetupGuide.getStep(nextTour)));return;}
  if(step!=='website'||editorBusy())return;
  if(businessWebsite.isDirty()){toast('Save your website changes before continuing.');return;}
  const guide=setupGuideRead(),index=JovaSetupGuide.sections.findIndex(([id])=>id===guide.section);
@@ -763,7 +773,7 @@ async function saveBusinessDetails(form,data){
   if(!hoursOnly&&!/^[0-9]{7,15}$/.test(enteredPhone))throw Error('Enter 7 to 15 digits for the business phone.');
   const phone=hoursOnly||enteredPhone===businessPhoneDigits(existingPhone)?existingPhone:enteredPhone;
   const contactError=hoursOnly?'':businessContactError({...salon(),mobileService},address,phone);if(contactError)throw Error(contactError);
-  if(!hoursOnly&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Enter a valid email address.');
+  if(!hoursOnly&&!window.JovaContactValidation.email(email))throw Error('Enter a valid email address.');
   if(about.length>700)throw Error('Keep the description to 700 characters.');
   const hours=schedulingSupported()?workspace.readBusinessHours(form):salon().hours,buffer=Number(data.buffer??salon().buffer),notice=Number(data.notice??salon().notice);
   if(!Number.isInteger(buffer)||buffer<0||buffer>120||buffer%5||!Number.isInteger(notice)||notice<0||notice>480||notice%15)throw Error('Use a buffer from 0 to 120 in steps of 5, and notice from 0 to 480 in steps of 15.');
@@ -1044,7 +1054,7 @@ function toast(text,type='neutral'){
  const title=document.createElement('span');title.className='jg-toast-message';title.textContent=confirmed[message]||message;
  const close=document.createElement('button');close.type='button';close.className='jg-toast-dismiss';close.setAttribute('aria-label','Dismiss notification');
  const cross=svg.cloneNode(false),crossPath=document.createElementNS('http://www.w3.org/2000/svg','path');crossPath.setAttribute('d','m6 6 12 12 M18 6 6 18');cross.append(crossPath);cross.setAttribute('aria-hidden','true');close.append(cross);close.addEventListener('click',dismiss);
- el.classList.add('jg-toast');el.dataset.kind=kind;el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.setAttribute('aria-atomic','true');el.replaceChildren(icon,title,close);el.classList.add('show');toastTimer=setTimeout(dismiss,4000);
+ el.classList.add('jg-toast');el.dataset.kind=kind;el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.setAttribute('aria-atomic','true');el.replaceChildren(icon,title,close);el.classList.add('show');toastTimer=setTimeout(dismiss,2500);
 }
 function error(form,text){const el=form.querySelector('.error');if(el)el.textContent=text;else toast(text);}
 function bookingDetails(id){const b=salon().bookings.find(x=>x.id===id);if(!b)return;modal('Booking details',`<div class="row between"><h3>${esc(b.name)}</h3>${statusPill(b.status)}</div><div class="key-value"><span>Service</span><b>${esc(b.serviceName)}</b></div><div class="key-value"><span>Professional</span><b>${esc(staffName(b.staffId))}</b></div><div class="key-value"><span>Time</span><b>${humanDate(b.date)} · ${b.time} (${b.duration} min)</b></div><div class="key-value"><span>Contact</span><b>${esc(b.email)}<br>${esc(b.phone)}</b></div><div class="key-value"><span>Price / deposit</span><b>${money(b.price)} / ${money(b.deposit)}</b></div>${JovaBookingContent.section(b)}<div class="jg-booking-actions">${b.status==='confirmed'?`<button class="btn primary" data-action="edit-booking" data-id="${id}">Edit</button><button data-action="reschedule" data-id="${id}">Reschedule</button><button data-action="complete-booking" data-id="${id}">Mark completed</button><button class="danger" data-action="cancel-booking" data-id="${id}">Cancel</button>`:`<button class="btn primary" data-action="edit-booking" data-id="${id}">Edit</button>`}${b.status==='completed'?`<button class="danger" data-action="cancel-booking" data-id="${id}">Cancel</button>`:''}<button class="danger" data-action="delete-booking" data-id="${id}">Delete</button><a class="btn" href="#manage/${id}" data-action="close-modal">Customer manage page</a></div>`);}
@@ -1119,7 +1129,7 @@ async function confirmSetupRecord(step,table,id,sid){
  advanceSetup(step);
 }
 function handleForms(type,form,data,s){
- if(type==='customer'){const id=form.dataset.id,name=data.name.trim(),email=data.email.trim();if(!name||!email)throw Error('Add a name and an email.');if(s.customers.some(c=>c.id!==id&&c.email.toLowerCase()===email.toLowerCase()))throw Error('Another customer already uses that email.');const phone=data.phone.trim();if(!JovaPhone.valid(phone))throw Error(JovaPhone.message);const notes=(data.notes||'').trim();if(id){const c=s.customers.find(x=>x.id===id);Object.assign(c,{name,email,phone,notes});// Booking contact snapshots retain the details recorded at booking time.
+ if(type==='customer'){const id=form.dataset.id,name=data.name.trim(),email=data.email.trim();if(!window.JovaContactValidation.name(name))throw Error(window.JovaContactValidation.nameMessage);if(!window.JovaContactValidation.email(email))throw Error(window.JovaContactValidation.emailMessage);if(s.customers.some(c=>c.id!==id&&c.email.toLowerCase()===email.toLowerCase()))throw Error('Another customer already uses that email.');const phone=data.phone.trim();if(!JovaPhone.valid(phone))throw Error(JovaPhone.message);const notes=(data.notes||'').trim();if(id){const c=s.customers.find(x=>x.id===id);Object.assign(c,{name,email,phone,notes});// Booking contact snapshots retain the details recorded at booking time.
 }else s.customers.push({id:uid('c'),name,email,phone,notes});save();closeModal();render();toast(id?'Customer saved.':'Customer added.');return true;}
  if(type==='category'){const id=form.dataset.id,name=data.name.trim(),colour=JovaBookingPalette.safeColor(data.categoryColor);if(!name||name.length>60)throw Error('Enter a category name up to 60 characters.');if(!colour)throw Error('Choose a valid category colour.');const usedColour=JovaBookingPalette.usedBy(s,colour,id);if(usedColour)throw Error('That colour is already used by '+usedColour.name+'. Choose another colour.');if(s.categories.some(c=>c.id!==id&&c.name.toLowerCase()===name.toLowerCase()))throw Error('That category already exists.');let record=s.categories.find(c=>c.id===id);if(record)record.name=name;else{record={id:uid('cat'),name};s.categories.push(record);}s.workspace=JovaBookingPalette.workspace(s);s.workspace.categoryColors={...s.workspace.categoryColors,[record.id]:colour};save();serviceManagement.revealCategory(record.id,s.id);closeModal();render();toast(id?'Category saved.':'Category added.');if(dashboardSetupStep()==='category')void confirmSetupRecord('category','categories',record.id,s.id);return true;}
  if(type==='service'){const id=form.dataset.id,fd=new FormData(form),old=s.services.find(x=>x.id===id),x={name:data.name.trim(),price:Number(data.price),duration:Number(data.duration),description:String(data.description||'').trim(),categoryId:data.categoryId||'',staffIds:fd.getAll('staffIds')};if(x.description.length>1000)throw Error('Keep the service description to 1,000 characters.');if(!x.name)throw Error('Enter a service name.');if(!Number.isFinite(x.price)||x.price<0||x.price>10000)throw Error('Enter a price of £0 or more.');if(!Number.isInteger(x.duration)||x.duration<5||x.duration>600)throw Error('Duration must be between 5 and 600 minutes.');if(!x.staffIds.length)throw Error('Choose at least one person who offers this service.');const record=old||{id:uid('svc'),...x};if(old)Object.assign(old,x);else s.services.push(record);save();serviceManagement.revealService(record.id,s.id);closeModal();render();
@@ -1151,6 +1161,8 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
  if(a==='close-modal'){closeModal();return;}
  if(a==='start-setup-tutorial'){startSetupTutorial();return;}
  if(a==='skip-setup-tutorial'){skipSetupDemo();return;}
+ if(a==='replay-setup-tutorial'){startSetupTutorial(true);return;}
+ if(a==='dismiss-setup-tutorial'){setupGuideWrite({dismissed:true});render();return;}
  if(a==='setup-pause'){pauseSetup();return;}
  if(a==='setup-skip-step'){skipSetupStep();return;}
  if(a==='setup-continue'){continueSetup();return;}
@@ -1263,6 +1275,8 @@ async function submitCustomerBookingDetails(form,data,s){
   let identity=bookingCustomerIdentity();
   if(pubMode()&&(expected||identity||customerHeaderKey(slug))){await refreshCustomerHeader(slug,true,false);if(!form.isConnected||requestedSalon!==slug||!pubMode())return;identity=bookingCustomerIdentity();if(!identity)throw Error('We could not verify your customer account. Try again, or log in again using the link above.');if(expected&&expected!==slug+':'+identity.id)throw Error('Your customer account changed. Log in again before continuing.');data.email=identity.email;}
   if(!form.isConnected)return;
+  if(!window.JovaContactValidation.name(data.name))throw Error(window.JovaContactValidation.nameMessage);
+  if(!window.JovaContactValidation.email(data.email))throw Error(window.JovaContactValidation.emailMessage);
   const smsConsent=pubMode()?smsReminders.readConsent(form,s):false;Object.assign(draft,{name:data.name.trim(),email:data.email.trim(),phone:data.phone.trim(),notes:String(data.notes||'').trim(),smsConsent,...(identity?{customerIdentityKey:slug+':'+identity.id}:{})});
   if(!draft.time||!onlineAvailable(draft.date,draft.serviceId,null,draft.staffId).includes(draft.time))throw Error('Choose an available date and time first.');go('book/payment');
  }catch(problem){if(form.isConnected)error(form,problem.message||'We could not check your account. Try again.');}finally{delete form.dataset.checking;buttons.forEach((b,i)=>b.disabled=wasDisabled[i]);}

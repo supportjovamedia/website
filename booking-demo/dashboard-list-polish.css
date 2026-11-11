@@ -162,7 +162,7 @@ html[data-workspace-theme] .shell .jg-setup-tip .jg-setup-jump{
  text-underline-offset:4px;box-shadow:none!important
 }
 .jg-setup-cue[hidden]{display:none}
-.jg-setup-pointed:not(.jg-setup-target){outline:2px solid #ac8700!important;outline-offset:3px}
+.jg-setup-pointed:not(.jg-setup-target,input,textarea){outline:2px solid #ac8700!important;outline-offset:3px}
 
 #modal-root .setup-welcome-modal{
  width:min(100%,320px);padding:16px!important;border-radius:16px!important;
@@ -179,12 +179,6 @@ html[data-workspace-theme] .shell .jg-setup-tip .jg-setup-jump{
 /* Make the current field distinct while keeping completed fields editable. */
 html[data-workspace-theme] .shell[data-setup-active=details] .bd-information input.jg-setup-field-done{
  background:#f0f0ed!important;color:#343531!important
-}
-html[data-workspace-theme] :is(.shell[data-setup-active],#modal-root) :is(input,textarea).jg-setup-pointed{
- background:#fff6cf!important;color:#171819!important;border-color:#927100!important
-}
-html[data-workspace-theme] :is(.shell[data-setup-active],#modal-root) :is(input,textarea).jg-setup-pointed:is(:hover,:focus-visible){
- outline:2px solid #927100!important;outline-offset:2px
 }
 
 html[data-workspace-theme] .shell[data-setup-active=details] .bd-information .field:not(:focus-within):not(:has(.jg-setup-pointed)){
@@ -224,3 +218,9 @@ html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions 
  .field:not(:focus-within):not(:hover) :is(input,select,textarea):not(.jg-setup-pointed){
  filter:blur(1.5px)
 }
+
+.jg-setup-cue-arrow{width:26px;height:26px;display:grid;place-items:center;padding:0;border-radius:50%;font-size:17px}
+.jg-setup-cue-arrow::before{display:none}
+.shell[data-setup-active=website] .bw-save-bar>button{display:none!important}
+
+.shell[data-setup-active=website]:has([data-form=bw-website][data-dirty=true]) .jg-setup-tip [data-action=setup-continue]{display:none!important}

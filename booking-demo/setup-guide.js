@@ -7,8 +7,8 @@
   {id:'category',title:'Add a service category',route:'services',target:'[data-action="add-category"]',text:'Select the highlighted Category button. Give it a name, choose a color, then select Add category.'},
   {id:'services',title:'Add a service',route:'services',target:'[data-action="add-service"]',text:'Select the highlighted Add service button. Enter the name, category, price and duration, then confirm who offers it.'},
   {id:'website',title:'Set up your website',route:'scheduling',target:'[data-bw-section]:not([hidden])',text:'Choose how your website looks and what clients see.'},
-  {id:'booking',title:'Booking page',route:'booking-setup',target:'.bw-settings-intro',text:'Share the booking page to send clients straight to appointments. Share your website to let them browse first.'},
-  {id:'share',title:'Your dashboard',route:'dashboard',target:'.workspace-header [data-action="share-booking-link"]',text:'Use Share links at the top right to copy your website or direct booking link. The bell shows notifications, and the palette changes your workspace theme.'},
+  {id:'booking',title:'Booking page',route:'booking-setup',target:'.bw-settings-intro',text:'Review how clients see your booking page. Continue when you’re ready.'},
+  {id:'share',title:'Your dashboard',route:'dashboard',target:'.workspace-header [data-action="workspace-appearance"]',text:'The palette changes your workspace theme. The bell shows notifications, and Share links opens your website and booking links.'},
   {id:'bookings',title:'Bookings',route:'bookings',target:'[data-action="bookings-filters"]',text:'Find your appointments here. Use the filters to narrow the list by status, service or team member. You can also manage bookings with multiple sessions.'},
   {id:'calendar',title:'Calendar',route:'calendar',target:'.db-period-controls',text:'Switch between Day, Week and Month to see your schedule at different levels. Try the views whenever you like.'},
   {id:'customers',title:'Customers',route:'customers',target:'[data-action="add-customer"]',text:'Find client details and booking history here. Add customer opens the form. You can look around and close it when you are ready.'}
@@ -22,7 +22,7 @@
  ];
  const getStep=id=>steps.find(step=>step.id===id);
  const destination=id=>{const step=getStep(id);return step?step.route+'?setup='+step.id:'dashboard';};
- const defaultState={mode:'new',step:'',section:'design',websiteReviewed:false,skipped:false,waived:[]};
+ const defaultState={mode:'new',step:'',section:'design',websiteReviewed:false,skipped:false,replayed:false,dismissed:false,waived:[]};
  function createState(storage){
   const memory=new Map();
   const key=(owner,business)=>'jovabook-setup-guide-v2:'+JSON.stringify([owner,business]);
@@ -31,7 +31,7 @@
    if(!stored){try{stored=JSON.parse(storage?.getItem(id)||'null');}catch{}}
    const valid=stored&&['paused','active','done'].includes(stored.mode);
    if(!valid)return {...defaultState};
-   return {mode:stored.mode,step:getStep(stored.step)?.id||'',section:sections.some(([id])=>id===stored.section)?stored.section:'design',websiteReviewed:stored.websiteReviewed===true,skipped:stored.skipped===true,waived:Array.isArray(stored.waived)?stored.waived.filter(id=>steps.slice(0,5).some(step=>step.id===id)):[]};
+   return {mode:stored.mode,step:getStep(stored.step)?.id||'',section:sections.some(([id])=>id===stored.section)?stored.section:'design',websiteReviewed:stored.websiteReviewed===true,skipped:stored.skipped===true,replayed:stored.replayed===true,dismissed:stored.dismissed===true,waived:Array.isArray(stored.waived)?stored.waived.filter(id=>steps.slice(0,5).some(step=>step.id===id)):[]};
   }
   function write(owner,business,change){
    const id=key(owner,business),state={...read(owner,business),...change};
@@ -68,7 +68,7 @@
   const section=sections.find(([key])=>key===guide.section)||sections[0];
   const actions={
    website:button('setup-continue',guide.section==='search'?'Continue to booking page':'Continue','primary'),
-   booking:button('setup-continue','Continue to sharing','primary'),
+   booking:button('setup-continue','Continue to dashboard','primary'),
    share:button('setup-continue','Continue to bookings','primary'),
    bookings:button('setup-continue','Continue to calendar','primary'),
    calendar:button('setup-continue','Continue to customers','primary'),
@@ -90,20 +90,21 @@
  }
  function render(s,options={}){
   const guide=options.guide||defaultState,done=guide.mode==='done',percent=progressValue(s,options);
+  if(done&&(guide.dismissed||guide.replayed))return '';
   const label=done&&!guide.skipped?'Replay demo':guide.mode==='paused'&&guide.step?'Resume demo':'Start demo';
-  return '<section class="jg-setup-progress" aria-labelledby="jg-setup-title"><div><h2 id="jg-setup-title">'+(done?(guide.skipped?'Setup demo skipped':'Setup demo complete'):'Setup demo')+'</h2><div class="jg-progress-track"><progress max="100" value="'+percent+'" aria-label="Setup demo progress"></progress><span>'+(guide.skipped?'Skipped':percent+'% complete')+'</span></div></div><div class="jg-setup-progress-actions">'+(guide.mode==='active'?'':button('start-setup-tutorial',label,'primary'))+(done?'':button('skip-setup-tutorial','Skip demo','jg-setup-skip'))+'</div></section>';
+  return '<section class="jg-setup-progress" aria-labelledby="jg-setup-title"><div><h2 id="jg-setup-title">'+(done?(guide.skipped?'Setup demo skipped':'Setup demo complete'):'Setup demo')+'</h2><div class="jg-progress-track"><progress max="100" value="'+percent+'" aria-label="Setup demo progress"></progress><span>'+(guide.skipped?'Skipped':percent+'% complete')+'</span></div></div><div class="jg-setup-progress-actions">'+(guide.mode==='active'?'':button(done&&!guide.skipped?'replay-setup-tutorial':'start-setup-tutorial',label,'primary'))+(done?button('dismiss-setup-tutorial','Dismiss','jg-setup-skip'):button('skip-setup-tutorial','Skip demo','jg-setup-skip'))+'</div></section>';
  }
  // One quiet pointer follows the real control. It never blocks input or takes focus.
  function createCue(){
   let badge,pointed,frame,typingTarget,typingTimer;
   const usedCues=new Set();
   const cueAction=element=>element?.dataset.action;
-  const dismissibleActions=new Set(['add-category','add-service','share-booking-link','bookings-filters','cal-view','add-customer','ws-copy']);
+  const dismissibleActions=new Set(['add-category','add-service','workspace-appearance','share-booking-link','bookings-filters','cal-view','add-customer','ws-copy']);
   const cueKey=(step,action)=>step+':'+action;
   const modalFields={
    category:[['[name=name]','Name the category'],['[name=categoryColor]','Choose a color'],['button.primary','Save']],
    service:[['[name=name]','Name the service'],['[name=categoryId]','Choose a category'],['[name=price]','Enter the price'],['[name=duration]','Enter the duration'],['[name=staffIds]','Choose who offers it'],['button.primary','Save']],
-   customer:[['[name=name]','Enter the name']]
+   customer:[['[name=name]','Enter the name'],['[name=email]','Enter an email address']]
   };
   const find=(root,selector)=>Array.from(root?.querySelectorAll(selector)||[]).find(el=>{
    const r=el.getBoundingClientRect();
@@ -138,8 +139,9 @@
    const targets=fields.map(([selector,label])=>asCue(form,selector,label));
    const current=targets.find(([el])=>enabled(el)&&el===document.activeElement&&(el===typingTarget||el.matches('select,button,input[type=color],input[type=checkbox]')));
    if(current)return current;
-   const missing=targets.find(([el])=>enabled(el)&&el.matches(':invalid'));
+   const missing=targets.find(([el])=>enabled(el)&&!complete(el)&&!el.matches('button,input[type=checkbox]'));
    if(missing)return missing;
+   if(form.dataset.form==='customer')return asCue(form.closest('.modal'),'[data-action=close-modal]','Close to continue');
    if(form.dataset.form==='category'&&!form.dataset.setupColorSeen)return targets[1];
    if(form.dataset.form==='service'&&!form.querySelector('[name=staffIds]:checked'))return targets[4];
    return targets.at(-1);
@@ -149,9 +151,6 @@
    const dialog=document.querySelector('#modal-root .modal');
    if(dialog){
     if(dialog.querySelector('[data-unsaved-warning]'))return [];
-    if(dialog.matches('.share-links-modal')&&step==='share'){
-     return asCue(dialog,'[data-action=copy-link]:not([data-copy-state=copied])','Copy the link');
-    }
     const form=dialog.querySelector('[data-form]'),id=form?.dataset.form;
     if((step==='category'&&id==='category')||(step==='services'&&id==='service')||(step==='customers'&&id==='customer'))return formCue(form,modalFields[id]);
     return [];
@@ -168,9 +167,9 @@
     const selection={design:['.bw-layout-choice','Choose a design'],colours:['[data-colour-value]','Choose a color'],hero:['[name=headline]','Type here'],about:['[name=about]','Type here'],search:['[name=showInSearch]','Optional']};
     return section&&selection[section.dataset.bwSection]?asCue(section,...selection[section.dataset.bwSection]):[];
    }
-   if(step==='booking')return asCue(shell,'[data-action=ws-copy][data-target=link]','Copy booking link');
+   if(step==='booking')return [];
    if(step==='calendar')return asCue(shell,'[data-action=cal-view][data-value=week]','Try Week view');
-   return asCue(shell,getStep(step).target,{category:'Add category',services:'Add service',share:'Share links',bookings:'Try filters',customers:'Add customer'}[step]);
+   return asCue(shell,getStep(step).target,{category:'Add category',services:'Add service',share:'Workspace theme',bookings:'Try filters',customers:'Add customer'}[step]);
   }
   function updateJump(shell,el){
    const jump=shell?.querySelector('[data-setup-jump]');
@@ -203,10 +202,12 @@
     document.body.append(badge);
    }
    const below=el.matches('[data-bd-save],[data-action=ws-save-personalise]');
-   badge.textContent=label||'';
+   badge.textContent=below?'↑':label||'';
+   badge.classList.toggle('jg-setup-cue-arrow',below);
    badge.dataset.placement=below?'below':'above';
    badge.hidden=false;
-   const width=badge.offsetWidth,x=Math.max(6,Math.min(innerWidth-width-6,r.right-width));
+   const width=badge.offsetWidth,anchor=below?r.left+(r.width-width)/2:r.right-width;
+   const x=Math.max(6,Math.min(innerWidth-width-6,anchor));
    badge.style.left=x+'px';
    badge.style.top=(below?r.bottom+8:Math.max(5,top,r.top-badge.offsetHeight-7))+'px';
   }

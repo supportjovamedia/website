@@ -1,5 +1,7 @@
 "use client";
 
+import contactValidation from "../booking-demo/contact-validation.cjs";
+
 import { useRef, useState } from "react";
 import RecaptchaCheckbox from "./RecaptchaCheckbox";
 
@@ -156,11 +158,11 @@ export default function ContactForm() {
       <fieldset className="contact-fields" disabled={status === "sending"}>
         <input type="hidden" name="service" value="General enquiry" />
         <div className="two">
-          <label><span>First name <Required /></span><input name="firstName" autoComplete="given-name" required maxLength={50} placeholder="First name" {...fieldProps("firstName")} />{fieldError("firstName")}</label>
-          <label><span>Last name <Required /></span><input name="lastName" autoComplete="family-name" required maxLength={50} placeholder="Last name" {...fieldProps("lastName")} />{fieldError("lastName")}</label>
+          <label><span>First name <Required /></span><input name="firstName" pattern={contactValidation.namePattern} title={contactValidation.nameMessage} autoComplete="given-name" required maxLength={50} placeholder="First name" {...fieldProps("firstName")} />{fieldError("firstName")}</label>
+          <label><span>Last name <Required /></span><input name="lastName" pattern={contactValidation.namePattern} title={contactValidation.nameMessage} autoComplete="family-name" required maxLength={50} placeholder="Last name" {...fieldProps("lastName")} />{fieldError("lastName")}</label>
         </div>
         <div className="two">
-          <label><span>Email address <Required /></span><input name="email" type="email" autoComplete="email" required maxLength={200} placeholder="name@example.com" {...fieldProps("email")} />{fieldError("email")}</label>
+          <label><span>Email address <Required /></span><input name="email" type="email" pattern={contactValidation.emailPattern} title={contactValidation.emailMessage} autoComplete="email" required maxLength={200} placeholder="name@example.com" {...fieldProps("email")} />{fieldError("email")}</label>
           <label><span className="contact-phone-label">Contact number <span className="field-hint">(optional)</span></span><input name="phone" type="tel" autoComplete="tel" maxLength={40} placeholder="Your phone number" {...fieldProps("phone")} />{fieldError("phone")}</label>
         </div>
         <label><span>Message <Required /></span>
