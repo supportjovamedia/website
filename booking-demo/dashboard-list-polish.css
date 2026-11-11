@@ -88,3 +88,139 @@ html[data-workspace-theme] .shell.jb-reference .jg-quick-stat{display:grid;grid-
 html[data-workspace-theme] .shell.jb-reference .rf-dashboard-heading{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;min-height:0!important;height:auto!important;text-align:left!important}
 html[data-workspace-theme] .shell.jb-reference .rf-dashboard-heading>div:first-child{flex:1 1 220px!important;width:auto!important;height:auto!important;min-height:0!important;margin:0!important;text-align:left!important}
 html[data-workspace-theme] .shell.jb-reference .rf-dashboard-actions{height:auto!important;align-self:center!important}
+.shell.jb-reference .jg-setup-progress{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 28px;align-items:center;
+ padding:18px 22px;margin:0 0 18px;border:1px solid var(--theme-line,#dce4ea);
+ border-radius:16px;background:var(--theme-panel,#fff);color:var(--theme-heading,#182d3c)
+}
+.shell.jb-reference .jg-setup-progress h2{margin:0 0 10px;font-size:16px;line-height:1.25;letter-spacing:-.02em}
+.jg-setup-progress .jg-progress-track{display:flex;align-items:center;gap:12px;max-width:420px}
+.jg-setup-progress .jg-progress-track span{white-space:nowrap;font-size:12px;font-weight:600;color:var(--theme-muted,#536677)}
+.jg-setup-progress progress{flex:1;min-width:0;appearance:none;height:7px;border:0;border-radius:10px;overflow:hidden;background:var(--theme-inset,#eaf0f4);color:var(--theme-primary,#235789)}
+.jg-setup-progress progress::-webkit-progress-bar{background:var(--theme-inset,#eaf0f4)}
+.jg-setup-progress progress::-webkit-progress-value{background:var(--theme-primary,#235789);border-radius:10px}
+.jg-setup-progress progress::-moz-progress-bar{background:var(--theme-primary,#235789);border-radius:10px}
+.shell.jb-reference .jg-setup-progress .btn{min-height:40px;white-space:nowrap}
+.shell .jg-setup-target{outline:2px solid var(--theme-primary,#235789);outline-offset:4px}
+.shell[data-setup-active] .jg-setup-tip{border-inline-start:3px solid var(--theme-primary,#235789)}
+.shell[data-setup-active] .jg-setup-tip-actions .btn{white-space:nowrap}
+@media(max-width:600px){
+ .shell.jb-reference .jg-setup-progress{gap:12px;padding:14px 16px;border-radius:14px}
+ .shell.jb-reference .jg-setup-progress .btn{padding-inline:12px}
+ .jg-setup-progress .jg-progress-track{gap:8px}
+ .jg-setup-progress .jg-progress-track span{font-size:11px}
+}
+
+.jg-setup-progress-actions{display:flex;align-items:center;gap:8px}
+.shell.jb-reference .jg-setup-progress .jg-setup-skip{border-color:transparent;background:transparent;box-shadow:none;color:var(--theme-muted,#536677)}
+@media(max-width:500px){.shell.jb-reference .jg-setup-progress{grid-template-columns:1fr}.jg-setup-progress-actions{justify-content:flex-start}}
+
+.jg-setup-readiness{margin:0 0 16px}.jg-setup-readiness p{margin:6px 0}.jg-setup-readiness .btn{margin-top:6px}
+
+/* The guide has its own high contrast treatment so it reads as help, not page content. */
+.shell.jb-reference :is(.jg-setup-progress,.jg-setup-tip){
+ background:#171819;color:#fff;border:1px solid #383936;border-radius:16px
+}
+.shell.jb-reference .jg-setup-tip{padding:16px 18px}
+.shell.jb-reference .jg-setup-tip strong{color:#fff;font-size:17px}
+.shell.jb-reference :is(.jg-setup-position,.jg-setup-progress .jg-progress-track span){color:#ffe35b;font-weight:700}
+.shell.jb-reference .jg-setup-tip p{color:#dfdfd8}
+.shell.jb-reference .jg-setup-progress progress,
+.shell.jb-reference .jg-setup-progress progress::-webkit-progress-bar{background:#454541}
+.shell.jb-reference .jg-setup-progress progress::-webkit-progress-value{background:#f4d321}
+.shell.jb-reference .jg-setup-progress progress::-moz-progress-bar{background:#f4d321}
+html[data-workspace-theme] .shell.jb-reference :is(.jg-setup-progress,.jg-setup-tip) .btn{
+ min-height:42px;padding:9px 15px!important;border:1px solid #676761!important;
+ background:#222321!important;color:#fff!important;box-shadow:none!important
+}
+html[data-workspace-theme] .shell.jb-reference :is(.jg-setup-progress,.jg-setup-tip) .btn.primary{
+ background:#f4d321!important;color:#171819!important;border-color:#f4d321!important
+}
+.shell .jg-setup-target{outline:2px solid #f4d321;outline-offset:4px}
+.shell[data-setup-active] .jg-setup-target[aria-describedby="jg-setup-instruction"]{box-shadow:0 0 0 4px #171819,0 0 0 7px #f4d321!important;position:relative;z-index:1}
+.shell[data-setup-active] .jg-setup-obscured{filter:blur(2px);opacity:.48;pointer-events:none}
+@media(max-width:500px){
+ .shell.jb-reference .jg-setup-tip{padding:14px 16px}
+ .shell.jb-reference .jg-setup-tip-actions{gap:8px}
+}
+
+html[data-workspace-theme] .shell.jb-reference .jg-setup-progress h2{color:#fff!important}
+
+.jg-setup-cue{
+ position:fixed;z-index:230;padding:5px 9px;border:1px solid #8a7000;border-radius:5px;
+ background:#f4d321;color:#171819;font:700 12px/1.3 'Plus Jakarta Sans',system-ui,sans-serif;
+ white-space:nowrap;pointer-events:none;box-shadow:0 3px 8px #0003
+}
+.jg-setup-cue::before{
+ content:'';position:absolute;right:12px;bottom:-4px;width:7px;height:7px;
+ background:#f4d321;transform:rotate(45deg)
+}
+.jg-setup-cue[data-placement=below]::before{top:-4px;bottom:auto}
+html[data-workspace-theme] .shell .jg-setup-tip .jg-setup-jump{
+ min-height:36px;padding:0;border:0;border-radius:0;background:transparent!important;
+ color:#ffe35b!important;font-size:13px;font-weight:700;text-decoration:underline;
+ text-underline-offset:4px;box-shadow:none!important
+}
+.jg-setup-cue[hidden]{display:none}
+.jg-setup-pointed:not(.jg-setup-target,input,textarea){outline:2px solid #ac8700!important;outline-offset:3px}
+
+#modal-root .setup-welcome-modal{
+ width:min(100%,320px);padding:16px!important;border-radius:16px!important;
+ animation:fade .18s ease-out
+}
+#modal-root .setup-welcome-modal .modal-head{gap:8px;margin:0 0 4px}
+#modal-root .setup-welcome-modal .modal-head h2{font-size:18px!important;line-height:1.3!important;font-weight:700!important}
+#modal-root .setup-welcome-modal .modal-head button{flex:0 0 44px;width:44px;height:44px;border-radius:50%}
+#modal-root .setup-welcome-modal p{margin:0 0 14px;font-size:14px;line-height:1.45}
+#modal-root .setup-welcome-actions{display:flex;flex-wrap:wrap;gap:8px}
+#modal-root .setup-welcome-modal .setup-welcome-actions .btn{font-size:13px!important;padding:9px 14px!important}
+@media(prefers-reduced-motion:reduce){#modal-root .setup-welcome-modal{animation:none}}
+
+/* Make the current field distinct while keeping completed fields editable. */
+html[data-workspace-theme] .shell[data-setup-active=details] .bd-information input.jg-setup-field-done{
+ background:#f0f0ed!important;color:#343531!important
+}
+
+html[data-workspace-theme] .shell[data-setup-active=details] .bd-information .field:not(:focus-within):not(:has(.jg-setup-pointed)){
+ color:#5e605c!important
+}
+html[data-workspace-theme] .shell[data-setup-active=details] .bd-information .field :is(input,select,textarea):not(:focus):not(.jg-setup-pointed){
+ background:#e9eae7!important;border-color:#c5c7c1!important;color:#4d514c!important
+}
+.shell .bd-phone-field>.field{margin-bottom:4px!important}
+.shell .bd-phone-field>small{display:block;margin:0 0 12px;color:var(--theme-muted,#585a55);font-size:12px}
+.shell .jg-setup-jump[hidden]{display:none!important}
+
+.shell .workspace-header .jg-setup-line{
+ position:absolute;inset:auto 0 0;width:100%;height:3px;margin:0;
+ appearance:none;border:0;border-radius:0;background:#e7e7e2;color:#f4d321
+}
+.jg-setup-line::-webkit-progress-bar{background:#e7e7e2}
+.jg-setup-line::-webkit-progress-value{background:#f4d321}
+.jg-setup-line::-moz-progress-bar{background:#f4d321}
+html[data-workspace-theme] #app .shell[data-setup-active] .workspace-main{padding-bottom:162px!important}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip{
+ position:fixed;z-index:75;right:20px;bottom:16px;width:min(420px,calc(100% - 40px));
+ margin:0;padding:10px 12px;display:grid;gap:8px;border-radius:12px;box-shadow:0 8px 24px #0002
+}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip p{margin:0;font-size:12px;line-height:1.4}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions{gap:8px}
+html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions .btn{min-height:40px;padding:7px 12px!important}
+@media(max-width:800px){
+ html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip{
+  inset:auto 12px calc(var(--jg-mobile-nav-space,68px) + 8px);width:auto;max-width:420px;margin-inline:auto
+ }
+}
+
+#modal-root .modal-backdrop:has(.setup-welcome-modal){backdrop-filter:blur(3px)}
+/* Keep the current and keyboard-focused fields sharp during business setup. */
+.shell[data-setup-active=details]:has(.jg-setup-pointed) .bd-information
+ .field:not(:focus-within):not(:hover) :is(input,select,textarea):not(.jg-setup-pointed){
+ filter:blur(1.5px)
+}
+
+.jg-setup-cue-arrow{width:26px;height:26px;display:grid;place-items:center;padding:0;border-radius:50%;font-size:17px}
+.jg-setup-cue-arrow::before{display:none}
+.shell[data-setup-active=website] .bw-save-bar>button{display:none!important}
+
+.shell[data-setup-active=website]:has([data-form=bw-website][data-dirty=true]) .jg-setup-tip [data-action=setup-continue]{display:none!important}

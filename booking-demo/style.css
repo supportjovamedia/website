@@ -263,8 +263,8 @@ td .secondary{display:block;margin-top:3px;color:var(--muted);font-size:12.5px}
 .modal-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}
 .modal-head h2{margin:0}
 .modal-head button{padding:5px 11px;font-size:19px;line-height:1;min-height:36px;min-width:36px}
-#toast{position:fixed;bottom:calc(24px + var(--safe-b));left:50%;transform:translateX(-50%) translateY(120px);opacity:0;visibility:hidden;pointer-events:none;background:var(--ink);color:#fff;padding:13px 22px;border-radius:var(--r);font-size:14.5px;box-shadow:var(--sh-3);z-index:120;transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .2s,visibility .2s;max-width:min(92vw,520px);text-align:center}
-#toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
+#toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0;visibility:hidden;pointer-events:none;background:var(--ink);color:#fff;padding:13px 22px;border-radius:var(--r);font-size:14.5px;box-shadow:var(--sh-3);z-index:120;transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .2s,visibility .2s;max-width:min(92vw,520px);text-align:center}
+#toast.show{opacity:1;visibility:visible}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 
@@ -470,11 +470,10 @@ td.actions .small+.small{margin-left:4px}
   .footer{margin-top:30px}
   .stripe-card{padding:20px}
 
-  /* Modals become bottom sheets */
-  .modal-backdrop{align-items:flex-end;padding:0}
-  .modal,.modal.large{width:100%;max-height:92vh;max-height:92dvh;border-radius:16px 16px 0 0;padding:22px 18px calc(22px + var(--safe-b));animation:sheet .24s cubic-bezier(.2,.8,.2,1)}
+  .modal-backdrop{padding:16px}
+  .modal{width:min(100%,420px);border-radius:16px;padding:20px}
+  .modal.large{width:min(100%,680px)}
   .modal-head{margin-bottom:16px}
-  #toast{bottom:calc(16px + var(--safe-b));width:calc(100vw - 24px);max-width:none}
 }
 
 @media(max-width:760px){
@@ -703,9 +702,9 @@ body:has(.share-links-modal) #toast.jg-toast{z-index:99}
 .share-link-actions{list-style:none;margin:0;padding:0;border:1px solid var(--theme-line);border-radius:12px}
 .share-link-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 10px;font-size:14px}
 .share-link-row+li{border-top:1px solid var(--theme-line)}
-.share-link-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;background:var(--theme-soft);color:var(--theme-primary)}
+.share-link-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;background:#f4d321;color:#171819}
 .share-link-icon svg{width:19px;height:19px}
-html[data-workspace-theme] #modal-root .share-link-row button{min-width:78px;min-height:44px;padding:7px 12px;border:0;border-radius:8px;background:var(--theme-inset);color:var(--theme-heading);font-size:13px;font-weight:650;box-shadow:none}
+html[data-workspace-theme] #modal-root .share-link-row button{width:78px;min-width:78px;min-height:44px;white-space:nowrap;padding:7px 12px;border:0;border-radius:8px;background:var(--theme-inset);color:var(--theme-heading);font-size:13px;font-weight:650;box-shadow:none}
 html[data-workspace-theme] #modal-root .share-link-row button:is(:hover,[data-copy-state=copied]){background:var(--theme-soft);color:var(--theme-primary)}
 html[data-workspace-theme] :is(.shell button,#modal-root button,.jg-setup-tip .btn):active:not(:disabled){filter:brightness(.9)}
 .share-copy-help{margin:0 0 6px;font-size:13px}

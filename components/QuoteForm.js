@@ -1,4 +1,6 @@
 "use client";
+
+import contactValidation from "../booking-demo/contact-validation.cjs";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { productById, formatPrice } from "@/lib/products.mjs";
@@ -75,8 +77,8 @@ export default function QuoteForm({ product = "", website = "" }) {
     {selectedProduct && <section className="quote-package" aria-label="Selected product"><div><span className="quote-package-label">Selected product</span><h2>{selectedProduct.name}</h2><p>{selectedProduct.interval ? "" : "From "}{formatPrice(selectedProduct.amount)}{selectedProduct.interval ? " / month" : " · One-off build"}</p></div><Link href="/products/pricing">Change product</Link></section>}
     {product && <input type="hidden" name="product" value={product} />}
     <fieldset className="contact-fields" disabled={status === "sending"}>
-      <label><span>Name <Required /></span><input name="name" autoComplete="name" required maxLength={100} {...props("name")} />{feedback("name")}</label>
-      <label><span>Email address <Required /></span><input name="email" type="email" autoComplete="email" required maxLength={200} {...props("email")} />{feedback("email")}</label>
+      <label><span>Name <Required /></span><input name="name" pattern={contactValidation.namePattern} title={contactValidation.nameMessage} autoComplete="name" required maxLength={100} {...props("name")} />{feedback("name")}</label>
+      <label><span>Email address <Required /></span><input name="email" type="email" pattern={contactValidation.emailPattern} title={contactValidation.emailMessage} autoComplete="email" required maxLength={200} {...props("email")} />{feedback("email")}</label>
       <label><span>Phone number <span className="quote-optional">(optional)</span></span><input name="phone" type="tel" autoComplete="tel" maxLength={40} {...props("phone")} />{feedback("phone")}</label>
       <label><span>Service <Required /></span><span className="quote-select"><select name="service" required defaultValue={website || (product ? "service-0" : "")} {...props("service")}>
         <option value="">Select a service</option>

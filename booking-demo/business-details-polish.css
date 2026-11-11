@@ -104,3 +104,74 @@ html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-day-times input{
 html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;min-height:42px;margin:0 0 22px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
 html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-back{min-height:32px!important;padding:4px 0!important;margin:0 0 12px!important}
 html[data-workspace-theme] .shell.jb-reference .bd-settings .bd-heading :is(.df-save-bar,.se-save-bar){margin:0!important;padding:0!important;border:0!important;min-height:0!important;flex:none!important;background:transparent!important;box-shadow:none!important}
+@media(max-width:760px){
+ html[data-workspace-theme] .shell.jb-reference .bd-settings:not([data-business-view=home]) .bd-heading{
+  position:sticky;top:0;z-index:5;padding:12px 14px!important;
+  border:1px solid var(--theme-line,#dce4ea)!important;border-radius:14px;
+  background:var(--theme-panel,#fff)!important;box-shadow:0 4px 14px rgb(24 45 60 / 6%)!important
+ }
+}
+
+.bd-address-group{display:grid;gap:8px}
+.shell.jb-reference .bd-information .bd-address-group .field{margin-bottom:0!important}
+.bd-address-group .bd-mobile-service{margin:0;min-height:40px}
+.bd-required{color:#b42318;font-weight:800}
+.bd-optional{color:var(--theme-muted,#536677);font-size:.875em;font-weight:400}
+.shell[data-setup-active="details"] .bd-back,.shell[data-setup-active="hours"] .bd-back{display:none!important}
+
+/* Guided settings keep their title and Save directly below the workspace bar. */
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .workspace-main{
+ padding-top:0!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-settings .bd-heading{
+ position:sticky;top:0;z-index:6;flex-wrap:nowrap!important;gap:10px!important;
+ padding:12px 14px!important;margin:0 0 14px!important;border-radius:0 0 14px 14px;
+ background:#171819!important;color:#fff!important;box-shadow:0 4px 12px #17181920!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading h1{
+ flex:1 1 auto!important;color:#fff!important;font-size:clamp(18px,4vw,25px)!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading :is(.df-save-bar,.se-save-bar){
+ flex:0 0 auto!important;width:auto!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading [data-bd-save]{
+ flex:none;width:auto!important;min-width:68px;min-height:40px!important;padding:8px 14px!important;
+ border:1px solid #fff!important;border-radius:999px!important;background:#fff!important;color:#171819!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading [data-bd-save]:disabled{
+ opacity:.65
+}
+
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading :is(.df-save-status,.se-save-status){
+ position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;
+ padding:0!important;margin:0!important;clip-path:inset(50%)!important;overflow:hidden!important;white-space:nowrap!important
+}
+
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading h1{grid-area:1/1}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading .df-save-indicator{
+ grid-area:2/1;color:#f1f1ec!important;margin:0!important;min-height:0
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading .df-save-indicator:not(.is-dirty){display:none!important}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading .df-save-indicator-dot{background:#f4d321}
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading [data-bd-save]{
+ grid-area:1/2/span 2/3
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .workspace-main{padding-top:0!important}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .jg-personalise>.pp-heading{
+ position:sticky;top:0;z-index:6;margin:0 0 14px!important;padding:12px 14px!important;
+ border-radius:0 0 14px 14px;background:#171819!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .jg-personalise>.pp-heading h1{color:#fff!important}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .pp-heading [data-action=ws-save-personalise]{
+ border-color:#fff!important;background:#fff!important;color:#171819!important
+}
+
+html[data-workspace-theme] #app .shell:is([data-setup-active=details],[data-setup-active=hours]) .bd-heading :is(.jg-top-save-wrap,.df-save-bar,.se-save-bar){
+ display:contents!important
+}
+html[data-workspace-theme] #app .shell:is([data-setup-active=website],[data-setup-active=booking]) .pp-heading .df-save-indicator{
+ color:#f1f1ec!important
+}

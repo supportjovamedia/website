@@ -1,4 +1,6 @@
 "use client";
+
+import contactValidation from "../booking-demo/contact-validation.cjs";
 import { useId, useState } from "react";
 import Link from "next/link";
 import styles from "./GrowthSignup.module.css";
@@ -12,8 +14,8 @@ export default function GrowthSignup({ newsletter = false }) {
  <div className={newsletter?styles.newsletterCard:styles.contentGrid}>
  <div className={styles.signupCopy}>{newsletter&&<span className={styles.label}>Free Google visibility checklist</span>}<h2 id={`${id}-title`}>{newsletter?"Help customers find you.":"Is your digital presence costing you customers?"}</h2>{newsletter?<p>12 practical checks for your Google profile, website and booking link. <Link prefetch={false} className={styles.inlineGuide} href="/resources#google-guides">Browse free guides</Link></p>:<><p>Get our practical checklist covering your website, search, social, content and conversion.</p><p className={styles.detail}>20 practical checks. Five areas to review. A simple plan for what to improve next.</p></>}</div>
  <form method="post" onSubmit={submit} className={styles.form} aria-busy={state.busy} data-analytics-form={newsletter?"newsletter":"checklist"} data-clarity-mask="true">
- {!newsletter&&<div><label htmlFor={`${id}-name`}>First name <span>(optional)</span></label><input id={`${id}-name`} name="name" autoComplete="given-name" maxLength={80}/></div>}
- <div><label htmlFor={`${id}-email`}>Email address</label><input id={`${id}-email`} type="email" name="email" autoComplete="email" maxLength={200} required/></div>
+ {!newsletter&&<div><label htmlFor={`${id}-name`}>First name <span>(optional)</span></label><input id={`${id}-name`} name="name" pattern={contactValidation.namePattern} title={contactValidation.nameMessage} autoComplete="given-name" maxLength={80}/></div>}
+ <div><label htmlFor={`${id}-email`}>Email address</label><input id={`${id}-email`} type="email" pattern={contactValidation.emailPattern} title={contactValidation.emailMessage} name="email" autoComplete="email" maxLength={200} required/></div>
  <div className={styles.trap} aria-hidden="true"><label>Leave this blank<input name="website" tabIndex={-1} autoComplete="off"/></label></div>
  <button disabled={state.busy} type="submit">{state.busy?"Sending…":newsletter?"Send checklist":"Get the checklist"}</button>
  <p className={styles.privacy}>{newsletter?"Sign up for JovaMedia business growth tips and product updates. Confirm by email. Unsubscribe anytime.":"We’ll email your checklist. This does not sign you up for marketing."} <Link prefetch={false} href="/privacy-policy">Privacy policy</Link></p>

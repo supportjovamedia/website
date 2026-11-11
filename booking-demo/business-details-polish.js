@@ -1,7 +1,7 @@
 /* Business details sections share one mounted form and the existing save transaction. */
 (() => {
  'use strict';
- const titles={home:'Business details',information:'Business information',hours:'Working hours',rules:'Booking rules',booking:'Your booking page'};
+ const titles={home:'Business details',information:'Business information',hours:'Working hours',rules:'Booking rules'};
  let owner='',section='home',pending=false;
  function view(nextOwner,route){if(owner!==nextOwner){owner=nextOwner;section=route==='availability'?'hours':'home';}return section;}
  function updateHoursRow(row){
@@ -20,6 +20,7 @@
    const closedLabel=document.createElement('span');closedLabel.className='bd-day-closed';closedLabel.textContent='Closed';
    const times=document.createElement('div');times.className='bd-day-times';times.hidden=true;times.append(labels[0]);const separator=row.querySelector('.ws-time-to');if(separator)times.append(separator);times.append(labels[1]);
    row.append(toggle,range,closedLabel,times);updateHoursRow(row);
+   if(root.closest('[data-setup-active=hours]'))row.dispatchEvent(new Event('change',{bubbles:true}));
   });
  }
  function open(next,{focus=true}={}){
@@ -28,7 +29,7 @@
   owner=root.dataset.bdOwner;section=next;root.dataset.businessView=next;
   root.querySelectorAll('[data-bd-section]').forEach(panel=>panel.hidden=panel.dataset.bdSection!==next);
   const title=root.querySelector('[data-bd-title]');if(title.textContent!==titles[next])title.textContent=titles[next];
-  root.querySelector('.bd-back').hidden=next==='home';root.querySelector('[data-bd-save]').hidden=['home','booking'].includes(next);
+  root.querySelector('.bd-back').hidden=next==='home';root.querySelector('[data-bd-save]').hidden=next==='home';
   if(focus){title.tabIndex=-1;title.focus({preventScroll:true});const scroller=root.closest('.workspace-main');if(scroller)scroller.scrollTop=0;}
   return true;
  }
@@ -38,10 +39,25 @@
   const dayToggle=event.target.closest?.('[data-bd-day-toggle]');if(dayToggle){event.preventDefault();if(dayToggle.disabled)return;const row=dayToggle.closest('.ws-daily-row'),closed=row.querySelector('.ws-closed input');closed.checked=!closed.checked;closed.dispatchEvent(new Event('change',{bubbles:true}));updateHoursRow(row);return;}
   const hoursEdit=event.target.closest?.('[data-bd-hours-edit]');if(hoursEdit){event.preventDefault();const times=hoursEdit.closest('.ws-daily-row').querySelector('.bd-day-times');times.hidden=!times.hidden;hoursEdit.setAttribute('aria-expanded',String(!times.hidden));if(!times.hidden)times.querySelector('input[type=time]')?.focus();return;}
   const button=event.target.closest?.('[data-bd-open]');if(button){event.preventDefault();open(button.dataset.bdOpen);return;}
-  const copy=event.target.closest?.('[data-bd-copy]');if(!copy)return;event.preventDefault();const field=copy.closest('.bd-settings').querySelector('[data-bd-link]');
-  void(async()=>{try{await navigator.clipboard.writeText(field.value);copy.textContent='Copied';setTimeout(()=>{if(copy.isConnected)copy.textContent='Copy link';},1800);}catch{field.focus();field.select();}})();
  });
- document.addEventListener('change',event=>{const row=event.target.closest?.('.bd-settings .ws-daily-row');if(row?.dataset.bdHoursReady)updateHoursRow(row);});
+ document.addEventListener('input',event=>{
+  const field=event.target;
+  if(!field.matches?.('[data-bd-phone]')||event.isComposing)return;
+  const digits=field.value.replace(/\D/g,'');
+  if(digits===field.value)return;
+  const position=field.value.slice(0,field.selectionStart??field.value.length).replace(/\D/g,'').length;
+  field.value=digits;
+  field.setSelectionRange(position,position);
+ },true);
+ document.addEventListener('change',event=>{
+  const row=event.target.closest?.('.bd-settings .ws-daily-row');if(row?.dataset.bdHoursReady)updateHoursRow(row);
+  const mobile=event.target;if(mobile.name!=='mobileService'||mobile.form?.dataset.form!=='settings')return;
+  const address=mobile.form.elements.address;
+  address.required=!mobile.checked;
+  const label=address.closest('label');
+  label.querySelector('.bd-required').hidden=mobile.checked;
+  label.querySelector('.bd-optional').hidden=!mobile.checked;
+ });
  // Unfinished required details are revealed before the browser focuses the invalid input.
  document.addEventListener('invalid',event=>{const first=event.target.form?.querySelector('input:invalid,select:invalid,textarea:invalid');if(first&&first!==event.target)return;const panel=event.target.closest?.('.bd-settings [data-bd-section]');if(panel)open(panel.dataset.bdSection,{focus:false});},true);
  function start(){sync();new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});}

@@ -9,6 +9,7 @@
   more:'M5 12h.01M12 12h.01M19 12h.01',
   services:'m20 13-7 7a2 2 0 0 1-3 0l-7-7V3h10l7 7a2 2 0 0 1 0 3ZM7 7h.01',
   staff:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M20 21v-2a4 4 0 0 0-3-3.87M13 3.13a4 4 0 0 1 0 7.75M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+  'booking-setup':'M7 3v4M17 3v4M3 10h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z',
   scheduling:'m16 3 5 5-12 12-6 1 1-6L16 3ZM14 5l5 5',
   insights:'M4 20V10M10 20V4M16 20v-8M22 20H2',
   referrals:'M3 8h18v4H3zM5 12v9h14v-9M12 8v13M12 8H8a3 3 0 1 1 3-3l1 3ZM12 8h4a3 3 0 1 0-3-3l-1 3Z',
@@ -17,7 +18,7 @@
   settings:'M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1 1-3ZM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
  });
  const main=Object.freeze([['dashboard','Dashboard'],['bookings','Bookings'],['calendar','Calendar'],['customers','Customers']].map(Object.freeze));
- const more=Object.freeze([['settings','Business Details'],['services','Services'],['staff','Staff'],['scheduling','Website'],['insights','Insights'],['integrations','Integrations'],['referrals','Referrals']].map(Object.freeze));
+ const more=Object.freeze([['settings','Business Details'],['services','Services'],['staff','Staff'],['scheduling','Website'],['booking-setup','Booking page'],['insights','Insights'],['integrations','Integrations'],['referrals','Referrals']].map(Object.freeze));
  const icon=key=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+paths[key]+'"/></svg>';
  const allowed=(items,options)=>Array.isArray(options?.allowedRoutes)?items.filter(([route])=>options.allowedRoutes.includes(route)):items;
  function markup(active,options={}){
