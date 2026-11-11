@@ -147,13 +147,13 @@ html[data-workspace-theme] .shell.jb-reference :is(.jg-setup-progress,.jg-setup-
 html[data-workspace-theme] .shell.jb-reference .jg-setup-progress h2{color:#fff!important}
 
 .jg-setup-cue{
- position:fixed;z-index:230;padding:5px 9px;border:1px solid #444440;border-radius:5px;
- background:#222;color:#fff;font:600 12px/1.3 'Plus Jakarta Sans',system-ui,sans-serif;
+ position:fixed;z-index:230;padding:5px 9px;border:1px solid #8a7000;border-radius:5px;
+ background:#f4d321;color:#171819;font:700 12px/1.3 'Plus Jakarta Sans',system-ui,sans-serif;
  white-space:nowrap;pointer-events:none;box-shadow:0 3px 8px #0003
 }
 .jg-setup-cue::before{
  content:'';position:absolute;right:12px;bottom:-4px;width:7px;height:7px;
- background:#222;transform:rotate(45deg)
+ background:#f4d321;transform:rotate(45deg)
 }
 .jg-setup-cue[data-placement=below]::before{top:-4px;bottom:auto}
 html[data-workspace-theme] .shell .jg-setup-tip .jg-setup-jump{
@@ -216,4 +216,11 @@ html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip-actions 
  html[data-workspace-theme] #app .shell[data-setup-active] .jg-setup-tip{
   inset:auto 12px calc(var(--jg-mobile-nav-space,68px) + 8px);width:auto;max-width:420px;margin-inline:auto
  }
+}
+
+#modal-root .modal-backdrop:has(.setup-welcome-modal){backdrop-filter:blur(3px)}
+/* Keep the current and keyboard-focused fields sharp during business setup. */
+.shell[data-setup-active=details]:has(.jg-setup-pointed) .bd-information
+ .field:not(:focus-within):not(:hover) :is(input,select,textarea):not(.jg-setup-pointed){
+ filter:blur(1.5px)
 }
