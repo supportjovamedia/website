@@ -74,7 +74,7 @@
    calendar:button('setup-continue','Continue to customers','primary'),
    customers:button('setup-finish','Finish demo','primary')
   };
-  const skip=['details','hours','category','services'].includes(id)?button('setup-skip-step','Skip this step'):'';
+  const skip=['details','hours','category','services'].includes(id)?button('setup-skip-step','Skip this step','primary'):'';
   return '<aside class="jg-setup-tip" aria-label="Setup guide"><div><span class="jg-setup-position">Setup demo</span><strong>'+step.title+'</strong><p id="jg-setup-instruction">'+(id==='website'?section[1]:step.text)+'</p></div><div class="jg-setup-tip-actions">'+(actions[id]||'')+skip+button('setup-pause','Exit demo')+'</div></aside>';
  }
  function render(s,options={}){
@@ -88,11 +88,11 @@
  }
  // One quiet pointer follows the real control. It never blocks input or takes focus.
  function createCue(){
-  let badge,pointed,frame;
+  let badge,pointed,frame,typingTarget,typingTimer;
   const modalFields={
-   category:[['[name=name]','Type here'],['[name=categoryColor]','Choose a color'],['button.primary','Save']],
-   service:[['[name=name]','Type here'],['[name=categoryId]','Choose a category'],['[name=price]','Enter the price'],['[name=duration]','Enter the duration'],['[name=staffIds]','Choose who offers it'],['button.primary','Save']],
-   customer:[['[name=name]','Type here']]
+   category:[['[name=name]','Name the category'],['[name=categoryColor]','Choose a color'],['button.primary','Save']],
+   service:[['[name=name]','Name the service'],['[name=categoryId]','Choose a category'],['[name=price]','Enter the price'],['[name=duration]','Enter the duration'],['[name=staffIds]','Choose who offers it'],['button.primary','Save']],
+   customer:[['[name=name]','Enter the name']]
   };
   const find=(root,selector)=>Array.from(root?.querySelectorAll(selector)||[]).find(el=>{
    const r=el.getBoundingClientRect();
@@ -100,9 +100,32 @@
   });
   const enabled=el=>!!el&&!el.matches(':disabled');
   const asCue=(root,selector,label)=>[find(root,selector),label];
+  function complete(field){
+   if(!enabled(field)||field.matches(':invalid')||!field.value.trim())return false;
+   if(field.name==='address')return field.value.trim().length>=3;
+   if(field.name==='phone')return field.value.replace(/\D/g,'').length>=7;
+   return true;
+  }
+  function detailsCue(form){
+   const mobile=form?.elements.mobileService?.checked;
+   const fields=[
+    ['name','Enter business name'],
+    ['address','Enter your address'],
+    ['phone','Enter your phone'],
+    ['email','Enter your email']
+   ].map(([name,label])=>asCue(form,'[name='+name+']',label));
+   for(const [field] of fields)if(field){
+    field.classList.add('jg-setup-field');
+    field.classList.toggle('jg-setup-field-done',complete(field));
+   }
+   const required=fields.filter(([field])=>enabled(field)&&!(mobile&&field.name==='address'));
+   return required.find(([field])=>field===typingTarget&&field===document.activeElement)
+    ||required.find(([field])=>!complete(field))
+    ||asCue(form,'[data-bd-save]:not(:disabled)','Save details');
+  }
   function formCue(form,fields){
    const targets=fields.map(([selector,label])=>asCue(form,selector,label));
-   const current=targets.find(([el])=>enabled(el)&&el===document.activeElement);
+   const current=targets.find(([el])=>enabled(el)&&el===document.activeElement&&(el===typingTarget||el.matches('select,button,input[type=color],input[type=checkbox]')));
    if(current)return current;
    const missing=targets.find(([el])=>enabled(el)&&el.matches(':invalid'));
    if(missing)return missing;
@@ -122,12 +145,7 @@
     if((step==='category'&&id==='category')||(step==='services'&&id==='service')||(step==='customers'&&id==='customer'))return formCue(form,modalFields[id]);
     return [];
    }
-   if(step==='details'){
-    const form=shell.querySelector('[data-form=settings]'),fields=['name','address','mobileService','phone','email'].map(name=>asCue(form,'[name='+name+']',name==='mobileService'?'Mobile service?':'Type here'));
-    const current=fields.find(([el])=>enabled(el)&&el===document.activeElement);
-    const invalid=fields.find(([el])=>enabled(el)&&el.matches(':invalid'));
-    return current||invalid||asCue(form,'[data-bd-save]:not(:disabled)','Save');
-   }
+   if(step==='details')return detailsCue(shell.querySelector('[data-form=settings]'));
    if(step==='hours')return shell.querySelector('.bd-day-toggle[aria-checked=true]')&&find(shell,'[data-bd-save]:not(:disabled)')
     ?asCue(shell,'[data-bd-save]:not(:disabled)','Save')
     :asCue(shell,'.bd-day-toggle','Set opening hours');
@@ -166,6 +184,11 @@
   for(const event of ['focusin','input','change','click','scroll','animationend','toggle'])document.addEventListener(event,e=>{
    if(!pointed&&!document.querySelector('.shell[data-setup-active]'))return;
    if(e.type==='change'&&e.target.name==='categoryColor'&&e.target.form)e.target.form.dataset.setupColorSeen='true';
+   if(e.type==='input'&&e.target.matches('input:not([type=checkbox]):not([type=radio]),textarea')){
+    typingTarget=e.target;
+    clearTimeout(typingTimer);
+    typingTimer=setTimeout(()=>{typingTarget=null;refresh();},550);
+   }
    refresh();
   },true);
   window.addEventListener('resize',refresh);

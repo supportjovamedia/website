@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const app=await readFile(new URL('../app.js',import.meta.url),'utf8'),navigation=await readFile(new URL('../business-details-polish.js',import.meta.url),'utf8');
-const source=app.slice(app.indexOf('function businessSettings(){'),app.indexOf('async function persistBusinessDetails('));
+const source=app.slice(app.indexOf('function businessSettings('),app.indexOf('async function persistBusinessDetails('));
 
 test('Business details keeps one real save form and only supported settings fields',()=>{
  const salon={id:'fictional',name:'Fictional Studio',about:'Owner description',color:'#242424',bookings:[],address:'Address',phone:'0123456789',email:'owner@example.test'};
