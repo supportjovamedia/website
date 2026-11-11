@@ -18,6 +18,15 @@
     { key: 'capital', label: 'One capital letter', test: p => /[A-Z]/.test(p) },
     { key: 'number', label: 'One number', test: p => /[0-9]/.test(p) }
   ];
+  function passwordReuseError(data) {
+    const code = data?.error_code || data?.code;
+    const message = data?.msg || data?.message || '';
+    const legacy = /\bsame password\b|\bpassword (?:should|must) be different\b|\b(?:same as|different from) (?:the |your )?(?:old|current|previous) password\b/i;
+    return code === 'same_password' || (!code && legacy.test(message))
+      ? 'Choose a password different from your current password.'
+      : '';
+  }
+
   const TRIAL_MS = 3 * 86400000;
   const RESET_MS = 30 * 60000;
   const MAX_ATTEMPTS = 5, LOCK_MS = 60000;
@@ -469,7 +478,7 @@
         const required=this.needsOwnerPassword();if(required&&(passwordIssues(values.password).length||String(values.password||'').length>72))return {ok:false,message:'Use at least 8 characters, a capital letter and a number.'};
         const {password,...profile}=values,result=await this.onboardingProgress('profile',profile);if(!result.ok||!required)return result;
         const t=await token();if(!t)return authFailure();const expected=stamp(),changed=await call('/auth/v1/user',{method:'PUT',token:t,owner:true,body:{password,data:{email_first_profile_complete:true}}});
-        if(!current(expected))return stale();if(!changed.ok||changed.data?.id!==load()?.user?.id)return {ok:false,message:'Your password could not be saved. Please try again.'};keep({...load(),user:changed.data});return result;
+        if(!current(expected))return stale();if(!changed.ok||changed.data?.id!==load()?.user?.id)return {ok:false,message:passwordReuseError(changed.data)||'Your password could not be saved. Please try again.'};keep({...load(),user:changed.data});return result;
       },
       async registerOwnerProfile({email,password,firstName,lastName,mobile='',country}) {
         const expected=intent(),first=String(firstName||'').trim(),last=String(lastName||'').trim(),e=String(email||'').trim(),phone=String(mobile||'').trim();
@@ -575,7 +584,7 @@
         if (r.network) return { ok: false, message: NET };
         if(r.status===401||r.status===403){clearRecovery(expected.raw);return expiredRecovery();}
         if(r.status===429||r.status>=500)return {ok:false,reason:'unavailable',retryable:true,message:'Password reset is temporarily unavailable. Try again shortly.'};
-        if (!r.ok) return { ok: false, message: /same|different/i.test((r.data && (r.data.msg || r.data.message)) || '') ? 'Choose a password you haven’t used before.' : 'Your password could not be updated. Try again, or request a new reset link.' };
+        if (!r.ok) return { ok: false, message: passwordReuseError(r.data) || 'Your password could not be updated. Try again, or request a new reset link.' };
         clearRecovery(expected.raw);
         return { ok: true };
       },
@@ -825,5 +834,5 @@
     return window.JOVA_SUPABASE ? createRemote(getState, save, local) : local;
   };
 
-  window.JovaAccounts = { create: makeDirectory, normEmail, passwordIssues, PASSWORD_RULES, TRIAL_MS };
+  window.JovaAccounts = { create: makeDirectory, normEmail, passwordIssues, passwordReuseError, PASSWORD_RULES, TRIAL_MS };
 })();

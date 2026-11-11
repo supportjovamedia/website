@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const require=createRequire(import.meta.url),{PGlite}=require('@electric-sql/pglite');
 const sql=await readFile(new URL('../supabase/migrations/20261109115800_owner_onboarding_progress.sql',import.meta.url),'utf8');
 const categorySql=await readFile(new URL('../supabase/migrations/20261109151245_simple_primary_service.sql',import.meta.url),'utf8');
-const accountsSource=await readFile(new URL('../accounts.js',import.meta.url),'utf8'),controllerSource=await readFile(new URL('../owner-onboarding.js',import.meta.url),'utf8');
+const accountsSource=await readFile(new URL('../accounts.js',import.meta.url),'utf8'),controllerSource=(await readFile(new URL('../public-links.js',import.meta.url),'utf8'))+'\n'+await readFile(new URL('../owner-onboarding.js',import.meta.url),'utf8');
 const owner='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002',business='20000000-0000-4000-8000-000000000001';
 test('submitted onboarding is private, resumable and cannot grant a paid plan or skip verification',async()=>{
  const db=new PGlite();try{

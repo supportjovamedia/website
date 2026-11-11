@@ -31,7 +31,7 @@ test('published opted-in website renders crawlable business content and the exis
   const html = await response.text();
   assert.match(html, /<title>Fictional &lt;Studio&gt;<\/title>/);
   assert.match(html, /rel="canonical" href="https:\/\/www\.jovamedia\.com\/book\/fictional-studio"/);
-  assert.match(html, /href="https:\/\/fictional-studio\.jovamedia\.com\/book"/);
+  assert.match(html, /href="https:\/\/www\.jovamedia\.com\/book\/fictional-studio\?view=booking"/);
   assert.match(html, /href="#services"/);
   assert.match(html, /id="services"/);
   assert.match(html, /Haircut/);
