@@ -510,9 +510,9 @@ function dashboardSetupBusiness(s,{confirmedServices=false}={}){
 function dashboardSetupOptions(s){
  return {bookable:service=>eligible(s,service).length>0,hasHours:Array.from({length:7},(_,i)=>addDays(today(),i)).some(date=>(s.services||[]).some(service=>eligible(s,service).some(member=>!JovaSchedule.hoursFor(s,member,date).closed)))};
 }
-function dashboardSetupStep(){
+function dashboardSetupStep(currentRoute=route()){
  const step=new URLSearchParams(location.hash.split('?')[1]).get('setup');
- return ({services:'services',availability:'hours',settings:'details',scheduling:'website',dashboard:'share'}[route()]===step)?step:'';
+ return ({services:'services',availability:'hours',settings:'details',scheduling:'website',dashboard:'share'}[currentRoute]===step)?step:'';
 }
 function openSetupWebsite(){
  workspace.click('ws-personalise-section',{dataset:{section:'website'}});
@@ -1009,6 +1009,7 @@ function chatSend(text){chat.push({role:'user',text});const s=salon();const svc=
 document.addEventListener('click',async e=>{const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id,s=salon();if(a==='list-page'){if(window.JovaListPages?.move(el.dataset.list,Number(el.dataset.direction))){render();document.querySelector('.workspace-main')?.scrollTo({top:0});}return;}if(teamMode()&&(/^delete-/.test(a)||staffAction(a)||a==='setup-service'||/^(add|edit)-(service|category)/.test(a))){e.preventDefault();e.stopImmediatePropagation();toast('Only the business owner can do that.');return;}
  if(isLive(s)&&(a.startsWith('onboard-')||a==='deposit'||a==='portal')){e.preventDefault();closeModal();go('payments');return;}
  if(signedIn()&&billingRestricted()&&!['signout','owner-funnel-reject','cookies','sb-reload','sb-pay-now','sb-select-trial-plan','sb-trial-plans','sb-cadence','close-modal'].includes(a)){go('billing');return;}
+ if(a==='close-modal'){closeModal();return;}
  if(a==='start-setup-tutorial'){startSetupTutorial();return;}
  if(a==='setup-website'){openSetupWebsite();return;}
  if(a==='workspace-more'){modal('More',window.JovaMobileNavigation.moreContent(teamMode()?{allowedRoutes:TEAM_ROUTES}:{}));return;}
@@ -1026,7 +1027,7 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
   ];
   const buttons=links.map(({id,label,icon})=>`<li class="share-link-row"><span class="share-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icon}"/></svg></span><strong>${label}</strong><button type="button" class="btn" data-action="copy-link" data-target="${id}" aria-label="Copy ${id} link">Copy</button></li>`).join('');
   const fields=links.map(({id,url})=>'<label class="field">'+(id==='website'?'Website':'Booking')+' link<input id="share-'+id+'" readonly value="'+esc(url)+'"></label>').join('');
-  modal('Share your links','<div class="share-links"><ul class="share-link-actions">'+buttons+'</ul><details><summary>See more</summary>'+fields+'</details></div>','share-links-modal');
+  modal('Share your links','<div class="share-links"><ul class="share-link-actions">'+buttons+'</ul><p class="db-sr-only" role="status" data-share-status></p><details><summary>See more</summary><p class="share-copy-help" hidden>Select and copy the link below.</p>'+fields+'</details></div>','share-links-modal');
   return;
  }
  if(a==='workspace-appearance'){const current=JovaWorkspaceThemes.resolve(s.workspace?.appearance);modal('Your workspace theme',`<p class="wt-intro">Only your dashboard uses this theme.</p><form data-form="workspace-appearance">${JovaWorkspaceThemes.choices(current.id)}<div class="error" role="alert"></div><div class="form-footer"><button class="btn primary">Apply theme</button></div></form>`,'wt-picker-modal');return;}
@@ -1040,7 +1041,7 @@ document.addEventListener('click',async e=>{const el=e.target.closest('[data-act
  if(a==='signout'){clearTimeout(accessRefreshTimer);accessRefreshTimer=null;await flushSync();signOut();onbSet(null);if(dir.remote)purgeLive();if(dir.logout)dir.logout();closeModal();go('home');toast('You’ve been logged out.');return;}
  if(a==='toggle-password'){const inp=el.parentElement.querySelector('input'),show=inp.type==='password';inp.type=show?'text':'password';el.textContent=show?'Hide':'Show';el.setAttribute('aria-label',show?'Hide password':'Show password');return;}
  if(a==='use-slug'){const f=el.closest('form'),i=f.elements.slug;i.value=el.dataset.slug;f.dataset.slugTouched='1';i.dispatchEvent(new Event('input',{bubbles:true}));i.focus();return;}
- if(a==='screens')screens();else if(a==='close-modal')closeModal();else if(handleCrud(a,id,el,s)){}
+ if(a==='screens')screens();else if(handleCrud(a,id,el,s)){}
 
 
  else if(a==='reset')modal('Reset demo?',`<p>This clears only JovaBook's local demo records and restores the example salon. It does not affect your real website, Stripe or other browser data.</p><button class="danger" data-action="reset-confirm">Reset local demonstration</button>`);
@@ -1086,10 +1087,31 @@ else if(a==='restart-trial'){s.subscription.status='trialing';s.subscription.tri
  else if(a==='email')emailPreview(id);
  else if(a==='chat-prompt')chatSend(el.dataset.value);
  else if(a==='copy-link'){
-  const input=document.getElementById('share-'+el.dataset.target);
-  if(!input||!el.closest('.share-links')?.contains(input))return;
-  try{await navigator.clipboard.writeText(input.value);toast('Link copied.');}
-  catch{input.closest('details').open=true;input.focus();input.select();}
+  const links=el.closest('.share-links'),id=el.dataset.target,input=document.getElementById('share-'+id);
+  if(!input||!links?.contains(input)||el.dataset.copyState==='pending')return;
+  const status=links.querySelector('[data-share-status]'),help=links.querySelector('.share-copy-help');
+  el.dataset.copyState='pending';
+  el.textContent='Copying…';
+  el.setAttribute('aria-label','Copying '+id+' link');
+  status.textContent='';
+  try{
+   await navigator.clipboard.writeText(input.value);
+   if(!el.isConnected)return;
+   el.dataset.copyState='copied';
+   el.textContent='Copied';
+   el.setAttribute('aria-label','Copied '+id+' link');
+   help.hidden=true;
+   status.textContent=id==='website'?'Website link copied.':'Booking link copied.';
+  }catch{
+   if(!el.isConnected)return;
+   delete el.dataset.copyState;
+   el.textContent='Copy';
+   el.setAttribute('aria-label','Copy '+id+' link');
+   input.closest('details').open=true;
+   help.hidden=false;
+   input.focus();
+   input.select();
+  }
  }
  else if(a==='export'){const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=s.slug+'-demo-export.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Demo salon export downloaded.');}
 });
@@ -1230,7 +1252,9 @@ function invalidateOwnerView(){
 }
 async function restoreOwnerSession(){
  if(customerScope()||pubMode()||/^(?:book|manage|website|salon|customer)(?:\/|$)/.test(route()))return;
- restoringOwnerSession=true;ownerRestoreRoute=OWNER_ROUTES.includes(route().split('/')[0])?route():'dashboard';
+ const currentRoute=route(),setupStep=dashboardSetupStep(currentRoute);
+ restoringOwnerSession=true;
+ ownerRestoreRoute=OWNER_ROUTES.includes(currentRoute.split('/')[0])?currentRoute+(setupStep?'?setup='+setupStep:''):'dashboard';
  loadingOwner=true;ownerLoadError='';
  if(!OWNER_ROUTES.includes(route().split('/')[0]))history.replaceState(null,'',location.pathname+location.search+'#dashboard');
  render();await reloadOwner();

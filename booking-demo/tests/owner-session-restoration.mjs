@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const source=(await readFile(new URL('../app.js',import.meta.url),'utf8')).replaceAll('\r\n','\n');
 const restoreSource=source.slice(source.indexOf('async function restoreOwnerSession(){'),source.indexOf("window.addEventListener('storage',e=>{"));
+const setupStepSource=source.slice(source.indexOf('function dashboardSetupStep('),source.indexOf('function openSetupWebsite('));
 const signupRequiredSource=source.match(/^const ownerSignupRequired=.*;$/m)?.[0];if(!signupRequiredSource)throw Error('Owner signup routing helper missing');
 const storageStart=source.indexOf("window.addEventListener('storage',e=>{");
 const storageSource=source.slice(storageStart,source.indexOf('(async function boot(){',storageStart));
@@ -11,10 +12,10 @@ const bootSource=source.slice(source.indexOf('(async function boot(){'),source.i
 function harness({hash='#login',result={ok:true,salon:{id:'business-a'}},publicPage=false,customerPage=false,load,google}={}){
  let signed=false,owner='owner-a',hasAuth=true;const events=[],listeners={};
  const location={pathname:'/',search:'',hash};
- const env={ownerIdle:null,console,Promise,Date,setTimeout,clearTimeout,KEY:'jovabook-essential-demo-v2',TABLES:[],snap:{},salonSnap:{},syncDirty:false,syncBlocked:false,syncTimer:null,accessRefreshTimer:null,verifiedOwnerIdentity:null,observedOwnerIdentity:owner,ownerAccessState:null,ownerLoadError:'',loadingOwner:false,restoringOwnerSession:false,ownerRestoreRoute:'',ownerRestoreAttempt:0,liveLoadSequence:0,state:{active:'old-business'},location,window:{addEventListener:(name,handler)=>listeners[name]=handler},
+ const env={ownerIdle:null,console,Promise,Date,URLSearchParams,setTimeout,clearTimeout,KEY:'jovabook-essential-demo-v2',TABLES:[],snap:{},salonSnap:{},syncDirty:false,syncBlocked:false,syncTimer:null,accessRefreshTimer:null,verifiedOwnerIdentity:null,observedOwnerIdentity:owner,ownerAccessState:null,ownerLoadError:'',loadingOwner:false,restoringOwnerSession:false,ownerRestoreRoute:'',ownerRestoreAttempt:0,liveLoadSequence:0,state:{active:'old-business'},location,window:{addEventListener:(name,handler)=>listeners[name]=handler},
   dir:{remote:true,hasSession:()=>hasAuth,sessionIdentity:()=>owner,hasPendingOwnerSessionAdoption:()=>false},
-  OWNER_ROUTES:['dashboard','calendar','bookings','customers','billing'],
-  route:()=>location.hash.slice(1)||'login',signedIn:()=>signed,signIn:()=>{signed=true;events.push('signIn');},signOut:()=>signed=false,
+  OWNER_ROUTES:['dashboard','calendar','bookings','customers','billing','availability'],
+  route:()=>location.hash.slice(1).split('?')[0]||'login',signedIn:()=>signed,signIn:()=>{signed=true;events.push('signIn');},signOut:()=>signed=false,
   customerScope:()=>customerPage,pubMode:()=>publicPage,salon:()=>({id:env.state.active}),isLive:()=>false,onbGet:()=>null,
   purgeLive:()=>events.push('purge'),render:()=>events.push({type:'render',signed,loading:env.loadingOwner,restoring:env.restoringOwnerSession,error:env.ownerLoadError}),
   billingRestricted:()=>false,history:{replaceState:(_a,_b,url)=>{location.hash=url.includes('#')?'#'+url.split('#')[1]:'';}},
@@ -23,7 +24,7 @@ function harness({hash='#login',result={ok:true,salon:{id:'business-a'}},publicP
   loadLive:async()=>{env.liveLoadSequence++;events.push('verify');const response=load?await load():result;if(response.ok){env.verifiedOwnerIdentity=owner;env.ownerAccessState=response.access||{access:'active',business:{status:'active'}};}return response;}
  };
  if(google)env.window.JovaGoogleAuth={callback:async()=>google};
- const ctx=vm.createContext(env);vm.runInContext(signupRequiredSource+'\n'+restoreSource,ctx);
+ const ctx=vm.createContext(env);vm.runInContext(signupRequiredSource+'\n'+setupStepSource+'\n'+restoreSource,ctx);
  return {env,events,listeners,runBoot:()=>vm.runInContext(bootSource,ctx),installStorage:()=>vm.runInContext(storageSource,ctx),restore:()=>env.restoreOwnerSession(),owner:value=>owner=value,auth:value=>hasAuth=value,get signed(){return signed;}};
 }
 test('fresh persisted session with no tab marker shows loader and verifies before signIn',async()=>{
@@ -34,7 +35,9 @@ test('fresh persisted session with no tab marker shows loader and verifies befor
  assert.equal(h.signed,true);assert.equal(h.env.state.active,'business-a');assert(h.events.indexOf('verify')<h.events.indexOf('signIn'));
 });
 test('saved owner deep link survives successful re-verification',async()=>{
- const h=harness({hash:'#bookings'});await h.runBoot();assert.equal(h.env.location.hash,'#bookings');assert.equal(h.signed,true);
+ for(const [hash,expected] of [['#bookings','#bookings'],['#availability?setup=hours','#availability?setup=hours'],['#availability?setup=website','#availability']]){
+  const h=harness({hash});await h.runBoot();assert.equal(h.env.location.hash,expected);assert.equal(h.signed,true);
+ }
 });
 test('managed incomplete signup restores to its payment/setup gate before billing restriction',async()=>{
  const access={access:'billing_only',business:{status:'setup'},onboarding_required:true,signup_payment:{managed_signup:true,payment_required:true,paid_verified:false}};
