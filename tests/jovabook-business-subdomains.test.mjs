@@ -25,3 +25,20 @@ test('public addresses cannot switch business through a query and canonical link
  const {window}=runtime('https://arooj.jovamedia.com/?salon=another-studio');assert.equal(window.JovaPublicLinks.resolve(window.location).slug,'');assert.equal(window.JovaPublicLinks.booking('arooj'),'https://arooj.jovamedia.com/book');
  const legacy=runtime('https://book.jovamedia.com/arooj/account/login');vm.runInNewContext(await readFile(new URL('../booking-demo/public-entry.js',import.meta.url),'utf8'),{window:legacy.window,URL,URLSearchParams});assert.deepEqual(legacy.redirects,['https://arooj.jovamedia.com/account/login']);
 });
+
+test('old website addresses forward to the main site while old booking links keep their flow', async () => {
+ const entry = await readFile(new URL('../booking-demo/public-entry.js', import.meta.url), 'utf8');
+ for (const [address, expected] of [
+  ['https://book.jovamedia.com/arooj', ['https://www.jovamedia.com/book/arooj']],
+  ['https://arooj.jovamedia.com/about', ['https://www.jovamedia.com/book/arooj#about']],
+  ['https://arooj.jovamedia.com/#website/contact', ['https://www.jovamedia.com/book/arooj#contact']],
+  ['https://book.jovamedia.com/pricing', ['https://www.jovamedia.com/book/pricing']],
+  ['https://book.jovamedia.com/arooj#book/service', ['https://arooj.jovamedia.com/book']],
+  ['https://arooj.jovamedia.com/book', []],
+  ['https://arooj.jovamedia.com/?salon=other', []],
+ ]) {
+  const { window, redirects } = runtime(address);
+  vm.runInNewContext(entry, { window, URL, URLSearchParams });
+  assert.deepEqual(redirects, expected, address);
+ }
+});

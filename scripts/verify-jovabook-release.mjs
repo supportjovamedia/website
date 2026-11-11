@@ -12,7 +12,8 @@ export const RELEASE_TARGETS=Object.freeze({
  main:{host:'www.jovamedia.com',projectId:'prj_SMgNZdv77o7zdKf3Fb7Yv7MVAyvE'}
 });
 const CRITICAL_ASSETS=Object.freeze([
- 'config.js','accounts.js','google-auth.js','app.js','business-locale.js','workspace.js',
+ 'config.js','accounts.js','google-auth.js','app.js','public-links.js','public-entry.js',
+ 'business-website.cjs','business-locale.js','workspace.js',
  'workspace-polish.css','mobile-navigation.js','mobile-navigation.css','calendar-workspace.js',
  'calendar-polish.css','dashboard-date-picker.js','date-picker-polish.css','booking-filters.js',
  'booking-filters.css','booking-list-polish.css','dirty-forms.js','dirty-forms.css',

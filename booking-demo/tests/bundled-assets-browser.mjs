@@ -102,10 +102,9 @@ try{
    const warm=await phase(page,'operator warm reload',async()=>{await page.reload();await ready();});assert(warm.static<=1);assert.equal(warm.supabase,5);assert.equal(warm.vercelApi,0);
    const hard=await phase(page,'operator hard reload',()=>hardReload(ctx,page,ready));assert(hard.static<=8);assert.equal(hard.supabase,5);assert.equal(hard.vercelApi,0);
    const refresh=await phase(page,'operator in-page Overview Refresh',async()=>{await page.getByRole('button',{name:'Refresh',exact:true}).click();await ready();});assert.equal(refresh.static,0);assert.equal(refresh.supabase,5);assert.equal(refresh.vercelApi,0);
-   const notifications=await phase(page,'operator Notifications navigation',async()=>{await page.locator('nav [data-action=notifications]').click();await expect(page.getByRole('heading',{name:'Notifications',exact:true,level:1})).toBeVisible();});assert.equal(notifications.static,0);assert.equal(notifications.supabase,2);assert.equal(notifications.vercelApi,0);
-   const notificationRefresh=await phase(page,'operator Notifications Refresh',async()=>{await page.getByRole('button',{name:'Refresh',exact:true}).click();await expect(page.getByRole('heading',{name:'Notifications',exact:true,level:1})).toBeVisible();});assert.equal(notificationRefresh.static,0);assert.equal(notificationRefresh.supabase,2);assert.equal(notificationRefresh.vercelApi,0);
+   await expect(page.locator('nav [data-action=notifications]')).toHaveCount(0);
    const idle=await phase(page,'operator idle focus and visibility',()=>page.evaluate(()=>{window.dispatchEvent(new Event('focus'));window.dispatchEvent(new Event('pageshow'));document.dispatchEvent(new Event('visibilitychange'));}));assert.equal(idle.total,0);
-   await page.screenshot({path:path.join(output,'operator-notifications.png'),fullPage:true});
+   await page.screenshot({path:path.join(output,'operator-overview.png'),fullPage:true});
   }finally{await ctx.close();}
  });
  assert.deepEqual(errors,[],'Built pages must not throw runtime errors');assert.deepEqual(external,[],'All browser requests must stay inside the local fixture');assert(requests.length<300);

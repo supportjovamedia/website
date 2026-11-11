@@ -40,5 +40,13 @@
     url.hash = hash;
     return url.href;
   }
-  window.JovaPublicLinks = Object.freeze({resolve, validSlug, hostBusiness, addressLabel:slug=>{const value=build(slug,'website',{location:{origin:'https://book.jovamedia.com'}});return value?new URL(value).hostname:'';}, booking:(slug,{step='service',...options}={})=>['service','time','choice','details','payment','confirmation'].includes(step)?build(slug,'book/'+step,options):'', account:(slug,{page='bookings',...options}={})=>['login','register','forgot','reset','bookings','profile','payments'].includes(page)?build(slug,'customer/'+(page==='payments'?'bookings':page),options):'', website:(slug, {page = 'home', ...options} = {})=>['home','about','contact'].includes(page) ? build(slug, 'website' + (page === 'home' ? '' : '/' + page), options) : ''});
+  function website(slug, {page = 'home', ...options} = {}) {
+    if (!['home','about','contact'].includes(page)) return '';
+    const current = options.location || window.location;
+    if (!options.demo && cleanSlug(slug) && /^https:\/\/(?:[a-z0-9-]+\.)?jovamedia\.com$/.test(current.origin || '')) {
+      return 'https://www.jovamedia.com/book/' + slug + (page === 'home' ? '' : '#' + page);
+    }
+    return build(slug, 'website' + (page === 'home' ? '' : '/' + page), options);
+  }
+  window.JovaPublicLinks = Object.freeze({resolve, validSlug, hostBusiness, addressLabel:slug=>{const value=build(slug,'website',{location:{origin:'https://book.jovamedia.com'}});return value?new URL(value).hostname:'';}, booking:(slug,{step='service',...options}={})=>['service','time','choice','details','payment','confirmation'].includes(step)?build(slug,'book/'+step,options):'', account:(slug,{page='bookings',...options}={})=>['login','register','forgot','reset','bookings','profile','payments'].includes(page)?build(slug,'customer/'+(page==='payments'?'bookings':page),options):'', website});
 })();

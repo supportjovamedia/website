@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const source=await readFile(new URL('../owner-tools.js',import.meta.url),'utf8');
-const scheduling=await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8');
+const scheduling=await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8');
 const workspace=await readFile(new URL('../workspace.js',import.meta.url),'utf8');
 const reference=workspace.slice(workspace.indexOf('/* Reference-led owner presentation.'),workspace.indexOf('/* vanilla-colorful'));
 const plain=value=>JSON.parse(JSON.stringify(value));

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const context = {window: {}};
-vm.runInNewContext(await readFile(new URL('../scheduling-core.js', import.meta.url), 'utf8'), context);
+vm.runInNewContext(await readFile(new URL('../scheduling-core.cjs', import.meta.url), 'utf8'), context);
 const core = context.window.JovaSchedule;
 const plain = value => JSON.parse(JSON.stringify(value));
 const hours = {start:'09:00', end:'18:00', days:[1,2,3,4,5]};

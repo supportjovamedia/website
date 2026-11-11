@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 
 const context={window:{},Date,Intl};
-vm.runInNewContext(await readFile(new URL('../scheduling-core.js',import.meta.url),'utf8'),context);
+vm.runInNewContext(await readFile(new URL('../scheduling-core.cjs',import.meta.url),'utf8'),context);
 context.JovaSchedule=context.window.JovaSchedule;
 vm.runInNewContext(await readFile(new URL('../calendar-workspace.js',import.meta.url),'utf8'),context);
 const calendar=context.window.JovaCalendar;

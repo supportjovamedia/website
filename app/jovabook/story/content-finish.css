@@ -34,21 +34,20 @@ body .jovabook-story #jova-story-concept .local-booking .ws-booking,body .jovabo
 body .jovabook-story #jova-story-concept #booking-tools{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#f1f2f2!important}
 body .jovabook-story #jova-story-concept #ex-websites{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#fff!important}
 body .jovabook-story #jova-story-concept .content-band{box-sizing:border-box;width:100%;max-width:none;padding-block:48px;border-top:1px solid #d9dddd}
-body .jovabook-story #jova-story-concept .content-band-stories,
-body .jovabook-story #jova-story-concept .content-band-support{background:#f1f2f2}
-body .jovabook-story #jova-story-concept .content-band-referrals{background:#fff}
+body .jovabook-story #jova-story-concept :is(.content-band-sharing,.content-band-referrals){background:#f1f2f2}
+body .jovabook-story #jova-story-concept :is(.content-band-stories,.content-band-support){background:#fff}
 body .jovabook-story #jova-story-concept .content-band>:is(.cs-stories,#ex-referral,#ex-support){padding-block:0!important;margin-block:0!important;background:transparent!important}
-body .jovabook-story #jova-story-concept .nv-section-band:has(>#ex-themes){border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body .jovabook-story #jova-story-concept .nv-section-band:has(>#ex-themes){border-top:1px solid #d9dddd;background:#fff!important}
 body .jovabook-story #jova-story-concept #ex-themes{--story-top:48px;--story-bottom:48px;padding-block:48px!important;background:transparent!important}
-body .jovabook-story #jova-story-concept #ex-compare{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#fff!important}
-body .jovabook-story #jova-story-concept .nv-section-band:has(>#ex-pricing){border-top:1px solid #d9dddd;background:#fff!important}
+body .jovabook-story #jova-story-concept #ex-compare{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body .jovabook-story #jova-story-concept .nv-section-band:has(>#ex-pricing){border-top:1px solid #d9dddd;background:#f1f2f2!important}
 body .jovabook-story #jova-story-concept #ex-pricing{--story-top:48px;--story-bottom:48px;padding-block:48px!important;background:transparent!important}
-body .jovabook-story #jova-story-concept #ex-faq{padding-block:48px!important;border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body .jovabook-story #jova-story-concept #ex-faq{padding-block:48px!important;border-top:1px solid #d9dddd;background:#fff!important}
 body .jovabook-story #jova-story-concept #ex-faq :is(.ws,.ws-original-faq,#faq){background:transparent!important}
 body .jovabook-story #jova-story-concept #ex-faq .ws-original-faq{width:calc(100% - 80px);max-width:1160px;margin-inline:auto}
 body .jovabook-story #jova-story-concept #ex-faq #faq{padding:0!important}
-body .jovabook-story #jova-story-concept .nv-ending{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#fff!important}
-body:has(.jovabook-story) .jova-newsletter{border-top:1px solid #d9dddd;background:#f1f2f2}
+body .jovabook-story #jova-story-concept .nv-ending{--story-top:48px;--story-bottom:48px;padding-block:48px!important;border-top:1px solid #d9dddd;background:#f1f2f2!important}
+body:has(.jovabook-story) .jova-newsletter{border-top:1px solid #d9dddd;background:#fff}
 body:has(.jovabook-story) #growth-signup{box-sizing:border-box;width:100%;padding-block:48px!important;padding-inline:max(40px,calc((100% - 1160px)/2))!important;border:0;background:transparent!important}
 @media(max-width:700px){
  body .jovabook-story #jova-story-concept .js-wrap{width:calc(100% - 40px)!important}

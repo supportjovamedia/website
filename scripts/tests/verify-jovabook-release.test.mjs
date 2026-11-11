@@ -7,7 +7,7 @@ import {bundlePage} from '../../booking-demo/build-assets.mjs';
 
 const COMMIT='1'.repeat(40),OLDER='2'.repeat(40),TOKEN='local-test-token-never-report';
 const root=new URL('../../booking-demo/',import.meta.url),sources=new Map([['index.html',await readFile(new URL('index.html',root),'utf8')],['operator.html',await readFile(new URL('operator.html',root),'utf8')]]);
-for(const document of ['index.html','operator.html'])for(const match of sources.get(document).matchAll(/(?:src|href)=["']([^"']+\.(?:js|css)(?:\?[^"']*)?)["']/g)){
+for(const document of ['index.html','operator.html'])for(const match of sources.get(document).matchAll(/(?:src|href)=["']([^"']+\.(?:c?js|css)(?:\?[^"']*)?)["']/g)){
  const file=new URL(match[1],'https://'+RELEASE_TARGETS.booking.host+'/'+document).pathname.slice(1);sources.set(file,await readFile(new URL(file,root),'utf8'));
 }
 const sdk=sources.get('google-auth.js').match(/script\.src\s*=\s*['"]([^'"]+\/supabase-[^'"]+\.js)['"]/)[1].slice(1);

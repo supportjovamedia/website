@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const context={window:{},Date,Intl};
-for(const name of ['scheduling-core.js','calendar-workspace.js'])vm.runInNewContext(await readFile(new URL('../'+name,import.meta.url),'utf8'),context);
+for(const name of ['scheduling-core.cjs','calendar-workspace.js'])vm.runInNewContext(await readFile(new URL('../'+name,import.meta.url),'utf8'),context);
 const core=context.window.JovaSchedule,mini=context.window.JovaCalendar.mini;
 const add=(date,n)=>{const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
 test('online date bounds include day75 and reject day76, past and malformed dates',()=>{const now=Date.parse('2026-11-01T12:00:00Z'),s={timezone:'Europe/London'},clock={now,tick:0},w=core.onlineBookingWindow(s,clock);assert.equal(w.today,'2026-11-01');assert.equal(w.maxDate,'2027-01-15');assert(core.onlineDateAllowed(w.today,s,clock));assert(core.onlineDateAllowed(w.maxDate,s,clock));for(const d of ['2027-01-16','2026-10-31','2026-02-30','invalid'])assert.equal(core.onlineDateAllowed(d,s,clock),false,d);});

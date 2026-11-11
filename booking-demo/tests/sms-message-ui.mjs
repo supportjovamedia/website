@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 
-const files=['business-locale.js','sms-phone.js','scheduling-core.js','sms-message.js','sms-reminders.js'];
+const files=['business-locale.js','sms-phone.js','scheduling-core.cjs','sms-message.js','sms-reminders.js'];
 const source=(await Promise.all(files.map(file=>readFile(new URL('../'+file,import.meta.url),'utf8')))).join('\n');
 function harness(){
  const context={window:{},FormData:class{},crypto:globalThis.crypto,TextEncoder,Uint8Array};
