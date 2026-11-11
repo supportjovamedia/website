@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const source=await readFile(new URL('../owner-onboarding.js',import.meta.url),'utf8');
+const source=(await readFile(new URL('../public-links.js',import.meta.url),'utf8'))+'\n'+await readFile(new URL('../owner-onboarding.js',import.meta.url),'utf8');
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};};
 class Values {

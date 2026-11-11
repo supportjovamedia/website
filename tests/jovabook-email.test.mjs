@@ -16,7 +16,7 @@ function harness({jobs=[structuredClone(fixture)],providerStatus=200,providerDat
 }
 test('Booking emails escape content, keep business replies and separate owner/customer links',()=>{
  const j=structuredClone(fixture);j.payload.business='Studio\r\nBcc: other@example.test';j.payload.booking.name='<script>alert(1)</script>';j.payload.booking.serviceName='<img src=x onerror=alert(1)>';
- const mail=bookingEmailContent(j,cfg);assert(!mail.subject.includes('\n'));assert(!mail.html.includes('<script>'));assert(!mail.html.includes('<img src=x'));assert(mail.html.includes('&lt;img src=x'));assert.equal(mail.reply_to,'owner@example.test');assert(mail.text.includes('?salon=example-studio#manage/bk_private'));assert(mail.from.endsWith('<bookings@jovamedia.com>'));assert(!JSON.stringify(mail).includes('private-test-only'));
+ const mail=bookingEmailContent(j,cfg);assert(!mail.subject.includes('\n'));assert(!mail.html.includes('<script>'));assert(!mail.html.includes('<img src=x'));assert(mail.html.includes('&lt;img src=x'));assert.equal(mail.reply_to,'owner@example.test');assert(mail.text.includes('https://www.jovamedia.com/book/example-studio?view=booking#manage/bk_private'));assert(mail.from.endsWith('<bookings@jovamedia.com>'));assert(!JSON.stringify(mail).includes('private-test-only'));
  j.payload.audience='owner';const owner=bookingEmailContent(j,cfg);assert(owner.text.includes('https://book.jovamedia.com/#bookings'));assert(!owner.text.includes('#manage/'));
 });
 test('the business copy includes special instructions while customer messages never expose booking notes',()=>{

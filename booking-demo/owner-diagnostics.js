@@ -8,7 +8,11 @@
   const stages=['email','check-email','profile','business','category','team','location','software','source','ready'];
   const storageKey='jovabook-diagnostic-visit-v1',uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const recent=new Map();let sent=0,access=null,identity=null,visit=null;
-  function excluded(){return ['customer','operator','team'].includes(new URLSearchParams(location.search||'').get('portal'));}
+  function excluded(){
+    const address=window.JovaPublicLinks?.resolve(location);
+    return !!(window.JOVA_EMBED_SLUG||address?.slug||address?.demo)
+      || ['customer','operator','team'].includes(new URLSearchParams(location.search||'').get('portal'));
+  }
   function sessionId(reset=false){
     try{if(!visit&&!reset){const saved=sessionStorage.getItem(storageKey);if(uuid.test(saved||''))visit=saved;}if(reset||!visit){visit=crypto.randomUUID();sessionStorage.setItem(storageKey,visit);}return visit;}catch{try{return visit||(visit=crypto.randomUUID());}catch{return null;}}
   }

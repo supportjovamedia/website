@@ -20,10 +20,10 @@ test('Next rewrites preserve the public hostname and serve the exact business an
  }
  for(const host of ['www.jovamedia.com','book.jovamedia.com','support.jovamedia.com','arooj.jovamedia.com.attacker.test'])assert.equal(matchHas({headers:{host}},{},rules[0].has),false,host);
 });
-test('public addresses cannot switch business through a query and canonical links use business subdomains',async()=>{
+test('public addresses cannot switch business through a query and canonical links use the main domain',async()=>{
  for(const [path,route] of [['/','website'],['/book','book/service'],['/book/time','book/time'],['/account/login','customer/login'],['/login','customer/login'],['/account/register','customer/register']]){const {window}=runtime('https://arooj.jovamedia.com'+path);assert.deepEqual(JSON.parse(JSON.stringify(window.JovaPublicLinks.resolve(window.location))),{slug:'arooj',demo:false,route});}
- const {window}=runtime('https://arooj.jovamedia.com/?salon=another-studio');assert.equal(window.JovaPublicLinks.resolve(window.location).slug,'');assert.equal(window.JovaPublicLinks.booking('arooj'),'https://arooj.jovamedia.com/book');
- const legacy=runtime('https://book.jovamedia.com/arooj/account/login');vm.runInNewContext(await readFile(new URL('../booking-demo/public-entry.js',import.meta.url),'utf8'),{window:legacy.window,URL,URLSearchParams});assert.deepEqual(legacy.redirects,['https://arooj.jovamedia.com/account/login']);
+ const {window}=runtime('https://arooj.jovamedia.com/?salon=another-studio');assert.equal(window.JovaPublicLinks.resolve(window.location).slug,'');assert.equal(window.JovaPublicLinks.booking('arooj'),'https://www.jovamedia.com/book/arooj?view=booking');
+ const legacy=runtime('https://book.jovamedia.com/arooj/account/login');vm.runInNewContext(await readFile(new URL('../booking-demo/public-entry.js',import.meta.url),'utf8'),{window:legacy.window,URL,URLSearchParams});assert.deepEqual(legacy.redirects,['https://www.jovamedia.com/book/arooj?view=account#customer/login']);
 });
 
 test('old website addresses forward to the main site while old booking links keep their flow', async () => {
@@ -33,8 +33,13 @@ test('old website addresses forward to the main site while old booking links kee
   ['https://arooj.jovamedia.com/about', ['https://www.jovamedia.com/book/arooj#about']],
   ['https://arooj.jovamedia.com/#website/contact', ['https://www.jovamedia.com/book/arooj#contact']],
   ['https://book.jovamedia.com/pricing', ['https://www.jovamedia.com/book/pricing']],
-  ['https://book.jovamedia.com/arooj#book/service', ['https://arooj.jovamedia.com/book']],
-  ['https://arooj.jovamedia.com/book', []],
+  ['https://book.jovamedia.com/arooj#book/service', ['https://www.jovamedia.com/book/arooj?view=booking']],
+  ['https://arooj.jovamedia.com/book', ['https://www.jovamedia.com/book/arooj?view=booking']],
+  ['https://arooj.jovamedia.com/book?service=trim&utm_source=fb', ['https://www.jovamedia.com/book/arooj?view=booking&service=trim&utm_source=fb']],
+  ['https://book.jovamedia.com/?salon=arooj#manage/reference', ['https://www.jovamedia.com/book/arooj?view=booking#manage/reference']],
+  ['https://arooj.jovamedia.com/account/login#access_token=fixture&type=recovery', ['https://www.jovamedia.com/book/arooj?view=account#access_token=fixture&type=recovery']],
+  ['https://arooj.jovamedia.com/book#book/deposit', []],
+  ['https://book.jovamedia.com/?portal=owner#login', []],
   ['https://arooj.jovamedia.com/?salon=other', []],
  ]) {
   const { window, redirects } = runtime(address);

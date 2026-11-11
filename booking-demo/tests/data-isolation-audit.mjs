@@ -110,6 +110,20 @@ test('unrelated callbacks and arbitrary direct reset tokens do not establish rec
 test('recovery verification calls the actual auth user endpoint before any password update',async()=>{
  const h=harness({handler:async(url,options)=>response(options.method==='GET'?{id:'recovery-a'}:{id:'recovery-a'})});h.api.consumeRecoveryCallback(callback(jwt()));assert.equal((await h.api.checkResetToken('')).ok,true);const checked=h.requests.length;assert.equal((await h.api.resetPassword('','Example123')).ok,true);assert.equal(h.requests[checked].options.method,'GET');assert.equal(h.requests[checked+1].options.method,'PUT');assert(h.requests.every(r=>r.url.endsWith('/auth/v1/user')));assert.equal(h.tab.has(RECOVERY),false);assert.equal(h.api.sessionIdentity(),'owner-a');
 });
+test('a reused password gets an actionable message and the same recovery link can retry',async()=>{
+ let updateAttempts=0;
+ const h=harness({handler:async(_url,options)=>{
+  if(options.method==='GET')return response({id:'recovery-a'});
+  return ++updateAttempts===1?response({error_code:'same_password'},422):response({id:'recovery-a'});
+ }});
+ h.api.consumeRecoveryCallback(callback(jwt()));
+ const rejected=await h.api.resetPassword('','Example123');
+ assert.equal(rejected.ok,false);
+ assert.equal(rejected.message,'Choose a password different from your current password.');
+ assert.equal(h.tab.has(RECOVERY),true);
+ assert.equal((await h.api.resetPassword('','Different123')).ok,true);
+ assert.equal(h.tab.has(RECOVERY),false);
+});
 test('expired or denied recovery clears only recovery credentials',async()=>{
  const h=harness({handler:async()=>response({message:'Expired'},401)});h.api.consumeRecoveryCallback(callback(jwt()));assert.equal((await h.api.checkResetToken('')).reason,'expired');assert.equal(h.tab.has(RECOVERY),false);assert.equal(h.api.sessionIdentity(),'owner-a');assert.equal(h.api.consumeRecoveryCallback(callback(jwt(1))).reason,'expired');assert.equal(h.api.consumeRecoveryCallback('#error=access_denied&error_code=otp_expired').reason,'expired');
 });

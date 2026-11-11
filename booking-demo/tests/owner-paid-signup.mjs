@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import vm from 'node:vm';import {readFile} from 'node:fs/promises';
-const source=await readFile(new URL('../owner-onboarding.js',import.meta.url),'utf8'),tick=()=>new Promise(r=>setImmediate(r));
+const source=(await readFile(new URL('../public-links.js',import.meta.url),'utf8'))+'\n'+await readFile(new URL('../owner-onboarding.js',import.meta.url),'utf8'),tick=()=>new Promise(r=>setImmediate(r));
 const deferred=()=>{let resolve;const promise=new Promise(r=>resolve=r);return{promise,resolve};};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 class Values{constructor(f){this.rows=Object.entries(f.values);}get(k){return this.rows.find(([n])=>n===k)?.[1]??null;}has(k){return this.rows.some(([n])=>n===k);}getAll(k){const v=this.get(k);return v===null?[]:Array.isArray(v)?v:[v];}[Symbol.iterator](){return this.rows[Symbol.iterator]();}}
