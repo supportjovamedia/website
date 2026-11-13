@@ -1,0 +1,38 @@
+.jb-duration-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.jb-duration-field legend {
+  padding: 0;
+  margin-bottom: 8px;
+  font: inherit;
+}
+.jb-duration-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.jb-duration-pair > * {
+  min-width: 0;
+  width: 100%;
+}
+.jb-service-timing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.85fr);
+  gap: 12px;
+  align-items: start;
+}
+#modal-root .jg-panel .jb-service-timing {
+  margin-bottom: 20px;
+}
+#modal-root .jg-panel .jb-service-timing .field {
+  margin-bottom: 0 !important;
+}
+@media (max-width: 420px) {
+  .jb-service-timing {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
